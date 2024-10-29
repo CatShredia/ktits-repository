@@ -32,7 +32,7 @@ function minAB(a, b) {
         return null
     }
 }
-// task1()
-// task2()
-// task3()
+task1()
+task2()
+task3()
 alert(minAB(parseInt(prompt("Введите a")), parseInt(prompt("Введите b"))))

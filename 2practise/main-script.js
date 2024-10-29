@@ -57,7 +57,7 @@ function task4() {
 
 // TODO: start
 
-// task1();
-// task2();
-// alert(task3());
-// task4();
+task1();
+task2();
+alert(task3());
+task4();
