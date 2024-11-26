@@ -18,10 +18,24 @@ namespace OAIP
         public static bool isDevoperEdition = false; //переменная для разработчика
         //public static OAIP_Arrays oaip_arrays; //переменная внутренних технологий массивов
 
+        public static List<string> projects;
+
+
+        // Добавление проектов в проект
+        public static void addProjects() {
+            projects = new List<string>() { 
+            "21.11", 
+            "null", 
+            "null" };
+        }
+
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
             Console.WriteLine("Какая практика вас интересует? (за какое число: 01.01)");
+
+            addProjects();
+            OAIP_Arrays.WriteArray(projects, "Существующие практики: ");
 
             //TODO: разраб
             string date;

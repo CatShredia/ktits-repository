@@ -92,6 +92,15 @@ namespace OAIP
             }
             Console.WriteLine();
         }
+        internal static void WriteArray(List<string> list, String titleArray)
+        {
+            Console.WriteLine("Массив " + titleArray);
+            foreach (var item in list)
+            {
+                Console.Write(item + " ");
+            }
+            Console.WriteLine();
+        }
 
         //вывод двумерного массива
         internal static void WriteTwoArray(int[,] array, int n, String titleArray)
