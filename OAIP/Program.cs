@@ -22,15 +22,18 @@ namespace OAIP
 
 
         // Добавление проектов в проект
-        public static void addProjects() {
-            projects = new List<string>() { 
-            "21.11", 
-            "null", 
+        public static void addProjects()
+        {
+            projects = new List<string>() {
+            "21.11",
+            "28.11",
             "null" };
         }
 
         static void Main(string[] args)
         {
+            Console.Clear();
+
             Console.WriteLine("Hello World!");
             Console.WriteLine("Какая практика вас интересует? (за какое число: 01.01)");
 
@@ -45,7 +48,7 @@ namespace OAIP
             }
             else
             {
-                date = "21.11";
+                date = "28.11";
             }
 
             //выбор даты практики
@@ -53,6 +56,9 @@ namespace OAIP
             {
                 case "21.11":
                     OAIP_21_11 oaip_21_11 = new OAIP_21_11(isDevoperEdition);
+                    break;
+                case "28.11":
+                    OAIP_28_11 oaip_28_11 = new OAIP_28_11(isDevoperEdition);
                     break;
 
                 default:

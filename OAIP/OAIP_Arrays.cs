@@ -24,6 +24,20 @@ namespace OAIP
 
             return numbers;
         }
+        // генерация листа размером n с элементами от firstLine до secondLine
+        internal static List<int> generateRandomList(int n, int firstLine, int secondLine)
+        {
+            Random random = new Random();
+
+            List<int> numbers = new List<int>{};
+
+            for (int i = 0; i < n; i++)
+            {
+                numbers.Add(random.Next(firstLine,secondLine));
+            }
+
+            return numbers;
+        }
 
         // генерация массива размером (n * n) с элементами от firstLine до secondLine
         internal static int[,] generateRandomTwoArray(int n, int firstLine, int secondLine)
@@ -93,6 +107,15 @@ namespace OAIP
             Console.WriteLine();
         }
         internal static void WriteArray(List<string> list, String titleArray)
+        {
+            Console.WriteLine("Массив " + titleArray);
+            foreach (var item in list)
+            {
+                Console.Write(item + " ");
+            }
+            Console.WriteLine();
+        }
+        internal static void WriteArray(List<int> list, String titleArray)
         {
             Console.WriteLine("Массив " + titleArray);
             foreach (var item in list)

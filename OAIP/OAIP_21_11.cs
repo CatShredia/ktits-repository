@@ -61,7 +61,8 @@ namespace OAIP
             if (isDevoperEdition == false)
             {
                 numb = Convert.ToInt32(Console.ReadLine());
-            } else
+            }
+            else
             {
                 numb = 2;
             }
@@ -98,7 +99,7 @@ namespace OAIP
 
 
         }
-        
+
         //2 задача
         public static bool menu2()
         {
