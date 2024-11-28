@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OAIP")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+55871f26ffba0018200fe53c9be1b31869812a21")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+58949631b121d66b313c9bbf06b4886f644b4652")]
 [assembly: System.Reflection.AssemblyProductAttribute("OAIP")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OAIP")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
