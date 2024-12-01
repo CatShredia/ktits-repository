@@ -4,11 +4,5 @@
   // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-    {
-      "name": "C#: OAIP Debug",
-      "type": "dotnet",
-      "request": "launch",
-      "projectPath": "${workspaceFolder}/OAIP/OAIP.csproj"
-    }
   ]
 }
