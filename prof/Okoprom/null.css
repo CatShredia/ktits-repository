@@ -6,6 +6,13 @@
 
     border: none;
 }
+.copyright {
+    text-align: center;
+
+    font-size: 15px;
+
+    background-color: white;
+}
 button {
     background-color: white;
 }
