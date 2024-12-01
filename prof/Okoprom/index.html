@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Главная Страница</title>
+
+    <!-- icon -->
+    <link rel="icon" href="rec/img/logo.png" type="image/x-icon" />
+    <!-- css -->
+    <link rel="stylesheet" href="null.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="animations.css" />
+  </head>
+  <body class="body">
+    <header class="header">
+      <div class="container header__inner">
+        <a href="#" class="header-a"
+          ><img src="rec/img/logo.png" alt="Логотип" class="header-logo-img" />
+          <h1 class="title">Окопром</h1></a
+        >
+
+        <div class="header-contacts">
+          <p class="header-text">myemail@gmail.com</p>
+          <p class="header-text">+7(950)3451211</p>
+        </div>
+
+        <a class="header-link link" href="html/delivery.html">Доставка</a>
+        <a class="header-link link" href="html/warranty.html">Гарантии</a>
+
+        <button type="button" class="header-menu-button link">
+          Консультация
+        </button>
+
+        <div class="menu">
+          <button type="button" class="header-menu-button" onclick="menu()">
+            <img
+              src="rec/img/Menu.png"
+              alt="Меню"
+              srcset=""
+              class="menu-button"
+            />
+          </button>
+        </div>
+      </div>
+      <div class="menu-active0">
+        <a class="header-link link" href="html/catalog.html">Каталог</a>
+        <a class="header-link link" href="html/about.html">О компании</a>
+        <a class="header-link link" href="html/contacts.html">Контакты</a>
+      </div>
+    </header>
+    <main class="main">
+      <div class="form_inner">
+        <form action="" method="post">
+          <div class="inputs">
+            <input
+              type="text"
+              name="name"
+              id="name"
+              placeholder="Ваше Имя"
+              class="font-input"
+            />
+            <input
+              type="text"
+              name="phone"
+              id="phone"
+              placeholder="Телефон"
+              class="font-input"
+            />
+            <input
+              type="text"
+              name="email"
+              id="email"
+              placeholder="Почта"
+              class="font-input"
+            />
+          </div>
+
+          <button type="button" class="font-button">ОТПРАВИТЬ</button>
+        </form>
+      </div>
+    </main>
+    <footer class="footer">
+      <div class="container footer_inner">
+        <a href="#" class="header-a"
+          ><img src="rec/img/logo.png" alt="Логотип" class="header-logo-img" />
+          <h1 class="title">Окопром</h1></a
+        >
+
+        <div class="footer-contacts">
+          <p class="footer-text">myemail@gmail.com</p>
+          <p class="footer-text">РФ, г.Казань, ул.Кремлевская, д.11</p>
+          <p class="footer-text">+7(950)3451211</p>
+        </div>
+        <div class="footer-icons">
+          <a href="https://whatsapp.com" class="footer-a"
+            ><img src="rec/img/whatsapp.svg" alt="WhatsApp" class="footer-img"
+          /></a>
+          <a href="https://telegram.org/" class="footer-a"
+            ><img src="rec/img/tg.svg" alt="Telegram" class="footer-img"
+          /></a>
+        </div>
+        <button type="button" class="header-menu-button" onclick="menu2()">
+          <img
+            src="rec/img/Menu.png"
+            alt="Меню"
+            srcset=""
+            class="menu-button"
+          />
+        </button>
+      </div>
+      <p class="copyright">Kazan 2024©</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

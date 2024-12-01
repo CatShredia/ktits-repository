@@ -1,0 +1,15 @@
+/* header-animation */
+.link, .header-menu-button {
+   transition: 0.5s linear;
+}
+.link:hover, .header-menu-button:hover {
+    transform: scale(1.01);
+}
+.header-text {
+    color: black;
+
+    transition: 0.5s linear;
+}
+.header-text:hover {
+    color: rgb(0, 0, 179);
+}

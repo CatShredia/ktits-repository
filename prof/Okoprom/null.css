@@ -1,0 +1,70 @@
+* {
+    margin: 0;
+    padding: 0;
+
+    text-decoration: none;
+
+    border: none;
+}
+.copyright {
+    text-align: center;
+
+    font-size: 15px;
+
+    background-color: white;
+}
+button {
+    background-color: white;
+}
+@font-face {
+    font-family: "Oswald-Variable";
+    src: url(rec/fonts/Oswald-VariableFont_wght.ttf);
+}
+@font-face {
+    font-family: "IBM-Plex-Sand-Arabic";
+    src: url(rec/fonts/IBMPlexSansArabic-SemiBold.ttf);
+}
+@font-face {
+    font-family: "Montserrat";
+    src: url(rec/fonts/Montserrat-VariableFont_wght.ttf);
+}
+@font-face {
+    font-family: "OpenSans";
+    src: url(rec/fonts/OpenSans-VariableFont_wdth\,wght.ttf);
+}
+.title {
+    font-family: "Oswald-Variable";
+
+    font-size: 24px;
+
+    color: black;
+}
+.link {
+    font-family: "Montserrat";
+
+    font-weight: 200;
+
+    font-size: 24px;
+
+    color: black;
+    
+}
+.font-input {
+    font-family: "Montserrat";
+
+    font-weight: 200;
+
+    font-size: 24px;
+
+    color: black;
+    
+}
+.font-button {
+    font-family: "OpenSans";
+
+    font-weight: 200;
+
+    font-size: 24px;
+
+    color: black;
+}
