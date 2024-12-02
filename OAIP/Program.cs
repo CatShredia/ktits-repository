@@ -32,7 +32,7 @@ namespace OAIP
 
         static void Main(string[] args)
         {
-            Console.Clear();
+            // Console.Clear();
 
             Console.WriteLine("Hello World!");
             Console.WriteLine("Какая практика вас интересует? (за какое число: 01.01)");

@@ -38,7 +38,16 @@ namespace OAIP
 
             return numbers;
         }
-
+        // нахождение элемента в листе
+        internal static int getElementList(List<int> numbers, int findsElement) {
+            for (int i = 0; i < numbers.Count; i++)
+            {
+                if(numbers[i] == findsElement) {
+                    return i;
+                } 
+            }
+            return -1;
+        } 
         // генерация массива размером (n * n) с элементами от firstLine до secondLine
         internal static int[,] generateRandomTwoArray(int n, int firstLine, int secondLine)
         {
