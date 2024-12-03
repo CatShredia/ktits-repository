@@ -1,4 +1,5 @@
-/OAIP/bin
-/OAIP/obj
-/OAIP/OAIP.csproj
-OAIP.sln
+/cs/OAIP/bin
+/cs/OAIP/obj
+/cs/OAIP/OAIP.csproj
+/cs/OAIP.sln
+/cs/.vscode
