@@ -1,15 +1,62 @@
 /* header-animation */
-.link, .header-menu-button {
-   transition: 0.5s linear;
+.link,
+.header-menu-button {
+  transition: 0.5s linear;
 }
-.link:hover, .header-menu-button:hover {
-    transform: scale(1.01);
+.link:hover,
+.header-menu-button:hover {
+  transform: scale(1.01);
 }
 .header-text {
-    color: black;
+  color: black;
 
-    transition: 0.5s linear;
+  transition: 0.5s linear;
 }
 .header-text:hover {
-    color: rgb(0, 0, 179);
+  color: rgb(0, 0, 179);
+}
+.link {
+  text-decoration: none;
+  background-image: linear-gradient(blue, blue);
+  background-position: 50% 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 0.1px;
+  transition: background-size 0.3s;
+
+  padding-bottom: 2px;
+}
+.link:hover {
+  background-size: 100% 1px;
+}
+/* .link2 {
+  text-decoration: none;
+  background-image: linear-gradient(black, black);
+  background-position: 50% 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 0.01px;
+  transition: background-size 1s;
+
+  padding-bottom: 0px;
+}
+.link2:hover {
+  background-size: 10% 2px;
+} */
+.button1:active {
+  color: rgb(255, 255, 255);
+  background-color: rgb(0, 0, 0);
+
+  font-weight: 800;
+}
+.button1 {
+  text-decoration: none;
+  background-image: linear-gradient(black, black);
+  background-position: 50% 75%;
+  background-repeat: no-repeat;
+  background-size: 0% 0.01px;
+  transition: background-size 1s;
+
+  padding-bottom: 0px;
+}
+.button1:hover {
+  background-size: 40% 2px;
 }

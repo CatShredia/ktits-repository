@@ -18,8 +18,11 @@ class Slider {
       return;
     }
 
+    //установка размеров слайдов
     this.setDimensions();
+    //установка переключателей
     this.createSwitchers();
+    //закрашивание рандомными цветами контента
     this.paintSlides();
     this.deleteSlidesDrag();
     this.controlDots();

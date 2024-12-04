@@ -14,7 +14,7 @@ function menu() {
 
     menuActive.style.display = "none";
     menuButton.src = "rec/img/Menu.png";
-    
+
     num--;
   }
 }
