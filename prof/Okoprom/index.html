@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="null.css" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="animations.css" />
+    <!-- slider css -->
+    <link rel="stylesheet" href="slider/style.css" />
   </head>
   <body class="body">
     <header class="header">
@@ -43,14 +45,14 @@
           </button>
         </div>
       </div>
-      <div class="menu-active0">
+      <div class="menu-active0 container">
         <a class="header-link link" href="html/catalog.html">Каталог</a>
         <a class="header-link link" href="html/about.html">О компании</a>
         <a class="header-link link" href="html/contacts.html">Контакты</a>
       </div>
     </header>
     <main class="main">
-      <div class="form_inner">
+      <div class="form_inner container">
         <form action="" method="post">
           <div class="inputs">
             <input
@@ -78,6 +80,14 @@
 
           <button type="button" class="font-button button1">ОТПРАВИТЬ</button>
         </form>
+      </div>
+
+      <div type class="slider">
+        <button type="button" class="slider-button rotate180"></button>
+        <div class="slid" id="slid1">1</div>
+        <div class="slid" id="slid2">2</div>
+        <div class="slid" id="slid3">3</div>
+        <button type="button" class="slider-button"></button>
       </div>
     </main>
     <footer class="footer">
@@ -114,5 +124,7 @@
 
     <!-- js -->
     <script src="script.js"></script>
+    <!-- script js -->
+    <script src="slider/script.js"></script>
   </body>
 </html>

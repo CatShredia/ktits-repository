@@ -1,6 +1,7 @@
 let num = 0;
 let menuActive = document.querySelector(".menu-active0");
 let menuButton = document.querySelector(".menu-button");
+
 function menu() {
   if (num == 0) {
     console.log("Открытие меню");

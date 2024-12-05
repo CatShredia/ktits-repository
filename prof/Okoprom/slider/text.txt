@@ -1,0 +1,6 @@
+//html code
+<div class="slider">
+      <div class="slid" id="slid">1</div>
+      <div class="slid" id="slid">2</div>
+      <div class="slid" id="slid">3</div>
+</div>

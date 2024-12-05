@@ -43,7 +43,6 @@
 }
 /* header-menu */
 .menu-active0 {
-  padding: 6px;
   gap: 40px;
 
   display: none;
@@ -67,6 +66,8 @@
 .form_inner input {
   text-align: center;
   width: 100%;
+
+  border: none;
 
   padding: 5px;
 }
