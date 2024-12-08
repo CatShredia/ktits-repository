@@ -25,6 +25,7 @@ namespace OAIP
         public static void addProjects()
         {
             projects = new List<string>() {
+            "18.10",
             "21.11",
             "28.11",
             "null" };
@@ -54,6 +55,9 @@ namespace OAIP
             //выбор даты практики
             switch (date)
             {
+                case "18.10":
+                    OAIP_18_10 oaip_18_10 = new OAIP_18_10(isDevoperEdition);
+                    break;
                 case "21.11":
                     OAIP_21_11 oaip_21_11 = new OAIP_21_11(isDevoperEdition);
                     break;
