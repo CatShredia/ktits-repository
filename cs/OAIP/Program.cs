@@ -28,6 +28,7 @@ namespace OAIP
             "18.10",
             "21.11",
             "28.11",
+            "09.12",
             "null" };
         }
 
@@ -63,6 +64,9 @@ namespace OAIP
                     break;
                 case "28.11":
                     OAIP_28_11 oaip_28_11 = new OAIP_28_11(isDevoperEdition);
+                    break;
+                case "09.12":
+                    OAIP_09_12 oAIP_09_12 = new OAIP_09_12(isDevoperEdition);
                     break;
 
                 default:
