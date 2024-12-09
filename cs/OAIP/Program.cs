@@ -15,7 +15,7 @@ namespace OAIP
     // TODO: класс с main
     internal class OAIP_Main
     {
-        public static bool isDevoperEdition = false; //переменная для разработчика
+        public static bool isDevoperEdition = true; //переменная для разработчика
         //public static OAIP_Arrays oaip_arrays; //переменная внутренних технологий массивов
 
         public static List<string> projects;
@@ -50,7 +50,7 @@ namespace OAIP
             }
             else
             {
-                date = "28.11";
+                date = "09.12";
             }
 
             //выбор даты практики
