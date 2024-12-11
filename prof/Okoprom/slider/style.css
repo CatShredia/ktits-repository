@@ -43,6 +43,9 @@
   height: 150px;
 }
 .slid-button {
+  background-color: white;
+
+  color: black;
   padding: 15px;
 }
 .slider-title {

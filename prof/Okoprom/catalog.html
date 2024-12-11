@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <!-- icon -->
+    <link rel="icon" href="rec/img/logo.png" type="image/x-icon" />
+    <!-- css -->
+    <link rel="stylesheet" href="null.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="animations.css" />
+    <!-- slider css -->
+    <link rel="stylesheet" href="slider/style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="container header__inner">
+        <a href="index.html" class="header-a"
+          ><img src="rec/img/logo.png" alt="Логотип" class="header-logo-img" />
+          <h1 class="title">Окопром</h1></a
+        >
+
+        <div class="header-contacts">
+          <p class="header-text">myemail@gmail.com</p>
+          <p class="header-text">+7(950)3451211</p>
+        </div>
+
+        <a class="header-link link" href="html/delivery.html">Доставка</a>
+        <a class="header-link link" href="html/warranty.html">Гарантии</a>
+
+        <button type="button" class="header-menu-button link">
+          Консультация
+        </button>
+
+        <div class="menu">
+          <button type="button" class="header-menu-button" onclick="menu()">
+            <img
+              src="rec/img/Menu.png"
+              alt="Меню"
+              srcset=""
+              class="menu-button"
+            />
+          </button>
+        </div>
+      </div>
+      <div class="menu-active0 container">
+        <a class="header-link link" href="html/catalog.html">Каталог</a>
+        <a class="header-link link" href="html/about.html">О компании</a>
+        <a class="header-link link" href="html/contacts.html">Контакты</a>
+      </div>
+    </header>
+    <main class="main">
+      <div class="advantages container">
+        <h1 class="advantages-title title">Преимущества</h1>
+        <div class="advantages-div">
+          <div class="advantages-cart">
+            <img
+              src="rec/icons/check.svg"
+              alt="Иконка"
+              srcset=""
+              class="advantages-icon"
+            />
+            <h2 class="advantages-title link">Преимущество 1</h2>
+            <p class="advantages-text">
+              Имеется спорная точка зрения, гласящая примерно следующее:
+              ключевые особенности структуры проекта, которые представляют собой
+              яркий пример континентально-европейского типа политической
+              культуры, будут рассмотрены исключительно в разрезе маркетинговых
+              и финансовых предпосылок!
+            </p>
+          </div>
+          <div class="advantages-cart">
+            <img
+              src="rec/icons/search.svg"
+              alt="Иконка"
+              srcset=""
+              class="advantages-icon"
+            />
+            <h2 class="advantages-title link">Преимущество 2</h2>
+            <p class="advantages-text">
+              Имеется спорная точка зрения, гласящая примерно следующее:
+              ключевые особенности структуры проекта, которые представляют собой
+              яркий пример континентально-европейского типа политической
+              культуры, будут рассмотрены исключительно в разрезе маркетинговых
+              и финансовых предпосылок!
+            </p>
+          </div>
+          <div class="advantages-cart">
+            <img
+              src="rec/icons/plus.svg"
+              alt="Иконка"
+              srcset=""
+              class="advantages-icon"
+            />
+            <h2 class="advantages-title link">Преимущество 3</h2>
+            <p class="advantages-text">
+              Имеется спорная точка зрения, гласящая примерно следующее:
+              ключевые особенности структуры проекта, которые представляют собой
+              яркий пример континентально-европейского типа политической
+              культуры, будут рассмотрены исключительно в разрезе маркетинговых
+              и финансовых предпосылок!
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="main__inner container">
+        <nav class="nav">
+          <h1 class="nav-title title">Навигация</h1>
+          <div class="filter">
+            <form class="filter-class">
+              <label class="filter-label">Убрать фильтры</label>
+              <input
+                type="checkbox"
+                name="filter-checkbox"
+                id="filter-checkbox1"
+                class="filter-checkbox"
+                checked="true"
+              />
+              <label class="filter-label">С скидкой</label>
+              <input
+                type="checkbox"
+                name="filter-checkbox"
+                id="filter-checkbox2"
+                class="filter-checkbox"
+              />
+              <label class="filter-label">Услуга</label>
+              <input
+                type="checkbox"
+                name="filter-checkbox"
+                id="filter-checkbox3"
+                class="filter-checkbox"
+              />
+              <label class="filter-label">Прекрасный</label>
+              <input
+                type="checkbox"
+                name="filter-checkbox"
+                id="filter-checkbox4"
+                class="filter-checkbox"
+              />
+              <label class="filter-label">Чудесный</label>
+              <input
+                type="checkbox"
+                name="filter-checkbox"
+                id="filter-checkbox5"
+                class="filter-checkbox"
+              />
+              <label class="filter-label">Потрясающий</label>
+              <input
+                type="checkbox"
+                name="filter-checkbox"
+                id="filter-checkbox6"
+                class="filter-checkbox"
+              />
+              <label class="filter-label">Завораживающий</label>
+              <input
+                type="checkbox"
+                name="filter-checkbox"
+                id="filter-checkbox6"
+                class="filter-checkbox"
+              />
+            </form>
+          </div>
+        </nav>
+        <div class="products">
+          <div class="product">
+            <img
+              src="rec/img/slider/slid1.webp"
+              alt="Продукт"
+              srcset=""
+              class="product-img"
+            />
+            <h2 class="product-title title">Название 1</h2>
+            <h2 class="product-title link">Параметры:</h2>
+            <ul class="product-ul">
+              <li class="product-li">Услуга</li>
+              <li class="product-li">Параметр 2</li>
+              <li class="product-li">Параметр 3</li>
+              <li class="product-li">Параметр 4</li>
+              <li class="product-li">Параметр 5</li>
+              <li class="product-li">Параметр 6</li>
+            </ul>
+            <h4 class="count">Цена: 2300 $</h4>
+            <h4 class="count-from-sale">Цена со скидкой: 2000 $</h4>
+            <a href="product.html" class="link">Купить</a>
+          </div>
+          <div class="product">
+            <img
+              src="rec/img/slider/slid2.webp"
+              alt="Продукт"
+              srcset=""
+              class="product-img"
+            />
+            <h2 class="product-title title">Название 1</h2>
+            <h2 class="product-title link">Параметры:</h2>
+            <ul class="product-ul">
+              <li class="product-li">Услуга</li>
+              <li class="product-li">Параметр 2</li>
+              <li class="product-li">Параметр 3</li>
+              <li class="product-li">Параметр 4</li>
+              <li class="product-li">Параметр 5</li>
+              <li class="product-li">Параметр 6</li>
+            </ul>
+            <h4 class="count">Цена: 2300 $</h4>
+            <h4 class="count-from-sale">Цена со скидкой: 2000 $</h4>
+            <a href="product.html" class="link">Купить</a>
+          </div>
+          <div class="product">
+            <img
+              src="rec/img/slider/slid2.webp"
+              alt="Продукт"
+              srcset=""
+              class="product-img"
+            />
+            <h2 class="product-title title">Название 1</h2>
+            <h2 class="product-title link">Параметры:</h2>
+            <ul class="product-ul">
+              <li class="product-li">Параметр 1</li>
+              <li class="product-li">Параметр 2</li>
+              <li class="product-li">Параметр 3</li>
+              <li class="product-li">Параметр 4</li>
+              <li class="product-li">Параметр 5</li>
+              <li class="product-li">Параметр 6</li>
+            </ul>
+            <h4 class="count">Цена: 2300 $</h4>
+            <h4 class="count-from-sale">Цена со скидкой: 2000 $</h4>
+            <a href="product.html" class="link">Купить</a>
+          </div>
+          <div class="product">
+            <img
+              src="rec/img/slider/slid2.webp"
+              alt="Продукт"
+              srcset=""
+              class="product-img"
+            />
+            <h2 class="product-title title">Название 1</h2>
+            <h2 class="product-title link">Параметры:</h2>
+            <ul class="product-ul">
+              <li class="product-li">Параметр 1</li>
+              <li class="product-li">Параметр 2</li>
+              <li class="product-li">Завораживающий</li>
+              <li class="product-li">Параметр 4</li>
+              <li class="product-li">Маркер 4</li>
+              <li class="product-li">Параметр 6</li>
+            </ul>
+            <h4 class="count">Цена: 2300 $</h4>
+            <h4 class="count-from-sale">Цена со скидкой: 2000 $</h4>
+            <a href="product.html" class="link">Купить</a>
+          </div>
+          <div class="product">
+            <img
+              src="rec/img/slider/slid1.webp"
+              alt="Продукт"
+              srcset=""
+              class="product-img"
+            />
+            <h2 class="product-title title">Название 1</h2>
+            <h2 class="product-title link">Параметры:</h2>
+            <ul class="product-ul">
+              <li class="product-li">Услуга</li>
+              <li class="product-li">Параметр 2</li>
+              <li class="product-li">Параметр 3</li>
+              <li class="product-li">Параметр 4</li>
+              <li class="product-li">Параметр 5</li>
+              <li class="product-li">Параметр 6</li>
+            </ul>
+            <h4 class="count">Цена: 2300 $</h4>
+            <h4 class="count-from-sale">Цена со скидкой: 2000 $</h4>
+            <a href="product.html" class="link">Купить</a>
+          </div>
+          <div class="product">
+            <img
+              src="rec/img/slider/slid2.webp"
+              alt="Продукт"
+              srcset=""
+              class="product-img"
+            />
+            <h2 class="product-title title">Название 1</h2>
+            <h2 class="product-title link">Параметры:</h2>
+            <ul class="product-ul">
+              <li class="product-li">Услуга</li>
+              <li class="product-li">Параметр 2</li>
+              <li class="product-li">Параметр 3</li>
+              <li class="product-li">Параметр 4</li>
+              <li class="product-li">Параметр 5</li>
+              <li class="product-li">Параметр 6</li>
+            </ul>
+            <h4 class="count">Цена: 2300 $</h4>
+            <h4 class="count-from-sale">Цена со скидкой: 2000 $</h4>
+            <a href="product.html" class="link">Купить</a>
+          </div>
+          <div class="product">
+            <img
+              src="rec/img/slider/slid2.webp"
+              alt="Продукт"
+              srcset=""
+              class="product-img"
+            />
+            <h2 class="product-title title">Название 1</h2>
+            <h2 class="product-title link">Параметры:</h2>
+            <ul class="product-ul">
+              <li class="product-li">Параметр 1</li>
+              <li class="product-li">Параметр 2</li>
+              <li class="product-li">Параметр 3</li>
+              <li class="product-li">Параметр 4</li>
+              <li class="product-li">Параметр 5</li>
+              <li class="product-li">Параметр 6</li>
+            </ul>
+            <h4 class="count">Цена: 2300 $</h4>
+            <h4 class="count-from-sale">Цена со скидкой: 2000 $</h4>
+            <a href="product.html" class="link">Купить</a>
+          </div>
+          <div class="product">
+            <img
+              src="rec/img/slider/slid2.webp"
+              alt="Продукт"
+              srcset=""
+              class="product-img"
+            />
+            <h2 class="product-title title">Название 1</h2>
+            <h2 class="product-title link">Параметры:</h2>
+            <ul class="product-ul">
+              <li class="product-li">Красивый</li>
+              <li class="product-li">Прекрасный</li>
+              <li class="product-li">Чудесный</li>
+              <li class="product-li">Параметр 4</li>
+              <li class="product-li">Маркер 4</li>
+              <li class="product-li">С Скидкой</li>
+            </ul>
+            <h4 class="count">Цена: 2300 $</h4>
+            <h4 class="count-from-sale">Цена со скидкой: 2300 $</h4>
+            <a href="product.html" class="link">Купить</a>
+          </div>
+          <div class="product">
+            <img
+              src="rec/img/slider/slid2.webp"
+              alt="Продукт"
+              srcset=""
+              class="product-img"
+            />
+            <h2 class="product-title title">Название 1</h2>
+            <h2 class="product-title link">Параметры:</h2>
+            <ul class="product-ul">
+              <li class="product-li">Параметр 1</li>
+              <li class="product-li">Параметр 2</li>
+              <li class="product-li">Параметр 3</li>
+              <li class="product-li">Параметр 4</li>
+              <li class="product-li">Параметр 5</li>
+              <li class="product-li">Параметр 6</li>
+            </ul>
+            <h4 class="count">Цена: 2300 $</h4>
+            <h4 class="count-from-sale">Цена со скидкой: 2300 $</h4>
+            <a href="product.html" class="link">Купить</a>
+          </div>
+          <div class="product">
+            <img
+              src="rec/img/slider/slid2.webp"
+              alt="Продукт"
+              srcset=""
+              class="product-img"
+            />
+            <h2 class="product-title title">Название 1</h2>
+            <h2 class="product-title link">Параметры:</h2>
+            <ul class="product-ul">
+              <li class="product-li">Параметр 1</li>
+              <li class="product-li">Параметр 2</li>
+              <li class="product-li">Параметр 3</li>
+              <li class="product-li">Параметр 4</li>
+              <li class="product-li">Маркер 4</li>
+              <li class="product-li">Параметр 6</li>
+            </ul>
+            <h4 class="count">Цена: 2300 $</h4>
+            <h4 class="count-from-sale">Цена со скидкой: 2000 $</h4>
+            <a href="product.html" class="link">Купить</a>
+          </div>
+          <form class="show-more-div">
+            <button type="button" class="show-more-button">
+              Показать ещё !
+            </button>
+            <span class="show-more-span" id="span1"></span>
+            <span class="show-more-span" id="span2"></span>
+            <span class="show-more-span" id="span3"></span>
+            <span class="show-more-span" id="span4"></span>
+          </form>
+        </div>
+      </div>
+    </main>
+    <footer class="footer">
+      <div class="container footer_inner">
+        <a href="#" class="header-a"
+          ><img src="rec/img/logo.png" alt="Логотип" class="header-logo-img" />
+          <h1 class="title">Окопром</h1></a
+        >
+
+        <div class="footer-contacts">
+          <p class="footer-text">myemail@gmail.com</p>
+          <p class="footer-text">РФ, г.Казань, ул.Кремлевская, д.11</p>
+          <p class="footer-text">+7(950)3451211</p>
+        </div>
+        <div class="footer-icons">
+          <a href="https://whatsapp.com" class="footer-a"
+            ><img src="rec/img/whatsapp.svg" alt="WhatsApp" class="footer-img"
+          /></a>
+          <a href="https://telegram.org/" class="footer-a"
+            ><img src="rec/img/tg.svg" alt="Telegram" class="footer-img"
+          /></a>
+        </div>
+        <button type="button" class="header-menu-button" onclick="menu2()">
+          <img
+            src="rec/img/Menu.png"
+            alt="Меню"
+            srcset=""
+            class="menu-button"
+          />
+        </button>
+      </div>
+      <p class="copyright">Kazan 2024©</p>
+    </footer>
+
+    <!-- js -->
+    <script src="script.js"></script>
+    <script src="script-catalog.js"></script>
+  </body>
+</html>
