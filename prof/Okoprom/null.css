@@ -48,7 +48,8 @@ input:focus {
 
   color: black;
 }
-.link {
+.link,
+.stati {
   font-family: "Montserrat";
 
   font-weight: 200;

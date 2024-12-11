@@ -43,3 +43,19 @@
   align-items: center;
   justify-content: center;
 }
+/* tabs */
+.tabs {
+  display: flex;
+}
+.tab {
+  color: black;
+}
+.main-content {
+  display: none;
+}
+.main-content:target {
+  display: grid;
+}
+.video {
+  width: 100%;
+}

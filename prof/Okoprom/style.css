@@ -262,3 +262,22 @@
 
   gap: 5px;
 }
+/* TODO: about us */
+.about-us,
+.statistic {
+  display: flex;
+  flex-direction: column;
+}
+.about-us p {
+  width: 500px;
+}
+.statistic ul {
+  padding: 0px 50px;
+}
+.statistic-text {
+  padding: 5px 0px;
+
+  border-bottom: 1px solid black;
+
+  margin-bottom: 30px;
+}
