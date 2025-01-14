@@ -1,5 +1,16 @@
-Calculator
-test-application
-ToDoList221
+# file directories
+**/.idea/**
+**/.vs/**
+**/.vscode/**
 
-**.log
+# .net build directories
+**/bin/**
+**/obj/**
+**/packages/**
+
+# libraries
+**/vendor/**
+**/node_modules/**
+
+# settings
+**/.env
