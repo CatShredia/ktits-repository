@@ -15,7 +15,8 @@ namespace OAIP
             menu();
         }
 
-        public static void menu() {
+        public static void menu()
+        {
             Console.WriteLine("Введите номер исключения (для выхода - 0):");
             Console.WriteLine("FormatException \nInvalidOperationException \nOverflowException");
 
@@ -24,7 +25,7 @@ namespace OAIP
             try
             {
                 number = Convert.ToInt32(Console.ReadLine());
-            } 
+            }
             catch (FormatException)
             {
                 Console.WriteLine("Вы ввели не верное выражение");
@@ -48,12 +49,13 @@ namespace OAIP
                     break;
             }
         }
-        public static void task1() {
+        public static void task1()
+        {
             try
             {
                 Console.WriteLine("Попробуйте ввести строку, число");
                 int number = Convert.ToInt32(Console.ReadLine());
-            } 
+            }
             catch (FormatException e)
             {
                 Console.WriteLine("Вы ввели не верное выражение" + " " + e.Message);
@@ -63,15 +65,24 @@ namespace OAIP
 
             menu();
         }
-        public static void task3() {
-            int number = 43642367436743674367;
+        public static void task3()
+        {
+            try
+            {
+                int maxValue = int.MaxValue;
+                
 
-            // try {
-                number++;
-                Console.WriteLine(number);
-            // } catch {
-
-            // }
+                // Используем checked для бросания исключения OverflowException
+                checked
+                {
+                    int resultChecked = maxValue + 1; // Выбросит OverflowException
+                    Console.WriteLine($"Результат после переполнения (checked): {resultChecked}"); // Эта строка не выполнится
+                }
+            }
+            catch (OverflowException ex)
+            {
+                Console.WriteLine($"Поймано исключение: {ex.Message}");
+            }
 
             menu();
         }
