@@ -1,0 +1,237 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+
+/* TODO: Обнуление */
+* {
+  margin: 0;
+  padding: 0;
+
+  text-decoration: none;
+
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+/* TODO: Настройка ссылок */
+a {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+a:hover {
+  transform: scale(1.03);
+}
+/* TODO: Привязка footer */
+html {
+  width: 100%;
+  height: 100%;
+}
+.body {
+  margin: 0;
+  /* Растягиваем body по высоте html */
+  min-height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+/* TODO: Header */
+.header {
+  background: url(rec/bannercar.png);
+  background-position: center;
+  background-size: cover;
+  background-color: #eaeaea;
+
+  height: 90vh;
+
+  padding: 5vh;
+
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+.header-top {
+  display: flex;
+  justify-content: space-between;
+
+  font-size: 3vh;
+}
+.header-img {
+  width: 10vh;
+  height: 10vh;
+}
+.header-left,
+.header-right {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  text-align: center;
+  align-items: center;
+
+  width: 49%;
+}
+.header-a {
+  font-size: 2vh;
+  margin-right: 5vh;
+
+  height: min-content;
+}
+.header-button {
+  color: white;
+  padding: 2%;
+  border-radius: 10px;
+}
+.header-bottom--m {
+  display: flex;
+  justify-content: end;
+}
+.header-bottom {
+  background: rgb(185, 185, 185);
+  border-radius: 10px;
+  padding: 1vh;
+  display: flex;
+
+  /* position: absolute;
+  left: 97vh;
+  top: 82vh; */
+}
+.header-bottom-p {
+  font-size: 2vh;
+  font-weight: 500;
+}
+/* TODO: Main */
+.main {
+  background: #ececec;
+  padding-top: 0;
+}
+.main-1 {
+  padding: 5vh;
+}
+.main-1-title {
+  font-size: 6vh;
+}
+.main-filter {
+  display: flex;
+  margin-top: 4vh;
+  margin-bottom: 4vh;
+}
+.main-button {
+  background: white;
+  color: blue;
+  padding: 1vh;
+  border-radius: 0.8vh;
+  margin-right: 5vh;
+  font-size: 2vh;
+
+  -webkit-box-shadow: 1px 1px 20px 0px rgba(0, 0, 0, 0.42);
+  -moz-box-shadow: 1px 1px 20px 0px rgba(0, 0, 0, 0.42);
+  box-shadow: 1px 1px 20px 0px rgba(0, 0, 0, 0.42);
+}
+.main-1-cat {
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+  flex-wrap: wrap;
+}
+.main-1-cat-el {
+  /* display: flex; */
+  background: #ececec;
+  margin: 2vh;
+}
+.main-1-cat-el--img {
+  width: 100%;
+  height: 45vh;
+
+  border-radius: 1vh;
+}
+.main-1-cat-el--text {
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+
+  font-weight: 500;
+  font-size: 2vh;
+  color: #252423;
+}
+.main-1-cat-el--p {
+  color: blue;
+  font-size: 3vh;
+  font-weight: 500;
+
+  margin: 2vh;
+}
+.main-1-cat-el--a {
+  color: white;
+  margin: 1vh;
+  padding: 1vh;
+  border-radius: 0.6vh;
+  background: blue;
+}
+.main-1-cat-el-bottom {
+  display: flex;
+  font-size: 3vh;
+  justify-content: space-between;
+  /* margin: 1vh; */
+}
+.main-p-d {
+  display: flex;
+  justify-content: flex-end;
+
+  padding: 5vh;
+}
+.main-p {
+  display: flex;
+  text-align: end;
+  background-color: rgb(207, 206, 206);
+  color: blue;
+  font-size: 3vh;
+  margin: 2vh;
+  padding: 1vh;
+  border-radius: 0.6vh;
+  font-weight: 500;
+}
+.main-2 {
+  text-align: center;
+  background: #181818;
+  color: white;
+
+  padding: 5vh;
+}
+.main-2-title {
+  font-size: 4vh;
+}
+/* TODO: Footer */
+.footer {
+  background: rgb(17, 164, 24);
+}
+.main-2-formm {
+  font-size: 5vh;
+}
+.main-2-d {
+  margin: 2vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.main-2-d-inp {
+  font-size: 4vh;
+  font-weight: bold;
+  background: #181835;
+  border-color: blue;
+  border-radius: 1vh;
+
+  margin-right: 2vh;
+}
+.main-2-d-but {
+  font-size: 2vh;
+  color: white;
+  background: blue;
+  border-radius: 1vh;
+  /* border: none; */
+  font-size: 4vh;
+}
+.main-3 {
+  padding: 5vh;
+}
+.main-3-title {
+  font-size: 4vh;
+  margin-bottom: 4vh;
+  font-weight: 600;
+}
+.footer {
+  background: #181818;
+  padding: 4vh;
+}

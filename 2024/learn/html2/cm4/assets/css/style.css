@@ -1,0 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Reddit+Mono:wght@200..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&family=Reddit+Mono:wght@200..900&display=swap");
+
+/* TODO: Обнуление */
+* {
+  margin: 0;
+  padding: 1%;
+
+  text-decoration: none;
+
+  /* font-family: "Reddit Mono", monospace; */
+  /* font-optical-sizing: auto; */
+
+  font-family: "Pacifico", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+/* TODO: Привязка footer */
+html {
+  width: 100%;
+  height: 100%;
+}
+.testIcon {
+  display: flex;
+  gap: 50px;
+
+  font-size: 50px;
+  color: red;
+}

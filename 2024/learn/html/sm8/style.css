@@ -1,0 +1,56 @@
+* {
+  color: white;
+  font-size: 10px;
+
+  margin: 0px;
+  margin: 2% 0px 2% 0px;
+  padding: 0px;
+
+  background: #333333;
+  font-family: "Montsserat";
+}
+
+body {
+  width: 90%;
+  height: 100%;
+  padding: 3%;
+}
+
+.body-title {
+  font-size: 500%;
+  color: #66ff63;
+}
+
+.body-title-2 {
+  font-size: 400%;
+}
+
+.body-text {
+  text-wrap: wrap;
+  font-size: 160%;
+
+  line-height: 200%;
+}
+
+.body-img-cont {
+  width: 100%;
+}
+
+.body-img {
+  width: 50%;
+  height: 30%;
+
+  border-radius: 3%;
+}
+
+.body-a {
+  font-size: 200%;
+  color: #66ff63;
+}
+
+@font-face {
+  font-family: "Montsserat";
+  src: url("rec/fonts/montsserat/Montserrat-Medium.ttf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}

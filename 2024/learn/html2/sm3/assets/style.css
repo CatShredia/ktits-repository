@@ -1,0 +1,94 @@
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+
+  text-decoration: none;
+  text-align: center;
+}
+html {
+  width: 93%;
+  height: 82%;
+}
+body {
+  width: 98%;
+  height: 100%;
+
+  padding: 1%;
+}
+.img {
+  width: 100%;
+  height: 100%;
+
+  padding: 4%;
+
+  /* background: url("../assets/img/pngwing.com.png") 20% 50%/ 300px no-repeat,
+  url("../assets/img/repeatbackground.png") 90% 10%/ 200px no-repeat,
+  url("../assets/img/image.png") center/ cover no-repeat; */
+
+  background: linear-gradient(to top, #0000008a 100%, #0000008a 100%),
+    /* linear-gradient(to bottom, #000000 10%, #000000 10%), */
+      /* linear-gradient(to left, #000000 10%, #000000 10%), */
+      /* linear-gradient(to right, #000000 10%, #000000 10%), */
+      url("../assets/img/i.jpg");
+  /* background: ; */
+
+  background-position: center;
+
+  background-position: center;
+  background-size: cover;
+
+  display: grid;
+  grid-template-rows: 1fr 2fr 0.1fr;
+}
+.menu {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 15px;
+
+  font-family: "Oswald", sans-serif;
+  font-optical-sizing: auto;
+}
+.menu-el {
+  color: white;
+
+  border-bottom: 1px greenyellow solid;
+  font-size: 20px;
+
+  transition: 0.3s ease-in;
+}
+.menu-el:hover {
+  background-color: rgb(222, 221, 221);
+  color: black;
+}
+.text {
+  display: flex;
+  flex-direction: column;
+
+  gap: 50px;
+}
+.title-text {
+  font-size: 50px;
+  color: white;
+}
+.text-text {
+  font-size: 20px;
+  color: white;
+}
+.bottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 15px;
+}
+.bottom-text {
+  color: white;
+}
+#id01 {
+  font-size: 30px;
+
+  text-decoration: greenyellow line-through;
+  /* text-decoration: ; */
+}

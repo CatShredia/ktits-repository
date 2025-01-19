@@ -46,3 +46,6 @@
 .links-title {
   border-bottom: 1px solid black;
 }
+a:hover {
+  color: blue;
+}

@@ -1,0 +1,49 @@
+* {
+  margin: 0;
+  padding: 0;
+
+  text-decoration: none;
+  text-align: center;
+}
+.body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+
+  padding: 10%;
+}
+.button {
+  margin: 10%;
+  padding: 1%;
+
+  background-color: white;
+  border: 3px black solid;
+
+  font-size: 50px;
+
+  transition: 0.3s ease-in;
+}
+#id1:hover {
+  background: url(img/cash.png);
+  color: blueviolet;
+}
+#id2:hover {
+  border-radius: 100%;
+}
+#id3:hover,
+#id4:hover {
+  -webkit-box-shadow: -3px 12px 79px 30px rgba(0, 0, 0, 0.58);
+  -moz-box-shadow: -3px 12px 79px 30px rgba(0, 0, 0, 0.58);
+  box-shadow: -3px 12px 79px 30px rgba(0, 0, 0, 0.58);
+}
+#id3,
+#id4 {
+  background: url(img/satana.jpg);
+
+  background-size: contain;
+  background-position: center;
+  color: white;
+}
+#id4:hover {
+  background-size: 100%;
+}

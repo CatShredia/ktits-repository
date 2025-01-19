@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Автоторг</title>
+
+    <link rel="stylesheet" href="style.css" />
+    <link rel="shortcut icon" href="rec/logo.png" />
+  </head>
+  <body class="body">
+    <header class="header">
+      <div class="header-top">
+        <div class="header-left">
+          <a class="header-a" style="color: #0009ea">О нас</a>
+          <a class="header-a">Каталог</a>
+          <a class="header-a">Где нас найти</a>
+        </div>
+
+        <img src="rec/logo.png" alt="Ошибка" class="header-img" />
+        <div class="header-right">
+          <a class="header-a header-button" style="background: rgb(27, 26, 26)"
+            >Регистрация</a
+          >
+          <a class="header-a header-button" style="background: rgb(43, 0, 255)"
+            >Вход</a
+          >
+        </div>
+      </div>
+      <div></div>
+      <div class="header-bottom--m">
+        <a class="header-bottom">
+          <p class="header-bottom-p" style="color: white">О компании</p>
+          <p
+            class="header-bottom-p"
+            style="margin-left: 1vh; color: rgb(43, 0, 255)"
+          >
+            АвтоТорг
+          </p>
+        </a>
+      </div>
+    </header>
+    <main class="main">
+      <div class="main-1">
+        <p class="main-1-title">Каталог товаров</p>
+        <div class="main-filter">
+          <a
+            class="main-button"
+            onclick="cat1()"
+            style="background: #0009ea; color: white"
+            >Все товары</a
+          >
+          <a class="main-button" onclick="cat2()">Шины/Колеса</a>
+          <a class="main-button" onclick="cat3()">Масла</a>
+          <a class="main-button" onclick="cat4()">Ароматизаторы</a>
+        </div>
+        <div class="main-1-cat">
+          <div class="main-1-cat-el">
+            <img
+              src="rec/arom.jpg"
+              alt="Ошибка"
+              class="main-1-cat-el--img"
+              id="1.1"
+            />
+            <p class="main-1-cat-el--text" id="1">Ароматизатор от Бориса</p>
+            <div class="main-1-cat-el-bottom">
+              <p class="main-1-cat-el--p">335₽</p>
+              <a href="" class="main-1-cat-el--a">Добавить в корзину</a>
+            </div>
+          </div>
+          <div class="main-1-cat-el">
+            <img
+              src="rec/shin.jpeg"
+              alt="Ошибка"
+              class="main-1-cat-el--img"
+              id="1.1"
+            />
+            <p class="main-1-cat-el--text" id="1">Шиныф от Бориса</p>
+            <div class="main-1-cat-el-bottom">
+              <p class="main-1-cat-el--p">335₽</p>
+              <a href="" class="main-1-cat-el--a">Добавить в корзину</a>
+            </div>
+          </div>
+          <div class="main-1-cat-el">
+            <img
+              src="rec/maslo.jpeg"
+              alt="Ошибка"
+              class="main-1-cat-el--img"
+              id="1.1"
+            />
+            <p class="main-1-cat-el--text" id="1">Масло не от Бориса</p>
+            <div class="main-1-cat-el-bottom">
+              <p class="main-1-cat-el--p">1002₽</p>
+              <a href="" class="main-1-cat-el--a">Добавить в корзину</a>
+            </div>
+          </div>
+          <div class="main-1-cat-el">
+            <img
+              src="rec/arom.jpg"
+              alt="Ошибка"
+              class="main-1-cat-el--img"
+              id="1.1"
+            />
+            <p class="main-1-cat-el--text" id="1">Ароматизатор от Бориса</p>
+            <div class="main-1-cat-el-bottom">
+              <p class="main-1-cat-el--p">335₽</p>
+              <a href="" class="main-1-cat-el--a">Добавить в корзину</a>
+            </div>
+          </div>
+          <div class="main-1-cat-el">
+            <img
+              src="rec/arom.jpg"
+              alt="Ошибка"
+              class="main-1-cat-el--img"
+              id="1.1"
+            />
+            <p class="main-1-cat-el--text" id="1">Ароматизатор от Бориса</p>
+            <div class="main-1-cat-el-bottom">
+              <p class="main-1-cat-el--p">335₽</p>
+              <a href="" class="main-1-cat-el--a">Добавить в корзину</a>
+            </div>
+          </div>
+          <div class="main-1-cat-el">
+            <img
+              src="rec/arom.jpg"
+              alt="Ошибка"
+              class="main-1-cat-el--img"
+              id="1.1"
+            />
+            <p class="main-1-cat-el--text" id="1">Ароматизатор от Бориса</p>
+            <div class="main-1-cat-el-bottom">
+              <p class="main-1-cat-el--p">335₽</p>
+              <a href="" class="main-1-cat-el--a">Добавить в корзину</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="main-p-d">
+        <p class="main-p">Загрузить ещё товары</p>
+      </div>
+      <div class="main-2">
+        <p class="main-2-title" style="font-size: 6vh; margin-bottom: 2vh">
+          Будь в курсе
+        </p>
+        <p class="main-2-title">
+          <span style="color: blue">Подпишись</span> на рассылку, чтобы не
+          пропускать самые <span style="color: blue">выгодные</span> предложения
+          и акции!
+        </p>
+        <div class="main-2-d">
+          <input type="text" class="main-2-d-inp" />
+          <button type="button" class="main-2-d-but">Подписаться</button>
+        </div>
+      </div>
+      <div class="main-3">
+        <p class="main-3-title">Где нас найти</p>
+        <div
+          style="position: relative; overflow: hidden; border: 0"
+          class="karta"
+        >
+          <a
+            href="https://yandex.ru/maps/43/kazan/?utm_medium=mapframe&utm_source=maps"
+            style="color: #eee; font-size: 12px; position: absolute; top: 0px"
+            >Казань</a
+          ><a
+            href="https://yandex.ru/maps/43/kazan/?ll=49.271110%2C55.857920&utm_medium=mapframe&utm_source=maps&z=11"
+            style="color: #eee; font-size: 12px; position: absolute; top: 14px"
+            >Яндекс Карты — транспорт, навигация, поиск мест</a
+          ><iframe
+            src="https://yandex.ru/map-widget/v1/?ll=49.271110%2C55.857920&z=11"
+            width="560"
+            height="400"
+            frameborder="1"
+            allowfullscreen="true"
+            style="position: relative"
+          ></iframe>
+        </div>
+      </div>
+    </main>
+    <footer class="footer">
+      <div class="header-top">
+        <img src="rec/logo.png" alt="Ошибка" class="header-img" />
+        <div class="header-left" style="justify-content: flex-end">
+          <a class="header-a" style="color: #0009ea">О нас</a>
+          <a class="header-a" style="color: white">Каталог</a>
+          <a class="header-a" style="color: white">Где нас найти</a>
+        </div>
+      </div>
+      <div></div>
+    </footer>
+  </body>
+  <script src="main.js"></script>
+</html>

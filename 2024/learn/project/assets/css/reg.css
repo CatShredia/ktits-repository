@@ -1,0 +1,14 @@
+.reg {
+  background: linear-gradient(
+    220deg,
+    #14c800,
+    #085200,
+    #0d7d00,
+    #0a6000,
+    #0b7200,
+    #032000
+  );
+}
+* {
+  color: black;
+}
