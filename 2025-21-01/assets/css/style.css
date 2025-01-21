@@ -1,0 +1,19 @@
+.box{
+    width: 100px;
+    height: 100px;
+    background-color: aqua;
+    border-radius: 5px;
+}
+.box_list{
+    display: flex;
+    gap:10px;
+    flex-wrap: wrap;
+}
+
+.form{
+    width: 300px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+}

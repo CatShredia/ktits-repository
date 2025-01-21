@@ -1,0 +1,112 @@
+* {
+  margin: 0;
+  padding: 0;
+
+  border: none;
+}
+
+a {
+  color: black;
+
+  display: block;
+
+  text-decoration: none;
+}
+input {
+  border: 1px solid black;
+}
+.container {
+  padding: 15px 75px;
+}
+.header__inner {
+  padding-top: 35px;
+}
+.header-title {
+  text-align: center;
+}
+.footer__inner {
+  padding-top: 35px;
+}
+/* posts */
+.posts-container {
+  display: grid;
+
+  gap: 20px;
+
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.posts__inner {
+  display: flex;
+  flex-direction: column;
+
+  gap: 15px;
+}
+.post {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  text-align: center;
+
+  justify-content: center;
+  align-items: center;
+
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+.post p {
+  text-align: justify;
+}
+/* form posts */
+.form__inner {
+  display: grid;
+
+  gap: 10px;
+
+  grid-template-columns: 1fr 1fr;
+}
+.add-posts-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 15px;
+}
+.add-posts-form input {
+  padding: 10px 25px;
+}
+.button-form {
+  margin: 10%;
+}
+/* .button-form:hover {
+  animation-duration: 0.5s;
+  animation-name: buttonFormAnimation;
+}
+@keyframes buttonFormAnimation {
+  from {
+    margin: 10%;
+
+    background-color: darkgrey;
+  }
+
+  to {
+    margin: 8%;
+
+    background-color: blue;
+  }
+} */
+.button-form {
+  background-color: darkgray; /* Начальный цвет */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer; /* Изменяет курсор при наведении */
+}
+
+.button-form:hover {
+  background-color: darkblue; /* Цвет при наведении */
+}
+/* ? theme */
