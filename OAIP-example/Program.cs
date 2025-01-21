@@ -15,7 +15,7 @@ namespace OAIP
     // TODO: класс с main
     internal class OAIP_Main
     {
-        public static bool isDevoperEdition = false; //переменная для разработчика
+        public static bool isDevoperEdition = true; //переменная для разработчика
         //public static OAIP_Arrays oaip_arrays; //переменная внутренних технологий массивов
 
         public static List<string> projects;
@@ -30,6 +30,8 @@ namespace OAIP
             "\"28.11\"",
             "\"09.12\"",
             "\"Шифр Цезаря\"",
+            "\"14.01\"",
+            "\"Работа с файлами\"",
             "\"null\"   " };
         }
 
@@ -51,7 +53,7 @@ namespace OAIP
             }
             else
             {
-                date = "Шифр Цезаря";
+                date = "Работа с файлами";
             }
 
             //выбор даты практики
@@ -69,10 +71,15 @@ namespace OAIP
                 case "09.12":
                     OAIP_09_12 oAIP_09_12 = new OAIP_09_12(isDevoperEdition);
                     break;
+                case "14.01":
+                    OAIP_14_01 oaip_14_01 = new OAIP_14_01(isDevoperEdition);
+                    break;
                 case "Шифр Цезаря":
                     Caesar caesar = new Caesar(isDevoperEdition);
                     break;
-
+                case "Работа с файлами":
+                    Files files = new Files(isDevoperEdition);
+                    break;
                 default:
                     Console.WriteLine("Нет такой практики");
                     break;
