@@ -1,8 +1,11 @@
 OAIP/bin
 OAIP/obj
 
+OAIP/files/texts/
+
 OAIP/OAIP.csproj
 OAIP.sln
 
 .vscode
 OAIP/text.txt
+
