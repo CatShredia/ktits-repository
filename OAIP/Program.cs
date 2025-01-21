@@ -31,6 +31,7 @@ namespace OAIP
             "\"09.12\"",
             "\"Шифр Цезаря\"",
             "\"14.01\"",
+            "\"Работа с файлами\"",
             "\"null\"   " };
         }
 
@@ -52,7 +53,7 @@ namespace OAIP
             }
             else
             {
-                date = "14.01";
+                date = "Работа с файлами";
             }
 
             //выбор даты практики
@@ -76,7 +77,9 @@ namespace OAIP
                 case "Шифр Цезаря":
                     Caesar caesar = new Caesar(isDevoperEdition);
                     break;
-
+                case "Работа с файлами":
+                    Files files = new Files(isDevoperEdition);
+                    break;
                 default:
                     Console.WriteLine("Нет такой практики");
                     break;
