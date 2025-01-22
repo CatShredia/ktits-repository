@@ -1,3 +1,6 @@
+// Данный класс OAIP_09_12 реализует простую консольную программу, которая предлагает пользователю выполнить несколько заданий, связанных с символами и строками. 
+// Программа позволяет пользователю вводить символы и строки, а затем выполняет различные операции, такие как проверка типа символа, поиск символа в строке, подсчет слов в строке и количество гласных и пробелов.
+
 namespace OAIP
 {
     internal class OAIP_09_12
@@ -6,15 +9,11 @@ namespace OAIP
         public OAIP_09_12(bool isDevoperEdition)
         {
             this.isDevoperEdition = isDevoperEdition;
-
-
             int choise = 1;
             while (choise != 0)
             {
                 Console.WriteLine("Введите нужное задание, для выхода: 0");
-
                 choise = Convert.ToInt32(Console.ReadLine());
-
                 switch (choise)
                 {
                     case 0:
@@ -42,7 +41,6 @@ namespace OAIP
                 }
             }
         }
-
         public void charTest()
         {
             char charTestPer = 'k';
@@ -52,50 +50,37 @@ namespace OAIP
         public void task1()
         {
             Console.WriteLine("1 задача");
-
             Console.WriteLine("Введите символ:");
             char charPer = Console.ReadLine()[0];
-
             Console.WriteLine(charPer);
-
             Console.WriteLine(char.IsLetter(charPer) + " буквы"); //букавки
             Console.WriteLine(char.IsDigit(charPer) + " десятичное число"); //десятичное число
             Console.WriteLine(char.IsSymbol(charPer) + " специальный символ");//спец символы
         }
-
         public void task2()
         {
             Console.WriteLine("2 задача");
-
             Console.WriteLine("Введите символ:");
             char sumbol = Console.ReadLine()[0];
             Console.WriteLine("Введите строку:");
             string strin = Console.ReadLine();
-
             Console.WriteLine(strin.IndexOf(sumbol));
         }
-
         public void task3()
         {
             Console.WriteLine("3 задача");
-
             Console.WriteLine("Введите строку:");
             string str = Console.ReadLine();
-
             Console.WriteLine(str.Split(' ').Length);
         }
         public void task4()
         {
             int count = 0;
             Console.WriteLine("3 задача");
-
             Console.WriteLine("Гласные и Пробелы");
-
             string checkStr = "aeiouy ";
-
             Console.WriteLine("Введите строку");
             string str = Console.ReadLine();
-
             // перебор введеной строки
             for (int i = 0; i < str.Length; i++)
             {
@@ -105,15 +90,10 @@ namespace OAIP
                     if (checkStr[j] == str[i])
                     {
                         count++;
-
                     }
                 }
             }
-
             Console.WriteLine("Кол-во гласных и пробелов: " + count);
-
         }
-
-
     }
 }

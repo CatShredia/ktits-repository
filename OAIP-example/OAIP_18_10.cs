@@ -12,23 +12,21 @@ namespace OAIP
 
             OAIP_Arrays.WriteArray(numbers, "Рандомный массив");
 
-            //  
             Array.Sort(numbers);
 
             Console.WriteLine(numbers[n - 1] + " - максимальный элемент");
 
-            //  
             Array.Reverse(numbers);
 
             Console.WriteLine("Реверс: ");
             OAIP_Arrays.WriteArray(numbers, "Реверсивный массив");
 
-            //  
             Array.Clear(numbers, 0, 3);
 
             Console.WriteLine("Очистка: ");
             OAIP_Arrays.WriteArray(numbers, "Очищенный массив");
 
+            Console.ReadKey();
         }
     }
 }
