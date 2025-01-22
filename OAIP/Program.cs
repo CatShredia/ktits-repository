@@ -1,63 +1,70 @@
-﻿//TODO: ---навигация---
-
-// Program - main и внутренние инструменты работы с массивами
+﻿// ** ---навигация---
+// Программа - main и внутренние инструменты работы с массивами
 // OAIP_Arrays - методы и функции для работы с массивами
 // OAIP_да_та - практики
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OAIP
 {
-    // TODO: класс с main
     internal class OAIP_Main
     {
-        public static bool isDevoperEdition = true; //переменная для разработчика
-        //public static OAIP_Arrays oaip_arrays; //переменная внутренних технологий массивов
+        // Переменная для определения, является ли версия разработческой
+        public static bool isDevoperEdition = false; 
 
+        // Список проектов
         public static List<string> projects;
 
-
-        // Добавление проектов в проект
+        // Метод для добавления проектов в список
         public static void addProjects()
         {
+            // Инициализация списка проектов
             projects = new List<string>() {
-            "\"18.10\"",
-            "\"21.11\"",
-            "\"28.11\"",
-            "\"09.12\"",
-            "\"Шифр Цезаря\"",
-            "\"14.01\"",
-            "\"Работа с файлами\"",
-            "\"Работа с файлами: Практика\"",
-            "\"null\"   " };
+                "\"18.10\"",
+                "\"21.11\"",
+                "\"28.11\"",
+                "\"09.12\"",
+                "\"Шифр Цезаря\"",
+                "\"14.01\"",
+                "\"Работа с файлами\"",
+                "\"Работа с файлами: Практика\"",
+                "\"null\""
+            };
         }
 
         static void Main(string[] args)
         {
-            // Console.Clear();
+            if(!isDevoperEdition) {
+                Console.Clear();
+            } else {
+                Console.WriteLine("Hello World!");
+            }
 
-            Console.WriteLine("Hello World!");
+            // Вывод приветственного сообщения
             Console.WriteLine("Какая практика вас интересует? (за какое число: 01.01)");
 
+            // Добавление проектов в список
             addProjects();
+
+            // Вывод существующих практик
             OAIP_Arrays.WriteArray(projects, "Существующие практики: ");
 
-            //TODO: разраб
+            // Переменная для хранения даты
             string date;
-            if (isDevoperEdition == false)
+
+            // Если не разработческая версия, считываем ввод пользователя
+            if (!isDevoperEdition)
             {
                 date = Console.ReadLine();
             }
             else
             {
+                // В противном случае, используем предустановленное значение
                 date = "Работа с файлами: Практика";
             }
 
-            //выбор даты практики
+            // Выбор практики по введенной дате
             switch (date)
             {
                 case "18.10":
@@ -85,11 +92,10 @@ namespace OAIP
                     FilesPractise filesPractise = new FilesPractise(isDevoperEdition);
                     break;
                 default:
+                    // Сообщение об ошибке, если практика не найдена
                     Console.WriteLine("Нет такой практики");
                     break;
             }
-
-            Console.ReadKey();
 
             Console.Clear();
         }

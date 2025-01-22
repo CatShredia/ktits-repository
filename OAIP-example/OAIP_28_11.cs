@@ -10,7 +10,7 @@ namespace OAIP
     class OAIP_28_11
     {
         public static bool isDevoperEdition;
-        // TODO: конструктор
+        //  
         public OAIP_28_11(bool isDevoperEditioni)
         {
             isDevoperEdition = isDevoperEditioni;
@@ -26,7 +26,7 @@ namespace OAIP
             }
         }
 
-        // TODO: выбор задачи
+        //  
         public bool choiseTask()
         {
             Console.WriteLine("Выберите задачу. Для выхода: 0");
@@ -58,12 +58,12 @@ namespace OAIP
                     return false;
             }
         }
-        // TODO: 0 задача
+        //  
         public void task0()
         {
             Console.WriteLine("0 задача");
         }
-        // TODO: 1 задача
+        //  
         //10, 15, 20, 25, 30, 35, 40 
         //10, 20, 30, 40
         public void task1()
@@ -82,7 +82,7 @@ namespace OAIP
 
             OAIP_Arrays.WriteArray(list1, "numbers");
         }
-        // TODO: 2 задача
+        //  
         public void task2()
         {
             Console.WriteLine("\"Умножение чисел на их индекс\"");
@@ -104,7 +104,7 @@ namespace OAIP
             OAIP_Arrays.WriteArray(list2, "numbers");
         }
 
-        // TODO: 3 задача
+        //  
         public void task3()
         {
             Console.WriteLine("\"Сортировка списка и поиск минимального элемента\"");
@@ -120,7 +120,7 @@ namespace OAIP
             Console.WriteLine("Минимальный элемент: " + numbers[0]);
         }
 
-        // TODO: 4 задача
+        //  
         public void task4()
         {
             Console.WriteLine("\"Поиск повторяющихся элементов\"");
@@ -151,7 +151,7 @@ namespace OAIP
             answer.Sort();
             OAIP_Arrays.WriteArray(answer, "Ответ");
         }
-        // TODO: 5 задача
+        //  
         public void task5()
         {
             Console.WriteLine("\"Сумма элементов между минимальным и максимальным\"");

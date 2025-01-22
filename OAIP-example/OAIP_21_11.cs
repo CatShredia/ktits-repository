@@ -19,7 +19,7 @@ namespace OAIP
 
         //public static OAIP_Arrays oaip_array;
 
-        //TODO: конструктор
+        // 
         public OAIP_21_11(bool isDevoperEdition)
         {
             //цены
@@ -56,7 +56,7 @@ namespace OAIP
             Console.WriteLine("Выберите задачу");
 
 
-            //TODO: разраб
+            // 
             int numb;
             if (isDevoperEdition == false)
             {

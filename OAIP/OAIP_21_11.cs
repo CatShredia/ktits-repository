@@ -16,10 +16,6 @@ namespace OAIP
         public static Dictionary<string, int> menu; //цены
         public static Dictionary<string, int> sales;//склад
         public static Dictionary<string, int> store;//продажи
-
-        //public static OAIP_Arrays oaip_array;
-
-        //TODO: конструктор
         public OAIP_21_11(bool isDevoperEdition)
         {
             //цены
@@ -55,8 +51,6 @@ namespace OAIP
 
             Console.WriteLine("Выберите задачу");
 
-
-            //TODO: разраб
             int numb;
             if (isDevoperEdition == false)
             {

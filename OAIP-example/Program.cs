@@ -1,4 +1,4 @@
-﻿//TODO: ---навигация---
+﻿// 
 
 // Program - main и внутренние инструменты работы с массивами
 // OAIP_Arrays - методы и функции для работы с массивами
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace OAIP
 {
-    // TODO: класс с main
+    //  
     internal class OAIP_Main
     {
         public static bool isDevoperEdition = true; //переменная для разработчика
@@ -46,7 +46,7 @@ namespace OAIP
             addProjects();
             OAIP_Arrays.WriteArray(projects, "Существующие практики: ");
 
-            //TODO: разраб
+            // 
             string date;
             if (isDevoperEdition == false)
             {

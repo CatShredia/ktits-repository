@@ -42,6 +42,9 @@ namespace OAIP
                 case 3:
                     Task3();
                     break;
+                case 100:
+                    DeleteFiles();
+                    break;
                 default:
                     Menu();
                     break;
@@ -145,6 +148,41 @@ namespace OAIP
             }
 
             Menu();
+        }
+        public static void DeleteFiles()
+        {
+            string dir = Directory.GetCurrentDirectory() + "\\files\\texts";
+
+            try
+            {
+                Directory.Delete(dir);
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("Папка не пуста, продолжит удаление? (да / нет)");
+
+                if (Console.ReadLine() == "да" ||
+                Console.ReadLine() == "yes")
+                {
+                    // Получаем все файлы в указанной папке
+                    string[] files = Directory.GetFiles(dir);
+
+                    // Удаляем каждый файл
+                    foreach (string file in files)
+                    {
+                        File.Delete(file);
+                        Console.WriteLine($"Файл {file} успешно удален.");
+                    }
+
+                    Directory.Delete(dir);
+
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Произошло исключение: " + e);
+            }
+
         }
     }
 }
