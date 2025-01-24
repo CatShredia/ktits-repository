@@ -29,7 +29,7 @@ namespace OAIP
         //  
         public bool choiseTask()
         {
-            Console.WriteLine("Выберите задачу. Для выхода: 0");
+            Console.WriteLine("Выберите задачу. Для выхода: 0 (из 5)");
 
 
             int number = Convert.ToInt32(Console.ReadLine());

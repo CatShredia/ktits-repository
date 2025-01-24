@@ -12,7 +12,7 @@ namespace OAIP
             int choise = 1;
             while (choise != 0)
             {
-                Console.WriteLine("Введите нужное задание, для выхода: 0");
+                Console.WriteLine("Введите нужное задание, для выхода: 0 (из 4)");
                 choise = Convert.ToInt32(Console.ReadLine());
                 switch (choise)
                 {
