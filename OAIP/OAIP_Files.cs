@@ -95,6 +95,8 @@ namespace OAIP
             {
                 string[] lines = File.ReadAllLines(pathTxtFile);
 
+                WriteArray(lines, "string");
+
                 countOfLines = lines.Length;
             }
             catch (Exception ex)
@@ -156,13 +158,20 @@ namespace OAIP
             return countOfChar;
         }
 
-        public static void ReplaceWords(string filePath, string OLDWORD, string NEWWORD)
+        public static void ReplaceWords(string filePath, string OLDWORD, string NEWWORD, bool isRegisterIxp)
         {
             try
             {
-                string newText = Regex.Replace(File.ReadAllText(filePath), OLDWORD, NEWWORD);
+                string text = File.ReadAllText(filePath);
 
-                File.WriteAllText(filePath, newText);
+                WriteLine("Изначальный текст: " + text);
+
+                string result = text.Replace(OLDWORD, NEWWORD);
+
+                WriteLine("Конечный текст: " + result);
+
+                File.WriteAllText(filePath, result);
+
             }
             catch (FileNotFoundException)
             {

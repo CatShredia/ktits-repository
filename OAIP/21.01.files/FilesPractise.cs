@@ -95,7 +95,7 @@ namespace OAIP
         {
             WriteLine(filePath + " путь!");
             
-            ReplaceWords(filePath, OLDWORD,NEWWORD);
+            ReplaceWords(filePath, OLDWORD,NEWWORD,false);
 
             Menu();
         }

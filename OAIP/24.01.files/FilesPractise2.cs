@@ -1,6 +1,7 @@
 using static System.Console;
 
 using static OAIP.OAIP_Files;
+using static OAIP.OAIP_Strings;
 
 namespace OAIP
 {
@@ -16,8 +17,6 @@ namespace OAIP
             FilePlactise2.isDevoperEdition = isDevoperEdition;
 
             WriteLine("---24.01.25---");
-
-            path = Directory.GetCurrentDirectory() + "\\24.01.files";
 
             WriteLine(path);
 
@@ -61,6 +60,8 @@ namespace OAIP
 
         private static void Task1()
         {
+            path = Directory.GetCurrentDirectory() + "\\24.01.files";
+
             WriteLine("-1 задание-");
 
             path = CreateFileAndDirectory("text", path);
@@ -73,7 +74,8 @@ namespace OAIP
             else
             {
                 WriteLine("Введите текст файла: ");
-                WriteInformationToFile(ReadLine(), path);
+                WriteInformationToFile(ReadMoreLines(), path);
+
             }
 
             WriteLine(CountOfLines(path) + " - количество строк");
@@ -82,21 +84,27 @@ namespace OAIP
 
             path = "";
         }
+
+        // TODO: не правильно работает поиск
         private static void Task2()
         {
+            path = Directory.GetCurrentDirectory() + "\\24.01.files";
+
             WriteLine("-2 задание-");
-            path = CreateFileAndDirectory("text2", path);
 
             WriteLine(path);
 
+            path = CreateFileAndDirectory("text2", path);
+
+
             if (FilePlactise2.isDevoperEdition)
             {
-                WriteInformationToFile("Привет, мир! Мир прекрасен.\nЯ люблю изучать программирование и мир технологий.", path);
+                WriteInformationToFile("Привет, мир! мир прекрасен.\nЯ люблю изучать программирование и мир технологий.", path);
             }
             else
             {
                 WriteLine("Введите текст файла: ");
-                WriteInformationToFile(ReadLine(), path);
+                WriteInformationToFile(ReadMoreLines(), path);
             }
 
             WriteLine("Введи заменяемое слово");
@@ -104,11 +112,42 @@ namespace OAIP
             WriteLine("Введи слово, которым нужно заменить");
             string NEWWORD = ReadLine().Split(" ")[0];
 
-            ReplaceWords(path, OLDWORD, NEWWORD);
+            ReplaceWords(path, OLDWORD, NEWWORD, true);
         }
         private static void Task3()
         {
+            path = Directory.GetCurrentDirectory() + "\\24.01.files";
 
+            WriteLine("-2 задание-");
+
+            WriteLine(path);
+
+            path = CreateFileAndDirectory("text3", path);
+
+
+            if (FilePlactise2.isDevoperEdition)
+            {
+                WriteInformationToFile("Привет, мир! \nКак твои дела?\nПогода сегодня прекрасная.\nХорошего дня!\n", path);
+            }
+            else
+            {
+                WriteLine("Введите текст файла: ");
+                WriteInformationToFile(ReadMoreLines(), path);
+            }
+
+            WriteLine("Введите букву: ");
+            char charUser = ReadLine()[0];
+            charUser = Char.ToLower(charUser);
+
+            string[] lines = File.ReadAllLines(path);
+            for (int i = 0; i < lines.Length - 1; i++)
+            {
+                if (Char.ToLower(lines[i][0]) == charUser)
+                {
+                    WriteLine(lines[i]);
+                }
+
+            }
         }
 
     }
