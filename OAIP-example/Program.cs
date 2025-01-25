@@ -1,23 +1,30 @@
 ﻿// ** ---навигация---
 // Программа - main и внутренние инструменты работы с массивами
 // OAIP_Arrays - методы и функции для работы с массивами
+// OAIP_Files - методы и функции для работы с файлами
 // OAIP_да_та - практики
 
 using System;
 using System.Collections.Generic;
+
+using static System.Console;
+
+using static OAIP.OAIP_Files;
+using static OAIP.OAIP_Arrays;
 
 namespace OAIP
 {
     internal class OAIP_Main
     {
         // Переменная для определения, является ли версия разработческой
-        public static bool isDevoperEdition = false; 
+        public static bool isDevoperEdition = false;
+        public const string DEVTASK = "24.01";
 
         // Список проектов
         public static List<string> projects;
 
         // Метод для добавления проектов в список
-        public static void addProjects()
+        public static void AddProjects()
         {
             // Инициализация списка проектов
             projects = new List<string>() {
@@ -28,42 +35,47 @@ namespace OAIP
                 "\"Шифр Цезаря\"",
                 "\"14.01\"",
                 "\"Работа с файлами\"",
-                "\"Работа с файлами: Практика\"",
+                "\"21.01\"",
+                "\"24.01\"",
                 "\"null\""
             };
         }
 
         static void Main(string[] args)
         {
-            if(!isDevoperEdition) {
-                Console.Clear();
-            } else {
-                Console.WriteLine("Hello World!");
+            if (!isDevoperEdition)
+            {
+                Clear();
             }
-
             // Вывод приветственного сообщения
-            Console.WriteLine("Какая практика вас интересует? (за какое число: 01.01)");
+            PrintHelloDev();
+            WriteLine("Какая практика вас интересует? (за какое число: 01.01)");
 
             // Добавление проектов в список
-            addProjects();
+            AddProjects();
 
             // Вывод существующих практик
-            OAIP_Arrays.WriteArray(projects, "Существующие практики: ");
+            WriteArray(projects, "Существующие практики: ");
 
-            // Переменная для хранения даты
+            // Переменная для хранения даты пользователя
             string date;
 
             // Если не разработческая версия, считываем ввод пользователя
             if (!isDevoperEdition)
             {
-                date = Console.ReadLine();
+                date = ReadLine();
             }
             else
             {
                 // В противном случае, используем предустановленное значение
-                date = "Работа с файлами: Практика";
+                date = DEVTASK;
             }
 
+            Menu(date);
+        }
+
+        public static void Menu(string date)
+        {
             // Выбор практики по введенной дате
             switch (date)
             {
@@ -88,16 +100,36 @@ namespace OAIP
                 case "Работа с файлами":
                     Files files = new Files(isDevoperEdition);
                     break;
-                case "Работа с файлами: Практика":
+                case "21.01":
                     FilesPractise filesPractise = new FilesPractise(isDevoperEdition);
+                    break;
+                case "24.01":
+                    FilePlactise2 filesPractise2 = new FilePlactise2(isDevoperEdition);
                     break;
                 default:
                     // Сообщение об ошибке, если практика не найдена
-                    Console.WriteLine("Нет такой практики");
+                    WriteLine("Нет такой практики");
                     break;
             }
+        }
 
-            Console.Clear();
+        private static void PrintHelloDev()
+        {
+            string[] helloDev = new string[]
+        {
+            "H   H  EEEEE  L      L       OOO      DDDD   EEEEE  V   V",
+            "H   H  E      L      L      O   O     D   D  E      V   V",
+            "HHHHH  EEEEE  L      L      O   O     D   D  EEEEE  V   V",
+            "H   H  E      L      L      O   O     D   D  E      V V V",
+            "H   H  EEEEE  LLLLL  LLLLL   OOO      DDDD   EEEEE   V V"
+        };
+
+            foreach (var line in helloDev)
+            {
+                WriteLine(line);
+            }
+
+            WriteLine("");
         }
     }
 }

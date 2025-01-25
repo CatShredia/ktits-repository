@@ -13,7 +13,7 @@ namespace OAIP
         public int period = 1;
         public Caesar(bool isDevoperEdition)
         {
-            Console.WriteLine("Шифр Цезаря");
+            Console.WriteLine("---Шифр Цезаря---");
             while (period != 0)
             {
                 Console.WriteLine("Введите период, для выхода: 0");

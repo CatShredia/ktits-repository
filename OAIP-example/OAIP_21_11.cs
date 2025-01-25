@@ -49,7 +49,7 @@ namespace OAIP
 
             Console.WriteLine("Выбрана практика 21.11");
 
-            Console.WriteLine("Выберите задачу");
+            Console.WriteLine("Выберите задачу (из 2)");
 
             int numb;
             if (isDevoperEdition == false)
