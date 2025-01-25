@@ -115,6 +115,15 @@ namespace OAIP
             }
             Console.WriteLine();
         }
+        internal static void WriteArray(string[] array, String titleArray)
+        {
+            Console.WriteLine("Массив " + titleArray + ":");
+            foreach (var item in array)
+            {
+                Console.Write(item + " | ");
+            }
+            Console.WriteLine();
+        }
         internal static void WriteArray(List<string> list, String titleArray)
         {
             Console.WriteLine("Массив " + titleArray);

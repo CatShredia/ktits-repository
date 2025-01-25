@@ -1,7 +1,16 @@
 namespace OAIP
 {
+    using System.Text.RegularExpressions;
+
+    using static System.Console;
+
+    using static OAIP_Arrays;
+
     class OAIP_Files
     {
+
+        private static char[] splitChar = [' ', '\t', '\n', '\r'];
+
         public static string CreateFileAndDirectory(string nameFile, string path)
         {
             path += "\\texts";
@@ -10,14 +19,14 @@ namespace OAIP
             {
                 Directory.CreateDirectory(path);
 
-                Console.WriteLine("Папка создана: " + path);
+                WriteLine("Папка создана: " + path);
             }
 
             string filePath = path + "\\" + nameFile + ".txt";
             if (!File.Exists(filePath))
             {
                 using (File.Create(filePath)) { }
-                Console.WriteLine("Файл создан: " + filePath);
+                WriteLine("Файл создан: " + filePath);
             }
 
             return filePath;
@@ -25,8 +34,8 @@ namespace OAIP
         public static void WriteFileInformation(string filepath)
         {
             string[] informationLines = File.ReadAllLines(filepath);
-            Console.WriteLine(File.ReadAllText(filepath));
-            Console.WriteLine("Количество строк: " + informationLines.Length);
+            WriteLine(File.ReadAllText(filepath));
+            WriteLine("Количество строк: " + informationLines.Length);
         }
 
         public static void WriteInformationToFile(string information, string filePath)
@@ -37,11 +46,11 @@ namespace OAIP
                 {
                     writer.WriteLine(information);  //  Переходим на новую строку, после добавления текста
                 }
-                Console.WriteLine("Текст успешно добавлен в конец файла.");
+                WriteLine("Текст успешно добавлен в конец файла.");
             }
             catch (IOException ex)
             {
-                Console.WriteLine("Ошибка записи в файл: " + ex.Message);
+                WriteLine("Ошибка записи в файл: " + ex.Message);
             }
         }
 
@@ -53,10 +62,10 @@ namespace OAIP
             }
             catch (IOException)
             {
-                Console.WriteLine("Папка не пуста, продолжит удаление? (да / нет)");
+                WriteLine("Папка не пуста, продолжит удаление? (да / нет)");
 
-                if (Console.ReadLine() == "да" ||
-                Console.ReadLine() == "yes")
+                if (ReadLine() == "да" ||
+                 ReadLine() == "yes")
                 {
                     // Получаем все файлы в указанной папке
                     string[] files = Directory.GetFiles(dir);
@@ -65,7 +74,7 @@ namespace OAIP
                     foreach (string file in files)
                     {
                         File.Delete(file);
-                        Console.WriteLine($"Файл {file} успешно удален.");
+                        WriteLine($"Файл {file} успешно удален.");
                     }
 
                     Directory.Delete(dir);
@@ -74,7 +83,94 @@ namespace OAIP
             }
             catch (Exception e)
             {
-                Console.WriteLine("Произошло исключение: " + e);
+                WriteLine("Произошло исключение: " + e);
+            }
+
+        }
+
+        public static int CountOfLines(string pathTxtFile)
+        {
+            int countOfLines = 0;
+            try
+            {
+                string[] lines = File.ReadAllLines(pathTxtFile);
+
+                countOfLines = lines.Length;
+            }
+            catch (Exception ex)
+            {
+                WriteLine($"Произошла ошибка: {ex.Message}");
+            }
+
+            return countOfLines;
+        }
+
+        public static int CountOfWords(string pathTxtFile)
+        {
+            int countOfWords = 0;
+            try
+            {
+                using (StreamReader reader = new StreamReader(pathTxtFile))
+                {
+                    string lines = reader.ReadToEnd();
+
+                    // WriteArray(lines.Split(splitChar),"title");
+
+                    countOfWords = lines.Split(splitChar).Length;
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLine($"Произошла ошибка: {ex.Message}");
+            }
+
+            countOfWords -= 2;
+            return countOfWords;
+        }
+
+        public static int CountOfChar(string pathTxtFile)
+        {
+            int countOfChar = 0;
+            try
+            {
+                using (StreamReader reader = new StreamReader(pathTxtFile))
+                {
+                    string text = reader.ReadToEnd();
+
+                    foreach (char charPer in text)
+                    {
+                        if (charPer != splitChar[1]
+                            && charPer != splitChar[2]
+                            && charPer != splitChar[3])
+                        {
+                            countOfChar++;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLine($"Произошла ошибка: {ex.Message}");
+            }
+
+            return countOfChar;
+        }
+
+        public static void ReplaceWords(string filePath, string OLDWORD, string NEWWORD)
+        {
+            try
+            {
+                string newText = Regex.Replace(File.ReadAllText(filePath), OLDWORD, NEWWORD);
+
+                File.WriteAllText(filePath, newText);
+            }
+            catch (FileNotFoundException)
+            {
+                WriteLine("Файл не найден.");
+            }
+            catch (IOException ex)
+            {
+                WriteLine("Ошибка при работе с файлом: " + ex.Message);
             }
 
         }

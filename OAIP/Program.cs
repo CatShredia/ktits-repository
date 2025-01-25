@@ -17,8 +17,8 @@ namespace OAIP
     internal class OAIP_Main
     {
         // Переменная для определения, является ли версия разработческой
-        public static bool isDevoperEdition = false;
-        public const string DEVTASK = "21.01";
+        public static bool isDevoperEdition = true;
+        public const string DEVTASK = "24.01";
 
         // Список проектов
         public static List<string> projects;
