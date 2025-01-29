@@ -47,8 +47,8 @@ namespace OAIP
                     Task3();
                     break;
                 case 100:
-                    WriteLine("Delete Directory: " + path + "\\texts");
-                    DeleteFilesInDirectory(path + "\\texts");
+                    WriteLine("Delete Directory: " + path + ".txts");
+                    DeleteFilesInDirectory(path + "\\.txts");
                     break;
                 default:
                     Menu();
@@ -60,11 +60,11 @@ namespace OAIP
         {
             WriteLine("-Задание 1-");
 
-            filePath = CreateFileAndDirectory("text", path);
+            filePath = CreateFileAndDirectory("text", path, ".txt", true);
 
-            WriteInformationToFile("старое \nстарое \nАлександр Ефимов\nАлександр Ефимов", filePath);
+            TxtWriteInformationToFile("старое \nстарое \nАлександр Ефимов\nАлександр Ефимов", filePath);
 
-            WriteFileInformation(filePath);
+            TxtWriteFileInformation(filePath);
 
             Menu();
         }
@@ -73,8 +73,8 @@ namespace OAIP
         {
             WriteLine("-Задание 2-");
 
-            filePath = CreateFileAndDirectory("example", path);
-            WriteInformationToFile("старое\nстарое\nстарое\nстарое\nстарое\n", filePath);
+            filePath = CreateFileAndDirectory("example", path, ".txt", true);
+            TxtWriteInformationToFile("старое\nстарое\nстарое\nстарое\nстарое\n", filePath);
 
             using (StreamWriter writer = new StreamWriter(filePath))
             {
@@ -95,7 +95,7 @@ namespace OAIP
         {
             WriteLine(filePath + " путь!");
             
-            ReplaceWords(filePath, OLDWORD,NEWWORD,false);
+            TxtReplaceWords(filePath, OLDWORD,NEWWORD,false);
 
             Menu();
         }

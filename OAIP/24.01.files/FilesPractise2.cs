@@ -48,8 +48,7 @@ namespace OAIP
                     Menu();
                     break;
                 case 100:
-                    WriteLine("Delete Directory: " + "D:\\directory-git\\ktits-repository\\OAIP\\24.01.files\\texts");
-                    DeleteFilesInDirectory("D:\\directory-git\\ktits-repository\\OAIP\\24.01.files\\texts");
+                    DeleteFilesInDirectory("D:\\directory-git\\ktits-repository\\OAIP\\24.01.files\\.txts");
                     Menu();
                     break;
                 default:
@@ -64,23 +63,23 @@ namespace OAIP
 
             WriteLine("-1 задание-");
 
-            path = CreateFileAndDirectory("text", path);
+            path = CreateFileAndDirectory("text", path, ".txt", true);
 
             WriteLine();
             if (FilePlactise2.isDevoperEdition)
             {
-                WriteInformationToFile("Привет, как дела?\nЯ изучаю работу с файлами.\nЭто интересно!", path);
+                TxtWriteInformationToFile("Привет, как дела?\nЯ изучаю работу с файлами.\nЭто интересно!", path);
             }
             else
             {
                 WriteLine("Введите текст файла: ");
-                WriteInformationToFile(ReadMoreLines(), path);
+                TxtWriteInformationToFile(ReadMoreLines(), path);
 
             }
 
-            WriteLine(CountOfLines(path) + " - количество строк");
-            WriteLine(CountOfWords(path) + " - количество слов");
-            WriteLine(CountOfChar(path) + " - количество символов");
+            WriteLine(TxtCountOfLines(path) + " - количество строк");
+            WriteLine(TxtCountOfWords(path) + " - количество слов");
+            WriteLine(TxtCountOfChar(path) + " - количество символов");
 
             path = "";
         }
@@ -94,17 +93,17 @@ namespace OAIP
 
             WriteLine(path);
 
-            path = CreateFileAndDirectory("text2", path);
+            path = CreateFileAndDirectory("text2", path, ".txt", true);
 
 
             if (FilePlactise2.isDevoperEdition)
             {
-                WriteInformationToFile("Привет, мир! мир прекрасен.\nЯ люблю изучать программирование и мир технологий.", path);
+                TxtWriteInformationToFile("Привет, мир! мир прекрасен.\nЯ люблю изучать программирование и мир технологий.", path);
             }
             else
             {
                 WriteLine("Введите текст файла: ");
-                WriteInformationToFile(ReadMoreLines(), path);
+                TxtWriteInformationToFile(ReadMoreLines(), path);
             }
 
             WriteLine("Введи заменяемое слово");
@@ -112,7 +111,7 @@ namespace OAIP
             WriteLine("Введи слово, которым нужно заменить");
             string NEWWORD = ReadLine().Split(" ")[0];
 
-            ReplaceWords(path, OLDWORD, NEWWORD, true);
+            TxtReplaceWords(path, OLDWORD, NEWWORD, true);
         }
         private static void Task3()
         {
@@ -122,17 +121,17 @@ namespace OAIP
 
             WriteLine(path);
 
-            path = CreateFileAndDirectory("text3", path);
+            path = CreateFileAndDirectory("text3", path, ".txt", true);
 
 
             if (FilePlactise2.isDevoperEdition)
             {
-                WriteInformationToFile("Привет, мир! \nКак твои дела?\nПогода сегодня прекрасная.\nХорошего дня!\n", path);
+                TxtWriteInformationToFile("Привет, мир! \nКак твои дела?\nПогода сегодня прекрасная.\nХорошего дня!\n", path);
             }
             else
             {
                 WriteLine("Введите текст файла: ");
-                WriteInformationToFile(ReadMoreLines(), path);
+                TxtWriteInformationToFile(ReadMoreLines(), path);
             }
 
             WriteLine("Введите букву: ");
