@@ -18,7 +18,7 @@ namespace OAIP
     {
         // Переменная для определения, является ли версия разработческой
         public static bool isDevoperEdition = false;
-        public const string DEVTASK = "24.01";
+        public const string DEVTASK = "28.01";
 
         // Список проектов
         public static List<string> projects;
@@ -37,6 +37,7 @@ namespace OAIP
                 "\"Работа с файлами\"",
                 "\"21.01\"",
                 "\"24.01\"",
+                "\"28.01\"",
                 "\"null\""
             };
         }
@@ -105,6 +106,9 @@ namespace OAIP
                     break;
                 case "24.01":
                     FilePlactise2 filesPractise2 = new FilePlactise2(isDevoperEdition);
+                    break;
+                case "28.01":
+                    PdfPractise pdfPractise = new PdfPractise(isDevoperEdition);
                     break;
                 default:
                     // Сообщение об ошибке, если практика не найдена

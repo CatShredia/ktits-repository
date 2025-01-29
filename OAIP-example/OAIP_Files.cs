@@ -11,34 +11,40 @@ namespace OAIP
 
         private static char[] splitChar = [' ', '\t', '\n', '\r'];
 
-        public static string CreateFileAndDirectory(string nameFile, string path)
+        public static string CreateFileAndDirectory(string nameFile, string path, string typeOfFile, bool createFile)
         {
-            path += "\\texts";
+            path += "\\" + typeOfFile + "s";
 
-            if (!Directory.Exists(path + "texts"))
+            if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
 
                 WriteLine("Папка создана: " + path);
             }
 
-            string filePath = path + "\\" + nameFile + ".txt";
-            if (!File.Exists(filePath))
+            string filePath;
+            if (!File.Exists(path + "\\" + nameFile + typeOfFile) && createFile == true)
             {
+                filePath = path + "\\" + nameFile + typeOfFile;
+
                 using (File.Create(filePath)) { }
                 WriteLine("Файл создан: " + filePath);
+            }
+            else
+            {
+                filePath = path;
             }
 
             return filePath;
         }
-        public static void WriteFileInformation(string filepath)
+        public static void TxtWriteFileInformation(string filepath)
         {
             string[] informationLines = File.ReadAllLines(filepath);
             WriteLine(File.ReadAllText(filepath));
             WriteLine("Количество строк: " + informationLines.Length);
         }
 
-        public static void WriteInformationToFile(string information, string filePath)
+        public static void TxtWriteInformationToFile(string information, string filePath)
         {
             try
             {
@@ -56,6 +62,7 @@ namespace OAIP
 
         public static void DeleteFilesInDirectory(string dir)
         {
+            WriteLine("ВНИМАНИЕ! Удаление: " + dir);
             try
             {
                 Directory.Delete(dir);
@@ -88,7 +95,7 @@ namespace OAIP
 
         }
 
-        public static int CountOfLines(string pathTxtFile)
+        public static int TxtCountOfLines(string pathTxtFile)
         {
             int countOfLines = 0;
             try
@@ -107,7 +114,7 @@ namespace OAIP
             return countOfLines;
         }
 
-        public static int CountOfWords(string pathTxtFile)
+        public static int TxtCountOfWords(string pathTxtFile)
         {
             int countOfWords = 0;
             try
@@ -130,7 +137,7 @@ namespace OAIP
             return countOfWords;
         }
 
-        public static int CountOfChar(string pathTxtFile)
+        public static int TxtCountOfChar(string pathTxtFile)
         {
             int countOfChar = 0;
             try
@@ -158,7 +165,7 @@ namespace OAIP
             return countOfChar;
         }
 
-        public static void ReplaceWords(string filePath, string OLDWORD, string NEWWORD, bool isRegisterIxp)
+        public static void TxtReplaceWords(string filePath, string OLDWORD, string NEWWORD, bool isRegisterIxp)
         {
             try
             {
