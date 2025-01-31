@@ -18,7 +18,7 @@ namespace OAIP
     {
         // Переменная для определения, является ли версия разработческой
         public static bool isDevoperEdition = false;
-        public const string DEVTASK = "Работа с docx";
+        public const string DEVTASK = "NPOI";
 
         // Список проектов
         public static List<string> projects;
@@ -39,6 +39,7 @@ namespace OAIP
                 "\"24.01\"",
                 "\"Работа с pdf\"",
                 "\"Работа с docx\"",
+                "\"NPOI\"",
                 "\"null\""
             };
         }
@@ -113,6 +114,9 @@ namespace OAIP
                     break;
                 case "Работа с docx":
                     Word word = new Word(isDevoperEdition);
+                    break;
+                case "NPOI":
+                    NPOI npoi = new NPOI(isDevoperEdition);
                     break;
                 default:
                     // Сообщение об ошибке, если практика не найдена
