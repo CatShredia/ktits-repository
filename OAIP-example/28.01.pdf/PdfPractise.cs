@@ -16,6 +16,8 @@ namespace OAIP
 
         public PdfPractise(bool isDevoperEditionI)
         {
+            GlobalFontSettings.UseWindowsFontsUnderWindows = true;
+
             isDevoperEdition = isDevoperEditionI;
 
             WriteLine("---28.01.25---");
@@ -63,15 +65,18 @@ namespace OAIP
 
             document.Info.Title = "PDF с датой";
 
-            XFont font = new XFont("Times New Roman", 36, XFontStyleEx.Bold);
+            var font = new XFont("Arial", 10, XFontStyleEx.Bold);
             string formattedDate = "Практика: 28.01.2025";
 
             // Создаем новую страницу
-            PdfPage page = document.AddPage();
-            XGraphics gfx = XGraphics.FromPdfPage(page);
+            for (int i = 0; i < 5; i++)
+            {
+                PdfPage page = document.AddPage();
+                XGraphics gfx = XGraphics.FromPdfPage(page);
+                // Добавляем дату на текущую страницу
+                gfx.DrawString(formattedDate, font, XBrushes.Red, new XRect(-210, 0, page.Width, page.Height), XStringFormats.BottomCenter);
+            }
 
-            // Добавляем дату на текущую страницу
-            gfx.DrawString(formattedDate, font, XBrushes.Red, new XRect(-210, 0, page.Width, page.Height), XStringFormats.BottomCenter);
             // string file = Directory.GetCurrentDirectory() + "\\testFiles" + ".pdf";
 
             WriteLine("Путь: " + filePath);
