@@ -49,3 +49,8 @@
 a:hover {
   color: blue;
 }
+.border-top {
+  border-top: 1px solid black;
+
+  padding: 10px;
+}
