@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>3 practise</title>
+  </head>
+
+  <body bgcolor="#109f31">
+    <h3>Документ с несколькамми формами</h3>
+    <form>
+      <label for=""> Какое блюдо будите заказывать?</label>
+      <table width="300" height="100">
+        <tr bgcolor="#085219">
+          <td>
+            <pre>Пицца                                  <input type="checkbox" name="1" id="" /></pre>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <pre>Хот-дог                                <input type="checkbox" name="2" id="" /></pre>
+          </td>
+        </tr>
+
+        <tr bgcolor="#085219">
+          <td>
+            <pre>Гамбургер                              <input type="checkbox" name="3" id="" /></pre>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <pre>Попкорн                                <input type="checkbox" name="4" id="" /></pre>
+          </td>
+        </tr>
+
+        <tr bgcolor="#085219">
+          <td>
+            <pre>Чупа-чупс                              <input type="checkbox" name="5" id="" /></pre>
+          </td>
+        </tr>
+      </table>
+      <input type="button" value="Отправить" />
+      <input type="reset" value="Сбросить" />
+    </form>
+    <hr />
+    <form>
+      <h2>Куда доставить заказ?</h2>
+      <table>
+        <tr>
+          <td><label for="firstName">Имя:</label></td>
+          <td><input type="text" id="firstName" name="firstName" /></td>
+        </tr>
+        <tr>
+          <td><label for="lastName">Фамилия:</label></td>
+          <td><input type="text" id="lastName" name="lastName" /></td>
+        </tr>
+        <tr>
+          <td><label for="email">eMail:</label></td>
+          <td>
+            <input type="text" id="email" name="email" />
+            <select>
+              <option>@mail.ru</option>
+              <option>@gmail.com</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td><label for="street">Улица:</label></td>
+          <td>
+            <input type="text" id="street" name="street" value="" />
+            <select>
+              <option>Ленина</option>
+              <option>Глушко</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td><label for="city">Город:</label></td>
+          <td>
+            <input type="text" id="city" name="city" value="" />
+            <select>
+              <option>Мурманск</option>
+              <option>не Мурманск</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+      <br />
+      <input type="submit" value="Отправить" />
+      <input type="reset" value="Сбросить" />
+    </form>
+    <hr />
+    <form>
+      <h2>Как будете расплачиваться?</h2>
+      <table border="5" width="60">
+        <tr>
+          <td>
+            <input type="radio" id="cash" name="payment" value="Наличными" />
+          </td>
+          <td><label for="cash">Наличными</label></td>
+        </tr>
+        <tr>
+          <td>
+            <input type="radio" id="check" name="payment" value="Чеком" />
+          </td>
+          <td><label for="check">Чеком</label></td>
+        </tr>
+        <tr>
+          <td>
+            <input
+              type="radio"
+              id="debit"
+              name="payment"
+              value="Дебитной картой"
+            />
+          </td>
+          <td><label for="debit">Дебитной картой</label></td>
+        </tr>
+        <tr width="60">
+          <td colspan="2">
+            <label>Кредитной карточкой:</label> <br />
+
+            <pre>
+                <input type="radio" id="mastercard" name="payment" value="MasterCard">
+                <label for="mastercard">MasterCard</label></pre>
+            <br />
+
+            <pre>
+                <input type="radio" id="visa" name="payment" value="Visa">
+                <label for="visa">Visa</label></pre>
+            <br />
+
+            <pre>
+                <input type="radio" id="discovery" name="payment" value="Discovery">
+                <label for="discovery">Discovery</label><br>
+                </pre>
+            <pre>
+                <input type="radio" id="amex" name="payment" value="American Express">
+                <label for="amex">American Express</label></pre>
+            <br />
+          </td>
+        </tr>
+      </table>
+      <input type="submit" value="Отправить" />
+      <input type="reset" value="Сбросить" />
+    </form>
+  </body>
+</html>

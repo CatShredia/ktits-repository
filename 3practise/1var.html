@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>3 practise</title>
+  </head>
+  <body>
+    <h1>Документ с несколькими формами</h1>
+
+    <h2>Какое блюдо будете заказывать?</h2>
+    <form>
+      <label><input type="checkbox" name="food" value="pizza" /> Пицца</label
+      ><br />
+      <label><input type="checkbox" name="food" value="hotdog" /> Хот-дог</label
+      ><br />
+      <label
+        ><input type="checkbox" name="food" value="hamburger" />
+        Гамбургер</label
+      ><br />
+      <label
+        ><input type="checkbox" name="food" value="popcorn" /> Попкорн</label
+      ><br />
+      <label
+        ><input type="checkbox" name="food" value="chupachups" />
+        Чупа-чупс</label
+      ><br /><br />
+      <input type="submit" value="Отправить" />
+      <input type="reset" value="Сбросить" />
+    </form>
+
+    <hr />
+
+    <h2>Куда доставить заказ?</h2>
+    <form>
+      <label for="name">Имя:</label><br />
+      <input type="text" id="name" name="name" /><br /><br />
+
+      <label for="surname">Фамилия:</label><br />
+      <input type="text" id="surname" name="surname" /><br /><br />
+
+      <label for="email">eMail:</label><br />
+      <input type="email" id="email" name="email" />
+      <select name="email_domain">
+        <option>@mail.ru</option>
+      </select>
+      <br /><br />
+
+      <label for="street">Улица:</label><br />
+      <select id="street" name="street">
+        <option>Кирова</option></select
+      ><br /><br />
+
+      <label for="city">Город:</label><br />
+      <select id="city" name="city">
+        <option>Мурманск</option></select
+      ><br /><br />
+
+      <input type="submit" value="Отправить" />
+      <input type="reset" value="Сбросить" />
+    </form>
+
+    <hr />
+
+    <h2>Как будете расплачиваться?</h2>
+    <form>
+      <label><input type="radio" name="payment" value="cash" /> Наличными</label
+      ><br />
+      <label><input type="radio" name="payment" value="check" /> Чеком</label
+      ><br />
+      <label
+        ><input type="radio" name="payment" value="debit_card" checked />
+        Дебитной картой</label
+      ><br />
+      Кредитной карточкой:<br />
+      <label
+        ><input type="radio" name="credit_card" value="mastercard" />
+        MasterCard</label
+      ><br />
+      <label><input type="radio" name="credit_card" value="visa" /> Visa</label
+      ><br />
+      <label
+        ><input type="radio" name="credit_card" value="discovery" checked />
+        Discovery</label
+      ><br />
+      <label
+        ><input type="radio" name="credit_card" value="american_express" />
+        American Express</label
+      ><br /><br />
+
+      <input type="submit" value="Отправить" />
+      <input type="reset" value="Сбросить" />
+    </form>
+  </body>
+</html>
