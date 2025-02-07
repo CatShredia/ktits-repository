@@ -18,7 +18,7 @@ namespace OAIP
     {
         // Переменная для определения, является ли версия разработческой
         public static bool isDevoperEdition = false;
-        public const string DEVTASK = "Коллекции";
+        public const string DEVTASK = "Коллекции: Практика";
 
         // Список проектов
         public static List<string> projects;
