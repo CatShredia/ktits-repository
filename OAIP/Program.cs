@@ -41,6 +41,7 @@ namespace OAIP
                 "\"Работа с docx\"",
                 "\"NPOI\"",
                 "\"Коллекции\"",
+                "\"Коллекции: Практика\"",
                 "\"null\""
             };
         }
@@ -121,6 +122,9 @@ namespace OAIP
                     break;
                 case "Коллекции":
                     Collections collections = new Collections(isDevoperEdition);
+                    break;
+                case "Коллекции: Практика":
+                    CollectionsPractise collectionsPractise = new CollectionsPractise(isDevoperEdition);
                     break;
                 default:
                     // Сообщение об ошибке, если практика не найдена
