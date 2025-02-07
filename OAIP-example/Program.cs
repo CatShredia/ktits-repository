@@ -18,7 +18,7 @@ namespace OAIP
     {
         // Переменная для определения, является ли версия разработческой
         public static bool isDevoperEdition = false;
-        public const string DEVTASK = "NPOI";
+        public const string DEVTASK = "Коллекции: Практика";
 
         // Список проектов
         public static List<string> projects;
@@ -40,6 +40,8 @@ namespace OAIP
                 "\"Работа с pdf\"",
                 "\"Работа с docx\"",
                 "\"NPOI\"",
+                "\"Коллекции\"",
+                "\"Коллекции: Практика\"",
                 "\"null\""
             };
         }
@@ -117,6 +119,12 @@ namespace OAIP
                     break;
                 case "NPOI":
                     NPOI npoi = new NPOI(isDevoperEdition);
+                    break;
+                case "Коллекции":
+                    Collections collections = new Collections(isDevoperEdition);
+                    break;
+                case "Коллекции: Практика":
+                    CollectionsPractise collectionsPractise = new CollectionsPractise(isDevoperEdition);
                     break;
                 default:
                     // Сообщение об ошибке, если практика не найдена
