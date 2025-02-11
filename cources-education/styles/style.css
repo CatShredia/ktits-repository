@@ -37,6 +37,15 @@ menu {
 
   gap: 10px;
 }
+/* ? animations */
+button:hover,
+a:hover {
+  transition: linear 0.2s;
+
+  color: white;
+
+  background-color: blue;
+}
 /* ? header */
 .header-1 {
   display: flex;
@@ -61,6 +70,59 @@ menu {
 
   border-radius: 2em;
 }
+/* ? menu */
+.header-menu ul,
+.header-menu li {
+  list-style-type: none;
+}
+/* CSS для стилизации меню и анимации */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-button {
+  background-color: #000000;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Плавное изменение цвета при наведении */
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 100px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  opacity: 0; /* Изначально делаем невидимым */
+  transform: translateY(-10px); /* Сдвигаем немного вверх */
+  transition: opacity 0.3s ease, transform 0.3s ease; /* Плавное появление и смещение */
+  top: 100%; /* Позиционируем сразу под кнопкой */
+  left: 0;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 10px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.3s ease; /* Плавное изменение цвета ссылок при наведении */
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.show {
+  display: block;
+  opacity: 1; /* Показываем */
+  transform: translateY(0); /* Возвращаем на место */
+}
+
 /* ? about */
 .main-about {
   display: flex;
@@ -93,12 +155,20 @@ menu {
   display: block;
 
   border: none;
+
+  transition: 0.5s linear;
 }
+
 .products-button-left {
   transform: rotate(180deg);
 }
 .products-button-bottom {
   transform: rotate(90deg);
+}
+.products-button:hover {
+  background-color: white;
+
+  border-radius: 5px;
 }
 .product {
   display: flex;
@@ -196,4 +266,21 @@ menu {
 }
 .count-red {
   color: red;
+}
+/* ? footer */
+.footer-1 img {
+  width: 2em;
+}
+.footer-1 {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  background-color: gainsboro;
+}
+.footer-cc {
+  display: flex;
+
+  gap: 15px;
 }

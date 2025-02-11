@@ -19,8 +19,19 @@
             <h1 class="header-title">Образовашка</h1>
           </div>
           <div class="header-el">
-            <h6 class="header-menu">Аккаунт</h6>
-            <menu class="header-menu">Меню</menu>
+            <h6 class="header-account">Аккаунт</h6>
+            <div class="header-menu">
+              <div class="dropdown">
+                <button onclick="toggleDropdown()" class="dropdown-button">
+                  Меню
+                </button>
+                <div id="myDropdown" class="dropdown-content">
+                  <a href="#about">О нас</a>
+                  <a href="#feedback">Отзывы</a>
+                  <a href="#">Каталог</a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -28,7 +39,7 @@
     <main class="main">
       <div class="main__inner">
         <div class="container">
-          <h2 class="title">О нас</h2>
+          <h2 class="title" id="about">О нас</h2>
           <div class="main-about">
             <p class="about">
               Далеко-далеко за, словесными горами в стране гласных и согласных
@@ -46,7 +57,7 @@
           </div>
         </div>
         <div class="container">
-          <h2 class="title">Популярные продукты</h2>
+          <h2 class="title" id="popular">Популярные продукты</h2>
           <div class="main-popular-product">
             <button
               type="button"
@@ -93,7 +104,7 @@
           </div>
         </div>
         <div class="container">
-          <h2 class="title">Отзывы</h2>
+          <h2 class="title" id="feedback">Отзывы</h2>
           <div class="main-feedbacks">
             <div class="main-feedback">
               <div class="feedbacks">
@@ -201,9 +212,18 @@
         <div class="container footer-1">
           <img src="rec/icon.png" alt="Иконка" srcset="" />
           <div class="footer-cc">
-            <img src="" alt="" srcset="" />
+            <a href="#" class="footer-cc-a"
+              ><img src="rec/icon.png" alt="" class="footer-cc-img"
+            /></a>
+            <a href="#" class="footer-cc-a"
+              ><img src="rec/icon.png" alt="" class="footer-cc-img"
+            /></a>
+            <a href="#" class="footer-cc-a"
+              ><img src="rec/icon.png" alt="" class="footer-cc-img"
+            /></a>
           </div>
         </div>
+        <div class="copyright text-center">©2025</div>
       </div>
     </footer>
 
