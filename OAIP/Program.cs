@@ -42,6 +42,7 @@ namespace OAIP
                 "\"NPOI\"",
                 "\"Коллекции\"",
                 "\"Коллекции: Практика\"",
+                "\"OOP\"",
                 "\"null\""
             };
         }
@@ -125,6 +126,9 @@ namespace OAIP
                     break;
                 case "Коллекции: Практика":
                     CollectionsPractise collectionsPractise = new CollectionsPractise(isDevoperEdition);
+                    break;
+                case "OOP":
+                    OOP oop = new OOP();
                     break;
                 default:
                     // Сообщение об ошибке, если практика не найдена

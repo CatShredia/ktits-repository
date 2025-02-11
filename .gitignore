@@ -1,4 +1,6 @@
-*
+Montserrat,Roboto,Smooch_Sans
 
-!OAIP
-!OAIP-example
+OAIP/bin
+OAIP/obj
+
+.vscode
