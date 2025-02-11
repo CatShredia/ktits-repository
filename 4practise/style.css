@@ -1,0 +1,67 @@
+body {
+  font-family: sans-serif;
+  margin: 20px;
+}
+
+h1 {
+  color: red;
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+  font-style: italic;
+}
+p {
+  font-size: 20px;
+}
+ul {
+  list-style-type: square;
+  margin-left: 20px;
+}
+.italic {
+  font-style: italic;
+}
+.bold {
+  font-weight: 600;
+}
+.block-description {
+  margin-top: 20px;
+}
+
+.block-explanation {
+  margin-top: 10px;
+}
+
+.block-shapes {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 20px;
+}
+
+.rectangle {
+  width: 100px;
+  height: 50px;
+  background-color: red;
+}
+
+.oval {
+  width: 100px;
+  height: 50px;
+  background-color: lightblue;
+  border-radius: 50%;
+}
+
+.parallelogram {
+  width: 100px;
+  height: 50px;
+  background-color: lightgreen;
+  transform: skew(-20deg); /* Corrected the skew */
+}
+
+.footer {
+  margin-top: 20px;
+  text-align: right;
+  font-size: smaller;
+  color: grey;
+}
