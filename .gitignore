@@ -1,24 +1,4 @@
-OAIP/bin
-OAIP/obj
+*
 
-OAIP/files/texts/
-
-OAIP/OAIP.csproj
-OAIP.sln
-
-.vscode
-
-OAIP/texts
-
-# files txt
-OAIP/21.01.files/texts
-OAIP/24.01.files/texts
-
-OAIP/28.01.pdf/.pdfs/
-
-# test proj
-test
-OAIP-share
-
-PLUS
-PLUS+
+!OAIP
+!OAIP-example
