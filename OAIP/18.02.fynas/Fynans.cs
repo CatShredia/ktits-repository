@@ -1,20 +1,19 @@
+using System;
+using System.Collections.Generic;
+using static System.Console;
+
 namespace OAIP
 {
-    using System.ComponentModel.Design;
-    using static System.Console;
-    using static OAIP_Arrays;
     class Fynans : Object
     {
         public Dictionary<string, List<double>> Dictionary;
-
         public bool isDevoperEdition;
+
         public Fynans(bool isDevoperEditioni)
         {
             isDevoperEdition = isDevoperEditioni;
             PrintWithColor("Программа расчета финанс", ConsoleColor.Black, ConsoleColor.DarkGreen);
-
             Dictionary = new Dictionary<string, List<double>>();
-
             if (isDevoperEdition)
             {
                 AddTransaction("еда", 14);
@@ -23,7 +22,6 @@ namespace OAIP
                 AddTransaction("марат казуал", 666);
                 AddTransaction("пытки", 142678);
             }
-
             Menu();
         }
 
@@ -40,14 +38,13 @@ namespace OAIP
             try
             {
                 int number = Convert.ToInt32(ReadLine());
-
                 switch (number)
                 {
                     case 0:
                         break;
                     case 1:
                         WriteLine("Введите категорию и сумму");
-                        AddTransaction(ReadLine(), Convert.ToInt32(ReadLine()));
+                        AddTransaction(ReadLine(), Convert.ToDouble(ReadLine()));
                         Menu();
                         break;
                     case 2:
@@ -60,12 +57,19 @@ namespace OAIP
                         Menu();
                         break;
                     case 4:
-                        WriteLine("Введите категорию, для расчета разницы");
-                        CalculateBalance(ReadLine());
+                        WriteLine("Введите категорию, для расчета средней траты");
+                        GetAverageExpense(ReadLine());
                         Menu();
                         break;
                     case 5:
-                        
+                        WriteLine("Введите категорию, для прогноза расходов на следующий месяц");
+                        PredictNextMonthExpenses(ReadLine());
+                        Menu();
+                        break;
+                    case 6:
+                        PrintStatistics();
+                        Menu();
+                        break;
                     default:
                         PrintWithColor("Ошибка ввода, такого порядкового номера не существует", ConsoleColor.DarkRed, ConsoleColor.Red);
                         break;
@@ -75,17 +79,15 @@ namespace OAIP
             {
                 PrintWithColor("Ошибка ввода, введите число", ConsoleColor.Black, ConsoleColor.Red);
                 Menu();
-                throw;
             }
         }
 
-        private void AddTransaction(string str, int num)
+        private void AddTransaction(string str, double num)
         {
             if (!Dictionary.ContainsKey(str))
             {
                 Dictionary[str] = new List<double>();
             }
-
             Dictionary[str].Add(num);
         }
 
@@ -96,17 +98,12 @@ namespace OAIP
                 PrintWithColor("Словарь пуст. Нет данных для отображения.", ConsoleColor.Black, ConsoleColor.Gray);
                 return;
             }
-
             WriteLine("Финансовый отчет:");
             foreach (var entry in Dictionary)
             {
                 string category = entry.Key;
                 List<double> amounts = entry.Value;
-
                 PrintWithColor($"Категория: {category}", ConsoleColor.DarkBlue, ConsoleColor.Black);
-
-                WriteLine("Суммы:");
-
                 foreach (var amount in amounts)
                 {
                     if (amount <= 0)
@@ -118,7 +115,6 @@ namespace OAIP
                         WriteLine($"Доход: {amount}");
                     }
                 }
-
                 WriteLine();
             }
         }
@@ -130,11 +126,9 @@ namespace OAIP
                 WriteLine($"Категория '{category}' не найдена.");
                 return;
             }
-
             List<double> amounts = Dictionary[category];
             double totalExpenses = 0;
             double totalIncome = 0;
-
             foreach (var amount in amounts)
             {
                 if (amount < 0)
@@ -146,9 +140,143 @@ namespace OAIP
                     totalIncome += amount;
                 }
             }
-
             double balance = totalIncome - totalExpenses;
-            WriteLine($"Баланс для категории '{category}': {balance}");
+            PrintWithColor($"Баланс для категории '{category}': {balance}", ConsoleColor.DarkBlue, ConsoleColor.Black);
+
+        }
+
+        private void GetAverageExpense(string category)
+        {
+            if (!Dictionary.ContainsKey(category))
+            {
+                WriteLine($"Категория '{category}' не найдена.");
+                return;
+            }
+            List<double> amounts = Dictionary[category];
+            double totalExpenses = 0;
+            int count = 0;
+
+            foreach (var amount in amounts)
+            {
+                if (amount < 0) // учитываем только расходы
+                {
+                    totalExpenses += Math.Abs(amount);
+                    count++;
+                }
+            }
+
+            if (count == 0)
+            {
+                WriteLine($"Нет расходов в категории '{category}'.");
+            }
+            else
+            {
+                double average = totalExpenses / count;
+                WriteLine($"Средние траты для категории '{category}': {average}");
+            }
+        }
+
+        private void PredictNextMonthExpenses(string category)
+        {
+            if (!Dictionary.ContainsKey(category))
+            {
+                WriteLine($"Категория '{category}' не найдена.");
+                return;
+            }
+            List<double> amounts = Dictionary[category];
+            double totalExpenses = 0;
+            int count = 0;
+
+            foreach (var amount in amounts)
+            {
+                if (amount < 0) // учитываем только расходы
+                {
+                    totalExpenses += Math.Abs(amount);
+                    count++;
+                }
+            }
+
+            if (count == 0)
+            {
+                WriteLine($"Нет расходов в категории '{category}'.");
+            }
+            else
+            {
+                double average = totalExpenses / count;
+                WriteLine($"Прогноз расходов на следующий месяц для категории '{category}': {average}");
+            }
+        }
+
+        private void PrintStatistics()
+        {
+            double totalExpenses = 0;
+            var categoryExpenses = new Dictionary<string, double>();
+            var categoryCount = new Dictionary<string, int>();
+
+            foreach (var entry in Dictionary)
+            {
+                string category = entry.Key;
+                List<double> amounts = entry.Value;
+
+                foreach (var amount in amounts)
+                {
+                    if (amount < 0) // учитываем только расходы
+                    {
+                        double expense = Math.Abs(amount);
+                        totalExpenses += expense;
+
+                        if (!categoryExpenses.ContainsKey(category))
+                        {
+                            categoryExpenses[category] = 0;
+                            categoryCount[category] = 0;
+                        }
+                        categoryExpenses[category] += expense;
+                        categoryCount[category]++;
+                    }
+                }
+            }
+
+            if (totalExpenses == 0)
+            {
+                WriteLine("Нет расходов для анализа.");
+                return;
+            }
+
+            WriteLine($"Общая сумма расходов: {totalExpenses}");
+
+            // Определяем самую затратную категорию
+            var mostExpensiveCategory = "";
+            var maxExpense = 0.0;
+            foreach (var entry in categoryExpenses)
+            {
+                if (entry.Value > maxExpense)
+                {
+                    maxExpense = entry.Value;
+                    mostExpensiveCategory = entry.Key;
+                }
+            }
+            WriteLine($"Самая затратная категория: {mostExpensiveCategory} с расходами {maxExpense}");
+
+            // Определяем самую частую категорию
+            var mostFrequentCategory = "";
+            var maxCount = 0;
+            foreach (var entry in categoryCount)
+            {
+                if (entry.Value > maxCount)
+                {
+                    maxCount = entry.Value;
+                    mostFrequentCategory = entry.Key;
+                }
+            }
+            WriteLine($"Самая частая категория: {mostFrequentCategory} с {maxCount} расходами");
+
+            // Расчет процентного соотношения расходов
+            WriteLine("Процентное соотношение расходов:");
+            foreach (var entry in categoryExpenses)
+            {
+                double percentage = (entry.Value / totalExpenses) * 100;
+                WriteLine($"{entry.Key}: {percentage:F2}%");
+            }
         }
     }
 }
