@@ -17,8 +17,8 @@ namespace OAIP
     internal class OAIP_Main
     {
         // Переменная для определения, является ли версия разработческой
-        public static bool isDevoperEdition = false;
-        public const string DEVTASK = "Коллекции: Практика";
+        public static bool isDevoperEdition = true;
+        public const string DEVTASK = "Финансы";
 
         // Список проектов
         public static List<string> projects;
@@ -42,6 +42,8 @@ namespace OAIP
                 "\"NPOI\"",
                 "\"Коллекции\"",
                 "\"Коллекции: Практика\"",
+                "\"OOP\"",
+                "\"Финансы\"",
                 "\"null\""
             };
         }
@@ -125,6 +127,12 @@ namespace OAIP
                     break;
                 case "Коллекции: Практика":
                     CollectionsPractise collectionsPractise = new CollectionsPractise(isDevoperEdition);
+                    break;
+                case "OOP":
+                    OOP oop = new OOP();
+                    break;
+                case "Финансы":
+                    Fynans fynanc = new Fynans(isDevoperEdition);
                     break;
                 default:
                     // Сообщение об ошибке, если практика не найдена
