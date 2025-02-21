@@ -17,7 +17,7 @@ namespace OAIP
     internal class OAIP_Main
     {
         // Переменная для определения, является ли версия разработческой
-        public static bool isDevoperEdition = true;
+        public static bool isDevoperEdition = false;
         public const string DEVTASK = "Финансы";
 
         // Список проектов
@@ -32,53 +32,60 @@ namespace OAIP
                 "\"21.11\"",
                 "\"28.11\"",
                 "\"09.12\"",
-                "\"Шифр Цезаря\"",
                 "\"14.01\"",
-                "\"Работа с файлами\"",
-                "\"21.01\"",
-                "\"24.01\"",
-                "\"Работа с pdf\"",
-                "\"Работа с docx\"",
-                "\"NPOI\"",
-                "\"Коллекции\"",
-                "\"Коллекции: Практика\"",
-                "\"OOP\"",
-                "\"Финансы\"",
-                "\"null\""
+                "\"21.01:l Файлы Лекция\"",
+                "\"21.01:p Файлы 1\"",
+                "\"24.01 Файлы 2\"",
+                "\"28.01 ПДФ\"",
+                "\"31.01 docx (вариант с нерабочей библиотекой)\"",
+                "\"31.01:NPOI (вариант с NPOI, БЕСПЛАТНОЙ)\"",
+                "\"07.02:l лекция с коллекциями\"",
+                "\"07.02:p практика с коллекциями\"",
+                "\"14.02 OOP\"",
+                "\"18.02 fynans\"",
+                "\"Шифр Цезаря\"",
             };
         }
 
         static void Main(string[] args)
         {
-            if (!isDevoperEdition)
+            while (true)
             {
-                Clear();
+                if (!isDevoperEdition)
+                {
+                    Clear();
+                }
+                // Вывод приветственного сообщения
+                PrintHelloDev();
+                WriteLine("Какая практика вас интересует? (за какое число: 01.01)");
+
+                // Добавление проектов в список
+                AddProjects();
+
+                // Вывод существующих практик
+                WriteLine("---");
+                foreach (var item in projects)
+                {
+                    WriteLine(item);
+                }
+                WriteLine("---");
+
+                // Переменная для хранения даты пользователя
+                string date;
+
+                // Если не разработческая версия, считываем ввод пользователя
+                if (!isDevoperEdition)
+                {
+                    date = ReadLine();
+                }
+                else
+                {
+                    // В противном случае, используем предустановленное значение
+                    date = DEVTASK;
+                }
+
+                Menu(date);
             }
-            // Вывод приветственного сообщения
-            PrintHelloDev();
-            WriteLine("Какая практика вас интересует? (за какое число: 01.01)");
-
-            // Добавление проектов в список
-            AddProjects();
-
-            // Вывод существующих практик
-            WriteArray(projects, "Существующие практики: ");
-
-            // Переменная для хранения даты пользователя
-            string date;
-
-            // Если не разработческая версия, считываем ввод пользователя
-            if (!isDevoperEdition)
-            {
-                date = ReadLine();
-            }
-            else
-            {
-                // В противном случае, используем предустановленное значение
-                date = DEVTASK;
-            }
-
-            Menu(date);
         }
 
         public static void Menu(string date)
@@ -104,34 +111,34 @@ namespace OAIP
                 case "Шифр Цезаря":
                     Caesar caesar = new Caesar(isDevoperEdition);
                     break;
-                case "Работа с файлами":
+                case "21.01:l":
                     Files files = new Files(isDevoperEdition);
                     break;
-                case "21.01":
+                case "21.01:p":
                     FilesPractise filesPractise = new FilesPractise(isDevoperEdition);
                     break;
                 case "24.01":
                     FilePlactise2 filesPractise2 = new FilePlactise2(isDevoperEdition);
                     break;
-                case "Работа с pdf":
+                case "28.01":
                     PdfPractise pdfPractise = new PdfPractise(isDevoperEdition);
                     break;
-                case "Работа с docx":
+                case "31.01":
                     Word word = new Word(isDevoperEdition);
                     break;
-                case "NPOI":
+                case "31.01:NPOI":
                     NPOI npoi = new NPOI(isDevoperEdition);
                     break;
-                case "Коллекции":
+                case "07.02:l":
                     Collections collections = new Collections(isDevoperEdition);
                     break;
-                case "Коллекции: Практика":
+                case "07.02:p":
                     CollectionsPractise collectionsPractise = new CollectionsPractise(isDevoperEdition);
                     break;
-                case "OOP":
+                case "14.02":
                     OOP oop = new OOP();
                     break;
-                case "Финансы":
+                case "18.02":
                     Fynans fynanc = new Fynans(isDevoperEdition);
                     break;
                 default:
