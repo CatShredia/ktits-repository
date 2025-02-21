@@ -14,7 +14,7 @@ namespace OAIP
         public NPOI(bool isDevelopEditioni)
         {
             isDevelopEdition = isDevelopEditioni;
-            filePath = Directory.GetCurrentDirectory() + "\\31.01.docx";
+            filePath = Directory.GetCurrentDirectory() + "\\01.31.docx";
             WriteLine(filePath);
             filePath = CreateFileAndDirectory("test", filePath, ".docx", false);
             Menu();
@@ -36,7 +36,7 @@ namespace OAIP
                     Menu();
                     break;
                 case 100:
-                    DeleteFilesInDirectory("D:\\directory-git\\ktits-repository\\OAIP\\31.01.docx\\.docxs");
+                    DeleteFilesInDirectory("D:\\directory-git\\ktits-repository\\OAIP\\01.31.docx\\.docxs");
                     Menu();
                     break;
                 default:

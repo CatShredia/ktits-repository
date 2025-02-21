@@ -58,6 +58,7 @@ namespace OAIP
             {
                 Console.WriteLine($"{group.Key}: {string.Join(",", group)}");
             }
+            Console.ReadKey();
         }
 
     }

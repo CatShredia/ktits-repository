@@ -20,7 +20,7 @@ namespace OAIP
             WriteLine("---Практика с файлами---");
             WriteLine("21.01.2025");
 
-            path = Directory.GetCurrentDirectory() + "\\21.01.files";
+            path = Directory.GetCurrentDirectory() + "\\01.21.files";
 
             Menu();
 

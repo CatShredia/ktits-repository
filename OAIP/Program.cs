@@ -18,6 +18,7 @@ namespace OAIP
     {
         // Переменная для определения, является ли версия разработческой
         public static bool isDevoperEdition = false;
+        public static bool isRun = false;
         public const string DEVTASK = "Финансы";
 
         // Список проектов
@@ -49,7 +50,8 @@ namespace OAIP
 
         static void Main(string[] args)
         {
-            while (true)
+            isRun = true;
+            while (isRun)
             {
                 if (!isDevoperEdition)
                 {
@@ -76,6 +78,7 @@ namespace OAIP
                 // Если не разработческая версия, считываем ввод пользователя
                 if (!isDevoperEdition)
                 {
+                    Write("Для выхода: 0 - ");
                     date = ReadLine();
                 }
                 else
@@ -91,8 +94,12 @@ namespace OAIP
         public static void Menu(string date)
         {
             // Выбор практики по введенной дате
+            Clear();
             switch (date)
             {
+                case "0":
+                    isRun = false;
+                    break;
                 case "18.10":
                     OAIP_18_10 oaip_18_10 = new OAIP_18_10(isDevoperEdition);
                     break;
@@ -156,7 +163,7 @@ namespace OAIP
             "H   H  E      L      L      O   O     D   D  E      V   V",
             "HHHHH  EEEEE  L      L      O   O     D   D  EEEEE  V   V",
             "H   H  E      L      L      O   O     D   D  E      V V V",
-            "H   H  EEEEE  LLLLL  LLLLL   OOO      DDDD   EEEEE   V V"
+            "H   H  EEEEE  LLLLL  LLLLL   OOO      DDDD   EEEEE   V V",
         };
 
             foreach (var line in helloDev)

@@ -21,7 +21,7 @@ namespace OAIP
 
                 isDevoperEdition = isDevoperEditionI;
 
-                string filePath = Directory.GetCurrentDirectory() + "\\31.01.docx\\files";
+                string filePath = Directory.GetCurrentDirectory() + "\\01.31.docx\\files";
 
                 WriteLine(filePath);
 
@@ -51,12 +51,12 @@ namespace OAIP
                 }
             }
             catch(Exception e){
-                WriteLine("----ВНИМАНИ! БЕЗ КЛЮЧА НЕ РАБОТАЕТ----");
+                WriteLine("----ВНИМАНИЕ! БЕЗ КЛЮЧА НЕ РАБОТАЕТ----");
 
                 WriteLine(e);
             }
 
-
+            ReadKey();
         }
     }
 }

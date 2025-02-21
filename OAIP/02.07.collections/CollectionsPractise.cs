@@ -32,6 +32,9 @@ namespace OAIP
             {
                 WriteLine(number);
             }
+
+            Console.ReadKey();
+
         }
     }
 }

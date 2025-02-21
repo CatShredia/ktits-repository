@@ -23,7 +23,7 @@ namespace OAIP
             WriteLine("---28.01.25---");
             WriteLine("---Практика pdf---");
 
-            path = Directory.GetCurrentDirectory() + "\\28.01.pdf";
+            path = Directory.GetCurrentDirectory() + "\\01.28.pdf";
 
             WriteLine(path);
 
@@ -48,7 +48,7 @@ namespace OAIP
                     Menu();
                     break;
                 case 100:
-                    DeleteFilesInDirectory("D:\\directory-git\\ktits-repository\\OAIP\\28.01.pdf\\.pdfs");
+                    DeleteFilesInDirectory("D:\\directory-git\\ktits-repository\\OAIP\\01.28.pdf\\.pdfs");
                     Menu();
                     break;
                 default:

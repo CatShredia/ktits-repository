@@ -48,7 +48,7 @@ namespace OAIP
                     Menu();
                     break;
                 case 100:
-                    DeleteFilesInDirectory("D:\\directory-git\\ktits-repository\\OAIP\\24.01.files\\.txts");
+                    DeleteFilesInDirectory("D:\\directory-git\\ktits-repository\\OAIP\\01.24.files\\.txts");
                     Menu();
                     break;
                 default:
@@ -59,7 +59,7 @@ namespace OAIP
 
         private static void Task1()
         {
-            path = Directory.GetCurrentDirectory() + "\\24.01.files";
+            path = Directory.GetCurrentDirectory() + "\\01.24.files";
 
             WriteLine("-1 задание-");
 
@@ -84,10 +84,9 @@ namespace OAIP
             path = "";
         }
 
-        // TODO: не правильно работает поиск
         private static void Task2()
         {
-            path = Directory.GetCurrentDirectory() + "\\24.01.files";
+            path = Directory.GetCurrentDirectory() + "\\01.24.files ";
 
             WriteLine("-2 задание-");
 
@@ -115,7 +114,7 @@ namespace OAIP
         }
         private static void Task3()
         {
-            path = Directory.GetCurrentDirectory() + "\\24.01.files";
+            path = Directory.GetCurrentDirectory() + "\\01.24.files";
 
             WriteLine("-2 задание-");
 
