@@ -17,9 +17,9 @@ namespace OAIP
     internal class OAIP_Main
     {
         // Переменная для определения, является ли версия разработческой
-        public static bool isDevoperEdition = false;
+        public static bool isDevoperEdition = true;
+        public const string DEVTASK = "18.02";
         public static bool isRun = false;
-        public const string DEVTASK = "Финансы";
 
         // Список проектов
         public static List<string> projects;
@@ -53,10 +53,7 @@ namespace OAIP
             isRun = true;
             while (isRun)
             {
-                if (!isDevoperEdition)
-                {
-                    Clear();
-                }
+                Clear();
                 // Вывод приветственного сообщения
                 PrintHelloDev();
                 WriteLine("Какая практика вас интересует? (за какое число: 01.01)");
@@ -93,8 +90,8 @@ namespace OAIP
 
         public static void Menu(string date)
         {
-            // Выбор практики по введенной дате
             Clear();
+            // Выбор практики по введенной дате
             switch (date)
             {
                 case "0":

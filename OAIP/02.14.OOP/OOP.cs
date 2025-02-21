@@ -9,7 +9,6 @@ namespace OAIP
     {
         public OOP()
         {
-            Clear();
             while (true)
             {
                 WriteLine("Выберите задание (1-10) или 0 для выхода:");
