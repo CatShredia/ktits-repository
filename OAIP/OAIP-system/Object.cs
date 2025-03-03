@@ -5,7 +5,6 @@ namespace OAIP
 
     class Object
     {
-
         public static ConsoleColor defaultForeground = ConsoleColor.Gray;
         public static ConsoleColor defaultBackground = ConsoleColor.Black;
         

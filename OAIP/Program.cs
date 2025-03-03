@@ -18,7 +18,7 @@ namespace OAIP
     {
         // Переменная для определения, является ли версия разработческой
         public static bool isDevoperEdition = true;
-        public const string DEVTASK = "18.02";
+        public const string DEVTASK = "28.02";
         public static bool isRun = false;
 
         // Список проектов
@@ -45,6 +45,7 @@ namespace OAIP
                 "\"14.02 OOP\"",
                 "\"18.02 fynans\"",
                 "\"Шифр Цезаря\"",
+                "\"28.02 Морской бой\"",
             };
         }
 
@@ -144,6 +145,9 @@ namespace OAIP
                     break;
                 case "18.02":
                     Fynans fynanc = new Fynans(isDevoperEdition);
+                    break;
+                case "28.02":
+                    SeaFight seaFight = new SeaFight(isDevoperEdition);
                     break;
                 default:
                     // Сообщение об ошибке, если практика не найдена
