@@ -18,6 +18,7 @@ body {
     font-style: normal;
 }
 
+
 .title {
     /* font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; */
     font-size: 32px;
@@ -45,6 +46,12 @@ body {
     background: url(../rec/icon.png);
     background-position: center;
     background-size: 100%;
+
+    transition: 0.1s;
+}
+
+.icon_main:hover {
+    transform: scale(1.1);
 }
 
 /* * icon block */
@@ -134,6 +141,17 @@ body {
     background-color: white;
 
     padding: 10px 20px;
+
+    transition: 0.5s;
+}
+
+.card__button:hover {
+    background-color: blue;
+    color: white;
+}
+
+.card__button:focus {
+    background-color: black;
 }
 
 /* * feedback block */
@@ -187,6 +205,8 @@ body {
 
     border-radius: 0px 0px 10px 10px;
     padding: 10px 20px;
+
+    display: none;
 }
 
 /* * footer block */
