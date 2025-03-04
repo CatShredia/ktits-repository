@@ -68,6 +68,7 @@ body {
     font-size: 40px;
 }
 
+
 /* * about block */
 .about {
     display: flex;
@@ -232,4 +233,60 @@ body {
     font-size: 20px;
 
     font-weight: 600;
+}
+
+/* navmenu */
+.navmenu {
+    display: grid;
+    grid-template-columns: 1fr 0.1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+    position: absolute;
+    box-sizing: border-box;
+
+    align-items: center;
+    justify-content: center;
+
+    top: 0;
+
+    background-color: #E5DFDF;
+
+    width: 100%;
+    height: 100%;
+}
+
+.navmenu i {
+    font-size: 40px;
+}
+
+.navmenu__group {
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+
+    padding: 10px 0px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.navmenu__group-title {
+    font-size: 32px;
+
+    font-weight: 600;
+}
+
+.navmenu__elems {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.navmenu__elem {
+    color: black;
+    transition: 0.5s;
+}
+
+.navmenu__elem:hover {
+    color: blue;
 }

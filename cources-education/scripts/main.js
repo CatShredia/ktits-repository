@@ -1,19 +1,5 @@
-console.log("Hello World!");
+console.log("hi");
 
-// ? menu
-function toggleDropdown() {
-  document.getElementById("myDropdown").classList.toggle("show");
+function menuOpen(elem) {
+  console.log(elem);
 }
-
-// Закрыть выпадающее меню, если пользователь щелкает за его пределами
-window.onclick = function (event) {
-  if (!event.target.matches(".dropdown-button")) {
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    for (var i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains("show")) {
-        openDropdown.classList.remove("show");
-      }
-    }
-  }
-};

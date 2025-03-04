@@ -22,7 +22,8 @@
     <h1 class="header__title title">Образовашка</h1>
     <div class="header__icons icons">
       <div class="icon"><a href="#" class="icon__link"><i class="fa-solid fa-user"></i></a></div>
-      <div class="icon"><button type="button" class="icon__link"><i class="fa-solid fa-bars"></i></button></div>
+      <div class="icon"><button type="button" class="icon__link" onclick="menuOpen(this)"><i
+            class="fa-solid fa-bars"></i></button></div>
     </div>
   </header>
   <main class="main">
@@ -159,6 +160,20 @@
     </div>
   </footer>
   <p class="copyright">©2025</p>
+
+  <nav class="navmenu container">
+    <div class="navmenu__group">
+      <p class="navmenu__group-title">Курсы</p>
+      <div class="navmenu__elems">
+        <a href="#" class="navmenu__elem">html/css</a>
+        <a href="#" class="navmenu__elem">javascript</a>
+        <a href="#" class="navmenu__elem">java</a>
+      </div>
+    </div>
+    <button type="button" class="navmenu__close"><i class="fa-solid fa-door-closed"></i></button>
+  </nav>
+
+  <script src="scripts/main.js"></script>
 </body>
 
 </html>
