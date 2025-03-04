@@ -1,232 +1,215 @@
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Образовашка</title>
 
-    <link rel="stylesheet" href="styles/fonts.css" />
-    <link rel="stylesheet" href="styles/style.css" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Образовашка</title>
 
-    <link rel="shortcut icon" href="rec/icon.png" type="image/png" />
-  </head>
-  <body class="body">
-    <header class="header">
-      <div class="header__inner">
-        <div class="container header-1">
-          <div class="header-el">
-            <img src="rec/icon.png" alt="Иконка" srcset="" />
-            <h1 class="header-title">Образовашка</h1>
-          </div>
-          <div class="header-el">
-            <h6 class="header-account">Аккаунт</h6>
-            <div class="header-menu">
-              <div class="dropdown">
-                <button onclick="toggleDropdown()" class="dropdown-button">
-                  Меню
-                </button>
-                <div id="myDropdown" class="dropdown-content">
-                  <a href="#about">О нас</a>
-                  <a href="#feedback">Отзывы</a>
-                  <a href="#">Каталог</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-    <main class="main">
-      <div class="main__inner">
-        <div class="container">
-          <h2 class="title" id="about">О нас</h2>
-          <div class="main-about">
-            <p class="about">
-              Далеко-далеко за, словесными горами в стране гласных и согласных
-              живут рыбные тексты. Даже, злых? Океана дороге своего текстов
-              парадигматическая великий, однажды толку то которой встретил!
-              Переписали что текстами, рот свое переписывается свою?
-            </p>
-            <p class="about">
-              Далеко-далеко за словесными горами в стране гласных и согласных
-              живут, рыбные тексты. Единственное наш заглавных приставка журчит
-              ipsum вопрос образ одна безорфографичный семь всеми даль алфавит
-              скатился, лучше коварных агентство! Океана, предупреждал.
-            </p>
-            <p class="about text-center">OOO "Обман"</p>
-          </div>
-        </div>
-        <div class="container">
-          <h2 class="title" id="popular">Популярные продукты</h2>
-          <div class="main-popular-product">
-            <button
-              type="button"
-              class="products-button products-button-left"
-              id="product-button"
-            ></button>
-            <div class="products">
-              <div class="product">
-                <h4 class="product-title">Название Продукта</h4>
-                <img src="rec/icon.png" alt="Товар" srcset="" />
-                <p class="product-text">
-                  Далеко-далеко за словесными горами в стране гласных и
-                  согласных живут, рыбные тексты.
-                </p>
-                <h6 class="product-cost">1000 руб</h6>
-                <button type="submit" class="product-button">Купить</button>
-              </div>
-              <div class="product">
-                <h4 class="product-title">Название Продукта</h4>
-                <img src="rec/icon.png" alt="Товар" srcset="" />
-                <p class="product-text">
-                  Далеко-далеко за словесными горами в стране гласных и
-                  согласных живут, рыбные тексты.
-                </p>
-                <h6 class="product-cost">1000 руб</h6>
-                <button type="submit" class="product-button">Купить</button>
-              </div>
-              <div class="product">
-                <h4 class="product-title">Название Продукта</h4>
-                <img src="rec/icon.png" alt="Товар" srcset="" />
-                <p class="product-text">
-                  Далеко-далеко за словесными горами в стране гласных и
-                  согласных живут, рыбные тексты.
-                </p>
-                <h6 class="product-cost">1000 руб</h6>
-                <button type="submit" class="product-button">Купить</button>
-              </div>
-            </div>
-            <button
-              type="button"
-              class="products-button"
-              id="product-button"
-            ></button>
-          </div>
-        </div>
-        <div class="container">
-          <h2 class="title" id="feedback">Отзывы</h2>
-          <div class="main-feedbacks">
-            <div class="main-feedback">
-              <div class="feedbacks">
-                <div class="feedback">
-                  <div class="feedback-title">
-                    <div class="feedback-icon">
-                      <p class="feedback-info">Автор</p>
-                      <img src="rec/icon.png" alt="Автор" srcset="" />
-                      <p class="feedback-date">11-02-2025</p>
-                    </div>
-                    <button
-                      type="button"
-                      class="products-button products-button-bottom feedback-open"
-                      id="feedback-open"
-                    ></button>
-                  </div>
-                  <p class="feedback-text">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Provident recusandae corrupti debitis tempore nostrum ad,
-                    quos magni? Dolorum aut, repellat explicabo animi sunt,
-                    expedita beatae, tenetur nemo cupiditate quos quasi.
-                  </p>
-                  <p class="feedback-text">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Provident recusandae corrupti debitis tempore nostrum ad,
-                    quos magni? Dolorum aut, repellat explicabo animi sunt,
-                    expedita beatae, tenetur nemo cupiditate quos quasi.
-                  </p>
-                  <div class="feedback-count">
-                    <p class="count-green">100</p>
-                    <p class="count">/</p>
-                    <p class="count-red">10</p>
-                  </div>
-                </div>
-                <div class="feedback">
-                  <div class="feedback-title">
-                    <div class="feedback-icon">
-                      <p class="feedback-info">Автор</p>
-                      <img src="rec/icon.png" alt="Автор" srcset="" />
-                      <p class="feedback-date">11-02-2025</p>
-                    </div>
-                    <button
-                      type="button"
-                      class="products-button products-button-bottom feedback-open"
-                      id="feedback-open"
-                    ></button>
-                  </div>
-                  <p class="feedback-text">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Provident recusandae corrupti debitis tempore nostrum ad,
-                    quos magni? Dolorum aut, repellat explicabo animi sunt,
-                    expedita beatae, tenetur nemo cupiditate quos quasi.
-                  </p>
-                  <p class="feedback-text">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Provident recusandae corrupti debitis tempore nostrum ad,
-                    quos magni? Dolorum aut, repellat explicabo animi sunt,
-                    expedita beatae, tenetur nemo cupiditate quos quasi.
-                  </p>
-                  <div class="feedback-count">
-                    <p class="count-green">100</p>
-                    <p class="count">/</p>
-                    <p class="count-red">10</p>
-                  </div>
-                </div>
-                <div class="feedback">
-                  <div class="feedback-title">
-                    <div class="feedback-icon">
-                      <p class="feedback-info">Автор</p>
-                      <img src="rec/icon.png" alt="Автор" srcset="" />
-                      <p class="feedback-date">11-02-2025</p>
-                    </div>
-                    <button
-                      type="button"
-                      class="products-button products-button-bottom feedback-open"
-                      id="feedback-open"
-                    ></button>
-                  </div>
-                  <p class="feedback-text">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Provident recusandae corrupti debitis tempore nostrum ad,
-                    quos magni? Dolorum aut, repellat explicabo animi sunt,
-                    expedita beatae, tenetur nemo cupiditate quos quasi.
-                  </p>
-                  <p class="feedback-text">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Provident recusandae corrupti debitis tempore nostrum ad,
-                    quos magni? Dolorum aut, repellat explicabo animi sunt,
-                    expedita beatae, tenetur nemo cupiditate quos quasi.
-                  </p>
-                  <div class="feedback-count">
-                    <p class="count-green">100</p>
-                    <p class="count">/</p>
-                    <p class="count-red">10</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-    <footer class="footer">
-      <div class="footer__inner">
-        <div class="container footer-1">
+  <link rel="stylesheet" href="styles/fonts.css" />
+  <link rel="stylesheet" href="styles/style.css" />
+
+  <link rel="shortcut icon" href="rec/icon.png" type="image/png" />
+
+  <!-- font awesome kit -->
+  <script src="https://kit.fontawesome.com/e68ac37ccf.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="body">
+  <header class="header">
+    <div class="header__inner">
+      <div class="container header-1">
+        <div class="header-el">
           <img src="rec/icon.png" alt="Иконка" srcset="" />
-          <div class="footer-cc">
-            <a href="#" class="footer-cc-a"
-              ><img src="rec/icon.png" alt="" class="footer-cc-img"
-            /></a>
-            <a href="#" class="footer-cc-a"
-              ><img src="rec/icon.png" alt="" class="footer-cc-img"
-            /></a>
-            <a href="#" class="footer-cc-a"
-              ><img src="rec/icon.png" alt="" class="footer-cc-img"
-            /></a>
+          <h1 class="header-title">Образовашка</h1>
+        </div>
+        <div class="header-el">
+          <h6 class="header-account">Аккаунт</h6>
+          <div class="header-menu">
+            <div class="dropdown">
+              <button onclick="toggleDropdown()" class="dropdown-button">
+                <i class="fa-solid fa-bars"></i>
+              </button>
+              <div id="myDropdown" class="dropdown-content">
+                <a href="#about">О нас</a>
+                <a href="#feedback">Отзывы</a>
+                <a href="#">Каталог</a>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="copyright text-center">©2025</div>
       </div>
-    </footer>
+    </div>
+  </header>
+  <main class="main">
+    <div class="main__inner">
+      <div class="container">
+        <h2 class="title" id="about">О нас</h2>
+        <div class="main-about">
+          <p class="about">
+            Далеко-далеко за, словесными горами в стране гласных и согласных
+            живут рыбные тексты. Даже, злых? Океана дороге своего текстов
+            парадигматическая великий, однажды толку то которой встретил!
+            Переписали что текстами, рот свое переписывается свою?
+          </p>
+          <p class="about">
+            Далеко-далеко за словесными горами в стране гласных и согласных
+            живут, рыбные тексты. Единственное наш заглавных приставка журчит
+            ipsum вопрос образ одна безорфографичный семь всеми даль алфавит
+            скатился, лучше коварных агентство! Океана, предупреждал.
+          </p>
+          <p class="about text-center">OOO "Обман"</p>
+        </div>
+      </div>
+      <div class="container">
+        <h2 class="title" id="popular">Популярные продукты</h2>
+        <div class="main-popular-product">
+          <button type="button" class="products-button products-button-left" id="product-button"></button>
+          <div class="products">
+            <div class="product">
+              <h4 class="product-title">Название Продукта</h4>
+              <img src="rec/icon.png" alt="Товар" srcset="" />
+              <p class="product-text">
+                Далеко-далеко за словесными горами в стране гласных и
+                согласных живут, рыбные тексты.
+              </p>
+              <h6 class="product-cost">1000 руб</h6>
+              <button type="submit" class="product-button">Купить</button>
+            </div>
+            <div class="product">
+              <h4 class="product-title">Название Продукта</h4>
+              <img src="rec/icon.png" alt="Товар" srcset="" />
+              <p class="product-text">
+                Далеко-далеко за словесными горами в стране гласных и
+                согласных живут, рыбные тексты.
+              </p>
+              <h6 class="product-cost">1000 руб</h6>
+              <button type="submit" class="product-button">Купить</button>
+            </div>
+            <div class="product">
+              <h4 class="product-title">Название Продукта</h4>
+              <img src="rec/icon.png" alt="Товар" srcset="" />
+              <p class="product-text">
+                Далеко-далеко за словесными горами в стране гласных и
+                согласных живут, рыбные тексты.
+              </p>
+              <h6 class="product-cost">1000 руб</h6>
+              <button type="submit" class="product-button">Купить</button>
+            </div>
+          </div>
+          <button type="button" class="products-button" id="product-button"></button>
+        </div>
+      </div>
+      <div class="container">
+        <h2 class="title" id="feedback">Отзывы</h2>
+        <div class="main-feedbacks">
+          <div class="main-feedback">
+            <div class="feedbacks">
+              <div class="feedback">
+                <div class="feedback-title">
+                  <div class="feedback-icon">
+                    <p class="feedback-info">Автор</p>
+                    <img src="rec/icon.png" alt="Автор" srcset="" />
+                    <p class="feedback-date">11-02-2025</p>
+                  </div>
+                  <button type="button" class="products-button products-button-bottom feedback-open"
+                    id="feedback-open"></button>
+                </div>
+                <p class="feedback-text">
+                  Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                  Provident recusandae corrupti debitis tempore nostrum ad,
+                  quos magni? Dolorum aut, repellat explicabo animi sunt,
+                  expedita beatae, tenetur nemo cupiditate quos quasi.
+                </p>
+                <p class="feedback-text">
+                  Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                  Provident recusandae corrupti debitis tempore nostrum ad,
+                  quos magni? Dolorum aut, repellat explicabo animi sunt,
+                  expedita beatae, tenetur nemo cupiditate quos quasi.
+                </p>
+                <div class="feedback-count">
+                  <p class="count-green">100</p>
+                  <p class="count">/</p>
+                  <p class="count-red">10</p>
+                </div>
+              </div>
+              <div class="feedback">
+                <div class="feedback-title">
+                  <div class="feedback-icon">
+                    <p class="feedback-info">Автор</p>
+                    <img src="rec/icon.png" alt="Автор" srcset="" />
+                    <p class="feedback-date">11-02-2025</p>
+                  </div>
+                  <button type="button" class="products-button products-button-bottom feedback-open"
+                    id="feedback-open"></button>
+                </div>
+                <p class="feedback-text">
+                  Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                  Provident recusandae corrupti debitis tempore nostrum ad,
+                  quos magni? Dolorum aut, repellat explicabo animi sunt,
+                  expedita beatae, tenetur nemo cupiditate quos quasi.
+                </p>
+                <p class="feedback-text">
+                  Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                  Provident recusandae corrupti debitis tempore nostrum ad,
+                  quos magni? Dolorum aut, repellat explicabo animi sunt,
+                  expedita beatae, tenetur nemo cupiditate quos quasi.
+                </p>
+                <div class="feedback-count">
+                  <p class="count-green">100</p>
+                  <p class="count">/</p>
+                  <p class="count-red">10</p>
+                </div>
+              </div>
+              <div class="feedback">
+                <div class="feedback-title">
+                  <div class="feedback-icon">
+                    <p class="feedback-info">Автор</p>
+                    <img src="rec/icon.png" alt="Автор" srcset="" />
+                    <p class="feedback-date">11-02-2025</p>
+                  </div>
+                  <button type="button" class="products-button products-button-bottom feedback-open"
+                    id="feedback-open"></button>
+                </div>
+                <p class="feedback-text">
+                  Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                  Provident recusandae corrupti debitis tempore nostrum ad,
+                  quos magni? Dolorum aut, repellat explicabo animi sunt,
+                  expedita beatae, tenetur nemo cupiditate quos quasi.
+                </p>
+                <p class="feedback-text">
+                  Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                  Provident recusandae corrupti debitis tempore nostrum ad,
+                  quos magni? Dolorum aut, repellat explicabo animi sunt,
+                  expedita beatae, tenetur nemo cupiditate quos quasi.
+                </p>
+                <div class="feedback-count">
+                  <p class="count-green">100</p>
+                  <p class="count">/</p>
+                  <p class="count-red">10</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="container footer-1">
+        <img src="rec/icon.png" alt="Иконка" srcset="" />
+        <div class="footer-cc">
+          <a href="#" class="footer-cc-a"><img src="rec/icon.png" alt="" class="footer-cc-img" /></a>
+          <a href="#" class="footer-cc-a"><img src="rec/icon.png" alt="" class="footer-cc-img" /></a>
+          <a href="#" class="footer-cc-a"><img src="rec/icon.png" alt="" class="footer-cc-img" /></a>
+        </div>
+      </div>
+      <div class="copyright text-center">©2025</div>
+    </div>
+  </footer>
 
-    <script src="scripts/main.js"></script>
-  </body>
+  <script src="scripts/main.js"></script>
+</body>
+
 </html>
