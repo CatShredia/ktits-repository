@@ -237,9 +237,18 @@ body {
 
 /* navmenu */
 .navmenu {
-    display: none;
+    display: grid;
+
+    z-index: -1;
+
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+
+
     grid-template-columns: 1fr 0.1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+
     position: absolute;
     box-sizing: border-box;
 
@@ -252,6 +261,15 @@ body {
 
     width: 100%;
     height: 100%;
+
+    box-sizing: border-box;
+}
+
+.navmenu.show {
+    display: grid;
+    opacity: 1;
+    z-index: 1;
+    transform: translateY(0);
 }
 
 .navmenu__group {
