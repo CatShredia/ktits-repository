@@ -24,7 +24,7 @@ body {
     font-size: 32px;
 }
 
-.container {
+.mycontainer {
     padding: 10px 40px;
 }
 
@@ -89,6 +89,13 @@ body {
 }
 
 /* * cards */
+.slider-button {
+    font-size: 40px;
+}
+
+.slider-button-rotate {
+    transform: rotate(180deg);
+}
 
 .cards {
     display: flex;
@@ -102,7 +109,7 @@ body {
 
 .cards__content {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 0.1fr 1fr 1fr 1fr 0.1fr;
 
     width: 100%;
 

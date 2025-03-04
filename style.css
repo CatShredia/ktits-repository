@@ -6,21 +6,26 @@
 
   text-align: center;
 }
-.container {
+
+.mycontainer {
   padding: 10px 50px;
 }
+
 * {
   font-family: "Oswald", serif;
   font-optical-sizing: auto;
   font-weight: 300;
   font-style: normal;
 }
+
 .main__inner-1 {
   background-color: rgb(226, 218, 218);
 }
+
 .title {
   font-weight: 500;
 }
+
 .link {
   color: black;
 
@@ -28,27 +33,33 @@
 
   font-weight: 300;
 }
-.links-container {
+
+.links-mycontainer {
   display: flex;
   flex-direction: column;
 
   gap: 15px;
 }
+
 .links-group {
   display: flex;
   flex-direction: column;
 
   gap: 10px;
 }
+
 .links-group .link {
   font-weight: 100;
 }
+
 .links-title {
   border-bottom: 1px solid black;
 }
+
 a:hover {
   color: blue;
 }
+
 .border-top {
   border-top: 1px solid black;
 
