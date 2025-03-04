@@ -23,8 +23,11 @@ namespace OAIP
 
             // заполняем пустотой
             FillLevel();
-            // поставитть корабли
+            // выводим
+            PrintContent();
+            // поставить корабли
             FillShip();
+
         }
 
         public void FillLevel()
@@ -38,7 +41,7 @@ namespace OAIP
 
                     if (i == 1)
                     {
-                        LevelContent[i, j] = $"___";
+                        LevelContent[i, j] = $"---";
                         if (j == 0)
                         {
                             LevelContent[i, j] = $"   ";
@@ -77,7 +80,26 @@ namespace OAIP
 
         public void FillShip()
         {
+            WriteLine("Поставим корабли");
 
+            while (true)
+            {
+                WriteLine("Введите точку, где будет нос корабля (например: А1 или a1)");
+                string stringForUser = ReadLine().ToLower();
+
+                if (stringForUser.Length == 2)
+                {
+                    WriteLine(GetLetterIndexIgnoreCase(stringForUser[0]));
+                    WriteLine(int.Parse(stringForUser[1].ToString()));
+
+                    LevelContent[int.Parse(stringForUser[1].ToString()) + 1, GetLetterIndexIgnoreCase(stringForUser[0])] = "[O]";
+                }
+                else if (stringForUser.Length == 3)
+                {
+                }
+
+                PrintContent();
+            }
         }
 
         public void PrintContent()

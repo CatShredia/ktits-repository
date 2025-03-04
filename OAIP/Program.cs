@@ -54,7 +54,7 @@ namespace OAIP
             isRun = true;
             while (isRun)
             {
-                Clear();
+                // Clear();
                 // Вывод приветственного сообщения
                 PrintHelloDev();
                 WriteLine("Какая практика вас интересует? (за какое число: 01.01)");
@@ -91,7 +91,7 @@ namespace OAIP
 
         public static void Menu(string date)
         {
-            Clear();
+            // Clear();
             // Выбор практики по введенной дате
             switch (date)
             {

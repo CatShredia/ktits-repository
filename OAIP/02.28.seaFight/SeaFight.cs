@@ -5,13 +5,11 @@ namespace OAIP
     class SeaFight : Object {
         public SeaFight(bool isDevelop) {
 
-            Level enemyLevel = new Level("противника");
-            enemyLevel.PrintContent();
+            // Level enemyLevel = new Level("противника");
 
             WriteLine();
 
             Level playerLevel = new Level("игрока");
-            playerLevel.PrintContent();
             
             ReadKey();
         }
