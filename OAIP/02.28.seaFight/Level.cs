@@ -10,6 +10,14 @@ namespace OAIP
 
         private const int LevelLength = 12;
 
+        public Dictionary<string, int> TypeOfShip = new Dictionary<string, int>
+        {
+            { "4x", 1 },
+            { "3x", 2 },
+            { "2x", 3 },
+            { "1x", 4 }
+        };
+
         /*
             "[-]" - туман
             "[.]" - пусто
@@ -78,28 +86,71 @@ namespace OAIP
             LevelContent[0, 0] = "    ";
         }
 
+        public char SelectDirectionShip()
+        {
+            while (true)
+            {
+                WriteLine("Выберите направление (wasd)");
+                char charFromUser = ReadLine().ToLower()[0];
+
+                if (charFromUser == 'w' || charFromUser == 'a' || charFromUser == 's' || charFromUser == 'd')
+                {
+                    return charFromUser;
+                } else {
+                    WriteLine("введи wasd!");
+                }
+            }
+        }
+
+        public int[] SelectNose()
+        {
+            WriteLine("Введите точку, где будет нос корабля (например: А1 или a1)");
+            string stringForUser = ReadLine().ToLower();
+
+            if (stringForUser.Length == 2)
+            {
+                WriteLine(GetLetterIndexIgnoreCase(stringForUser[0]));
+                WriteLine(int.Parse(stringForUser[1].ToString()));
+
+                return [int.Parse(stringForUser[1].ToString()) + 1, GetLetterIndexIgnoreCase(stringForUser[0])];
+            }
+            else if (stringForUser.Length == 3 || stringForUser[1] + stringForUser[2] == 10)
+            {
+                return [int.Parse(stringForUser[1] + stringForUser[2].ToString()) + 1, GetLetterIndexIgnoreCase(stringForUser[0])];
+            }
+            else
+            {
+                return [0];
+            }
+        }
         public void FillShip()
         {
             WriteLine("Поставим корабли");
 
             while (true)
             {
-                WriteLine("Введите точку, где будет нос корабля (например: А1 или a1)");
-                string stringForUser = ReadLine().ToLower();
-
-                if (stringForUser.Length == 2)
+                foreach (var item in TypeOfShip)
                 {
-                    WriteLine(GetLetterIndexIgnoreCase(stringForUser[0]));
-                    WriteLine(int.Parse(stringForUser[1].ToString()));
+                    for (int deck = item.Value; deck > 0; deck--)
+                    {
+                        WriteLine($"Устанавливание {item.Key} палубный корабль");
 
-                    LevelContent[int.Parse(stringForUser[1].ToString()) + 1, GetLetterIndexIgnoreCase(stringForUser[0])] = "[O]";
-                }
-                else if (stringForUser.Length == 3)
-                {
-                }
+                        int[] noseLocation = SelectNose();
 
-                PrintContent();
+                        char shipDirection = SelectDirectionShip();
+
+                        SetShip(noseLocation, shipDirection);
+
+                        PrintContent();
+                    }
+                }
             }
+        }
+
+        public void SetShip(int[] startLocation, char Direction)
+        {
+            WriteLine("Точка: " + startLocation[0] + " " + startLocation[1]);
+            WriteLine("Направление: " + Direction);
         }
 
         public void PrintContent()
