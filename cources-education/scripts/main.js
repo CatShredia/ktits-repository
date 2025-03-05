@@ -6,7 +6,7 @@ $(document).ready(function () {
   function menuClose() {
     $menu.removeClass("show");
   }
-  $(".icon__link").on("click", function () {
+  $("#menuButton").on("click", function () {
     menuOpen();
   });
   $(".navmenu__close").on("click", function () {
@@ -21,7 +21,7 @@ $(document).ready(function () {
   function menuClose() {
     $menu.removeClass("show");
   }
-  $(".icon__link").on("click", function () {
+  $("#menuButton").on("click", function () {
     menuOpen();
   });
   $(".navmenu__close").on("click", function () {

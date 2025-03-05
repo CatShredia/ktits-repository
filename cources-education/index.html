@@ -16,6 +16,7 @@
     crossorigin="anonymous"></script>
   <!-- css -->
   <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="styles/overlay.css">
 
   <!-- fontawesome -->
   <script src="https://kit.fontawesome.com/e68ac37ccf.js" crossorigin="anonymous"></script>
@@ -27,8 +28,8 @@
     <a class="header__icon icon_main" href="#"></a>
     <h1 class="header__title title">Образовашка</h1>
     <div class="header__icons icons">
-      <div class="icon"><a href="#" class="icon__link"><i class="fa-solid fa-user"></i></a></div>
-      <div class="icon"><button type="button" class="icon__link" onclick="menuOpen(this)"><i
+      <div class="icon"><a href="#" class="icon__link" id="login-button"><i class="fa-solid fa-user"></i></a></div>
+      <div class="icon"><button type="button" class="icon__link" id="menuButton"><i
             class="fa-solid fa-bars"></i></button></div>
     </div>
   </header>
@@ -356,35 +357,38 @@
       <div class="tab-content" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab"
           tabindex="0">
-          <ul class="cards__content">
-            <li class="card">
-              <h5 class="card__title title">Товар 1</h5>
-              <img src="rec/i.webp" alt="Show" srcset="" class="card__img">
-              <p class="card__text">Далеко-далеко за словесными горами в стране гласных и согласных живут, рыбные
-                тексты.
-              </p>
-              <p class="card__cost">1000 $</p>
-              <button type="button" class="card__button">Купить</button>
-            </li>
-            <li class="card">
-              <h5 class="card__title title">Товар 1</h5>
-              <img src="rec/i.webp" alt="Show" srcset="" class="card__img">
-              <p class="card__text">Далеко-далеко за словесными горами в стране гласных и согласных живут, рыбные
-                тексты.Далеко-далеко за словесными горами в стране гласных и согласных живут, рыбные тексты.
-              </p>
-              <p class="card__cost">1000 $</p>
-              <button type="button" class="card__button">Купить</button>
-            </li>
-            <li class="card">
-              <h5 class="card__title title">Товар 1</h5>
-              <img src="rec/i.webp" alt="Show" srcset="" class="card__img">
-              <p class="card__text">Далеко-далеко за словесными горами в стране гласных и согласных живут, рыбные
-                тексты.
-              </p>
-              <p class="card__cost">1000 $</p>
-              <button type="button" class="card__button">Купить</button>
-            </li>
-          </ul>
+          <div class="cards">
+            <div class="card">
+              <img src="rec/i.webp" class="card-img-top" alt="Ошика">
+              <div class="card-body">
+                <h5 class="card-title">Товар 1</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                  card's content.</p>
+                <p class="card__cost">1000 $</p>
+                <button type="button" class="card__button">Купить</button>
+              </div>
+            </div>
+            <div class="card">
+              <img src="rec/i.webp" class="card-img-top" alt="Ошика">
+              <div class="card-body">
+                <h5 class="card-title">Товар 2</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                  card's content.</p>
+                <p class="card__cost">1000 $</p>
+                <button type="button" class="card__button">Купить</button>
+              </div>
+            </div>
+            <div class="card">
+              <img src="rec/i.webp" class="card-img-top" alt="Ошика">
+              <div class="card-body">
+                <h5 class="card-title">Товар 3</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                  card's content.</p>
+                <p class="card__cost">1000 $</p>
+                <button type="button" class="card__button">Купить</button>
+              </div>
+            </div>
+          </div>
           <nav aria-label="Page navigation example">
             <ul class="pagination">
               <li class="page-item"><a class="page-link" href="#">Предыдущий</a></li>
@@ -396,9 +400,91 @@
           </nav>
         </div>
         <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
-          2</div>
+          <div class="cards">
+            <div class="card">
+              <img src="rec/i2.webp" class="card-img-top" alt="Ошика">
+              <div class="card-body">
+                <h5 class="card-title">Услуга 1</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                  card's content.</p>
+                <p class="card__cost">1000 $</p>
+                <button type="button" class="card__button">Купить</button>
+              </div>
+            </div>
+            <div class="card">
+              <img src="rec/i2.webp" class="card-img-top" alt="Ошика">
+              <div class="card-body">
+                <h5 class="card-title">Услуга 2</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                  card's content.</p>
+                <p class="card__cost">1000 $</p>
+                <button type="button" class="card__button">Купить</button>
+              </div>
+            </div>
+            <div class="card">
+              <img src="rec/i2.webp" class="card-img-top" alt="Ошика">
+              <div class="card-body">
+                <h5 class="card-title">Услуга 3</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                  card's content.</p>
+                <p class="card__cost">1000 $</p>
+                <button type="button" class="card__button">Купить</button>
+              </div>
+            </div>
+          </div>
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li class="page-item"><a class="page-link" href="#">Предыдущий</a></li>
+              <li class="page-item"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">Следующий</a></li>
+            </ul>
+          </nav>
+        </div>
         <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">
-          3</div>
+          <div class="cards">
+            <div class="card">
+              <img src="rec/i3.webp" class="card-img-top" alt="Ошика">
+              <div class="card-body">
+                <h5 class="card-title">Предприятие 1</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                  card's content.</p>
+                <p class="card__cost">1000 $</p>
+                <button type="button" class="card__button">Купить</button>
+              </div>
+            </div>
+            <div class="card">
+              <img src="rec/i3.webp" class="card-img-top" alt="Ошика">
+              <div class="card-body">
+                <h5 class="card-title">Предприятие 2</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                  card's content.</p>
+                <p class="card__cost">1000 $</p>
+                <button type="button" class="card__button">Купить</button>
+              </div>
+            </div>
+            <div class="card">
+              <img src="rec/i3.webp" class="card-img-top" alt="Ошика">
+              <div class="card-body">
+                <h5 class="card-title">Предприятие 3</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                  card's content.</p>
+                <p class="card__cost">1000 $</p>
+                <button type="button" class="card__button">Купить</button>
+              </div>
+            </div>
+          </div>
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li class="page-item"><a class="page-link" href="#">Предыдущий</a></li>
+              <li class="page-item"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">Следующий</a></li>
+            </ul>
+          </nav>
+        </div>
         <div class="tab-pane fade" id="pills-disabled" role="tabpanel" aria-labelledby="pills-disabled-tab"
           tabindex="0">4</div>
       </div>
@@ -431,8 +517,7 @@
       </div>
     </div>
     <div class="navmenu__button">
-      <button type="button" class="navmenu__close icon__link" onclick="menuClose(this)"><i
-          class="fa-solid fa-door-closed"></i></button>
+      <button type="button" class="navmenu__close icon__link"><i class="fa-solid fa-door-closed"></i></button>
     </div>
     <div class="navmenu__group">
       <p class="navmenu__group-title">Курсы</p>
@@ -461,9 +546,55 @@
       </div>
     </div>
   </nav>
+
+  <div id="overlay">
+    <div id="popup">
+      <i class="fa-solid fa-xmark" id="close-button"></i>
+      <h2>Специальное предложение!</h2>
+      <p>Получите скидку 20% на все наши товары!</p>
+      <a href="#" class="button">Узнать больше</a>
+    </div>
+  </div>
+
+  <div class="login-modal" id="login-modal">
+    <div class="login-modal-content">
+      <span class="close-button">&times;</span>
+      <div class="login container">
+        <h2>Вход</h2>
+        <form action="#" method="POST">
+          <div class="form-group">
+            <label for="username">Имя пользователя:</label>
+            <input type="text" id="username" name="username" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <input type="submit" value="Войти">
+          </div>
+          <div class="form-group">
+            <a href="#">Забыли пароль?</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
   <!-- jquery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- script before -->
+  <script src="scripts/before.js"></script>
+  <!-- script menu -->
   <script src="scripts/main.js"></script>
+  <!-- script overlay -->
+  <!-- <script src="scripts/overlay.js"></script> -->
+
+  <script src="scripts/login.js"></script>
 </body>
 
 </html>
