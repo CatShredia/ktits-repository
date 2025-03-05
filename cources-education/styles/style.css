@@ -308,3 +308,17 @@ body {
     align-items: start;
     justify-content: end;
 }
+
+@media (max-width:600px) {
+    .card {
+        display: none;
+    }
+
+    #mobile-card {
+        display: grid;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+}
