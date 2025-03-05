@@ -27,7 +27,7 @@ $(document).ready(function () {
   $(".navmenu__close").on("click", function () {
     menuClose();
   });
-  // Обработчик для кнопки отзыва
+  // Обработчик для кнопки отзываП
   $(".feedback__button").on("click", function () {
     $(this).closest(".feedback").find(".feedback-content").slideToggle(300); // Плавное открытие/закрытие контента отзыва
   });
