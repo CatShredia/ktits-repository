@@ -18,6 +18,18 @@ body {
     font-style: normal;
 }
 
+body::before {
+    content: "Dependences: bootstrap jquery fontawesome";
+
+    background-color: red;
+
+
+    padding: 10px;
+
+    display: block;
+
+}
+
 
 .title {
     /* font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; */
@@ -89,6 +101,13 @@ body {
 }
 
 /* * cards */
+.cards__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+
+    gap: 15px;
+}
+
 .slider-button {
     font-size: 40px;
 }
@@ -126,6 +145,20 @@ body {
 .card__button:hover {
     background-color: blue;
     color: white;
+}
+
+@media (max-width:600px) {
+    .card {
+        display: none;
+    }
+
+    #mobile-card {
+        display: grid;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
 }
 
 /*
@@ -307,18 +340,4 @@ body {
 
     align-items: start;
     justify-content: end;
-}
-
-@media (max-width:600px) {
-    .card {
-        display: none;
-    }
-
-    #mobile-card {
-        display: grid;
-    }
-
-    .cards {
-        grid-template-columns: 1fr;
-    }
 }
