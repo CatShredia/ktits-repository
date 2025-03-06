@@ -68,7 +68,7 @@ namespace OAIP
 
             // заполнение букв
             char numChar = 'A';
-            for (int i = 1; i < LevelLength; i++)
+            for (int i = 1; i < LevelLength - 1; i++)
             {
                 LevelContent[0, i] = " " + numChar.ToString() + " ";
 
@@ -91,7 +91,22 @@ namespace OAIP
                 numInt++;
             }
 
+            // заполнение последних
+            for (int i = 0; i < LevelLength; i++)
+            {
+                LevelContent[LevelLength - 1, i] = "---";
+            }
+            for (int i = 0; i < LevelLength; i++)
+            {
+                if (i != LevelLength - 1 && i != 0 && i != 1)
+                {
+                    LevelContent[i, LevelLength - 1] = " | ";
+                }
+            }
+
             LevelContent[0, 0] = "    ";
+            LevelContent[0, LevelLength - 1] = "    ";
+            LevelContent[LevelLength - 1, 0] = "  --";
         }
 
         // берем от пользовтеля направление корабля
