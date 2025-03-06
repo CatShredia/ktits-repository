@@ -9,7 +9,9 @@ namespace OAIP
 
             WriteLine();
 
-            Level playerLevel = new Level("игрока");
+            User user = new User();
+
+            Level playerLevel = new Level("игрока", user);
             
             ReadKey();
         }

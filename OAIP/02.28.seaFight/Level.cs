@@ -10,23 +10,9 @@ namespace OAIP
 
         private const int LevelLength = 13;
 
-        public Dictionary<string, int> TypeOfShip = new Dictionary<string, int>
-        {
-            { "4x", 4 },
-            { "3x", 3 },
-            { "2x", 2 },
-            { "1x", 1 }
-        };
-
-        public Dictionary<string, int> CountOfShip = new Dictionary<string, int>
-        {
-            { "4x", 1 },
-            { "3x", 2 },
-            { "2x", 3 },
-            { "1x", 4 }
-        };
-
         private bool isShipError = false;
+
+        private Player Player;
 
         /*
             "[-]" - туман
@@ -34,10 +20,12 @@ namespace OAIP
             "[O]" - корабль
         */
 
-        public Level(string name)
+        public Level(string name, Player player)
         {
             LevelName = name;
-            LevelContent = new string[LevelLength , LevelLength];
+            LevelContent = new string[LevelLength, LevelLength];
+
+            Player = player;
 
             FillLevel();
             PrintContent();
@@ -156,18 +144,28 @@ namespace OAIP
         {
             WriteLine("Поставим корабли");
 
+            Dictionary<int, int> countGenerateOfShip = new Dictionary<int, int>(Player.CountOfShip);
+
             while (true)
             {
                 // перебираем корабли
-                foreach (var item in TypeOfShip)
+                for (int i = countGenerateOfShip.Count; i != 0; i--)
                 {
-                    WriteLine($"Устанавливание {item.Key} палубный корабль");
-                    int[] noseLocation = SelectNose();
-                    char shipDirection = SelectDirectionShip();
+                    while (countGenerateOfShip[i] != 0)
+                    {
+                        WriteLine($"Установка {i}x палубный корабль");
+                        int[] noseLocation = SelectNose();
+                        char shipDirection = SelectDirectionShip();
 
-                    SetShip(noseLocation, shipDirection, item.Value);
+                        if (SetShip(noseLocation, shipDirection, i))
+                        {
+                            PrintWithColor("Корабль установлен!", ConsoleColor.Black, ConsoleColor.Green);
 
-                    PrintContent();
+                            countGenerateOfShip[i] -= 1;
+                        }
+
+                        PrintContent();
+                    }
                 }
             }
         }
@@ -235,7 +233,8 @@ namespace OAIP
                         PrintWithColor("Ошибка", ConsoleColor.Black, ConsoleColor.Red);
                         break;
                 }
-                if(isShipError) {
+                if (isShipError)
+                {
                     break;
                 }
             }
@@ -291,7 +290,9 @@ namespace OAIP
         {
             ReadKey();
             Clear();
-            WriteLine("Карта " + LevelName);
+
+            PrintWithColor($"Карта {LevelName}", ConsoleColor.Black, ConsoleColor.DarkBlue);
+            WriteLine();
 
             ConsoleColor[] choisedColor = new ConsoleColor[2];
 
