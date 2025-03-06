@@ -96,8 +96,6 @@ namespace OAIP
         // заполняем корабли
         public void FillShip()
         {
-            WriteLine("Поставим корабли");
-
             Dictionary<int, int> countGenerateOfShip = new Dictionary<int, int>(Player.CountOfShip);
 
             // перебираем корабли
@@ -111,16 +109,9 @@ namespace OAIP
                     char shipDirection;
                     if (Player.Name.Equals("игрок"))
                     {
-                        if (true)
-                        {
-                            noseLocation = Player.SelectNoseForRandom();
-                            shipDirection = Player.SelectDirectionShipForRandom();
-                        }
-                        else
-                        {
-                            noseLocation = Player.SelectNose();
-                            shipDirection = Player.SelectDirectionShip();
-                        }
+                        noseLocation = Player.SelectNoseForRandom();
+                        shipDirection = Player.SelectDirectionShipForRandom();
+
                     }
                     else if (Player.Name.Equals("бот"))
                     {
@@ -140,7 +131,7 @@ namespace OAIP
                         countGenerateOfShip[i] -= 1;
                     }
 
-                    PrintContent();
+                    // PrintContent();
                 }
             }
         }
@@ -264,8 +255,6 @@ namespace OAIP
         // печатаем левел
         public void PrintContent()
         {
-            Clear();
-
             PrintWithColor($"Карта {Player.Name}a", ConsoleColor.Black, ConsoleColor.DarkBlue);
             WriteLine();
 

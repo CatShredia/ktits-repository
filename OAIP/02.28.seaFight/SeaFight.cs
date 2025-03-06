@@ -11,6 +11,11 @@ namespace OAIP
 
             Bot bot = new Bot("бот");
             Level botLevel = new Level(bot);
+
+            Clear();
+            playerLevel.PrintContent();
+            botLevel.PrintContent();
+            ReadKey();
         }
     }
 }
