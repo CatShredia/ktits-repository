@@ -4,15 +4,13 @@ namespace OAIP
 
     class SeaFight : Object
     {
-        public SeaFight(bool isDevelop)
+        public SeaFight()
         {
-            WriteLine(isDevelop);
-
             User user = new User("игрок");
-            Level playerLevel = new Level(isDevelop, user);
+            Level playerLevel = new Level(user);
 
             Bot bot = new Bot("бот");
-            Level botLevel = new Level(isDevelop, bot);
+            Level botLevel = new Level(bot);
         }
     }
 }

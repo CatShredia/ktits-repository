@@ -12,15 +12,13 @@ namespace OAIP
 
         private Player Player;
 
-        public bool isDevEdition;
-
         /*
             "[-]" - туман
             "[.]" - пусто
             "[O]" - корабль
         */
 
-        public Level(bool isDevEditionI, Player player)
+        public Level(Player player)
         {
             LevelContent = new string[LevelLength, LevelLength];
 
@@ -29,8 +27,6 @@ namespace OAIP
             FillLevel();
             PrintContent();
             FillShip();
-
-            isDevEdition = isDevEditionI;
         }
 
         // заполняем левел первоначальными значениями
@@ -115,8 +111,7 @@ namespace OAIP
                     char shipDirection;
                     if (Player.Name.Equals("игрок"))
                     {
-                        WriteLine(isDevEdition);
-                        if (isDevEdition)
+                        if (true)
                         {
                             noseLocation = Player.SelectNoseForRandom();
                             shipDirection = Player.SelectDirectionShipForRandom();
@@ -269,7 +264,7 @@ namespace OAIP
         // печатаем левел
         public void PrintContent()
         {
-            // Clear();
+            Clear();
 
             PrintWithColor($"Карта {Player.Name}a", ConsoleColor.Black, ConsoleColor.DarkBlue);
             WriteLine();

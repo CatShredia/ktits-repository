@@ -147,7 +147,7 @@ namespace OAIP
                     Fynans fynanc = new Fynans(isDevoperEdition);
                     break;
                 case "28.02":
-                    SeaFight seaFight = new SeaFight(isDevoperEdition);
+                    SeaFight seaFight = new SeaFight();
                     break;
                 default:
                     // Сообщение об ошибке, если практика не найдена
