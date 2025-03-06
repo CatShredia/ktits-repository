@@ -26,6 +26,8 @@ namespace OAIP
             { "1x", 4 }
         };
 
+        private bool isShipError = false;
+
         /*
             "[-]" - туман
             "[.]" - пусто
@@ -175,52 +177,92 @@ namespace OAIP
                 {
                     case 'w':
                         point = [startLocation[0] - i, startLocation[1]];
-                        NewLevelContent[point[0], point[1]] = "[O]";
+                        if (CheckNeighboards([point[0], point[1]]))
+                        {
+                            NewLevelContent[point[0], point[1]] = "[O]";
+                        }
+                        else
+                        {
+                            isShipError = true;
+                        }
                         break;
                     case 's':
                         point = [startLocation[0] + i, startLocation[1]];
-                        NewLevelContent[point[0], point[1]] = "[O]";
+                        if (CheckNeighboards([point[0], point[1]]))
+                        {
+                            NewLevelContent[point[0], point[1]] = "[O]";
+                        }
+                        else
+                        {
+                            isShipError = true;
+                        }
                         break;
                     case 'a':
                         point = [startLocation[0], startLocation[1] - i];
-                        NewLevelContent[point[0], point[1]] = "[O]";
+                        if (CheckNeighboards([point[0], point[1]]))
+                        {
+                            NewLevelContent[point[0], point[1]] = "[O]";
+                        }
+                        else
+                        {
+                            isShipError = true;
+                        }
                         break;
                     case 'd':
                         point = [startLocation[0], startLocation[1] + i];
-                        NewLevelContent[point[0], point[1]] = "[O]";
+                        if (CheckNeighboards([point[0], point[1]]))
+                        {
+                            NewLevelContent[point[0], point[1]] = "[O]";
+                        }
+                        else
+                        {
+                            isShipError = true;
+                        }
                         break;
                     default:
                         PrintWithColor("Ошибка", ConsoleColor.Black, ConsoleColor.Red);
                         break;
                 }
             }
+            if (isShipError)
+            {
+                PrintWithColor("Нельзя распологать корабли вплотную!", ConsoleColor.Black, ConsoleColor.Red);
+            }
             LevelContent = NewLevelContent;
             return true;
         }
 
-        // проверяем есть ли в соседях корабли
-        public bool CheckNeignboards(int[] location)
+        // проверка на соседей
+        public bool CheckNeighboards(int[] point)
         {
-            // верх
-            if (LevelContent[(location[0] - 1), location[1]] == "[O]")
+            // строка столбец
+            WriteLine($"{point[0]}, {point[1]}");
+
+            // вверх
+            if (LevelContent[point[0] - 1, point[1]] == "[O]")
             {
+                WriteLine("вверх");
                 return false;
             }
             // низ
-            if (LevelContent[(location[0] + 1), location[1]] == "[O]")
+            if (LevelContent[point[0] + 1, point[1]] == "[O]")
             {
+                WriteLine("низ");
                 return false;
             }
             // право
-            if (LevelContent[(location[0]), location[1] - 1] == "[O]")
+            if (LevelContent[point[0], point[1] + 1] == "[O]")
             {
+                WriteLine("право");
                 return false;
             }
             // лево
-            if (LevelContent[location[0], location[1] + 1] == "[O]")
+            if (LevelContent[point[0], point[1] - 1] == "[O]")
             {
+                WriteLine("лево");
                 return false;
             }
+
             return true;
         }
 
