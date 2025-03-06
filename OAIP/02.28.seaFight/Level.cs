@@ -169,57 +169,30 @@ namespace OAIP
             {
                 WriteLine("Палуба: " + i);
 
+                int[] point;
+
                 switch (direction)
                 {
                     case 'w':
-                        if (NewLevelContent[startLocation[0] - i, startLocation[1]] != "[.]")
-                        {
-                            PrintWithColor("Этот корабль сюда не установится!", ConsoleColor.Black, ConsoleColor.Red);
-                            return false;
-                        }
-                        else
-                        {
-                            NewLevelContent[startLocation[0] - i, startLocation[1]] = "[O]";
-                        }
-                        break;
-                    case 'a':
-                        if (NewLevelContent[startLocation[0], startLocation[1] - i] != "[.]")
-                        {
-                            PrintWithColor("Этот корабль сюда не установится!", ConsoleColor.Black, ConsoleColor.Red);
-                            return false;
-                        }
-                        else
-                        {
-                            NewLevelContent[startLocation[0], startLocation[1] - i] = "[O]";
-                        }
+                        point = [startLocation[0] - i, startLocation[1]];
+                        NewLevelContent[point[0], point[1]] = "[O]";
                         break;
                     case 's':
-                        if (NewLevelContent[startLocation[0] + i, startLocation[1]] != "[.]")
-                        {
-                            PrintWithColor("Этот корабль сюда не установится!", ConsoleColor.Black, ConsoleColor.Red);
-                            return false;
-                        }
-                        else
-                        {
-                            NewLevelContent[startLocation[0] + i, startLocation[1]] = "[O]";
-                        }
+                        point = [startLocation[0] + i, startLocation[1]];
+                        NewLevelContent[point[0], point[1]] = "[O]";
+                        break;
+                    case 'a':
+                        point = [startLocation[0], startLocation[1] - i];
+                        NewLevelContent[point[0], point[1]] = "[O]";
                         break;
                     case 'd':
-                        if (NewLevelContent[startLocation[0], startLocation[1] + i] != "[.]")
-                        {
-                            PrintWithColor("Этот корабль сюда не установится!", ConsoleColor.Black, ConsoleColor.Red);
-                            return false;
-                        }
-                        else
-                        {
-                            NewLevelContent[startLocation[0], startLocation[1] + i] = "[O]";
-                        }
+                        point = [startLocation[0], startLocation[1] + i];
+                        NewLevelContent[point[0], point[1]] = "[O]";
                         break;
                     default:
                         PrintWithColor("Ошибка", ConsoleColor.Black, ConsoleColor.Red);
                         break;
                 }
-
             }
             LevelContent = NewLevelContent;
             return true;
