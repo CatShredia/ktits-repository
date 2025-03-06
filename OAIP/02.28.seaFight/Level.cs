@@ -12,6 +12,14 @@ namespace OAIP
 
         public Dictionary<string, int> TypeOfShip = new Dictionary<string, int>
         {
+            { "4x", 4 },
+            { "3x", 3 },
+            { "2x", 2 },
+            { "1x", 1 }
+        };
+
+        public Dictionary<string, int> CountOfShip = new Dictionary<string, int>
+        {
             { "4x", 1 },
             { "3x", 2 },
             { "2x", 3 },
@@ -21,7 +29,7 @@ namespace OAIP
         /*
             "[-]" - туман
             "[.]" - пусто
-            "[O]" - корадль
+            "[O]" - корабль
         */
 
         public Level(string name)
@@ -29,15 +37,13 @@ namespace OAIP
             LevelName = name;
             LevelContent = new string[LevelLength, LevelLength];
 
-            // заполняем пустотой
             FillLevel();
-            // выводим
             PrintContent();
-            // поставить корабли
             FillShip();
 
         }
 
+        // заполняем левел первоначальными значениями
         public void FillLevel()
         {
             // заполнение изначальных
@@ -86,6 +92,7 @@ namespace OAIP
             LevelContent[0, 0] = "    ";
         }
 
+        // берем от пользовтеля направление корабля
         public char SelectDirectionShip()
         {
             while (true)
@@ -96,12 +103,15 @@ namespace OAIP
                 if (charFromUser == 'w' || charFromUser == 'a' || charFromUser == 's' || charFromUser == 'd')
                 {
                     return charFromUser;
-                } else {
+                }
+                else
+                {
                     WriteLine("введи wasd!");
                 }
             }
         }
 
+        // берем от пользовтеля точку носа корабля
         public int[] SelectNose()
         {
             WriteLine("Введите точку, где будет нос корабля (например: А1 или a1)");
@@ -123,36 +133,125 @@ namespace OAIP
                 return [0];
             }
         }
+
+        // заполняем корабли
         public void FillShip()
         {
             WriteLine("Поставим корабли");
 
             while (true)
             {
+                // перебираем корабли
                 foreach (var item in TypeOfShip)
                 {
-                    for (int deck = item.Value; deck > 0; deck--)
-                    {
-                        WriteLine($"Устанавливание {item.Key} палубный корабль");
+                    WriteLine($"Устанавливание {item.Key} палубный корабль");
+                    int[] noseLocation = SelectNose();
+                    char shipDirection = SelectDirectionShip();
 
-                        int[] noseLocation = SelectNose();
+                    SetShip(noseLocation, shipDirection, item.Value);
 
-                        char shipDirection = SelectDirectionShip();
-
-                        SetShip(noseLocation, shipDirection);
-
-                        PrintContent();
-                    }
+                    PrintContent();
                 }
             }
         }
 
-        public void SetShip(int[] startLocation, char Direction)
+        // ставим корабль
+        public bool SetShip(int[] startLocation, char direction, int deck)
         {
             WriteLine("Точка: " + startLocation[0] + " " + startLocation[1]);
-            WriteLine("Направление: " + Direction);
+            WriteLine("Направление: " + direction);
+
+            // копируем
+            string[,] NewLevelContent = new string[LevelLength, LevelLength];
+            Array.Copy(LevelContent, NewLevelContent, LevelContent.Length);
+
+            for (int i = 0; i < deck; i++)
+            {
+                WriteLine("Палуба: " + i);
+
+                switch (direction)
+                {
+                    case 'w':
+                        if (NewLevelContent[startLocation[0] - i, startLocation[1]] != "[.]")
+                        {
+                            PrintWithColor("Этот корабль сюда не установится!", ConsoleColor.Black, ConsoleColor.Red);
+                            return false;
+                        }
+                        else
+                        {
+                            NewLevelContent[startLocation[0] - i, startLocation[1]] = "[O]";
+                        }
+                        break;
+                    case 'a':
+                        if (NewLevelContent[startLocation[0], startLocation[1] - i] != "[.]")
+                        {
+                            PrintWithColor("Этот корабль сюда не установится!", ConsoleColor.Black, ConsoleColor.Red);
+                            return false;
+                        }
+                        else
+                        {
+                            NewLevelContent[startLocation[0], startLocation[1] - i] = "[O]";
+                        }
+                        break;
+                    case 's':
+                        if (NewLevelContent[startLocation[0] + i, startLocation[1]] != "[.]")
+                        {
+                            PrintWithColor("Этот корабль сюда не установится!", ConsoleColor.Black, ConsoleColor.Red);
+                            return false;
+                        }
+                        else
+                        {
+                            NewLevelContent[startLocation[0] + i, startLocation[1]] = "[O]";
+                        }
+                        break;
+                    case 'd':
+                        if (NewLevelContent[startLocation[0], startLocation[1] + i] != "[.]")
+                        {
+                            PrintWithColor("Этот корабль сюда не установится!", ConsoleColor.Black, ConsoleColor.Red);
+                            return false;
+                        }
+                        else
+                        {
+                            NewLevelContent[startLocation[0], startLocation[1] + i] = "[O]";
+                        }
+                        break;
+                    default:
+                        PrintWithColor("Ошибка", ConsoleColor.Black, ConsoleColor.Red);
+                        break;
+                }
+
+            }
+            LevelContent = NewLevelContent;
+            return true;
         }
 
+        // проверяем есть ли в соседях корабли
+        public bool CheckNeignboards(int[] location)
+        {
+            // верх
+            if (LevelContent[(location[0] - 1), location[1]] == "[O]")
+            {
+                return false;
+            }
+            // низ
+            if (LevelContent[(location[0] + 1), location[1]] == "[O]")
+            {
+                return false;
+            }
+            // право
+            if (LevelContent[(location[0]), location[1] - 1] == "[O]")
+            {
+                return false;
+            }
+            // лево
+            if (LevelContent[location[0], location[1] + 1] == "[O]")
+            {
+                return false;
+            }
+            return true;
+        }
+
+        // печатаем левел
         public void PrintContent()
         {
             WriteLine("Карта " + LevelName);
