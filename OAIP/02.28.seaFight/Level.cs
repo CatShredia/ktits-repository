@@ -226,9 +226,12 @@ namespace OAIP
             }
             if (isShipError)
             {
-                PrintWithColor("Нельзя распологать корабли вплотную!", ConsoleColor.Black, ConsoleColor.Red);
+                PrintWithColor("Невозможное расположение корабля!", ConsoleColor.Black, ConsoleColor.Red);
             }
-            LevelContent = NewLevelContent;
+            else
+            {
+                LevelContent = NewLevelContent;
+            }
             return true;
         }
 
@@ -237,6 +240,13 @@ namespace OAIP
         {
             // строка столбец
             WriteLine($"{point[0]}, {point[1]}");
+
+            // устанавливаемая точка должна быть [.]
+            if (LevelContent[point[0], point[1]] != "[.]")
+            {
+                WriteLine("точка не верная");
+                return false;
+            }
 
             // вверх
             if (LevelContent[point[0] - 1, point[1]] == "[O]")
