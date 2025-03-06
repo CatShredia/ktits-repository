@@ -241,6 +241,7 @@ namespace OAIP
             if (isShipError)
             {
                 PrintWithColor("Невозможное расположение корабля!", ConsoleColor.Black, ConsoleColor.Red);
+                return false;
             }
             else
             {
