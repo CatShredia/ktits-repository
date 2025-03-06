@@ -2,18 +2,18 @@ namespace OAIP
 {
     using static System.Console;
 
-    class SeaFight : Object {
-        public SeaFight(bool isDevelop) {
-
-            // Level enemyLevel = new Level("противника");
-
+    class SeaFight : Object
+    {
+        public SeaFight(bool isDevelop)
+        {
             WriteLine();
 
-            User user = new User();
+            Bot bot = new Bot("бот");
+            Level botLevel = new Level(bot);
 
-            Level playerLevel = new Level("игрока", user);
-            
-            ReadKey();
+            User user = new User("игрок");
+            Level playerLevel = new Level(user);
+
         }
     }
-}   
+}

@@ -6,8 +6,6 @@ namespace OAIP
     {
         public string[,] LevelContent;
 
-        public string LevelName;
-
         private const int LevelLength = 13;
 
         private bool isShipError = false;
@@ -20,9 +18,8 @@ namespace OAIP
             "[O]" - корабль
         */
 
-        public Level(string name, Player player)
+        public Level(Player player)
         {
-            LevelName = name;
             LevelContent = new string[LevelLength, LevelLength];
 
             Player = player;
@@ -30,7 +27,6 @@ namespace OAIP
             FillLevel();
             PrintContent();
             FillShip();
-
         }
 
         // заполняем левел первоначальными значениями
@@ -97,48 +93,6 @@ namespace OAIP
             LevelContent[LevelLength - 1, 0] = "  --";
         }
 
-        // берем от пользовтеля направление корабля
-        public char SelectDirectionShip()
-        {
-            while (true)
-            {
-                WriteLine("Выберите направление (wasd)");
-                char charFromUser = ReadLine().ToLower()[0];
-
-                if (charFromUser == 'w' || charFromUser == 'a' || charFromUser == 's' || charFromUser == 'd')
-                {
-                    return charFromUser;
-                }
-                else
-                {
-                    WriteLine("введи wasd!");
-                }
-            }
-        }
-
-        // берем от пользовтеля точку носа корабля
-        public int[] SelectNose()
-        {
-            WriteLine("Введите точку, где будет нос корабля (например: А1 или a1)");
-            string stringForUser = ReadLine().ToLower();
-
-            if (stringForUser.Length == 2)
-            {
-                WriteLine(GetLetterIndexIgnoreCase(stringForUser[0]));
-                WriteLine(int.Parse(stringForUser[1].ToString()));
-
-                return [int.Parse(stringForUser[1].ToString()) + 1, GetLetterIndexIgnoreCase(stringForUser[0])];
-            }
-            else if (stringForUser.Length == 3 || stringForUser[1] + stringForUser[2] == 10)
-            {
-                return [int.Parse(stringForUser[1] + stringForUser[2].ToString()) + 1, GetLetterIndexIgnoreCase(stringForUser[0])];
-            }
-            else
-            {
-                return [0];
-            }
-        }
-
         // заполняем корабли
         public void FillShip()
         {
@@ -154,8 +108,24 @@ namespace OAIP
                     while (countGenerateOfShip[i] != 0)
                     {
                         WriteLine($"Установка {i}x палубный корабль");
-                        int[] noseLocation = SelectNose();
-                        char shipDirection = SelectDirectionShip();
+
+                        int[] noseLocation;
+                        char shipDirection;
+                        if (Player.Name.Equals("игрок"))
+                        {
+                            noseLocation = Player.SelectNose();
+                            shipDirection = Player.SelectDirectionShip();
+                        }
+                        else if (Player.Name.Equals("бот"))
+                        {
+                            noseLocation = Player.SelectNoseForRandom();
+                            shipDirection = Player.SelectDirectionShipForRandom();
+                        }
+                        else
+                        {
+                            noseLocation = null;
+                            shipDirection = 'w';
+                        }
 
                         if (SetShip(noseLocation, shipDirection, i))
                         {
@@ -289,10 +259,9 @@ namespace OAIP
         // печатаем левел
         public void PrintContent()
         {
-            ReadKey();
-            Clear();
+            // Clear();
 
-            PrintWithColor($"Карта {LevelName}", ConsoleColor.Black, ConsoleColor.DarkBlue);
+            PrintWithColor($"Карта {Player.Name}a", ConsoleColor.Black, ConsoleColor.DarkBlue);
             WriteLine();
 
             ConsoleColor[] choisedColor = new ConsoleColor[2];

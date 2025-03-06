@@ -4,6 +4,8 @@ namespace OAIP
 
     class Bot : Player
     {
-
+        public Bot(string name) : base(name)
+        {
+        }
     }
 }
