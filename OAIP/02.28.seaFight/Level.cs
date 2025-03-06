@@ -175,9 +175,6 @@ namespace OAIP
         // ставим корабль
         public bool SetShip(int[] startLocation, char direction, int deck)
         {
-            WriteLine("Точка: " + startLocation[0] + " " + startLocation[1]);
-            WriteLine("Направление: " + direction);
-
             // копируем
             string[,] NewLevelContent = new string[LevelLength, LevelLength];
             Array.Copy(LevelContent, NewLevelContent, LevelContent.Length);
@@ -185,7 +182,6 @@ namespace OAIP
             for (int i = 0; i < deck; i++)
             {
                 isShipError = false;
-                WriteLine("Палуба: " + i);
 
                 int[] point;
 
@@ -258,37 +254,32 @@ namespace OAIP
         public bool CheckNeighboards(int[] point)
         {
             // строка столбец
-            WriteLine($"{point[0]}, {point[1]}");
+            // WriteLine($"{point[0]}, {point[1]}");
 
             // устанавливаемая точка должна быть [.]
             if (LevelContent[point[0], point[1]] != "[.]")
             {
-                WriteLine("точка не верная");
                 return false;
             }
 
             // вверх
             if (LevelContent[point[0] - 1, point[1]] == "[O]")
             {
-                WriteLine("вверх");
                 return false;
             }
             // низ
             if (LevelContent[point[0] + 1, point[1]] == "[O]")
             {
-                WriteLine("низ");
                 return false;
             }
             // право
             if (LevelContent[point[0], point[1] + 1] == "[O]")
             {
-                WriteLine("право");
                 return false;
             }
             // лево
             if (LevelContent[point[0], point[1] - 1] == "[O]")
             {
-                WriteLine("лево");
                 return false;
             }
 
@@ -298,6 +289,8 @@ namespace OAIP
         // печатаем левел
         public void PrintContent()
         {
+            ReadKey();
+            Clear();
             WriteLine("Карта " + LevelName);
 
             ConsoleColor[] choisedColor = new ConsoleColor[2];
