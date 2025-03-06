@@ -8,7 +8,7 @@ namespace OAIP
 
         public string LevelName;
 
-        private const int LevelLength = 12;
+        private const int LevelLength = 13;
 
         public Dictionary<string, int> TypeOfShip = new Dictionary<string, int>
         {
@@ -37,7 +37,7 @@ namespace OAIP
         public Level(string name)
         {
             LevelName = name;
-            LevelContent = new string[LevelLength, LevelLength];
+            LevelContent = new string[LevelLength , LevelLength];
 
             FillLevel();
             PrintContent();
@@ -184,6 +184,7 @@ namespace OAIP
 
             for (int i = 0; i < deck; i++)
             {
+                isShipError = false;
                 WriteLine("Палуба: " + i);
 
                 int[] point;
@@ -237,6 +238,9 @@ namespace OAIP
                     default:
                         PrintWithColor("Ошибка", ConsoleColor.Black, ConsoleColor.Red);
                         break;
+                }
+                if(isShipError) {
+                    break;
                 }
             }
             if (isShipError)
