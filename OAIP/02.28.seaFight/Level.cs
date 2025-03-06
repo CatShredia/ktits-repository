@@ -12,13 +12,15 @@ namespace OAIP
 
         private Player Player;
 
+        public bool isDevEdition;
+
         /*
             "[-]" - туман
             "[.]" - пусто
             "[O]" - корабль
         */
 
-        public Level(Player player)
+        public Level(bool isDevEditionI, Player player)
         {
             LevelContent = new string[LevelLength, LevelLength];
 
@@ -27,6 +29,8 @@ namespace OAIP
             FillLevel();
             PrintContent();
             FillShip();
+
+            isDevEdition = isDevEditionI;
         }
 
         // заполняем левел первоначальными значениями
@@ -100,42 +104,48 @@ namespace OAIP
 
             Dictionary<int, int> countGenerateOfShip = new Dictionary<int, int>(Player.CountOfShip);
 
-            while (true)
+            // перебираем корабли
+            for (int i = countGenerateOfShip.Count; i != 0; i--)
             {
-                // перебираем корабли
-                for (int i = countGenerateOfShip.Count; i != 0; i--)
+                while (countGenerateOfShip[i] != 0)
                 {
-                    while (countGenerateOfShip[i] != 0)
-                    {
-                        WriteLine($"Установка {i}x палубный корабль");
+                    WriteLine($"Установка {i}x палубный корабль");
 
-                        int[] noseLocation;
-                        char shipDirection;
-                        if (Player.Name.Equals("игрок"))
-                        {
-                            noseLocation = Player.SelectNose();
-                            shipDirection = Player.SelectDirectionShip();
-                        }
-                        else if (Player.Name.Equals("бот"))
+                    int[] noseLocation;
+                    char shipDirection;
+                    if (Player.Name.Equals("игрок"))
+                    {
+                        WriteLine(isDevEdition);
+                        if (isDevEdition)
                         {
                             noseLocation = Player.SelectNoseForRandom();
                             shipDirection = Player.SelectDirectionShipForRandom();
                         }
                         else
                         {
-                            noseLocation = null;
-                            shipDirection = 'w';
+                            noseLocation = Player.SelectNose();
+                            shipDirection = Player.SelectDirectionShip();
                         }
-
-                        if (SetShip(noseLocation, shipDirection, i))
-                        {
-                            PrintWithColor("Корабль установлен!", ConsoleColor.Black, ConsoleColor.Green);
-
-                            countGenerateOfShip[i] -= 1;
-                        }
-
-                        PrintContent();
                     }
+                    else if (Player.Name.Equals("бот"))
+                    {
+                        noseLocation = Player.SelectNoseForRandom();
+                        shipDirection = Player.SelectDirectionShipForRandom();
+                    }
+                    else
+                    {
+                        noseLocation = null;
+                        shipDirection = 'w';
+                    }
+
+                    if (SetShip(noseLocation, shipDirection, i))
+                    {
+                        PrintWithColor("Корабль установлен!", ConsoleColor.Black, ConsoleColor.Green);
+
+                        countGenerateOfShip[i] -= 1;
+                    }
+
+                    PrintContent();
                 }
             }
         }

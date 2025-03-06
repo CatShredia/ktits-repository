@@ -6,14 +6,13 @@ namespace OAIP
     {
         public SeaFight(bool isDevelop)
         {
-            WriteLine();
-
-            Bot bot = new Bot("бот");
-            Level botLevel = new Level(bot);
+            WriteLine(isDevelop);
 
             User user = new User("игрок");
-            Level playerLevel = new Level(user);
+            Level playerLevel = new Level(isDevelop, user);
 
+            Bot bot = new Bot("бот");
+            Level botLevel = new Level(isDevelop, bot);
         }
     }
 }
