@@ -4,19 +4,40 @@ namespace OAIP
 
     class SeaFight : Object
     {
+        public User User;
+        public Bot Bot;
+
+        public bool isGame;
+
         public SeaFight()
         {
             // строки столбцы
-            User user = new User("игрок");
+            User = new User("игрок");
 
-            Bot bot = new Bot("бот");
+            Bot = new Bot("бот");
 
             Clear();
-            user.Level.PrintContent();
-            // bot.Level.PrintContent();
-            bot.LevelFog.PrintContent();
+            User.Level.PrintContent();
+            Bot.LevelFog.PrintContent();
+
+            isGame = true;
+            Game();
 
             ReadKey();
+        }
+
+        public void Game()
+        {
+            while (isGame)
+            {
+                int[] damagePoint = User.ChoisePointToDamage();
+
+
+                Clear();
+                Bot.Damage(damagePoint);
+                User.Level.PrintContent();
+                Bot.LevelFog.PrintContent();
+            }
         }
     }
 }
