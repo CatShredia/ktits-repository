@@ -29,15 +29,13 @@ namespace OAIP
             FillShip();
         }
 
-        public Level(Level cloningLevel) {
-            LevelLength = cloningLevel.LevelLength;
-            LevelContent = new string[cloningLevel.LevelLength, cloningLevel.LevelLength];
-            Array.Copy(cloningLevel.LevelContent, LevelContent, cloningLevel.LevelLength);
+        public Level(Player player, Level copyLevel)
+        {
+            Player = player;
 
-            foreach (var item in LevelContent)
-            {
-                WriteLine(item);
-            }
+            LevelLength = copyLevel.LevelLength;
+            LevelContent = new string[LevelLength, LevelLength];
+            LevelContent = copyLevel.LevelContent;
         }
 
         // заполняем левел первоначальными значениями
@@ -327,6 +325,13 @@ namespace OAIP
                     Write(typeOfShip);
                     SetDefaultColor();
                     break;
+                case '#':
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.Gray;
+
+                    Write(typeOfShip);
+                    SetDefaultColor();
+                    break;
                 default:
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.BackgroundColor = ConsoleColor.Black;
@@ -336,10 +341,23 @@ namespace OAIP
                     break;
             }
         }
-    
-        // установка тумана
-        public void SetFog() {
 
+        // установка тумана
+        public void SetFog()
+        {
+            for (int i = 0; i < LevelLength; i++)
+            {
+                for (int j = 0; j < LevelLength; j++)
+                {
+                    if (
+                        LevelContent[i, j].Equals("[O]")
+                        || LevelContent[i, j].Equals("[.]")
+                    )
+                    {
+                        LevelContent[i,j] = "[#]";
+                    }
+                }
+            }
         }
     }
 }

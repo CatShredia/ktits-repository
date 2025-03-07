@@ -8,8 +8,9 @@ namespace OAIP
         public Bot(string name) : base(name)
         {
             Level = new Level(this);
+            LevelFog = new Level(this, Level);
 
-            Level.SetFog();
+            LevelFog.SetFog();
         }
     }
 }
