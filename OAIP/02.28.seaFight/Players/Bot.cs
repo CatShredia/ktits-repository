@@ -16,10 +16,7 @@ namespace OAIP
         // получаем выстрел на карту бота
         public bool Damage(int[] damagePoint)
         {
-            WriteLine(LevelFog.LevelContent[damagePoint[0], damagePoint[1]]);
-            WriteLine(Level.LevelContent[damagePoint[0], damagePoint[1]]);
-
-
+            // проверка на попадание
             if (Level.LevelContent[damagePoint[0], damagePoint[1]].Equals("[O]"))
             {
                 LevelFog.LevelContent[damagePoint[0], damagePoint[1]] = "[Ж]";

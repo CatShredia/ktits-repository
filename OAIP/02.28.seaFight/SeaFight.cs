@@ -12,14 +12,18 @@ namespace OAIP
         public SeaFight()
         {
             // строки столбцы
-            User = new User("игрок");
 
+            // создаем игрока и бота, и левелы вместе с ними
+            User = new User("игрок");
             Bot = new Bot("бот");
 
             Clear();
+
+            // выводим левелы уже с туманом
             User.Level.PrintContent();
             Bot.LevelFog.PrintContent();
 
+            // начинаем игру
             isGame = true;
             Game();
 
@@ -30,12 +34,15 @@ namespace OAIP
         {
             while (isGame)
             {
+                // выводим левелы
                 // Clear();
                 User.Level.PrintContent();
                 Bot.Level.PrintContent();
                 Bot.LevelFog.PrintContent();
 
+                // выбираем точку удара
                 int[] damagePoint = User.ChoisePointToDamage();
+                // наносим удар
                 if(Bot.Damage(damagePoint)) {
                     PrintWithColor("\n\nВы попали!\n", ConsoleColor.Black, ConsoleColor.Red);
                 } else {

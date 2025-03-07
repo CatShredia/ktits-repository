@@ -6,6 +6,7 @@ namespace OAIP
     {
         public string Name;
 
+        // план на генерацию кораблей
         public Dictionary<int, int> CountOfShip = new Dictionary<int, int>
         {
             // сколько палуб в корабле, количество у игрока

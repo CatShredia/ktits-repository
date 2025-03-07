@@ -12,13 +12,7 @@ namespace OAIP
 
         private Player Player;
 
-        /*
-            "[#]" - туман
-            "[.]" - пусто
-            "[O]" - корабль
-            "[Ж]" - подбитый корабль
-        */
-
+        // простой конструктор
         public Level(Player player)
         {
             LevelContent = new string[LevelLength, LevelLength];
@@ -30,6 +24,7 @@ namespace OAIP
             FillShip();
         }
 
+        // конструктор копирования
         public Level(Player player, Level copyLevel)
         {
             Player = player;
@@ -109,17 +104,20 @@ namespace OAIP
         {
             Dictionary<int, int> countGenerateOfShip = new Dictionary<int, int>(Player.CountOfShip);
 
-            // перебираем корабли
+            // ? перебираем корабли
             for (int i = countGenerateOfShip.Count; i != 0; i--)
             {
+                // ? перебираем корабли одинаковой длины
                 while (countGenerateOfShip[i] != 0)
                 {
                     WriteLine($"Установка {i}x палубный корабль");
 
+                    // получаем стартовую точку и направление установки
                     int[] noseLocation;
                     char shipDirection;
                     if (Player.Name.Equals("игрок"))
                     {
+                        // TODO: дернуть коммиты во время
                         noseLocation = Player.SelectNoseForRandom();
                         shipDirection = Player.SelectDirectionShipForRandom();
 
@@ -143,8 +141,6 @@ namespace OAIP
 
                         countGenerateOfShip[i] -= 1;
                     }
-
-                    // PrintContent();
                 }
             }
         }
@@ -152,10 +148,11 @@ namespace OAIP
         // ставим корабль
         private bool SetShip(int[] startLocation, char direction, int deck)
         {
-            // копируем
+            // копируем левел, для того, чтобы если корабль не установится, легко откатить изменения
             string[,] NewLevelContent = new string[LevelLength, LevelLength];
             Array.Copy(LevelContent, NewLevelContent, LevelContent.Length);
 
+            // перебираем палубы корабля
             for (int i = 0; i < deck; i++)
             {
                 isShipError = false;
@@ -212,11 +209,14 @@ namespace OAIP
                         PrintWithColor("Ошибка", ConsoleColor.Black, ConsoleColor.Red);
                         break;
                 }
+                // если установка не возможна, останавливаем процесс, без сохранения
                 if (isShipError)
                 {
                     break;
                 }
             }
+
+            // если ошибка, выходим, иначе сохраняем
             if (isShipError)
             {
                 PrintWithColor("Невозможное расположение корабля!", ConsoleColor.Black, ConsoleColor.Red);
