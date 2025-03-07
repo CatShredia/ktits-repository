@@ -258,21 +258,21 @@ namespace OAIP
                 return false;
             }
             // левый нижний
-            if (LevelContent[point[0] - 1, point[1] - 1] == "[O]")
+            if (LevelContent[point[0] - 1, point[1] + 1] == "[O]")
             {
                 PrintWithColor("левый нижний", ConsoleColor.Black, ConsoleColor.DarkYellow);
                 return false;
             }
-            // левый верхний
+            // правый верхний
             if (LevelContent[point[0] - 1, point[1] + 1] == "[O]")
             {
-                PrintWithColor("левый верхний", ConsoleColor.Black, ConsoleColor.DarkYellow);
+                PrintWithColor("правый верхний", ConsoleColor.Black, ConsoleColor.DarkYellow);
                 return false;
             }
-            // правый верхний
+            // правый нижний
             if (LevelContent[point[0] + 1, point[1] + 1] == "[O]")
             {
-                PrintWithColor("левый верхний", ConsoleColor.Black, ConsoleColor.DarkYellow);
+                PrintWithColor("правый нижний", ConsoleColor.Black, ConsoleColor.DarkYellow);
                 return false;
             }
 

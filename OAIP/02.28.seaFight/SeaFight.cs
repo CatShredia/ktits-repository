@@ -6,15 +6,15 @@ namespace OAIP
     {
         public SeaFight()
         {
+            // строки столбцы
             User user = new User("игрок");
-            Level playerLevel = new Level(user);
 
             Bot bot = new Bot("бот");
-            Level botLevel = new Level(bot);
 
             Clear();
-            playerLevel.PrintContent();
-            botLevel.PrintContent();
+            user.Level.PrintContent();
+            bot.Level.PrintContent();
+
             ReadKey();
         }
     }

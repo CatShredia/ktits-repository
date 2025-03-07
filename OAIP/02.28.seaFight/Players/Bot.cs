@@ -7,5 +7,6 @@ namespace OAIP
         public Bot(string name) : base(name)
         {
         }
+
     }
 }

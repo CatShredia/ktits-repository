@@ -15,9 +15,13 @@ namespace OAIP
             { 4, 1 },
         };
 
+        public Level Level;
+
         public Player(string name)
         {
             Name = name;
+
+            Level = new Level(this);
         }
 
         // берем от пользовтеля направление корабля
