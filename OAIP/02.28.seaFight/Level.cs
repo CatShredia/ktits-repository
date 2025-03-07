@@ -6,7 +6,7 @@ namespace OAIP
     {
         public string[,] LevelContent;
 
-        private const int LevelLength = 13;
+        public int LevelLength = 13;
 
         private bool isShipError = false;
 
@@ -29,8 +29,19 @@ namespace OAIP
             FillShip();
         }
 
+        public Level(Level cloningLevel) {
+            LevelLength = cloningLevel.LevelLength;
+            LevelContent = new string[cloningLevel.LevelLength, cloningLevel.LevelLength];
+            Array.Copy(cloningLevel.LevelContent, LevelContent, cloningLevel.LevelLength);
+
+            foreach (var item in LevelContent)
+            {
+                WriteLine(item);
+            }
+        }
+
         // заполняем левел первоначальными значениями
-        public void FillLevel()
+        private void FillLevel()
         {
             // заполнение изначальных
             for (int i = 0; i < LevelLength; i++)
@@ -139,7 +150,7 @@ namespace OAIP
         }
 
         // ставим корабль
-        public bool SetShip(int[] startLocation, char direction, int deck)
+        private bool SetShip(int[] startLocation, char direction, int deck)
         {
             // копируем
             string[,] NewLevelContent = new string[LevelLength, LevelLength];
@@ -220,7 +231,7 @@ namespace OAIP
         }
 
         // проверка на соседей
-        public bool CheckNeighboards(int[] point)
+        private bool CheckNeighboards(int[] point)
         {
             // строка столбец
             // WriteLine($"{point[0]}, {point[1]}");
@@ -264,7 +275,7 @@ namespace OAIP
                 return false;
             }
             // правый верхний
-            if (LevelContent[point[0] - 1, point[1] + 1] == "[O]")
+            if (LevelContent[point[0] + 1, point[1] - 1] == "[O]")
             {
                 PrintWithColor("правый верхний", ConsoleColor.Black, ConsoleColor.DarkYellow);
                 return false;
@@ -298,7 +309,7 @@ namespace OAIP
         }
 
         // выбор цвета для печати, foreground, background
-        public void ChoisePrintingColor(string typeOfShip)
+        private void ChoisePrintingColor(string typeOfShip)
         {
             switch (typeOfShip[1])
             {
@@ -324,6 +335,11 @@ namespace OAIP
                     SetDefaultColor();
                     break;
             }
+        }
+    
+        // установка тумана
+        public void SetFog() {
+
         }
     }
 }

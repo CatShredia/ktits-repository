@@ -20,8 +20,6 @@ namespace OAIP
         public Player(string name)
         {
             Name = name;
-
-            Level = new Level(this);
         }
 
         // берем от пользовтеля направление корабля

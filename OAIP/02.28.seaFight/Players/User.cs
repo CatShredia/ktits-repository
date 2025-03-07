@@ -6,6 +6,7 @@ namespace OAIP
     {
         public User(string name) : base(name)
         {
+            Level = new Level(this);
         }
     }
 }
