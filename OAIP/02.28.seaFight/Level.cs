@@ -112,6 +112,8 @@ namespace OAIP
                         noseLocation = Player.SelectNoseForRandom();
                         shipDirection = Player.SelectDirectionShipForRandom();
 
+                        // noseLocation = Player.SelectNose();
+                        // shipDirection = Player.SelectDirectionShip();
                     }
                     else if (Player.Name.Equals("бот"))
                     {
@@ -212,6 +214,7 @@ namespace OAIP
             else
             {
                 LevelContent = NewLevelContent;
+                PrintContent();
             }
             return true;
         }
@@ -246,6 +249,30 @@ namespace OAIP
             // лево
             if (LevelContent[point[0], point[1] - 1] == "[O]")
             {
+                return false;
+            }
+            // левый верхний
+            if (LevelContent[point[0] - 1, point[1] - 1] == "[O]")
+            {
+                PrintWithColor("левый верхний", ConsoleColor.Black, ConsoleColor.DarkYellow);
+                return false;
+            }
+            // левый нижний
+            if (LevelContent[point[0] - 1, point[1] - 1] == "[O]")
+            {
+                PrintWithColor("левый нижний", ConsoleColor.Black, ConsoleColor.DarkYellow);
+                return false;
+            }
+            // левый верхний
+            if (LevelContent[point[0] - 1, point[1] + 1] == "[O]")
+            {
+                PrintWithColor("левый верхний", ConsoleColor.Black, ConsoleColor.DarkYellow);
+                return false;
+            }
+            // правый верхний
+            if (LevelContent[point[0] + 1, point[1] + 1] == "[O]")
+            {
+                PrintWithColor("левый верхний", ConsoleColor.Black, ConsoleColor.DarkYellow);
                 return false;
             }
 

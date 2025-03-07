@@ -97,7 +97,7 @@ namespace OAIP
         {
             Random random = new Random();
 
-            int[] numbers = [random.Next(0,9), random.Next(0,9)];
+            int[] numbers = [random.Next(1, 12), random.Next(1,12)];
 
             return numbers;
         }
