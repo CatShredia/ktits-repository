@@ -29,25 +29,27 @@ namespace OAIP
         {
             Random random = new Random();
 
-            List<int> numbers = new List<int>{};
+            List<int> numbers = new List<int> { };
 
             for (int i = 0; i < n; i++)
             {
-                numbers.Add(random.Next(firstLine,secondLine));
+                numbers.Add(random.Next(firstLine, secondLine));
             }
 
             return numbers;
         }
         // нахождение элемента в листе
-        internal static int getElementList(List<int> numbers, int findsElement) {
+        internal static int getElementList(List<int> numbers, int findsElement)
+        {
             for (int i = 0; i < numbers.Count; i++)
             {
-                if(numbers[i] == findsElement) {
+                if (numbers[i] == findsElement)
+                {
                     return i;
-                } 
+                }
             }
             return -1;
-        } 
+        }
         // генерация массива размером (n * n) с элементами от firstLine до secondLine
         internal static int[,] generateRandomTwoArray(int n, int firstLine, int secondLine)
         {
@@ -182,6 +184,23 @@ namespace OAIP
             }
 
             return (summ / array.Length);
+        }
+
+        // копирование значений из одного string[,] массива в другой такой же
+        internal static string[,] copy2StringArray(string[,] sourceArray)
+        {
+            // Создаем новый массив того же размера
+            string[,] destinationArray = new string[sourceArray.GetLength(0), sourceArray.GetLength(1)];
+            // Копируем значения из исходного массива в целевой
+            for (int i = 0; i < sourceArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < sourceArray.GetLength(1); j++)
+                {
+                    destinationArray[i, j] = sourceArray[i, j];
+                }
+            }
+
+            return destinationArray;
         }
     }
 }

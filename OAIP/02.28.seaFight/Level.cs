@@ -35,7 +35,8 @@ namespace OAIP
 
             LevelLength = copyLevel.LevelLength;
             LevelContent = new string[LevelLength, LevelLength];
-            LevelContent = copyLevel.LevelContent;
+
+            LevelContent = OAIP_Arrays.copy2StringArray(copyLevel.LevelContent);
         }
 
         // заполняем левел первоначальными значениями
@@ -354,11 +355,11 @@ namespace OAIP
                         || LevelContent[i, j].Equals("[.]")
                     )
                     {
-                        LevelContent[i,j] = "[#]";
+                        LevelContent[i, j] = "[#]";
                     }
                 }
             }
         }
-    
+
     }
 }
