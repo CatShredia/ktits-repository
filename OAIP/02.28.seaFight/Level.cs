@@ -13,9 +13,10 @@ namespace OAIP
         private Player Player;
 
         /*
-            "[-]" - туман
+            "[#]" - туман
             "[.]" - пусто
             "[O]" - корабль
+            "[Ж]" - подбитый корабль
         */
 
         public Level(Player player)
@@ -329,6 +330,20 @@ namespace OAIP
                 case '#':
                     Console.ForegroundColor = ConsoleColor.Black;
                     Console.BackgroundColor = ConsoleColor.Gray;
+
+                    Write(typeOfShip);
+                    SetDefaultColor();
+                    break;
+                case 'Ж':
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.Red;
+
+                    Write(typeOfShip);
+                    SetDefaultColor();
+                    break;
+                case 'М':
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.BackgroundColor = ConsoleColor.DarkRed;
 
                     Write(typeOfShip);
                     SetDefaultColor();

@@ -30,13 +30,17 @@ namespace OAIP
         {
             while (isGame)
             {
-                int[] damagePoint = User.ChoisePointToDamage();
-
-
-                Clear();
-                Bot.Damage(damagePoint);
+                // Clear();
                 User.Level.PrintContent();
+                Bot.Level.PrintContent();
                 Bot.LevelFog.PrintContent();
+
+                int[] damagePoint = User.ChoisePointToDamage();
+                if(Bot.Damage(damagePoint)) {
+                    PrintWithColor("\n\nВы попали!\n", ConsoleColor.Black, ConsoleColor.Red);
+                } else {
+                    PrintWithColor("\n\nЭхх, промах...\n", ConsoleColor.Black, ConsoleColor.Gray);
+                }
             }
         }
     }
