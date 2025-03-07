@@ -2,10 +2,10 @@ namespace OAIP
 {
     class Ship
     {
-        public int DeckCount;
-        public Ship(int startDeckCount)
+        public Dictionary<int, int[]> Decks;
+        public Ship()
         {
-            DeckCount = startDeckCount;
+            Decks = [];
         }
     }
 }

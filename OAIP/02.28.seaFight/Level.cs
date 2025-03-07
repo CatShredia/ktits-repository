@@ -12,10 +12,14 @@ namespace OAIP
 
         private Player Player;
 
+        public Ship[] Ships;
+
         // простой конструктор
         public Level(Player player)
         {
             LevelContent = new string[LevelLength, LevelLength];
+
+            Ships = new Ship[10];
 
             Player = player;
 
@@ -110,6 +114,18 @@ namespace OAIP
                 // ? перебираем корабли одинаковой длины
                 while (countGenerateOfShip[i] != 0)
                 {
+                    // создаем новый объект - корабль
+                    int shipNumber = 0;
+                    for (int p = 0; p < Ships.Length; p++)
+                    {
+                        if (Ships[p] == null)
+                        {
+                            Ships[p] = new Ship();
+                            shipNumber = p;
+                            break;
+                        }
+                    }
+
                     WriteLine($"Установка {i}x палубный корабль");
 
                     // получаем стартовую точку и направление установки
@@ -135,7 +151,7 @@ namespace OAIP
                         shipDirection = 'w';
                     }
 
-                    if (SetShip(noseLocation, shipDirection, i))
+                    if (SetShip(noseLocation, shipDirection, i, shipNumber))
                     {
                         PrintWithColor("Корабль установлен!", ConsoleColor.Black, ConsoleColor.Green);
 
@@ -146,13 +162,14 @@ namespace OAIP
         }
 
         // ставим корабль
-        private bool SetShip(int[] startLocation, char direction, int deck)
+        private bool SetShip(int[] startLocation, char direction, int deck, int shipNumber)
         {
             // копируем левел, для того, чтобы если корабль не установится, легко откатить изменения
             string[,] NewLevelContent = new string[LevelLength, LevelLength];
             Array.Copy(LevelContent, NewLevelContent, LevelContent.Length);
 
-            // перебираем палубы корабля
+            // ? перебираем палубы корабля
+            // TODO: черкануть i
             for (int i = 0; i < deck; i++)
             {
                 isShipError = false;
@@ -166,6 +183,7 @@ namespace OAIP
                         if (CheckNeighboards([point[0], point[1]]))
                         {
                             NewLevelContent[point[0], point[1]] = "[O]";
+                            Ships[shipNumber].Decks.Add(i, point);
                         }
                         else
                         {
@@ -177,6 +195,7 @@ namespace OAIP
                         if (CheckNeighboards([point[0], point[1]]))
                         {
                             NewLevelContent[point[0], point[1]] = "[O]";
+                            Ships[shipNumber].Decks.Add(i, point);
                         }
                         else
                         {
@@ -188,6 +207,7 @@ namespace OAIP
                         if (CheckNeighboards([point[0], point[1]]))
                         {
                             NewLevelContent[point[0], point[1]] = "[O]";
+                            Ships[shipNumber].Decks.Add(i, point);
                         }
                         else
                         {
@@ -199,6 +219,7 @@ namespace OAIP
                         if (CheckNeighboards([point[0], point[1]]))
                         {
                             NewLevelContent[point[0], point[1]] = "[O]";
+                            Ships[shipNumber].Decks.Add(i, point);
                         }
                         else
                         {
@@ -212,6 +233,7 @@ namespace OAIP
                 // если установка не возможна, останавливаем процесс, без сохранения
                 if (isShipError)
                 {
+                    Ships[shipNumber] = null;   
                     break;
                 }
             }

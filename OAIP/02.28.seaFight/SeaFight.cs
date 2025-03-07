@@ -17,7 +17,7 @@ namespace OAIP
             User = new User("игрок");
             Bot = new Bot("бот");
 
-            Clear();
+            // Clear();
 
             // выводим левелы уже с туманом
             User.Level.PrintContent();
