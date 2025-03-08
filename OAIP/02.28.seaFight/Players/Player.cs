@@ -18,6 +18,8 @@ namespace OAIP
 
         public Level Level;
 
+        public int CountLiveShips;
+
         public Player(string name)
         {
             Name = name;

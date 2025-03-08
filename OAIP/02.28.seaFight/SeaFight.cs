@@ -6,6 +6,7 @@ namespace OAIP
     {
         public User User;
         public Bot Bot;
+        public Player SelectedPlayer;
 
         public bool isGame;
 
@@ -48,13 +49,33 @@ namespace OAIP
                 {
                     PrintWithColor("\n\nВы попали!\n", ConsoleColor.Black, ConsoleColor.Red);
                     // проверка на уничтоженные корабли
-                    Bot.LevelFog.CheckDestroyesShips();
+                    Player selectedPlayer = Bot.LevelFog.CheckDestroyesShips(isGame);
                 }
                 else
                 {
                     PrintWithColor("\n\nЭхх, промах...\n", ConsoleColor.Black, ConsoleColor.Gray);
                 }
+            }
 
+            //  игра закончилась
+            if (!isGame)
+            {
+                Clear();
+
+                if (SelectedPlayer != null)
+                {
+                    switch (SelectedPlayer.Name)
+                    {
+                        case "игрок":
+                            PrintWithColor($"\n\nПобедил бот!", ConsoleColor.Black, ConsoleColor.Yellow);
+                            break;
+                        case "бот":
+                            PrintWithColor($"\n\nПобедил игрок!", ConsoleColor.Black, ConsoleColor.Yellow);
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
         }
     }

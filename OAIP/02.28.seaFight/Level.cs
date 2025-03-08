@@ -263,7 +263,6 @@ namespace OAIP
         private bool CheckNeighboards(int[] point)
         {
             // строка столбец
-            // WriteLine($"{point[0]}, {point[1]}");
 
             // устанавливаемая точка должна быть [.]
             if (LevelContent[point[0], point[1]] != "[.]")
@@ -406,26 +405,34 @@ namespace OAIP
         }
 
         // проверка на уничтоженные корабли
-        public void CheckDestroyesShips()
+        public Player CheckDestroyesShips(bool isGame)
         {
             // ? перебираем корабли
             for (int shipNumber = 0; shipNumber < Ships.Length; shipNumber++)
             {
-                WriteLine(Ships[shipNumber].LiveDeck + " livedeck");
                 if (Ships[shipNumber].LiveDeck <= 0)
                 {
-                    WriteLine(shipNumber + " shipnumber");
+                    PrintWithColor($"Потоплен {Ships[shipNumber].Decks.Count}x корабль!", ConsoleColor.Black, ConsoleColor.Red);
+                    // уменьшаем кол-во кораблей
+                    Player.CountLiveShips -= 1;
+
                     for (int deckNumber = 0; deckNumber < Ships[shipNumber].Decks.Count; deckNumber++)
                     {
                         UnSetFogByPoint([Ships[shipNumber].Decks[deckNumber][0], Ships[shipNumber].Decks[deckNumber][1]]);
                     }
+
+                    if(Player.CountLiveShips <= 0) {
+                        isGame = false;
+
+                        return Player;
+                    }
                 }
             }
+
+            return null;
         }
         public void UnSetFogByPoint(int[] point)
         {
-            WriteLine($"{point[0]}, {point[1]}");
-            WriteLine(LevelContent[2,2]);
             if (LevelContent[point[0] - 1, point[1]] == "[#]")
             {
                 LevelContent[point[0] - 1, point[1]] = "[.]";

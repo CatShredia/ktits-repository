@@ -10,6 +10,8 @@ namespace OAIP
             Level = new Level(this, "бот");
             LevelFog = new Level(this, Level, "туман");
 
+            CountLiveShips+=10;
+
             LevelFog.SetFog();
         }
 
@@ -31,7 +33,6 @@ namespace OAIP
                             && Level.Ships[shipNumber].Decks[deckNumber][1] == damagePoint[1]
                         )
                         {
-                            WriteLine(shipNumber + " shipnumber--");
                             Level.Ships[shipNumber].LiveDeck--;
                         }
                     }
