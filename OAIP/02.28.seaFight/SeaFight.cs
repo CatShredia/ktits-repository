@@ -48,6 +48,9 @@ namespace OAIP
                 } else {
                     PrintWithColor("\n\nЭхх, промах...\n", ConsoleColor.Black, ConsoleColor.Gray);
                 }
+
+                // проверка на уничтоженные корабли
+                User.Level.CheckDestroyesShips();
             }
         }
     }

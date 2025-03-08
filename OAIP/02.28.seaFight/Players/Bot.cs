@@ -19,12 +19,25 @@ namespace OAIP
             // проверка на попадание
             if (Level.LevelContent[damagePoint[0], damagePoint[1]].Equals("[O]"))
             {
+                // ? перебираем корабли
+                for (int shipNumber = 0; shipNumber < Level.Ships.Length; shipNumber++)
+                {
+                    // ? перебираем палубы
+                    for (int deckNumber = 0; deckNumber < Level.Ships[shipNumber].Decks.Count; deckNumber++)
+                    {
+                        // проверка на соотвествие палуб
+                        if (
+                            Level.Ships[shipNumber].Decks[deckNumber][0] == damagePoint[0]
+                            && Level.Ships[shipNumber].Decks[deckNumber][1] == damagePoint[1]
+                        )
+                        {
+                            Level.Ships[shipNumber].LiveDeck--;
+                        }
+                    }
+                }
                 LevelFog.LevelContent[damagePoint[0], damagePoint[1]] = "[Ж]";
                 Level.LevelContent[damagePoint[0], damagePoint[1]] = "[Ж]";
-                if (!CheckShip(damagePoint))
-                {
-                    PrintWithColor("\n\nКорабль подбит\n", ConsoleColor.Black, ConsoleColor.DarkRed);
-                }
+                // PrintWithColor("\n\nКорабль подбит\n", ConsoleColor.Black, ConsoleColor.DarkRed);
                 return true;
             }
             else
@@ -32,33 +45,6 @@ namespace OAIP
                 LevelFog.LevelContent[damagePoint[0], damagePoint[1]] = Level.LevelContent[damagePoint[0], damagePoint[1]];
                 return false;
             }
-        }
-
-        // проверяем, остались ли у корабля нетронутые палубы
-        public bool CheckShip(int[] point)
-        {
-            // вверх
-            if (Level.LevelContent[point[0] - 1, point[1]] == "[O]")
-            {
-                return true;
-            }
-            // низ
-            if (Level.LevelContent[point[0] + 1, point[1]] == "[O]")
-            {
-                return true;
-            }
-            // право
-            if (Level.LevelContent[point[0], point[1] + 1] == "[O]")
-            {
-                return true;
-            }
-            // лево
-            if (Level.LevelContent[point[0], point[1] - 1] == "[O]")
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }

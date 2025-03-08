@@ -184,6 +184,7 @@ namespace OAIP
                         {
                             NewLevelContent[point[0], point[1]] = "[O]";
                             Ships[shipNumber].Decks.Add(i, point);
+                            Ships[shipNumber].LiveDeck++;
                         }
                         else
                         {
@@ -196,6 +197,7 @@ namespace OAIP
                         {
                             NewLevelContent[point[0], point[1]] = "[O]";
                             Ships[shipNumber].Decks.Add(i, point);
+                            Ships[shipNumber].LiveDeck++;
                         }
                         else
                         {
@@ -208,6 +210,7 @@ namespace OAIP
                         {
                             NewLevelContent[point[0], point[1]] = "[O]";
                             Ships[shipNumber].Decks.Add(i, point);
+                            Ships[shipNumber].LiveDeck++;
                         }
                         else
                         {
@@ -220,6 +223,7 @@ namespace OAIP
                         {
                             NewLevelContent[point[0], point[1]] = "[O]";
                             Ships[shipNumber].Decks.Add(i, point);
+                            Ships[shipNumber].LiveDeck++;
                         }
                         else
                         {
@@ -233,7 +237,7 @@ namespace OAIP
                 // если установка не возможна, останавливаем процесс, без сохранения
                 if (isShipError)
                 {
-                    Ships[shipNumber] = null;   
+                    Ships[shipNumber] = null;
                     break;
                 }
             }
@@ -398,5 +402,57 @@ namespace OAIP
             }
         }
 
+        // проверка на уничтоженные корабли
+        public void CheckDestroyesShips()
+        {
+            // ? перебираем корабли
+            for (int shipNumber = 0; shipNumber < Ships.Length; shipNumber++)
+            {
+                if (Ships[shipNumber].LiveDeck <= 0)
+                {
+                    WriteLine("1");
+                    for (int deckNumber = 0; deckNumber < Ships[shipNumber].Decks.Count; deckNumber++)
+                    {
+                        WriteLine("12");
+                        UnSetFogByPoint([Ships[shipNumber].Decks[deckNumber][0], Ships[shipNumber].Decks[deckNumber][1]]);
+                    }
+                }
+            }
+        }
+        public void UnSetFogByPoint(int[] point)
+        {
+            if (LevelContent[point[0] - 1, point[1]] == "[#]")
+            {
+                LevelContent[point[0] - 1, point[1]] = "[.]";
+            }
+            if (LevelContent[point[0] + 1, point[1]] == "[#]")
+            {
+                LevelContent[point[0] + 1, point[1]] = "[.]";
+            }
+            if (LevelContent[point[0], point[1] + 1] == "[#]")
+            {
+                LevelContent[point[0], point[1] + 1] = "[.]";
+            }
+            if (LevelContent[point[0], point[1] - 1] == "[#]")
+            {
+                LevelContent[point[0], point[1] - 1] = "[.]";
+            }
+            if (LevelContent[point[0] - 1, point[1] - 1] == "[#]")
+            {
+                LevelContent[point[0] - 1, point[1] - 1] = "[.]";
+            }
+            if (LevelContent[point[0] - 1, point[1] + 1] == "[#]")
+            {
+                LevelContent[point[0] - 1, point[1] + 1] = "[.]";
+            }
+            if (LevelContent[point[0] + 1, point[1] - 1] == "[#]")
+            {
+                LevelContent[point[0] + 1, point[1] - 1] = "[.]";
+            }
+            if (LevelContent[point[0] + 1, point[1] + 1] == "[#]")
+            {
+                LevelContent[point[0] + 1, point[1] + 1] = "[.]";
+            }
+        }
     }
 }

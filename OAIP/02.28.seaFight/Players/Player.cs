@@ -100,10 +100,10 @@ namespace OAIP
         {
             Random random = new Random();
 
-            int[] numbers = [random.Next(1, 12), random.Next(1,12)];
+            int[] numbers = [random.Next(1, 12), random.Next(1, 12)];
 
             return numbers;
         }
-    
+
     }
 }
