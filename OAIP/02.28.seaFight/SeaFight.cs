@@ -16,6 +16,7 @@ namespace OAIP
             // создаем игрока и бота, и левелы вместе с ними
             User = new User("игрок");
             Bot = new Bot("бот");
+            Bot.LevelFog.Ships = Bot.Level.Ships;
 
             // Clear();
 
@@ -43,14 +44,17 @@ namespace OAIP
                 // выбираем точку удара
                 int[] damagePoint = User.ChoisePointToDamage();
                 // наносим удар
-                if(Bot.Damage(damagePoint)) {
+                if (Bot.Damage(damagePoint))
+                {
                     PrintWithColor("\n\nВы попали!\n", ConsoleColor.Black, ConsoleColor.Red);
-                } else {
+                    // проверка на уничтоженные корабли
+                    Bot.LevelFog.CheckDestroyesShips();
+                }
+                else
+                {
                     PrintWithColor("\n\nЭхх, промах...\n", ConsoleColor.Black, ConsoleColor.Gray);
                 }
 
-                // проверка на уничтоженные корабли
-                User.Level.CheckDestroyesShips();
             }
         }
     }

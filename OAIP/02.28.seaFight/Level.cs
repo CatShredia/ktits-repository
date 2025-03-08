@@ -4,6 +4,7 @@ namespace OAIP
 
     class Level : Object
     {
+        public string LevelName;
         public string[,] LevelContent;
 
         public int LevelLength = 13;
@@ -15,8 +16,9 @@ namespace OAIP
         public Ship[] Ships;
 
         // простой конструктор
-        public Level(Player player)
+        public Level(Player player, string levelName)
         {
+            LevelName = levelName;
             LevelContent = new string[LevelLength, LevelLength];
 
             Ships = new Ship[10];
@@ -29,8 +31,9 @@ namespace OAIP
         }
 
         // конструктор копирования
-        public Level(Player player, Level copyLevel)
+        public Level(Player player, Level copyLevel, string levelName)
         {
+            LevelName = levelName;
             Player = player;
 
             LevelLength = copyLevel.LevelLength;
@@ -408,12 +411,12 @@ namespace OAIP
             // ? перебираем корабли
             for (int shipNumber = 0; shipNumber < Ships.Length; shipNumber++)
             {
+                WriteLine(Ships[shipNumber].LiveDeck + " livedeck");
                 if (Ships[shipNumber].LiveDeck <= 0)
                 {
-                    WriteLine("1");
+                    WriteLine(shipNumber + " shipnumber");
                     for (int deckNumber = 0; deckNumber < Ships[shipNumber].Decks.Count; deckNumber++)
                     {
-                        WriteLine("12");
                         UnSetFogByPoint([Ships[shipNumber].Decks[deckNumber][0], Ships[shipNumber].Decks[deckNumber][1]]);
                     }
                 }
@@ -421,6 +424,8 @@ namespace OAIP
         }
         public void UnSetFogByPoint(int[] point)
         {
+            WriteLine($"{point[0]}, {point[1]}");
+            WriteLine(LevelContent[2,2]);
             if (LevelContent[point[0] - 1, point[1]] == "[#]")
             {
                 LevelContent[point[0] - 1, point[1]] = "[.]";

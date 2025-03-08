@@ -6,7 +6,7 @@ namespace OAIP
     {
         public User(string name) : base(name)
         {
-            Level = new Level(this);
+            Level = new Level(this, "юзер");
         }
 
         // выбор точки выстрела

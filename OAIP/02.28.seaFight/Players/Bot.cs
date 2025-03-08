@@ -7,8 +7,8 @@ namespace OAIP
         public Level LevelFog;
         public Bot(string name) : base(name)
         {
-            Level = new Level(this);
-            LevelFog = new Level(this, Level);
+            Level = new Level(this, "бот");
+            LevelFog = new Level(this, Level, "туман");
 
             LevelFog.SetFog();
         }
@@ -31,6 +31,7 @@ namespace OAIP
                             && Level.Ships[shipNumber].Decks[deckNumber][1] == damagePoint[1]
                         )
                         {
+                            WriteLine(shipNumber + " shipnumber--");
                             Level.Ships[shipNumber].LiveDeck--;
                         }
                     }
