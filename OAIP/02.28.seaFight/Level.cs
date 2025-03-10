@@ -405,31 +405,28 @@ namespace OAIP
         }
 
         // проверка на уничтоженные корабли
-        public Player CheckDestroyesShips(bool isGame)
+        public void CheckDestroyesShips(bool isGame)
         {
             // ? перебираем корабли
             for (int shipNumber = 0; shipNumber < Ships.Length; shipNumber++)
             {
-                if (Ships[shipNumber].LiveDeck <= 0)
+                if (Ships[shipNumber].LiveDeck == 0)
                 {
                     PrintWithColor($"Потоплен {Ships[shipNumber].Decks.Count}x корабль!", ConsoleColor.Black, ConsoleColor.Red);
+                    // WriteLine($"{Ships[shipNumber].Decks.Count}");
                     // уменьшаем кол-во кораблей
                     Player.CountLiveShips -= 1;
+                    WriteLine($"\n\nОсталось кораблей у {Player.Name}: {Player.CountLiveShips}");
 
                     for (int deckNumber = 0; deckNumber < Ships[shipNumber].Decks.Count; deckNumber++)
                     {
+                        // WriteLine($"Точка: {Ships[shipNumber].Decks[deckNumber][0]} {Ships[shipNumber].Decks[deckNumber][1]}");
                         UnSetFogByPoint([Ships[shipNumber].Decks[deckNumber][0], Ships[shipNumber].Decks[deckNumber][1]]);
-                    }
 
-                    if(Player.CountLiveShips <= 0) {
-                        isGame = false;
-
-                        return Player;
+                        Ships[shipNumber].LiveDeck = -1;    
                     }
                 }
             }
-
-            return null;
         }
         public void UnSetFogByPoint(int[] point)
         {

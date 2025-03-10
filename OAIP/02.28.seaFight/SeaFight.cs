@@ -6,7 +6,6 @@ namespace OAIP
     {
         public User User;
         public Bot Bot;
-        public Player SelectedPlayer;
 
         public bool isGame;
 
@@ -49,34 +48,52 @@ namespace OAIP
                 {
                     PrintWithColor("\n\nВы попали!\n", ConsoleColor.Black, ConsoleColor.Red);
                     // проверка на уничтоженные корабли
-                    Player selectedPlayer = Bot.LevelFog.CheckDestroyesShips(isGame);
+                    Bot.LevelFog.CheckDestroyesShips(isGame);
+                    User.Level.CheckDestroyesShips(isGame);
+
+                    CheckWinner();
                 }
                 else
                 {
                     PrintWithColor("\n\nЭхх, промах...\n", ConsoleColor.Black, ConsoleColor.Gray);
                 }
             }
-
-            //  игра закончилась
-            if (!isGame)
+        }
+        // проверка, есть ли победитель
+        public void CheckWinner()
+        {
+            if (
+                Bot.CountLiveShips == 0
+                && User.CountLiveShips == 0
+            )
             {
-                Clear();
-
-                if (SelectedPlayer != null)
+                Draw(Bot, User);
+            }
+            else
+            {
+                if (Bot.CountLiveShips == 0)
                 {
-                    switch (SelectedPlayer.Name)
-                    {
-                        case "игрок":
-                            PrintWithColor($"\n\nПобедил бот!", ConsoleColor.Black, ConsoleColor.Yellow);
-                            break;
-                        case "бот":
-                            PrintWithColor($"\n\nПобедил игрок!", ConsoleColor.Black, ConsoleColor.Yellow);
-                            break;
-                        default:
-                            break;
-                    }
+                    Victory(User);
+                }
+                if (User.CountLiveShips == 0)
+                {
+                    Victory(Bot);
                 }
             }
+        }
+
+        // победа
+        public void Victory(Player winner)
+        {
+            isGame = false;
+            PrintWithColor($"\n\nПобеда за {winner.Name}, у него осталось {winner.CountLiveShips}\n", ConsoleColor.Black, ConsoleColor.Yellow);
+        }
+
+        // ничья
+        public void Draw(Player drawPlayer1, Player drawPlayer2)
+        {
+            isGame = false;
+            PrintWithColor($"\n\nИгроки: {drawPlayer1.Name} и {drawPlayer2.Name} сыграли вничью\n", ConsoleColor.Black, ConsoleColor.DarkMagenta);
         }
     }
 }
