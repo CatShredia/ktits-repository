@@ -1,46 +1,46 @@
-// overlay menu
-document.addEventListener("DOMContentLoaded", function () {
-  const overlay = document.getElementById("overlay");
-  const closeButton = document.getElementById("close-button");
-  const popup = document.getElementById("popup");
+$(document).ready(function () {
+  const $overlay = $("#overlay");
+  const $closeButton = $("#close-button");
+  const $popup = $("#popup");
 
   function showPopup() {
-    overlay.style.opacity = 0;
-    overlay.style.display = "flex";
-    popup.style.transform = "translateY(-50px)";
+    $overlay.css({
+      opacity: 0,
+      display: "flex",
+    });
+    $popup.css("transform", "translateY(-50px)");
 
-    overlay.offsetHeight;
+    // Force a reflow to ensure the transition starts correctly
+    $overlay[0].offsetHeight;
 
-    overlay.style.transition = "opacity 0.3s ease-in-out";
-    popup.style.transition = "transform 0.3s ease-in-out";
-    overlay.style.opacity = 1;
-    popup.style.transform = "translateY(0)";
+    $overlay.css({
+      transition: "opacity 0.3s ease-in-out",
+      opacity: 1,
+    });
+    $popup.css({
+      transition: "transform 0.3s ease-in-out",
+      transform: "translateY(0)",
+    });
   }
 
   function hidePopup() {
-    overlay.style.opacity = 0;
-    popup.style.transform = "translateY(-50px)";
+    $overlay.css("opacity", 0);
+    $popup.css("transform", "translateY(-50px)");
 
-    overlay.addEventListener(
-      "transitionend",
-      () => {
-        overlay.style.display = "none";
-        overlay.style.transition = "none";
-        popup.style.transition = "none";
-        popup.style.transform = "translateY(0)";
-      },
-      {
-        once: true,
-      }
-    );
+    $overlay.one("transitionend", function () {
+      $overlay.css("display", "none");
+      $overlay.css("transition", "none");
+      $popup.css("transition", "none");
+      $popup.css("transform", "translateY(0)");
+    });
   }
 
-  setTimeout(showPopup, 3000); // 3000 миллисекунд = 3 секунды
+  setTimeout(showPopup, 5000);
 
-  closeButton.addEventListener("click", hidePopup);
+  $closeButton.on("click", hidePopup);
 
-  overlay.addEventListener("click", function (event) {
-    if (event.target === overlay) {
+  $overlay.on("click", function (event) {
+    if (event.target === this) {
       hidePopup();
     }
   });

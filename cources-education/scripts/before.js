@@ -1,4 +1,6 @@
 // dependences adding
+
+// добавляем отображение зависимостей, в style самой страницы
 let styleElem = $("style");
 if (styleElem.length === 0) {
   styleElem = $("<style>");
@@ -12,4 +14,3 @@ if (styleElem.length === 0) {
       `body::before { content: "Dependences: bootstrap jquery fontawesome"; }`
   );
 }
-console.log(styleElem);

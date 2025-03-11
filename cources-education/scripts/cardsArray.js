@@ -45,7 +45,7 @@ function getRandomEnglishWord(number) {
 
   //   делаем первую букву - заглавной
   returned = returned.charAt(0).toUpperCase() + returned.slice(1);
-  return returned.trim();
+  return returned;
 }
 
 // получаем рандомную стоимость

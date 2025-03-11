@@ -1,5 +1,5 @@
 // smooth listing
-const containers = document.querySelectorAll(".mycontainer");
+const mycontainers = document.querySelectorAll(".mycontainer");
 
 const observer = new IntersectionObserver(
   (entries) => {
@@ -13,11 +13,11 @@ const observer = new IntersectionObserver(
   },
   {
     root: null,
-    rootMargin: "0px",
+    rootMargin: "10px",
     threshold: 0.3,
   }
 );
 
-containers.forEach((container) => {
+mycontainers.forEach((container) => {
   observer.observe(container);
 });
