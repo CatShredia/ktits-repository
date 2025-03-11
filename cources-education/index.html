@@ -575,25 +575,28 @@
       <span class="close-button">&times;</span>
       <div class="login container">
         <h2>Вход</h2>
-        <form action="#" method="POST">
+        <form action="#" method="POST" class="form">
           <div class="form-group">
             <label for="username">Имя пользователя:</label>
-            <input type="text" id="username" name="username" required>
+            <p class="information">От 8 до 20 символов</p>
+            <input type="text" id="username" name="username" class="form__input">
           </div>
           <div class="form-group">
             <label for="password">Пароль:</label>
-            <input type="password" id="password" name="password" required>
+            <p class="information">От 8 до 20 символов, среди которых цифра и спец знак</p>
+            <input type="password" id="password" name="password" class="form__input">
           </div>
           <div class="form-group">
             <label for="email">Email:</label>
-            <input type="text" id="email" name="email" required>
+            <p class="information">example@test.com</p>
+            <input type="text" id="email" name="email" class="form__input">
           </div>
           <div class="form-group">
-            <input type="submit" value="Войти">
+            <button type="submit" class="form__button">Отправить</button>
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <a href="#">Забыли пароль?</a>
-          </div>
+          </div> -->
         </form>
       </div>
     </div>

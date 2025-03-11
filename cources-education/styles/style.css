@@ -418,6 +418,11 @@ body::before {
 
 .form-group {
     margin-bottom: 15px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
 }
 
 .form-group label {
@@ -462,4 +467,50 @@ body::before {
 
 .form-group a:hover {
     text-decoration: underline;
+}
+
+.form-group button {
+    background-color: blue;
+    color: white;
+
+    border-radius: 5px;
+
+    width: 100%;
+
+    padding: 10px 20px;
+
+    transition: 0.5s linear;
+
+    border: none;
+}
+
+.form-group button:hover {
+    background-color: black;
+    color: white;
+
+    padding: 10px 40px;
+
+}
+
+.form-group .information {
+    color: #888;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.form-group .error-message {
+    color: black;
+
+    background-color: red;
+
+    margin: 10px;
+}
+
+.form-group .success-message {
+    color: black;
+
+    background-color: green;
+
+    margin: 10px;
 }
