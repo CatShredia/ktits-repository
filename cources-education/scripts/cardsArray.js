@@ -32,26 +32,28 @@ const russianWords = [
   "воздух",
 ];
 
+// получение слова рандомно из russianWords
+// в зависимости от number изменяется число слов
 function getRandomEnglishWord(number) {
   let returned = "";
   let randomIndex;
 
   for (let i = 0; i < number; i++) {
-    // Исправляем начальное значение i и условие цикла
     randomIndex = Math.floor(Math.random() * russianWords.length);
-    returned += russianWords[randomIndex] + " "; // Добавляем пробел для разделения слов
+    returned += russianWords[randomIndex] + " ";
   }
-  return returned.trim(); // Возвращаем строку, убрав лишние пробелы в начале и конце
+
+  //   делаем первую букву - заглавной
+  returned = returned.charAt(0).toUpperCase() + returned.slice(1);
+  return returned.trim();
 }
 
-function getRandomNumber(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
+// получаем рандомную стоимость
 function getRandomCost() {
-  return Math.floor(Math.random() * 10000); // Генерирует цену от 0 до 9999
+  return Math.floor(Math.random() * 10000);
 }
 
+// объект с свойствами и функцией заполнения
 let cardInformation = {
   title: null,
   text: null,
@@ -63,24 +65,27 @@ let cardInformation = {
   },
 };
 
-let card = $(".array .card"); // Выбираем ОРИГИНАЛЬНУЮ карту
+// получаем jquery объект всех нужных карт
+let card = $(".array .card");
 
+// количество карт
 const cardCount = 6;
 
+// перебираем карты
 for (let index = 0; index < cardCount - 1; index++) {
-  // Ключевое слово 'new' здесь не нужно. Просто используем тот же объект
+  // заполняем инфу
   cardInformation.addInformation(
     getRandomEnglishWord(1),
     getRandomEnglishWord(10),
     getRandomCost()
   );
 
-  let newCard = card.clone(true); // Клонируем карту, включая события
-  newCard.find(".card-title").text(cardInformation.title); // изменил textContent на .text (jQuery)
-  newCard.find(".card-text").text(cardInformation.text); // изменил textContent на .text (jQuery)
-  newCard.find(".card-cost").text(cardInformation.cost); // изменил textContent на .text (jQuery)
+  //   клонируем объект и заполняем его
+  let newCard = card.clone(true);
+  newCard.find(".card-title").text(cardInformation.title);
+  newCard.find(".card-text").text(cardInformation.text);
+  newCard.find(".card__cost").text(cardInformation.cost + " $");
 
-  card.parent().append(newCard); // Добавляем клонированную карту к родителю
+  //   добавляем в .cards
+  card.parent().append(newCard);
 }
-
-console.log(card);
