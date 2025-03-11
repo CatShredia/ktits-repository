@@ -1,3 +1,4 @@
+// dependences adding
 let styleElem = $("style");
 if (styleElem.length === 0) {
   styleElem = $("<style>");

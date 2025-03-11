@@ -1,21 +1,20 @@
-// overlay
+// overlay menu
 document.addEventListener("DOMContentLoaded", function () {
   const overlay = document.getElementById("overlay");
   const closeButton = document.getElementById("close-button");
   const popup = document.getElementById("popup");
 
   function showPopup() {
-    overlay.style.opacity = 0; // Start with opacity 0
+    overlay.style.opacity = 0;
     overlay.style.display = "flex";
-    popup.style.transform = "translateY(-50px)"; // Start a bit higher
+    popup.style.transform = "translateY(-50px)";
 
-    // Trigger a reflow (important for the transition to work)
     overlay.offsetHeight;
 
-    overlay.style.transition = "opacity 0.3s ease-in-out"; // Define transition on opacity
-    popup.style.transition = "transform 0.3s ease-in-out"; // Define transition on transform
+    overlay.style.transition = "opacity 0.3s ease-in-out";
+    popup.style.transition = "transform 0.3s ease-in-out";
     overlay.style.opacity = 1;
-    popup.style.transform = "translateY(0)"; // Move to final position
+    popup.style.transform = "translateY(0)";
   }
 
   function hidePopup() {
@@ -31,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
         popup.style.transform = "translateY(0)";
       },
       {
-        once: true
+        once: true,
       }
     );
   }

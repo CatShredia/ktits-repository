@@ -1,3 +1,4 @@
+// menu adding
 $(document).ready(function () {
   let $menu = $(".navmenu");
   function menuOpen() {
