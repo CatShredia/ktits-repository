@@ -29,6 +29,10 @@ body {
     transform: translateY(0);
 }
 
+.navmenu.visible {
+    opacity: 0;
+}
+
 body::before {
     background-color: red;
 
@@ -261,7 +265,7 @@ body::before {
 
 
     grid-template-columns: 1fr 0.1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
 
     position: absolute;
     box-sizing: border-box;
@@ -274,9 +278,9 @@ body::before {
     background-color: #E5DFDF;
 
     width: 100%;
-    height: 100%;
 
     box-sizing: border-box;
+
 }
 
 .navmenu.show {
