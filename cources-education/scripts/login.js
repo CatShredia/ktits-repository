@@ -13,6 +13,14 @@ $(document).ready(function () {
     $(".success-message").remove();
     $loginModal.removeClass("show");
   });
+  $(document).on("keyup", function (event) {
+    console.log(event);
+    if (event.key === "Escape" || event.key === "Esc") {
+      $(".error-message").remove();
+      $(".success-message").remove();
+      $loginModal.removeClass("show");
+    }
+  });
 
   $(window).on("click", function (event) {
     if (event.target == $loginModal[0]) {

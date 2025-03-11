@@ -44,4 +44,10 @@ $(document).ready(function () {
       hidePopup();
     }
   });
+
+  $(document).on("keyup", function (event) {
+    if (event.key === "Escape" || event.key === "Esc") {
+      hidePopup();
+    }
+  });
 });
