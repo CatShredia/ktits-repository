@@ -185,19 +185,19 @@ namespace OAIP
                 {
                     case 'w':
                         point = [startLocation[0] - deckI, startLocation[1]];
-                        SetPointOfShip(point, shipNumber, NewLevelContent, deckI, isShipError);
+                        isShipError = SetPointOfShip(point, shipNumber, NewLevelContent, deckI);
                         break;
                     case 's':
                         point = [startLocation[0] + deckI, startLocation[1]];
-                        SetPointOfShip(point, shipNumber, NewLevelContent, deckI, isShipError);
+                        isShipError = SetPointOfShip(point, shipNumber, NewLevelContent, deckI);
                         break;
                     case 'a':
                         point = [startLocation[0], startLocation[1] - deckI];
-                        SetPointOfShip(point, shipNumber, NewLevelContent, deckI, isShipError);
+                        isShipError = SetPointOfShip(point, shipNumber, NewLevelContent, deckI);
                         break;
                     case 'd':
                         point = [startLocation[0], startLocation[1] + deckI];
-                        SetPointOfShip(point, shipNumber, NewLevelContent, deckI, isShipError);
+                        isShipError = SetPointOfShip(point, shipNumber, NewLevelContent, deckI);
                         break;
                     default:
                         break;
@@ -224,17 +224,19 @@ namespace OAIP
         }
 
         // установка точки в временный массив
-        private void SetPointOfShip(int[] point, int shipNumber, string[,] NewLevelContent, int deckI, bool isShipError)
+        private bool SetPointOfShip(int[] point, int shipNumber, string[,] NewLevelContent, int deckI)
         {
             if (CheckNeighboards([point[0], point[1]]))
             {
                 NewLevelContent[point[0], point[1]] = "[O]";
                 Ships[shipNumber].Decks.Add(deckI, point);
                 Ships[shipNumber].LiveDeck++;
+
+                return false;
             }
             else
             {
-                isShipError = true;
+                return true;
             }
         }
 
@@ -259,53 +261,60 @@ namespace OAIP
         // проверка на соседей
         private bool CheckNeighboards(int[] point)
         {
-            // устанавливаемая точка должна быть [.]
-            if (LevelContent[point[0], point[1]] != "[.]")
+            try
             {
-                return false;
-            }
+                // устанавливаемая точка должна быть [.]
+                if (LevelContent[point[0], point[1]] != "[.]")
+                {
+                    return false;
+                }
 
-            // вверх
-            if (LevelContent[point[0] - 1, point[1]] == "[O]")
-            {
-                return false;
-            }
-            // низ
-            if (LevelContent[point[0] + 1, point[1]] == "[O]")
-            {
-                return false;
-            }
-            // право
-            if (LevelContent[point[0], point[1] + 1] == "[O]")
-            {
-                return false;
-            }
-            // лево
-            if (LevelContent[point[0], point[1] - 1] == "[O]")
-            {
-                return false;
-            }
-            // левый верхний
-            if (LevelContent[point[0] - 1, point[1] - 1] == "[O]")
-            {
-                return false;
-            }
-            // левый нижний
-            if (LevelContent[point[0] - 1, point[1] + 1] == "[O]")
-            {
-                return false;
-            }
-            // правый верхний
-            if (LevelContent[point[0] + 1, point[1] - 1] == "[O]")
-            {
-                return false;
-            }
-            // правый нижний
-            if (LevelContent[point[0] + 1, point[1] + 1] == "[O]")
-            {
-                return false;
-            }
+                // вверх
+                if (LevelContent[point[0] - 1, point[1]] == "[O]")
+                {
+                    return false;
+                }
+                // низ
+                if (LevelContent[point[0] + 1, point[1]] == "[O]")
+                {
+                    return false;
+                }
+                // право
+                if (LevelContent[point[0], point[1] + 1] == "[O]")
+                {
+                    return false;
+                }
+                // лево
+                if (LevelContent[point[0], point[1] - 1] == "[O]")
+                {
+                    return false;
+                }
+                // левый верхний
+                if (LevelContent[point[0] - 1, point[1] - 1] == "[O]")
+                {
+                    return false;
+                }
+                // левый нижний
+                if (LevelContent[point[0] - 1, point[1] + 1] == "[O]")
+                {
+                    return false;
+                }
+                // правый верхний
+                if (LevelContent[point[0] + 1, point[1] - 1] == "[O]")
+                {
+                    return false;
+                }
+                // правый нижний
+                if (LevelContent[point[0] + 1, point[1] + 1] == "[O]")
+                {
+                    return false;
+                }
 
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -396,7 +405,7 @@ namespace OAIP
                 }
             }
         }
-        
+
         // удаляем точки, вблизи заданной
         public void UnSetFogByPoint(int[] point)
         {
