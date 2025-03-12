@@ -9,10 +9,9 @@ namespace OAIP
         {
             Level = new Level(this, "бот");
             LevelFog = new Level(this, Level, "туман");
+            LevelFog.SetFog();
 
             Level.CountLiveShips+=10;
-
-            LevelFog.SetFog();
         }
 
         // получаем выстрел на карту бота

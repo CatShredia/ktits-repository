@@ -4,18 +4,22 @@ namespace OAIP
 
     class Level : Object
     {
+        // название левела
         public string LevelName;
+        // содержимое левела
         public string[,] LevelContent;
+        // кол-во неуничтоженных кораблей
+        public int CountLiveShips;
 
+        // кол-во строк и столбцов
+        // TODO: необходимо переписать код генерации, для того, чтобы в контенте был только контент
         public int LevelLength = 13;
 
-        private bool isShipError = false;
-
+        // игрок, владелец
         private Player Player;
 
+        // корабли
         public Ship[] Ships;
-
-        public int CountLiveShips;
 
         // простой конструктор
         public Level(Player player, string levelName)
@@ -28,7 +32,6 @@ namespace OAIP
             Player = player;
 
             FillLevel();
-            PrintContent();
             FillShip();
         }
 
@@ -47,7 +50,7 @@ namespace OAIP
         // заполняем левел первоначальными значениями
         private void FillLevel()
         {
-            // заполнение изначальных
+            // ? заполнение изначальных
             for (int i = 0; i < LevelLength; i++)
             {
                 for (int j = 0; j < LevelLength; j++)
@@ -65,7 +68,7 @@ namespace OAIP
                 }
             }
 
-            // заполнение букв
+            // ? заполнение букв
             char numChar = 'A';
             for (int i = 1; i < LevelLength - 1; i++)
             {
@@ -74,7 +77,7 @@ namespace OAIP
                 numChar++;
             }
 
-            // заполнение цифр
+            // ? заполнение цифр
             int numInt = 1;
             for (int i = 2; i < LevelLength; i++)
             {
@@ -90,7 +93,7 @@ namespace OAIP
                 numInt++;
             }
 
-            // заполнение последних
+            // ? заполнение последних
             for (int i = 0; i < LevelLength; i++)
             {
                 LevelContent[LevelLength - 1, i] = "---";
@@ -103,6 +106,7 @@ namespace OAIP
                 }
             }
 
+            // ? базовое обнуление
             LevelContent[0, 0] = "    ";
             LevelContent[0, LevelLength - 1] = "    ";
             LevelContent[LevelLength - 1, 0] = "  --";
@@ -111,6 +115,7 @@ namespace OAIP
         // заполняем корабли
         public void FillShip()
         {
+            // временный словарь, для подсчета кол-ва сгенерированных кораблей
             Dictionary<int, int> countGenerateOfShip = new Dictionary<int, int>(Player.CountOfShip);
 
             // ? перебираем корабли
@@ -130,8 +135,6 @@ namespace OAIP
                             break;
                         }
                     }
-
-                    WriteLine($"Установка {i}x палубный корабль");
 
                     // получаем стартовую точку и направление установки
                     int[] noseLocation;
@@ -158,8 +161,6 @@ namespace OAIP
 
                     if (SetShip(noseLocation, shipDirection, i, shipNumber))
                     {
-                        PrintWithColor("Корабль установлен!", ConsoleColor.Black, ConsoleColor.Green);
-
                         countGenerateOfShip[i] -= 1;
                     }
                 }
@@ -174,69 +175,31 @@ namespace OAIP
             Array.Copy(LevelContent, NewLevelContent, LevelContent.Length);
 
             // ? перебираем палубы корабля
-            // TODO: черкануть i
-            for (int i = 0; i < deck; i++)
+            bool isShipError = false;
+            for (int deckI = 0; deckI < deck; deckI++)
             {
                 isShipError = false;
-
                 int[] point;
 
                 switch (direction)
                 {
                     case 'w':
-                        point = [startLocation[0] - i, startLocation[1]];
-                        if (CheckNeighboards([point[0], point[1]]))
-                        {
-                            NewLevelContent[point[0], point[1]] = "[O]";
-                            Ships[shipNumber].Decks.Add(i, point);
-                            Ships[shipNumber].LiveDeck++;
-                        }
-                        else
-                        {
-                            isShipError = true;
-                        }
+                        point = [startLocation[0] - deckI, startLocation[1]];
+                        SetPointOfShip(point, shipNumber, NewLevelContent, deckI, isShipError);
                         break;
                     case 's':
-                        point = [startLocation[0] + i, startLocation[1]];
-                        if (CheckNeighboards([point[0], point[1]]))
-                        {
-                            NewLevelContent[point[0], point[1]] = "[O]";
-                            Ships[shipNumber].Decks.Add(i, point);
-                            Ships[shipNumber].LiveDeck++;
-                        }
-                        else
-                        {
-                            isShipError = true;
-                        }
+                        point = [startLocation[0] + deckI, startLocation[1]];
+                        SetPointOfShip(point, shipNumber, NewLevelContent, deckI, isShipError);
                         break;
                     case 'a':
-                        point = [startLocation[0], startLocation[1] - i];
-                        if (CheckNeighboards([point[0], point[1]]))
-                        {
-                            NewLevelContent[point[0], point[1]] = "[O]";
-                            Ships[shipNumber].Decks.Add(i, point);
-                            Ships[shipNumber].LiveDeck++;
-                        }
-                        else
-                        {
-                            isShipError = true;
-                        }
+                        point = [startLocation[0], startLocation[1] - deckI];
+                        SetPointOfShip(point, shipNumber, NewLevelContent, deckI, isShipError);
                         break;
                     case 'd':
-                        point = [startLocation[0], startLocation[1] + i];
-                        if (CheckNeighboards([point[0], point[1]]))
-                        {
-                            NewLevelContent[point[0], point[1]] = "[O]";
-                            Ships[shipNumber].Decks.Add(i, point);
-                            Ships[shipNumber].LiveDeck++;
-                        }
-                        else
-                        {
-                            isShipError = true;
-                        }
+                        point = [startLocation[0], startLocation[1] + deckI];
+                        SetPointOfShip(point, shipNumber, NewLevelContent, deckI, isShipError);
                         break;
                     default:
-                        PrintWithColor("Ошибка", ConsoleColor.Black, ConsoleColor.Red);
                         break;
                 }
                 // если установка не возможна, останавливаем процесс, без сохранения
@@ -250,7 +213,6 @@ namespace OAIP
             // если ошибка, выходим, иначе сохраняем
             if (isShipError)
             {
-                PrintWithColor("Невозможное расположение корабля!", ConsoleColor.Black, ConsoleColor.Red);
                 return false;
             }
             else
@@ -261,11 +223,42 @@ namespace OAIP
             return true;
         }
 
+        // установка точки в временный массив
+        private void SetPointOfShip(int[] point, int shipNumber, string[,] NewLevelContent, int deckI, bool isShipError)
+        {
+            if (CheckNeighboards([point[0], point[1]]))
+            {
+                NewLevelContent[point[0], point[1]] = "[O]";
+                Ships[shipNumber].Decks.Add(deckI, point);
+                Ships[shipNumber].LiveDeck++;
+            }
+            else
+            {
+                isShipError = true;
+            }
+        }
+
+        // установка тумана
+        public void SetFog()
+        {
+            for (int i = 0; i < LevelLength; i++)
+            {
+                for (int j = 0; j < LevelLength; j++)
+                {
+                    if (
+                        LevelContent[i, j].Equals("[O]")
+                        || LevelContent[i, j].Equals("[.]")
+                    )
+                    {
+                        LevelContent[i, j] = "[#]";
+                    }
+                }
+            }
+        }
+
         // проверка на соседей
         private bool CheckNeighboards(int[] point)
         {
-            // строка столбец
-
             // устанавливаемая точка должна быть [.]
             if (LevelContent[point[0], point[1]] != "[.]")
             {
@@ -295,25 +288,21 @@ namespace OAIP
             // левый верхний
             if (LevelContent[point[0] - 1, point[1] - 1] == "[O]")
             {
-                PrintWithColor("левый верхний", ConsoleColor.Black, ConsoleColor.DarkYellow);
                 return false;
             }
             // левый нижний
             if (LevelContent[point[0] - 1, point[1] + 1] == "[O]")
             {
-                PrintWithColor("левый нижний", ConsoleColor.Black, ConsoleColor.DarkYellow);
                 return false;
             }
             // правый верхний
             if (LevelContent[point[0] + 1, point[1] - 1] == "[O]")
             {
-                PrintWithColor("правый верхний", ConsoleColor.Black, ConsoleColor.DarkYellow);
                 return false;
             }
             // правый нижний
             if (LevelContent[point[0] + 1, point[1] + 1] == "[O]")
             {
-                PrintWithColor("правый нижний", ConsoleColor.Black, ConsoleColor.DarkYellow);
                 return false;
             }
 
@@ -388,24 +377,6 @@ namespace OAIP
             }
         }
 
-        // установка тумана
-        public void SetFog()
-        {
-            for (int i = 0; i < LevelLength; i++)
-            {
-                for (int j = 0; j < LevelLength; j++)
-                {
-                    if (
-                        LevelContent[i, j].Equals("[O]")
-                        || LevelContent[i, j].Equals("[.]")
-                    )
-                    {
-                        LevelContent[i, j] = "[#]";
-                    }
-                }
-            }
-        }
-
         // проверка на уничтоженные корабли
         public void CheckDestroyesShips(bool isGame)
         {
@@ -414,22 +385,19 @@ namespace OAIP
             {
                 if (Ships[shipNumber].LiveDeck == 0)
                 {
-                    PrintWithColor($"Потоплен {Ships[shipNumber].Decks.Count}x корабль!", ConsoleColor.Black, ConsoleColor.Red);
-                    // WriteLine($"{Ships[shipNumber].Decks.Count}");
-                    // уменьшаем кол-во кораблей
                     Player.Level.CountLiveShips -= 1;
-                    WriteLine($"\n\nОсталось кораблей у {Player.Name}: {Player.Level.CountLiveShips}");
 
                     for (int deckNumber = 0; deckNumber < Ships[shipNumber].Decks.Count; deckNumber++)
                     {
-                        // WriteLine($"Точка: {Ships[shipNumber].Decks[deckNumber][0]} {Ships[shipNumber].Decks[deckNumber][1]}");
                         UnSetFogByPoint([Ships[shipNumber].Decks[deckNumber][0], Ships[shipNumber].Decks[deckNumber][1]]);
 
-                        Ships[shipNumber].LiveDeck = -1;    
+                        Ships[shipNumber].LiveDeck = -1;
                     }
                 }
             }
         }
+        
+        // удаляем точки, вблизи заданной
         public void UnSetFogByPoint(int[] point)
         {
             if (LevelContent[point[0] - 1, point[1]] == "[#]")

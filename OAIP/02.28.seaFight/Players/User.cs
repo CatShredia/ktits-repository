@@ -33,6 +33,5 @@ namespace OAIP
                 return [0];
             }
         }
-        
     }
 }
