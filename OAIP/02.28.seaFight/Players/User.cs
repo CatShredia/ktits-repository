@@ -8,7 +8,7 @@ namespace OAIP
         {
             Level = new Level(this, "юзер");
 
-            CountLiveShips+=10;
+            Level.CountLiveShips+=10;
         }
 
         // выбор точки выстрела
@@ -33,5 +33,6 @@ namespace OAIP
                 return [0];
             }
         }
+        
     }
 }

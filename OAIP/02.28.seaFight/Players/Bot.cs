@@ -10,7 +10,7 @@ namespace OAIP
             Level = new Level(this, "бот");
             LevelFog = new Level(this, Level, "туман");
 
-            CountLiveShips+=10;
+            Level.CountLiveShips+=10;
 
             LevelFog.SetFog();
         }

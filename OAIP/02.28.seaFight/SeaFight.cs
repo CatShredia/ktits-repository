@@ -61,19 +61,19 @@ namespace OAIP
         public void CheckWinner()
         {
             if (
-                Bot.CountLiveShips == 0
-                && User.CountLiveShips == 0
+                Bot.Level.CountLiveShips == 0
+                && User.Level.CountLiveShips == 0
             )
             {
                 Draw(Bot, User);
             }
             else
             {
-                if (Bot.CountLiveShips == 0)
+                if (Bot.Level.CountLiveShips == 0)
                 {
                     Victory(User);
                 }
-                if (User.CountLiveShips == 0)
+                if (User.Level.CountLiveShips == 0)
                 {
                     Victory(Bot);
                 }
@@ -83,7 +83,7 @@ namespace OAIP
         public void Victory(Player winner)
         {
             isGame = false;
-            PrintWithColor($"\n\nПобеда за {winner.Name}, у него осталось {winner.CountLiveShips}\n", ConsoleColor.Black, ConsoleColor.Yellow);
+            PrintWithColor($"\n\nПобеда за {winner.Name}, у него осталось {winner.Level.CountLiveShips}\n", ConsoleColor.Black, ConsoleColor.Yellow);
         }
         // ничья
         public void Draw(Player drawPlayer1, Player drawPlayer2)

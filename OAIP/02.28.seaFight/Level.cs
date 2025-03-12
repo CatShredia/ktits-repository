@@ -15,6 +15,8 @@ namespace OAIP
 
         public Ship[] Ships;
 
+        public int CountLiveShips;
+
         // простой конструктор
         public Level(Player player, string levelName)
         {
@@ -415,8 +417,8 @@ namespace OAIP
                     PrintWithColor($"Потоплен {Ships[shipNumber].Decks.Count}x корабль!", ConsoleColor.Black, ConsoleColor.Red);
                     // WriteLine($"{Ships[shipNumber].Decks.Count}");
                     // уменьшаем кол-во кораблей
-                    Player.CountLiveShips -= 1;
-                    WriteLine($"\n\nОсталось кораблей у {Player.Name}: {Player.CountLiveShips}");
+                    Player.Level.CountLiveShips -= 1;
+                    WriteLine($"\n\nОсталось кораблей у {Player.Name}: {Player.Level.CountLiveShips}");
 
                     for (int deckNumber = 0; deckNumber < Ships[shipNumber].Decks.Count; deckNumber++)
                     {
