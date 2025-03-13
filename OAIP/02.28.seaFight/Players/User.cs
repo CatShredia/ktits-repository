@@ -8,7 +8,40 @@ namespace OAIP
         {
             Level = new Level(this, "юзер");
 
-            Level.CountLiveShips+=10;
+            Level.CountLiveShips += 10;
+        }
+
+        // получаем выстрел на карту бота
+        public bool Damage(int[] damagePoint, SeaFight game)
+        {
+            // проверка на попадание
+            if (Level.LevelContent[damagePoint[0], damagePoint[1]].Equals("[O]"))
+            {
+                // ? перебираем корабли
+                for (int shipNumber = 0; shipNumber < Level.Ships.Length; shipNumber++)
+                {
+                    // ? перебираем палубы
+                    for (int deckNumber = 0; deckNumber < Level.Ships[shipNumber].Decks.Count; deckNumber++)
+                    {
+                        // проверка на соотвествие палуб
+                        if (
+                            Level.Ships[shipNumber].Decks[deckNumber][0] == damagePoint[0]
+                            && Level.Ships[shipNumber].Decks[deckNumber][1] == damagePoint[1]
+                        )
+                        {
+                            Level.Ships[shipNumber].LiveDeck--;
+                        }
+                    }
+                }
+                Level.LevelContent[damagePoint[0], damagePoint[1]] = "[Ж]";
+                // PrintWithColor("\n\nКорабль подбит\n", ConsoleColor.Black, ConsoleColor.DarkRed);
+                return true;
+            }
+            else
+            {
+                Level.LevelContent[damagePoint[0], damagePoint[1]] = "[X]";
+                return false;
+            }
         }
 
         // выбор точки выстрела
@@ -31,6 +64,26 @@ namespace OAIP
             else
             {
                 return [0];
+            }
+        }
+
+        // выстрел игрока
+        public void UserShoot(Bot bot, SeaFight game)
+        {
+            // выбираем точку удара
+            int[] damagePoint = ChoisePointToDamage();
+            game.Messages += $"Игрок выстрелил по [{damagePoint[0] - 1} {damagePoint[1]}]: ";
+            // наносим удар
+            if (bot.Damage(damagePoint))
+            {
+                game.Messages += $" Корабль подбит!\n";
+                // проверка на уничтоженные корабли
+                bot.LevelFog.CheckDestroyesShips(game.isGame);
+                // проверка, есть ли победитель
+            }
+            else
+            {
+                game.Messages += $" Эхх... Промах!\n";
             }
         }
     }

@@ -11,7 +11,7 @@ namespace OAIP
             LevelFog = new Level(this, Level, "туман");
             LevelFog.SetFog();
 
-            Level.CountLiveShips+=10;
+            Level.CountLiveShips += 10;
         }
 
         // получаем выстрел на карту бота
@@ -38,7 +38,7 @@ namespace OAIP
                 }
                 LevelFog.LevelContent[damagePoint[0], damagePoint[1]] = "[Ж]";
                 Level.LevelContent[damagePoint[0], damagePoint[1]] = "[Ж]";
-                // PrintWithColor("\n\nКорабль подбит\n", ConsoleColor.Black, ConsoleColor.DarkRed);
+
                 return true;
             }
             else
@@ -46,6 +46,32 @@ namespace OAIP
                 LevelFog.LevelContent[damagePoint[0], damagePoint[1]] = Level.LevelContent[damagePoint[0], damagePoint[1]];
                 return false;
             }
+        }
+
+        // выстрел бота
+        public void BotShoot(User user, SeaFight game)
+        {
+            // выбираем точку удара
+            int[] damagePoint = ChoisePointToDamage();
+            game.Messages += $"Бот выстрелил по [{damagePoint[0] - 1} {damagePoint[1]}]:  ";
+
+            // наносим удар
+            if (user.Damage(damagePoint, game))
+            {
+                game.Messages += $" Корабль подбит!\n";
+                // проверка на уничтоженные корабли
+                user.Level.CheckDestroyesShips(game.isGame);
+                // проверка, есть ли победитель
+            }
+            else
+            {
+                game.Messages += $" Эхх... Промах!\n";
+            }
+        }
+
+        public int[] ChoisePointToDamage()
+        {
+            return SelectNoseForRandom();
         }
     }
 }

@@ -376,6 +376,13 @@ namespace OAIP
                     Write(typeOfShip);
                     SetDefaultColor();
                     break;
+                case 'X':
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Black;
+
+                    Write(typeOfShip);
+                    SetDefaultColor();
+                    break;
                 default:
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.BackgroundColor = ConsoleColor.Black;

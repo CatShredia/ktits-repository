@@ -12,6 +12,8 @@ namespace OAIP
         public Bot Bot;
         // идет ли игра
         public bool isGame;
+
+        public string Messages;
         public SeaFight()
         {
             // создаем игрока и бота, и левелы вместе с ними
@@ -19,6 +21,7 @@ namespace OAIP
             Bot = new Bot("бот");
             // создаем левел бота, который видет игрок
             Bot.LevelFog.Ships = Bot.Level.Ships;
+            Messages = "";
             // начинаем игру
             isGame = true;
             Game();
@@ -31,32 +34,22 @@ namespace OAIP
             {
                 // выводим левелы
                 Clear();
+                PrintWithColor($"\n{Messages}", ConsoleColor.Black, ConsoleColor.Green);
+                Messages = "";
+
                 User.Level.PrintContent();
                 Bot.Level.PrintContent();
                 Bot.LevelFog.PrintContent();
-                UserShoot();
-            }
-        }
-        // выстрел игрока
-        public void UserShoot()
-        {
-            // выбираем точку удара
-            int[] damagePoint = User.ChoisePointToDamage();
-            // наносим удар
-            if (Bot.Damage(damagePoint))
-            {
-                PrintWithColor("\n\nВы попали!\n", ConsoleColor.Black, ConsoleColor.Red);
-                // проверка на уничтоженные корабли
-                Bot.LevelFog.CheckDestroyesShips(isGame);
-                User.Level.CheckDestroyesShips(isGame);
-                // проверка, есть ли победитель
+
+                // стреляет юзер по боту
+                User.UserShoot(Bot, this);
+                Bot.BotShoot(User, this);
+
                 CheckWinner();
-            }
-            else
-            {
-                PrintWithColor("\n\nЭхх, промах...\n", ConsoleColor.Black, ConsoleColor.Gray);
+
             }
         }
+
         // проверка, есть ли победитель
         public void CheckWinner()
         {

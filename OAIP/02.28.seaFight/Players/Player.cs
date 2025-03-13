@@ -86,11 +86,11 @@ namespace OAIP
             }
             return charRandom;
         }
-        // берем от пользовтеля точку носа корабля
+        // берем от пользователя точку носа корабля
         public int[] SelectNoseForRandom()
         {
             Random random = new Random();
-            int[] numbers = new int[] { random.Next(1, 12), random.Next(1, 12) };
+            int[] numbers = [random.Next(2, 12), random.Next(1, 12)];
             return numbers;
         }
     }
