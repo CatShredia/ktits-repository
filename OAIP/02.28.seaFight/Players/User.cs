@@ -35,6 +35,9 @@ namespace OAIP
                 }
                 Level.LevelContent[damagePoint[0], damagePoint[1]] = "[Ж]";
                 // PrintWithColor("\n\nКорабль подбит\n", ConsoleColor.Black, ConsoleColor.DarkRed);
+
+                game.Bot.MemoryBot = new int[2] { damagePoint[0], damagePoint[1] };
+
                 return true;
             }
             else

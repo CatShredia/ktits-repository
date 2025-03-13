@@ -5,6 +5,10 @@ namespace OAIP
     class Bot : Player
     {
         public Level LevelFog;
+
+        // память 
+        public int[] MemoryBot;
+
         public Bot(string name) : base(name)
         {
             Level = new Level(this, "бот");
@@ -12,6 +16,10 @@ namespace OAIP
             LevelFog.SetFog();
 
             Level.CountLiveShips += 10;
+
+            MemoryBot = new int[2];
+            MemoryBot[0] = 0;
+            MemoryBot[1] = 0;
         }
 
         // получаем выстрел на карту бота
@@ -52,7 +60,20 @@ namespace OAIP
         public void BotShoot(User user, SeaFight game)
         {
             // выбираем точку удара
-            int[] damagePoint = ChoisePointToDamage();
+            // выбираем пока, точка не примет правильное значение
+            int[] damagePoint = [0, 0];
+            while (
+                // первая точка
+                (damagePoint[0] < 2
+                || damagePoint[0] > 12)
+                &&
+                // вторая точка
+                (damagePoint[1] < 1
+                || damagePoint[1] > 12)
+            )
+            {
+                damagePoint = ChoisePointToDamage();
+            }
             game.Messages += $"Бот выстрелил по [{damagePoint[0] - 1} {damagePoint[1]}]:  ";
 
             // наносим удар
@@ -71,6 +92,25 @@ namespace OAIP
 
         public int[] ChoisePointToDamage()
         {
+            PrintWithColor($"\nточка памяти: {MemoryBot[0]} : {MemoryBot[1]}\n", ConsoleColor.Black, ConsoleColor.DarkBlue);
+            // проверка, что в памяти не пусто
+            if (MemoryBot[0] >= 2 && MemoryBot[1] >= 1)
+            {
+                char direction = SelectDirectionShipForRandom();
+                PrintWithColor($"\nнаправление: {direction}\n", ConsoleColor.Black, ConsoleColor.DarkBlue);
+
+                switch (direction)
+                {
+                    case 'w':
+                        return [MemoryBot[0], MemoryBot[1] - 1];
+                    case 's':
+                        return [MemoryBot[0], MemoryBot[1] + 1];
+                    case 'a':
+                        return [MemoryBot[0] - 1, MemoryBot[1]];
+                    case 'd':
+                        return [MemoryBot[0] + 1, MemoryBot[1]];
+                }
+            }
             return SelectNoseForRandom();
         }
     }

@@ -13,7 +13,9 @@ namespace OAIP
         // идет ли игра
         public bool isGame;
 
+        // вывод сообщения
         public string Messages;
+
         public SeaFight()
         {
             // создаем игрока и бота, и левелы вместе с ними
@@ -33,7 +35,7 @@ namespace OAIP
             while (isGame)
             {
                 // выводим левелы
-                Clear();
+                // Clear();
                 PrintWithColor($"\n{Messages}", ConsoleColor.Black, ConsoleColor.Green);
                 Messages = "";
 
@@ -46,7 +48,6 @@ namespace OAIP
                 Bot.BotShoot(User, this);
 
                 CheckWinner();
-
             }
         }
 
