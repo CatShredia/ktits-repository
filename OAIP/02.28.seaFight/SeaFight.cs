@@ -35,7 +35,7 @@ namespace OAIP
             while (isGame)
             {
                 // выводим левелы
-                // Clear();
+                Clear();
                 PrintWithColor($"\n{Messages}", ConsoleColor.Black, ConsoleColor.Green);
                 Messages = "";
 

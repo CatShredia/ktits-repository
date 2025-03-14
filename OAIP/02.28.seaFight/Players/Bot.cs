@@ -68,11 +68,11 @@ namespace OAIP
             )
             {
                 WriteLine(user.Level.LevelContent[damagePoint[0], damagePoint[1]]);
-                damagePoint = ChoisePointToDamage();
+                damagePoint = ChoisePointToDamage(user);
 
                 // TODO: дернуть
                 if (user.Level.LevelContent[damagePoint[0], damagePoint[1]] == "[O]"
-                // || user.Level.LevelContent[damagePoint[0], damagePoint[1]] == "[.]"
+                || user.Level.LevelContent[damagePoint[0], damagePoint[1]] == "[.]"
                 )
                 {
                     break;
@@ -99,7 +99,7 @@ namespace OAIP
             }
         }
 
-        public int[] ChoisePointToDamage()
+        public int[] ChoisePointToDamage(User user)
         {
             PrintWithColor($"\nточка памяти: {MemoryBot[0]} : {MemoryBot[1]}\n", ConsoleColor.Black, ConsoleColor.DarkBlue);
             // проверка, что в памяти не пусто
