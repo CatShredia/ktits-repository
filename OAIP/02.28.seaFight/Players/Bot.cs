@@ -63,16 +63,25 @@ namespace OAIP
             // выбираем пока, точка не примет правильное значение
             int[] damagePoint = [0, 0];
             while (
-                // первая точка
-                (damagePoint[0] < 2
-                || damagePoint[0] > 12)
-                &&
-                // вторая точка
-                (damagePoint[1] < 1
-                || damagePoint[1] > 12)
+                user.Level.LevelContent[damagePoint[0], damagePoint[1]] != "[.]"
+                || user.Level.LevelContent[damagePoint[0], damagePoint[1]] != "[O]"
             )
             {
+                WriteLine(user.Level.LevelContent[damagePoint[0], damagePoint[1]]);
                 damagePoint = ChoisePointToDamage();
+
+                // TODO: дернуть
+                if (user.Level.LevelContent[damagePoint[0], damagePoint[1]] == "[O]"
+                // || user.Level.LevelContent[damagePoint[0], damagePoint[1]] == "[.]"
+                )
+                {
+                    break;
+                }
+
+                if (user.Level.CheckNeighboardsShootBot(damagePoint))
+                {
+                    MemoryBot = [0, 0];
+                }
             }
             game.Messages += $"Бот выстрелил по [{damagePoint[0] - 1} {damagePoint[1]}]:  ";
 
@@ -81,7 +90,7 @@ namespace OAIP
             {
                 game.Messages += $" Корабль подбит!\n";
                 // проверка на уничтоженные корабли
-                user.Level.CheckDestroyesShips(game.isGame);
+                user.Level.CheckDestroyesShips(game.isGame, LevelFog.LevelName);
                 // проверка, есть ли победитель
             }
             else
@@ -99,17 +108,24 @@ namespace OAIP
                 char direction = SelectDirectionShipForRandom();
                 PrintWithColor($"\nнаправление: {direction}\n", ConsoleColor.Black, ConsoleColor.DarkBlue);
 
+                int[] point = [0, 0];
                 switch (direction)
                 {
                     case 'w':
-                        return [MemoryBot[0], MemoryBot[1] - 1];
+                        point = [MemoryBot[0], MemoryBot[1] - 1];
+                        break;
                     case 's':
-                        return [MemoryBot[0], MemoryBot[1] + 1];
+                        point = [MemoryBot[0], MemoryBot[1] + 1];
+                        break;
                     case 'a':
-                        return [MemoryBot[0] - 1, MemoryBot[1]];
+                        point = [MemoryBot[0] - 1, MemoryBot[1]];
+                        break;
                     case 'd':
-                        return [MemoryBot[0] + 1, MemoryBot[1]];
+                        point = [MemoryBot[0] + 1, MemoryBot[1]];
+                        break;
                 }
+
+                return point;
             }
             return SelectNoseForRandom();
         }

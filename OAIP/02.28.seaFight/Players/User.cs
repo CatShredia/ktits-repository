@@ -81,7 +81,7 @@ namespace OAIP
             {
                 game.Messages += $" Корабль подбит!\n";
                 // проверка на уничтоженные корабли
-                bot.LevelFog.CheckDestroyesShips(game.isGame);
+                bot.LevelFog.CheckDestroyesShips(game.isGame, Level.LevelName);
                 // проверка, есть ли победитель
             }
             else

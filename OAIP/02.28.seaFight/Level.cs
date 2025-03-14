@@ -318,6 +318,32 @@ namespace OAIP
             return true;
         }
 
+        // проверка на соседей
+        public bool CheckNeighboardsShootBot(int[] point)
+        {
+            try
+            {
+                // вверх
+                if (LevelContent[point[0] - 1, point[1]] == "[X]" || LevelContent[point[0] + 1, point[1]] == "[Ж]"
+                    && LevelContent[point[0] + 1, point[1]] == "[X]" || LevelContent[point[0] + 1, point[1]] == "[Ж]"
+                    && LevelContent[point[0], point[1] + 1] == "[X]" || LevelContent[point[0] + 1, point[1]] == "[Ж]"
+                    && LevelContent[point[0], point[1] - 1] == "[X]" || LevelContent[point[0] + 1, point[1]] == "[Ж]"
+                    && LevelContent[point[0] - 1, point[1] - 1] == "[X]" || LevelContent[point[0] + 1, point[1]] == "[Ж]"
+                    && LevelContent[point[0] - 1, point[1] + 1] == "[X]" || LevelContent[point[0] + 1, point[1]] == "[Ж]"
+                    && LevelContent[point[0] + 1, point[1] - 1] == "[X]" || LevelContent[point[0] + 1, point[1]] == "[Ж]"
+                    && LevelContent[point[0] + 1, point[1] + 1] == "[X]" || LevelContent[point[0] + 1, point[1]] == "[Ж]"
+                )
+                {
+                    return true;
+                }
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return true;
+            }
+            return false;
+        }
+
         // печатаем левел
         public void PrintContent()
         {
@@ -394,7 +420,7 @@ namespace OAIP
         }
 
         // проверка на уничтоженные корабли
-        public void CheckDestroyesShips(bool isGame)
+        public void CheckDestroyesShips(bool isGame, string LevelName)
         {
             // ? перебираем корабли
             for (int shipNumber = 0; shipNumber < Ships.Length; shipNumber++)
@@ -405,7 +431,16 @@ namespace OAIP
 
                     for (int deckNumber = 0; deckNumber < Ships[shipNumber].Decks.Count; deckNumber++)
                     {
-                        UnSetFogByPoint([Ships[shipNumber].Decks[deckNumber][0], Ships[shipNumber].Decks[deckNumber][1]]);
+                        WriteLine(LevelName);
+                        if (LevelName.Equals("туман"))
+                        {
+                            UnSetFogByPointBot([Ships[shipNumber].Decks[deckNumber][0], Ships[shipNumber].Decks[deckNumber][1]]);
+                        }
+                        else if (LevelName.Equals("юзер"))
+                        {
+                            UnSetFogByPoint([Ships[shipNumber].Decks[deckNumber][0], Ships[shipNumber].Decks[deckNumber][1]]);
+
+                        }
 
                         Ships[shipNumber].LiveDeck = -1;
                     }
@@ -447,6 +482,42 @@ namespace OAIP
             if (LevelContent[point[0] + 1, point[1] + 1] == "[#]")
             {
                 LevelContent[point[0] + 1, point[1] + 1] = "[.]";
+            }
+        }
+        // удаляем точки, вблизи заданной
+        public void UnSetFogByPointBot(int[] point)
+        {
+            if (LevelContent[point[0] - 1, point[1]] == "[.]")
+            {
+                LevelContent[point[0] - 1, point[1]] = "[X]";
+            }
+            if (LevelContent[point[0] + 1, point[1]] == "[.]")
+            {
+                LevelContent[point[0] + 1, point[1]] = "[X]";
+            }
+            if (LevelContent[point[0], point[1] + 1] == "[.]")
+            {
+                LevelContent[point[0], point[1] + 1] = "[X]";
+            }
+            if (LevelContent[point[0], point[1] - 1] == "[.]")
+            {
+                LevelContent[point[0], point[1] - 1] = "[X]";
+            }
+            if (LevelContent[point[0] - 1, point[1] - 1] == "[.]")
+            {
+                LevelContent[point[0] - 1, point[1] - 1] = "[X]";
+            }
+            if (LevelContent[point[0] - 1, point[1] + 1] == "[.]")
+            {
+                LevelContent[point[0] - 1, point[1] + 1] = "[X]";
+            }
+            if (LevelContent[point[0] + 1, point[1] - 1] == "[.]")
+            {
+                LevelContent[point[0] + 1, point[1] - 1] = "[X]";
+            }
+            if (LevelContent[point[0] + 1, point[1] + 1] == "[.]")
+            {
+                LevelContent[point[0] + 1, point[1] + 1] = "[X]";
             }
         }
     }
