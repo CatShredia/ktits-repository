@@ -105,4 +105,5 @@ pause
 
 endlocal
 
+cd C:\git-repositories\ktits-repository\
 CALL C:\git-repositories\ktits-repository\delete_files.bat
