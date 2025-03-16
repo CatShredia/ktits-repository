@@ -1,7 +1,7 @@
+@ECHO OFF
 setlocal
 
-@ECHO OFF
-set "folder_path=C:\git-repositories\ktits-repository\files"
+set "folder_path=%~dp0files"
 
 REM Проверка, существует ли папка
 if not exist "%folder_path%" (
@@ -27,7 +27,7 @@ echo All files and directories have been deleted.
 cd "files"
 mkdir "NAME1"
 mkdir "NAME2"
-echo Бан > "C:\git-repositories\ktits-repository\files\NAME1\text.txt"
+echo Бан > "%folder_path%\NAME1\text.txt"
 
 pause
 endlocal
