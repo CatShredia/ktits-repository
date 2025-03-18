@@ -6,10 +6,8 @@ namespace OAIP
     {
         private static readonly Random random = new Random();
 
-        // Метод для генерации случайного decimal значения в заданном диапазоне
         private static decimal GenerateRandomDecimal(decimal min, decimal max)
         {
-            // Преобразуем min и max в double для работы с Random.NextDouble()
             double range = (double)(max - min);
             double sample = random.NextDouble();
             decimal scaled = (decimal)(sample * range);
@@ -29,14 +27,13 @@ namespace OAIP
             admin.ManageUsers();
             admin.DisplayInfo();
 
-            // Генерируем случайный баланс для Customer
-            decimal customerBalance = GenerateRandomDecimal(50, 200); // Баланс от 50 до 200
+            decimal customerBalance = GenerateRandomDecimal(50, 200);
             Customer customer = new Customer("CustomerName", "customer@example.com", customerBalance);
             customer.DisplayInfo();
 
-            Product product1 = new Product("Laptop", GenerateRandomDecimal(800, 1200)); // Цена от 800 до 1200
-            Product product2 = new Product("Mouse", GenerateRandomDecimal(20, 50)); // Цена от 20 до 50
-            Product product3 = new Product("Keyboard", GenerateRandomDecimal(50, 100)); // Цена от 50 до 100
+            Product product1 = new Product("Laptop", GenerateRandomDecimal(800, 1200));
+            Product product2 = new Product("Mouse", GenerateRandomDecimal(20, 50));
+            Product product3 = new Product("Keyboard", GenerateRandomDecimal(50, 100));
 
             Order order = new Order(customer);
             order.Products.Add(product1);
@@ -49,7 +46,7 @@ namespace OAIP
             }
 
             WriteLine("\nПопытка оформить заказ с недостаточным балансом:");
-            customer.PlaceOrder(new List<Product> { product1, product2, product3 }); // Сумма > баланса
+            customer.PlaceOrder(new List<Product> { product1, product2, product3 });
 
             order.Products.Add(product3);
 
@@ -67,7 +64,7 @@ namespace OAIP
 
 
             WriteLine("\nДополнительное задание: VIP клиент");
-            decimal vipBalance = GenerateRandomDecimal(1500, 2500); // Баланс от 1500 до 2500
+            decimal vipBalance = GenerateRandomDecimal(1500, 2500);
             VipCustomer vipCustomer = new VipCustomer("VipCustomer", "vip@example.com", vipBalance);
             vipCustomer.DisplayInfo();
 
@@ -98,7 +95,7 @@ namespace OAIP
             electronics.DisplayProducts();
 
             Category books = new Category("Books");
-            Product book1 = new Product("Clean Code", GenerateRandomDecimal(30, 70)); // Цена от 30 до 70
+            Product book1 = new Product("Clean Code", GenerateRandomDecimal(30, 70));
             books.AddProduct(book1);
             books.DisplayProducts();
 
@@ -211,7 +208,7 @@ namespace OAIP
 
             public override bool PlaceOrder(List<Product> products)
             {
-                decimal totalPrice = products.Sum(p => p.Price * 0.9m); // Скидка 10%
+                decimal totalPrice = products.Sum(p => p.Price * 0.9m);
                 if (Balance >= totalPrice)
                 {
                     Balance -= totalPrice;
