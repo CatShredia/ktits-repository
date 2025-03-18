@@ -105,8 +105,8 @@ namespace OAIP
 
         private class User
         {
-            public string Name;
-            public string Email;
+            public string Name = null!;
+            public string Email = null!;
 
             public virtual void DisplayInfo()
             {
