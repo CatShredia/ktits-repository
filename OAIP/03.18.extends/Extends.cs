@@ -1,8 +1,21 @@
 namespace OAIP
 {
     using static System.Console;
+
     internal class Extends : Object
     {
+        private static readonly Random random = new Random();
+
+        // Метод для генерации случайного decimal значения в заданном диапазоне
+        private static decimal GenerateRandomDecimal(decimal min, decimal max)
+        {
+            // Преобразуем min и max в double для работы с Random.NextDouble()
+            double range = (double)(max - min);
+            double sample = random.NextDouble();
+            decimal scaled = (decimal)(sample * range);
+            return min + scaled;
+        }
+
         public bool isDevoperEdition;
 
         public Extends(bool isDevoperEdition)
@@ -16,12 +29,14 @@ namespace OAIP
             admin.ManageUsers();
             admin.DisplayInfo();
 
-            Customer customer = new Customer("CustomerName", "customer@example.com", 100);
+            // Генерируем случайный баланс для Customer
+            decimal customerBalance = GenerateRandomDecimal(50, 200); // Баланс от 50 до 200
+            Customer customer = new Customer("CustomerName", "customer@example.com", customerBalance);
             customer.DisplayInfo();
 
-            Product product1 = new Product("Laptop", 1000);
-            Product product2 = new Product("Mouse", 25);
-            Product product3 = new Product("Keyboard", 75);
+            Product product1 = new Product("Laptop", GenerateRandomDecimal(800, 1200)); // Цена от 800 до 1200
+            Product product2 = new Product("Mouse", GenerateRandomDecimal(20, 50)); // Цена от 20 до 50
+            Product product3 = new Product("Keyboard", GenerateRandomDecimal(50, 100)); // Цена от 50 до 100
 
             Order order = new Order(customer);
             order.Products.Add(product1);
@@ -52,7 +67,8 @@ namespace OAIP
 
 
             WriteLine("\nДополнительное задание: VIP клиент");
-            VipCustomer vipCustomer = new VipCustomer("VipCustomer", "vip@example.com", 2000);
+            decimal vipBalance = GenerateRandomDecimal(1500, 2500); // Баланс от 1500 до 2500
+            VipCustomer vipCustomer = new VipCustomer("VipCustomer", "vip@example.com", vipBalance);
             vipCustomer.DisplayInfo();
 
             Order vipOrder = new Order(vipCustomer);
@@ -82,12 +98,13 @@ namespace OAIP
             electronics.DisplayProducts();
 
             Category books = new Category("Books");
-            Product book1 = new Product("Clean Code", 50);
+            Product book1 = new Product("Clean Code", GenerateRandomDecimal(30, 70)); // Цена от 30 до 70
             books.AddProduct(book1);
             books.DisplayProducts();
 
             ReadKey();
         }
+
 
         private class User
         {
