@@ -1,0 +1,163 @@
+* {
+    margin: 0;
+    padding: 0;
+
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+header li {
+    list-style: none;
+}
+
+.header {
+    background-color: blue;
+
+    color: white;
+}
+
+.header__inner {
+    display: flex;
+
+    justify-content: space-between;
+}
+
+body {
+    display: grid;
+    grid-template-rows: 0.25fr auto 0.25fr;
+}
+
+/* ? logo */
+.logo {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 30px;
+}
+
+.logo__img {
+    display: block;
+    width: 75px;
+    height: 75px;
+
+    background-color: black;
+}
+
+.logo__title {
+    text-transform: uppercase;
+}
+
+.container {
+    padding: 30px 100px;
+}
+
+/* ? nav */
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav__ul {
+    display: flex;
+
+    gap: 15px;
+}
+
+.nav__element {
+    background-color: black;
+
+    width: 50px;
+    height: 10px;
+}
+
+/* ? section-1 */
+.section__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.section-1-title {
+    font-size: 3em;
+
+    font-weight: 800;
+}
+
+.section-1-text {
+    font-size: 1em;
+
+    font-weight: 300;
+
+    width: 75%;
+}
+
+.big-round {
+    width: 300px;
+    height: 300px;
+    background-color: black;
+
+    border-radius: 100%;
+}
+
+.section-2 {
+    display: flex;
+    flex-direction: column;
+
+    gap: 15px;
+}
+
+.section-2-title {
+    font-weight: 600;
+
+    text-align: center;
+}
+
+.small-rounds {
+    display: flex;
+    gap: 30px;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.small-round {
+    width: 150px;
+    height: 150px;
+    background-color: black;
+
+    border-radius: 100%;
+}
+
+/* ? footer */
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: blue;
+
+    padding: 30px 15px;
+}
+
+.footer-title {
+    color: white;
+
+    font-size: 0.8em;
+}
