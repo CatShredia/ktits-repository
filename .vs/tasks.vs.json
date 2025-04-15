@@ -1,0 +1,10 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "задача-test-application",
+      "appliesTo": "test-application/",
+      "type": "launch"
+    }
+  ]
+}
