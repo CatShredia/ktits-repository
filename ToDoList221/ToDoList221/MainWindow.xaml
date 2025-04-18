@@ -1,0 +1,77 @@
+﻿<Window
+    x:Class="ToDoList221.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ToDoList221"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    Title="MainWindow"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <local:DoneToTextDecorationConverter x:Key="DoneToTextDecorationConverter" />
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+            <TextBox
+                x:Name="TaskInputTb"
+                Width="250"
+                Height="30"
+                Margin="0,0,10,0" />
+            <DatePicker
+                x:Name="DueDatePicker"
+                Width="130"
+                Height="30"
+                Margin="0,0,10,0"
+                SelectedDate="{x:Static sys:DateTime.Today}" />
+            <Button
+                x:Name="AddTaskBtn"
+                Width="100"
+                Click="AddTaskBtn_Click"
+                Content="Добавить" />
+        </StackPanel>
+
+        <ListBox x:Name="TaskListLb" Grid.Row="1">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel Margin="0,2" LastChildFill="True">
+                        <CheckBox
+                            Margin="5"
+                            Checked="CheckBox_Changed"
+                            IsChecked="{Binding IsDone}"
+                            Unchecked="CheckBox_Changed" />
+                        <StackPanel>
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Text="{Binding Title}"
+                                TextDecorations="{Binding IsDone, Converter={StaticResource DoneToTextDecorationConverter}}" />
+                            <TextBlock FontSize="10" Text="{Binding DueDate, StringFormat='До {0:dd.mm.yyyy}'}" />
+                        </StackPanel>
+
+                        <Button
+                            x:Name="DeleteTaskBtn"
+                            Margin="5"
+                            Click="DeleteTaskBtn_Click"
+                            Content="✕"
+                            DockPanel.Dock="Right" />
+                    </DockPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock
+            x:Name="CounterTextTbl"
+            Grid.Row="2"
+            Margin="0,10,0,0"
+            HorizontalAlignment="Right"
+            FontWeight="Bold" />
+    </Grid>
+</Window>
