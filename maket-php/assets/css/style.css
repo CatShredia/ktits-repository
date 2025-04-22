@@ -1,0 +1,154 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  color: #121212;
+}
+
+button {
+  border: none;
+  background: none;
+}
+
+h1 {
+  font-size: 36px;
+}
+
+h2 {
+  font-size: 26px;
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.header__content {
+  padding: 30px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.input_container {
+  width: 100%;
+  max-width: 300px;
+}
+
+h2+.input_container {
+  margin-top: 1rem;
+}
+
+.input_container+.input_container {
+  margin-top: 1rem;
+}
+
+.input_container input,
+.input_container textarea {
+  width: 100%;
+}
+
+
+footer {
+  margin-top: 5rem;
+}
+
+.header__links {
+  display: flex;
+  list-style: none;
+  gap: 10px;
+}
+
+.header__btns {
+  display: flex;
+  list-style: none;
+  gap: 15px;
+}
+
+button,
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 8px 10px;
+  background: peachpuff;
+  border-radius: 10px;
+}
+
+form {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field_form {
+  margin: 0 auto;
+  margin-top: 2rem;
+}
+
+form button {
+  width: 100%;
+}
+
+.button_form {
+  width: fit-content;
+}
+
+input,
+textarea {
+  border: 1px solid #eeeeee;
+  border-radius: 3px;
+  padding: 6px 8px;
+}
+
+.catalog {
+  padding-top: 100px;
+}
+
+.catalog__headline {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.catalog__wrapper {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  row-gap: 20px;
+  column-gap: 20px;
+}
+
+.product {
+  width: 100%;
+}
+
+.product__image {
+  border-radius: 3px;
+  width: 100%;
+  aspect-ratio: 1/1;
+}
+
+.product__name {
+  margin-top: 16px;
+}
+
+.product__price {
+  margin-top: 5px;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.product__btn {
+  margin-top: 20px;
+  width: 100%;
+  background: peachpuff;
+  border-radius: 10px;
+  padding: 10px;
+}

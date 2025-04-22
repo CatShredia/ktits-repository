@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Список товаров</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header>
+    <h1>Список товаров</h1>
+    <nav>
+        <ul>
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="create-product.html">Добавить товар</a></li>
+            <li><a href="login.html">Войти</a></li>
+            <li><a href="register.html">Регистрация</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Цена</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Пример статических данных -->
+        <tr>
+            <td>1</td>
+            <td>Ноутбук</td>
+            <td>60000 руб.</td>
+            <td>
+                <a href="update-product.html?id=1" class="btn btn-sm">Редактировать</a>
+                <a href="delete-product.html?id=1" class="btn btn-sm btn-danger">Удалить</a>
+            </td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Смартфон</td>
+            <td>30000 руб.</td>
+            <td>
+                <a href="update-product.html?id=2" class="btn btn-sm">Редактировать</a>
+                <a href="delete-product.html?id=2" class="btn btn-sm btn-danger">Удалить</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

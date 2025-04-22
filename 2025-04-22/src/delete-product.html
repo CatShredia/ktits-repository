@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Удалить товар</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header>
+    <h1>Удалить товар</h1>
+    <nav>
+        <ul>
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="products.html">Список товаров</a></li>
+            <li><a href="login.html">Войти</a></li>
+            <li><a href="register.html">Регистрация</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <div class="delete-confirmation">
+        <!-- В реальном приложении здесь должна быть информация о товаре из БД -->
+        <p>Вы уверены, что хотите удалить товар <strong>Ноутбук</strong>?</p>
+        <form action="/delete-product?id=1" method="post">
+            <button type="submit" class="btn btn-danger">Удалить</button>
+        </form>
+    </div>
+</main>
+</body>
+</html>

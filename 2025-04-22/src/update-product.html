@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Редактировать товар</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header>
+    <h1>Редактировать товар</h1>
+    <nav>
+        <ul>
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="products.html">Список товаров</a></li>
+            <li><a href="login.html">Войти</a></li>
+            <li><a href="register.html">Регистрация</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <!-- В реальном приложении ID и текущие данные товара подтягиваются из БД -->
+    <form action="/update-product?id=1" method="post" class="form-container">
+        <div class="form-group">
+            <label for="product-name">Название</label>
+            <input
+                    type="text"
+                    id="product-name"
+                    name="name"
+                    value="Ноутбук"
+                    required
+            />
+        </div>
+
+        <div class="form-group">
+            <label for="product-price">Цена</label>
+            <input
+                    type="number"
+                    id="product-price"
+                    name="price"
+                    step="0.01"
+                    value="60000"
+                    required
+            />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+    </form>
+</main>
+</body>
+</html>

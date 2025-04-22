@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header>
+    <h1>Вход в систему</h1>
+    <nav>
+        <ul>
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="products.html">Список товаров</a></li>
+            <li><a href="register.html">Регистрация</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <form action="/login" method="post" class="form-container">
+        <div class="form-group">
+            <label for="login-email">Email или логин</label>
+            <input type="text" id="login-email" name="email" required />
+        </div>
+
+        <div class="form-group">
+            <label for="login-password">Пароль</label>
+            <input type="password" id="login-password" name="password" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Войти</button>
+
+        <div class="links">
+            <a href="register.html">Зарегистрироваться</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

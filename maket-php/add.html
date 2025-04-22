@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <title>Srez Laravel shop</title>
+</head>
+
+<body>
+
+  <header>
+    <div class="header__content container">
+      <h1>Logo</h1>
+      <ul class="header__links">
+        <li><a href="">Catalog</a></li>
+        <li><a href="">FAQ</a></li>
+        <li><a href="">About us</a></li>
+      </ul>
+      <ul class="header__btns">
+        <li>
+          <form class="button_form" action="" method="post">
+            <button class="btn">
+              Log out
+            </button>
+          </form>
+        </li>
+        <li><a class="btn" href="">Login</a></li>
+        <li><a class="btn" href="">Register</a></li>
+      </ul>
+    </div>
+  </header>
+  <section class="container form">
+    <form class="field_form" action="" method="post" enctype="multipart/form-data">
+      <h2>Add product</h2>
+
+      <div class="input_container">
+        <input type="file" name="image_path">
+        <p style="color:red"></p>
+      </div>
+      <div class="input_container">
+        <input type="text" placeholder="name" name="name" value="">
+        <p style="color:red"></p>
+      </div>
+      <div class="input_container">
+        <textarea name="description" placeholder="description"></textarea>
+        <p style="color:red"></p>
+      </div>
+      <div class="input_container">
+        <input type="text" placeholder="price" name="price" value="">
+        <p style="color:red"></p>
+      </div>
+      <button class="product__btn">Add product</button>
+    </form>
+  </section>
+</body>
+
+</html>

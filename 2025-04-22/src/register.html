@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header>
+    <h1>Регистрация пользователя</h1>
+    <nav>
+        <ul>
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="products.html">Список товаров</a></li>
+            <li><a href="login.html">Войти</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <form action="/register" method="post" class="form-container">
+        <div class="form-group">
+            <label for="register-name">Имя</label>
+            <input type="text" id="register-name" name="name" required />
+        </div>
+
+        <div class="form-group">
+            <label for="register-email">Email</label>
+            <input type="email" id="register-email" name="email" required />
+        </div>
+
+        <div class="form-group">
+            <label for="register-password">Пароль</label>
+            <input type="password" id="register-password" name="password" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+
+        <div class="links">
+            <a href="login.html">Есть аккаунт? Войти</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>
