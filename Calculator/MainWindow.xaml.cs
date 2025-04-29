@@ -1,102 +1,86 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 
-namespace CalculatorWPF
+namespace Calculator
 {
     public partial class MainWindow : Window
     {
-        private double _result = 0;
+        private double _firstNumber = 0;
         private string _operation = "";
-        private bool _isNewInput = true;  // Флаг для начала ввода нового числа
+        private bool _operationClicked = false;
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void NumberButton_Click(object sender, RoutedEventArgs e)
+        private void Number_Click(object sender, RoutedEventArgs e)
         {
-            string buttonContent = ((Button)sender).Content.ToString();
-
-            if (_isNewInput)
+            var value = (string)((System.Windows.Controls.Button)sender).Content;
+            if (_operationClicked || InputTextBox.Text == "0")
             {
-                ResultTextBox.Text = buttonContent;
-                _isNewInput = false;
+                InputTextBox.Text = value;
+                _operationClicked = false;
             }
             else
             {
-                if (ResultTextBox.Text == "0" && buttonContent != ".")
+                InputTextBox.Text += value;
+            }
+        }
+
+        private void Operation_Click(object sender, RoutedEventArgs e)
+        {
+            _operation = (string)((System.Windows.Controls.Button)sender).Content;
+            if (double.TryParse(InputTextBox.Text, out _firstNumber))
+            {
+                _operationClicked = true;
+            }
+        }
+
+        private void Equals_Click(object sender, RoutedEventArgs e)
+        {
+            if (double.TryParse(InputTextBox.Text, out double secondNumber))
+            {
+                double result = 0;
+                try
                 {
-                    ResultTextBox.Text = buttonContent;
+                    switch (_operation)
+                    {
+                        case "+":
+                            result = _firstNumber + secondNumber;
+                            break;
+                        case "-":
+                            result = _firstNumber - secondNumber;
+                            break;
+                        case "*":
+                            result = _firstNumber * secondNumber;
+                            break;
+                        case "/":
+                            if (secondNumber == 0)
+                                throw new DivideByZeroException();
+                            result = _firstNumber / secondNumber;
+                            break;
+                    }
+
+                    ResultTextBlock.Text = $"Result: {result}";
+                    InputTextBox.Text = result.ToString();
+                    _operationClicked = true;
                 }
-                else
+                catch (DivideByZeroException)
                 {
-                    ResultTextBox.Text += buttonContent;
+                    ResultTextBlock.Text = "Error: Division by zero!";
+                    InputTextBox.Text = "0";
                 }
             }
         }
 
-        private void OperationButton_Click(object sender, RoutedEventArgs e)
+        private void Clear_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(_operation))
-            {
-                EqualsButton_Click(sender, e); // Выполняем предыдущую операцию, если есть
-            }
-
-            _operation = ((Button)sender).Content.ToString();
-            _result = Convert.ToDouble(ResultTextBox.Text);
-            _isNewInput = true; // Сбрасываем для ввода следующего числа
-        }
-
-        private void EqualsButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(_operation)) return; // Никакой операции не было выбрано
-
-            double secondNumber;
-            if (!double.TryParse(ResultTextBox.Text, out secondNumber))
-            {
-                ResultTextBox.Text = "Ошибка";
-                _operation = "";
-                _isNewInput = true;
-                return; // Прерываем, если ввод некорректен
-            }
-
-            try
-            {
-                switch (_operation)
-                {
-                    case "+":
-                        _result += secondNumber;
-                        break;
-                    case "-":
-                        _result -= secondNumber;
-                        break;
-                    case "*":
-                        _result *= secondNumber;
-                        break;
-                    case "/":
-                        if (secondNumber == 0)
-                        {
-                            ResultTextBox.Text = "Деление на ноль";
-                            _operation = "";
-                            _isNewInput = true;
-                            return;
-                        }
-                        _result /= secondNumber;
-                        break;
-                }
-                ResultTextBox.Text = _result.ToString();
-            }
-            catch (Exception)
-            {
-                ResultTextBox.Text = "Ошибка";
-            }
-            finally
-            {
-                _operation = "";
-                _isNewInput = true; // Сбрасываем для ввода нового числа
-            }
+            InputTextBox.Text = "";
+            ResultTextBlock.Text = "";
+            _firstNumber = 0;
+            _operation = "";
+            _operationClicked = false;
         }
     }
 }
