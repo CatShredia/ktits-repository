@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Calculator
 {
@@ -81,6 +82,61 @@ namespace Calculator
             _firstNumber = 0;
             _operation = "";
             _operationClicked = false;
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.Focus(); // Установка фокуса на окно для перехвата клавиш
+        }
+
+        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            string key = e.Key.ToString();
+
+            // Цифры с верхнего ряда клавиш
+            if (key.StartsWith("D") && key.Length == 2 && char.IsDigit(key[1]))
+            {
+                Number_Click(CreateButton(key[1].ToString()), null);
+            }
+            // Цифры с NumPad
+            else if (key.StartsWith("NumPad"))
+            {
+                Number_Click(CreateButton(key.Substring(6)), null);
+            }
+            // Точка
+            else if (key == "Decimal" || key == "OemPeriod")
+            {
+                Number_Click(CreateButton("."), null);
+            }
+            // Операции
+            else if (key == "Add" || key == "OemPlus" && (Keyboard.Modifiers & ModifierKeys.Shift) != 0)
+            {
+                Operation_Click(CreateButton("+"), null);
+            }
+            else if (key == "Subtract" || key == "OemMinus")
+            {
+                Operation_Click(CreateButton("-"), null);
+            }
+            else if (key == "Multiply")
+            {
+                Operation_Click(CreateButton("*"), null);
+            }
+            else if (key == "Divide")
+            {
+                Operation_Click(CreateButton("/"), null);
+            }
+            else if (key == "Return" || key == "Enter")
+            {
+                Equals_Click(null, null);
+            }
+            else if (key == "Back" || key == "Escape")
+            {
+                Clear_Click(null, null);
+            }
+        }
+
+        private System.Windows.Controls.Button CreateButton(string content)
+        {
+            return new System.Windows.Controls.Button { Content = content };
         }
     }
 }
