@@ -7,12 +7,24 @@ class Logger
     private static $logFile = __DIR__ . '/../logs/app.log';
     private static $routeFile = __DIR__ . '/../logs/route.log';
 
+    private static $initFlagFile = __DIR__ . '/../logs/logger.initialized';
+    private static $initialized = false;
+
     const LEVEL_ERROR = 'ERROR';
     const LEVEL_DEBUG = 'DEBUG';
     const LEVEL_ROUTE = 'ROUTE';
 
     public static function init()
     {
+        if (self::$initialized) {
+            return;
+        }
+
+        if (file_exists(self::$initFlagFile)) {
+            self::$initialized = true;
+            return;
+        }
+
         if (!file_exists(dirname(self::$logFile))) {
             mkdir(dirname(self::$logFile), 0777, true);
         }
@@ -25,12 +37,11 @@ class Logger
             touch(self::$routeFile);
         }
 
-        // Logger::registerErrorHandler();
-        // Logger::registerExceptionHandler();
+        touch(self::$initFlagFile);
+        self::$initialized = true;
 
-        self::log('logger init', self::LEVEL_DEBUG);
+        self::logDebug('Logger initialized');
     }
-    // Метод для записи в лог
     public static function log($message, $level = self::LEVEL_ERROR)
     {
         $timestamp = date('Y-m-d H:i:s');
