@@ -51,7 +51,8 @@ function handleRequest()
             break;
 
         default:
-            echo "Page not found!";
-            break;
+            Logger::route($uri, Logger::LEVEL_ERROR);
+
+            include __DIR__ . "/views/404error.php";
     }
 }

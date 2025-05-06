@@ -4,6 +4,9 @@ body {
     padding: 0;
     background-color: #f4f4f4;
     color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 header {
@@ -33,90 +36,52 @@ nav a {
 }
 
 main {
-    padding: 20px;
+    padding: 40px 20px;
     max-width: 800px;
     margin: 0 auto;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    flex-grow: 1;
 }
 
 h1 {
     margin-top: 0;
+    color: #d9534f;
+    font-size: 3em;
+}
+
+.error-code {
+    font-size: 5em;
+    font-weight: bold;
+    color: #d9534f;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    font-size: 1.5em;
+    margin-bottom: 30px;
+}
+
+.home-button {
+    display: inline-block;
+    background-color: #5bc0de;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.home-button:hover {
+    background-color: #31b0d5;
 }
 
 footer {
     background-color: #333;
     color: #fff;
     text-align: center;
-    padding: 10px;
-    position: fixed;
-    /* Фиксируем футер внизу */
-    bottom: 0;
+    padding: 15px;
     width: 100%;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
-
-form {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-input[type="text"],
-input[type="email"],
-textarea {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    /* Чтобы padding не увеличивал ширину */
-}
-
-.error {
-    color: red;
-    margin-bottom: 10px;
-}
-
-button[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button[type="submit"]:hover {
-    background-color: #3e8e41;
-}
-
-.success {
-    color: green;
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: #e6ffe6;
-    border: 1px solid #00cc00;
-    border-radius: 4px;
-}
-
-.error {
-    color: red;
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: #ffe6e6;
-    border: 1px solid #cc0000;
-    border-radius: 4px;
 }
