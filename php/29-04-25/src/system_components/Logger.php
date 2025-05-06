@@ -5,9 +5,11 @@ namespace SystemComponents;
 class Logger
 {
     private static $logFile = __DIR__ . '/../logs/app.log';
+    private static $routeFile = __DIR__ . '/../logs/route.log';
 
     const LEVEL_ERROR = 'ERROR';
     const LEVEL_DEBUG = 'DEBUG';
+    const LEVEL_ROUTE = 'ROUTE';
 
     public static function init()
     {
@@ -19,8 +21,14 @@ class Logger
             touch(self::$logFile);
         }
 
-        Logger::registerErrorHandler();
-        Logger::registerExceptionHandler();
+        if (!file_exists(self::$routeFile)) {
+            touch(self::$routeFile);
+        }
+
+        // Logger::registerErrorHandler();
+        // Logger::registerExceptionHandler();
+
+        self::log('logger init', self::LEVEL_DEBUG);
     }
     // Метод для записи в лог
     public static function log($message, $level = self::LEVEL_ERROR)
@@ -60,5 +68,13 @@ class Logger
         set_exception_handler(function ($exception) {
             self::logException($exception);
         });
+    }
+
+    public static function route($url, $level = self::LEVEL_ROUTE)
+    {
+        $timestamp = date('Y-m-d H:i:s');
+        $formattedMessage = "[$timestamp] [$level] $url" . PHP_EOL;
+
+        file_put_contents(self::$routeFile, $formattedMessage, FILE_APPEND);
     }
 }

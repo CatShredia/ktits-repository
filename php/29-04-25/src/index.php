@@ -11,8 +11,7 @@ use SystemComponents\Logger;
 
 Logger::init();
 
-session_start(); // Добавляем старт сессии
-
+session_start();
 
 $uri = $_SERVER['REQUEST_URI'];
 $uri = strtok($uri, '?');
@@ -26,14 +25,11 @@ RedirectTo($uri);
 
 function RedirectTo($uri)
 {
+    Logger::route($uri);
     switch ($uri) {
         case '/':
             $homeController = new HomePageController();
             $homeController->index();
-            Logger::logError('Something went wrong!');
-
-            // Логирование отладочной информации
-            Logger::logDebug('Debugging some variables...');
             break;
         case 'form':
             $formController = new FormPageController();
