@@ -1,10 +1,18 @@
 <?php
-session_start(); // Добавляем старт сессии
+
+require __DIR__ . '/system_components/Logger.php';
 require __DIR__ . '/controllers/Controller.php';
 require __DIR__ . '/controllers/HomePageController.php';
 require __DIR__ . '/controllers/FormPageController.php';
 require __DIR__ . '/controllers/DBController.php';
 require __DIR__ . '/controllers/SecondDiplomeController.php';
+
+use SystemComponents\Logger;
+
+Logger::init();
+
+session_start(); // Добавляем старт сессии
+
 
 $uri = $_SERVER['REQUEST_URI'];
 $uri = strtok($uri, '?');
@@ -22,6 +30,10 @@ function RedirectTo($uri)
         case '/':
             $homeController = new HomePageController();
             $homeController->index();
+            Logger::logError('Something went wrong!');
+
+            // Логирование отладочной информации
+            Logger::logDebug('Debugging some variables...');
             break;
         case 'form':
             $formController = new FormPageController();

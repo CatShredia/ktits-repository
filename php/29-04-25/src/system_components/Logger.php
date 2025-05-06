@@ -1,0 +1,64 @@
+<?php
+
+namespace SystemComponents;
+
+class Logger
+{
+    private static $logFile = __DIR__ . '/../logs/app.log';
+
+    const LEVEL_ERROR = 'ERROR';
+    const LEVEL_DEBUG = 'DEBUG';
+
+    public static function init()
+    {
+        if (!file_exists(dirname(self::$logFile))) {
+            mkdir(dirname(self::$logFile), 0777, true);
+        }
+
+        if (!file_exists(self::$logFile)) {
+            touch(self::$logFile);
+        }
+
+        Logger::registerErrorHandler();
+        Logger::registerExceptionHandler();
+    }
+    // Метод для записи в лог
+    public static function log($message, $level = self::LEVEL_ERROR)
+    {
+        $timestamp = date('Y-m-d H:i:s');
+        $formattedMessage = "[$timestamp] [$level] $message" . PHP_EOL;
+
+        file_put_contents(self::$logFile, $formattedMessage, FILE_APPEND);
+    }
+
+    public static function logError($message)
+    {
+        self::log($message, self::LEVEL_ERROR);
+    }
+
+    public static function logDebug($message)
+    {
+        self::log($message, self::LEVEL_DEBUG);
+    }
+
+    public static function logException(\Exception $exception)
+    {
+        $message = "Exception caught: " . $exception->getMessage() . " in " . $exception->getFile() . " on line " . $exception->getLine();
+        self::logError($message);
+    }
+
+    public static function registerErrorHandler()
+    {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            $message = "PHP Error [$errno]: $errstr in $errfile on line $errline";
+            self::logError($message);
+        });
+    }
+
+    public static function registerExceptionHandler()
+    {
+        set_exception_handler(function ($exception) {
+            self::logException($exception);
+        });
+    }
+}
