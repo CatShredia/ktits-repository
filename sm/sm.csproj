@@ -97,5 +97,8 @@
   <ItemGroup>
     <Resource Include="valuta.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="2e27978f2e40bd1394aa2927c1eb3473.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
