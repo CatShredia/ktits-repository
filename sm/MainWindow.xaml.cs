@@ -42,7 +42,7 @@ namespace CurrencyConverter
             {
                 _rubles = value;
                 OnPropertyChanged(nameof(Rubles));
-                //Convert(); // Автоматическое обновление (дополнительно)
+                Convert(); // Автоматическое обновление (дополнительно)
             }
         }
 
@@ -55,7 +55,7 @@ namespace CurrencyConverter
             {
                 _selectedCurrency = value;
                 OnPropertyChanged(nameof(SelectedCurrency));
-                // Convert();  // Автоматическое обновление (дополнительно)
+                Convert();  // Автоматическое обновление (дополнительно)
             }
         }
 
