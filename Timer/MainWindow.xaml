@@ -1,77 +1,37 @@
-﻿<Window
-    x:Class="PomodoroTimer.MainWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Помидоро Таймер"
-    Width="320"
-    Height="450">
+﻿<Window x:Class="PomodoroTimer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Помидоро Таймер" Height="450" Width="320">
     <Grid Margin="10">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock
-                x:Name="StageText"
-                Margin="0,10"
-                FontSize="18"
-                Text="Ожидание..."
-                TextAlignment="Center" />
-            <TextBlock
-                x:Name="TimerText"
-                FontSize="36"
-                Text="25:00"
-                TextAlignment="Center" />
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock x:Name="StageText" FontSize="18" Text="Ожидание..." TextAlignment="Center" Margin="0,10" />
+            <TextBlock x:Name="TimerText" FontSize="36" Text="25:00" TextAlignment="Center" />
 
-            <!--  Блок настройки работы  -->
-            <GroupBox Margin="0,10" Header="Работа">
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                    <TextBlock Margin="5" Text="Мин:" />
-                    <TextBox
-                        x:Name="WorkMinutesBox"
-                        Width="40"
-                        Text="25" />
-                    <TextBlock Margin="10,0,5,0" Text="Сек:" />
-                    <TextBox
-                        x:Name="WorkSecondsBox"
-                        Width="40"
-                        Text="0" />
+            <GroupBox Header="Работа" Margin="0,10">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Мин:" Margin="5"/>
+                    <TextBox x:Name="WorkMinutesBox" Width="40" Text="25"/>
+                    <TextBlock Text="Сек:" Margin="10,0,5,0"/>
+                    <TextBox x:Name="WorkSecondsBox" Width="40" Text="0"/>
                 </StackPanel>
             </GroupBox>
 
-            <!--  Блок настройки отдыха  -->
             <GroupBox Header="Отдых">
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                    <TextBlock Margin="5" Text="Мин:" />
-                    <TextBox
-                        x:Name="BreakMinutesBox"
-                        Width="40"
-                        Text="5" />
-                    <TextBlock Margin="10,0,5,0" Text="Сек:" />
-                    <TextBox
-                        x:Name="BreakSecondsBox"
-                        Width="40"
-                        Text="0" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Мин:" Margin="5"/>
+                    <TextBox x:Name="BreakMinutesBox" Width="40" Text="5"/>
+                    <TextBlock Text="Сек:" Margin="10,0,5,0"/>
+                    <TextBox x:Name="BreakSecondsBox" Width="40" Text="0"/>
                 </StackPanel>
             </GroupBox>
 
-            <StackPanel
-                Margin="0,10"
-                HorizontalAlignment="Center"
-                Orientation="Horizontal">
-                <Button
-                    Width="100"
-                    Margin="5"
-                    Click="StartButton_Click"
-                    Content="Старт" />
-                <Button
-                    Width="100"
-                    Margin="5"
-                    Click="ResetButton_Click"
-                    Content="Сброс" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
+                <Button Content="Старт" Width="80" Margin="5" Click="StartButton_Click"/>
+                <Button Content="Пауза" Width="80" Margin="5" Click="PauseButton_Click"/>
+                <Button Content="Сброс" Width="80" Margin="5" Click="ResetButton_Click"/>
             </StackPanel>
 
-            <TextBlock
-                x:Name="SessionCountText"
-                Margin="0,10"
-                FontSize="14"
-                Text="Завершено сессий: 0" />
+            <TextBlock x:Name="SessionCountText" FontSize="14" Text="Завершено сессий: 0" Margin="0,10" />
         </StackPanel>
     </Grid>
 </Window>
