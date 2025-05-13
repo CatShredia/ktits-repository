@@ -1,0 +1,124 @@
+﻿<Window
+    x:Class="BookApp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Книжная база"
+    Width="1000"
+    Height="600">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+
+        <!--  Таблица книг  -->
+        <DataGrid
+            x:Name="BooksDataGrid"
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="5"
+            AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Title}" Header="Название" />
+                <DataGridTextColumn Binding="{Binding Author}" Header="Автор" />
+                <DataGridTextColumn Binding="{Binding Genre}" Header="Жанр" />
+                <DataGridTextColumn Binding="{Binding Rating}" Header="Рейтинг" />
+                <DataGridTextColumn Binding="{Binding DateAdded}" Header="Дата добавления" />
+                <DataGridTextColumn Binding="{Binding DateEdited}" Header="Дата редактирования" />
+                <DataGridTemplateColumn Header="Действия">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button
+                                    Margin="2"
+                                    Click="EditBook_Click"
+                                    Content="✎" />
+                                <Button
+                                    Margin="2"
+                                    Click="DeleteBook_Click"
+                                    Content="🗑" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!--  Фильтрация / Поиск  -->
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="5"
+            Orientation="Horizontal">
+            <TextBox
+                x:Name="SearchBox"
+                Width="200"
+                Margin="0,0,5,0"
+                Text="Поиск по названию..." />
+            <Button Click="Search_Click" Content="Поиск" />
+        </StackPanel>
+
+        <!--  Правая панель  -->
+        <StackPanel
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Margin="10"
+            VerticalAlignment="Top">
+
+            <!--  Статистика  -->
+            <GroupBox Margin="0,0,0,10" Header="Статистика пользователя">
+                <StackPanel>
+                    <TextBlock x:Name="StatsTextBlock" Text="Рейтинг: —\nКниг: —\nПопулярная: —" />
+                </StackPanel>
+            </GroupBox>
+
+            <!--  Добавление отзыва  -->
+            <GroupBox Margin="0,0,0,10" Header="Добавление отзыва">
+                <StackPanel>
+                    <TextBox
+                        x:Name="ReviewLinkBox"
+                        Margin="0,0,0,5"
+                        Text="Ссылка на книгу..." />
+                    <TextBox
+                        x:Name="ReviewTextBox"
+                        Height="60"
+                        AcceptsReturn="True"
+                        TextWrapping="Wrap" />
+                    <Button
+                        Margin="0,5,0,0"
+                        Click="AddReview_Click"
+                        Content="Добавить отзыв" />
+                </StackPanel>
+            </GroupBox>
+
+            <!--  Добавление книги  -->
+            <GroupBox Margin="0,0,0,10" Header="Добавление книги">
+                <StackPanel>
+                    <TextBox x:Name="NewBookTitle" Text="Название" />
+                    <TextBox x:Name="NewBookAuthor" Text="Автор" />
+                    <TextBox x:Name="NewBookGenre" Text="Жанр" />
+                    <Button
+                        Margin="0,5,0,0"
+                        Click="AddBook_Click"
+                        Content="Добавить книгу" />
+                </StackPanel>
+            </GroupBox>
+
+            <!--  Редактирование книги  -->
+            <GroupBox Header="Редактирование книги">
+                <StackPanel>
+                    <TextBox x:Name="EditTitleBox" Text="Новое название" />
+                    <Button
+                        Margin="0,5,0,0"
+                        Click="SaveEdit_Click"
+                        Content="Сохранить изменения" />
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </Grid>
+</Window>
