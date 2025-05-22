@@ -121,7 +121,19 @@
             <!--  Редактирование книги  -->
             <GroupBox Header="Редактирование книги">
                 <StackPanel>
-                    <TextBox x:Name="EditTitleBox" Text="Новое название" />
+                    <TextBlock Text="Название:" />
+                    <TextBox x:Name="EditTitleBox" Margin="0,0,0,5" />
+                    <TextBlock Text="Автор:" />
+                    <TextBox x:Name="EditAuthorBox" Margin="0,0,0,5" />
+                    <TextBlock Text="Жанр:" />
+                    <TextBox x:Name="EditGenreBox" Margin="0,0,0,5" />
+                    <TextBlock Text="Рейтинг:" />
+                    <Slider
+                        x:Name="EditRatingSlider"
+                        IsSnapToTickEnabled="True"
+                        Maximum="5"
+                        Minimum="0"
+                        TickFrequency="0.1" />
                     <Button
                         Margin="0,5,0,0"
                         Click="SaveEdit_Click"

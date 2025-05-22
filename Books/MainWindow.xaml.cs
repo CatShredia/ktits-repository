@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -61,23 +63,38 @@ namespace BookApp
         }
 
         private void EditBook_Click(object sender, RoutedEventArgs e)
-        {
-            selectedBook = (sender as Button)?.DataContext as Book;
-            if (selectedBook != null)
-            {
-                EditTitleBox.Text = selectedBook.Title;
-            }
-        }
+{
+    selectedBook = (sender as Button)?.DataContext as Book;
+    if (selectedBook != null)
+    {
+        EditTitleBox.Text = selectedBook.Title;
+        EditAuthorBox.Text = selectedBook.Author;
+        EditGenreBox.Text = selectedBook.Genre;
+        EditRatingSlider.Value = selectedBook.Rating;
+    }
+}
 
-        private void SaveEdit_Click(object sender, RoutedEventArgs e)
-        {
-            if (selectedBook != null)
-            {
-                selectedBook.Title = EditTitleBox.Text;
-                selectedBook.DateEdited = DateTime.Now;
-                BooksDataGrid.Items.Refresh();
-            }
-        }
+private void SaveEdit_Click(object sender, RoutedEventArgs e)
+{
+    if (selectedBook != null)
+    {
+        selectedBook.Title = EditTitleBox.Text;
+        selectedBook.Author = EditAuthorBox.Text;
+        selectedBook.Genre = EditGenreBox.Text;
+        selectedBook.Rating = EditRatingSlider.Value;
+        selectedBook.DateEdited = DateTime.Now;
+        
+        // Обновляем отображение в DataGrid
+        BooksDataGrid.Items.Refresh();
+        UpdateStats();
+        
+        MessageBox.Show("Изменения сохранены");
+    }
+    else
+    {
+        MessageBox.Show("Не выбрана книга для редактирования");
+    }
+}
 
         private void AddReview_Click(object sender, RoutedEventArgs e)
         {
@@ -119,14 +136,46 @@ namespace BookApp
         }
     }
 
-    public class Book
+    public class Book : INotifyPropertyChanged
     {
-        public string Title { get; set; }
-        public string Author { get; set; }
-        public string Genre { get; set; }
-        public double Rating { get; set; }
+        private string _title;
+        private string _author;
+        private string _genre;
+        private double _rating;
+
+        public string Title
+        {
+            get => _title;
+            set { _title = value; OnPropertyChanged(); }
+        }
+
+        public string Author
+        {
+            get => _author;
+            set { _author = value; OnPropertyChanged(); }
+        }
+
+        public string Genre
+        {
+            get => _genre;
+            set { _genre = value; OnPropertyChanged(); }
+        }
+
+        public double Rating
+        {
+            get => _rating;
+            set { _rating = value; OnPropertyChanged(); }
+        }
+
         public DateTime DateAdded { get; set; }
         public DateTime? DateEdited { get; set; }
         public ObservableCollection<string> Reviews { get; set; } = new ObservableCollection<string>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
