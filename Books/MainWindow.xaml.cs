@@ -10,13 +10,17 @@ namespace BookApp
     {
         private ObservableCollection<Book> Books = new ObservableCollection<Book>();
         private Book selectedBook = null;
+        public Book SelectedBook { get; set; } 
+
 
         public MainWindow()
         {
             InitializeComponent();
             BooksDataGrid.ItemsSource = Books;
+            BooksComboBox.ItemsSource = Books; 
             LoadSampleData();
             UpdateStats();
+            DataContext = this;
         }
 
         private void LoadSampleData()
@@ -77,17 +81,41 @@ namespace BookApp
 
         private void AddReview_Click(object sender, RoutedEventArgs e)
         {
-            string link = ReviewLinkBox.Text;
-            string text = ReviewTextBox.Text;
-            MessageBox.Show($"Отзыв добавлен к книге: {link}\n{text}");
-            ReviewLinkBox.Clear();
-            ReviewTextBox.Clear();
+            if (BooksComboBox.SelectedItem is Book selectedBook)
+            {
+                string reviewText = ReviewTextBox.Text;
+                if (!string.IsNullOrWhiteSpace(reviewText))
+                {
+                    selectedBook.Reviews.Add(reviewText);
+                    MessageBox.Show($"Отзыв добавлен к книге: {selectedBook.Title}");
+                    ReviewTextBox.Clear();
+                }
+                else
+                {
+                    MessageBox.Show("Введите текст отзыва");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите книгу из списка");
+            }
         }
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
             string query = SearchBox.Text.ToLower();
             BooksDataGrid.ItemsSource = Books.Where(b => b.Title.ToLower().Contains(query)).ToList();
+        }
+
+        private void ViewReviews_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.DataContext is Book book)
+            {
+                string reviews = book.Reviews.Count > 0
+                    ? string.Join("\n\n", book.Reviews)
+                    : "Нет отзывов";
+                MessageBox.Show($"Отзывы на книгу \"{book.Title}\":\n\n{reviews}");
+            }
         }
     }
 
@@ -99,5 +127,6 @@ namespace BookApp
         public double Rating { get; set; }
         public DateTime DateAdded { get; set; }
         public DateTime? DateEdited { get; set; }
+        public ObservableCollection<string> Reviews { get; set; } = new ObservableCollection<string>();
     }
 }

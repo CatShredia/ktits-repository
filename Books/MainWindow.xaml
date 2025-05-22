@@ -21,7 +21,8 @@
             Grid.Row="0"
             Grid.Column="0"
             Margin="5"
-            AutoGenerateColumns="False">
+            AutoGenerateColumns="False"
+            IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Title}" Header="Название" />
                 <DataGridTextColumn Binding="{Binding Author}" Header="Автор" />
@@ -41,6 +42,10 @@
                                     Margin="2"
                                     Click="DeleteBook_Click"
                                     Content="🗑" />
+                                <Button
+                                    Margin="2"
+                                    Click="ViewReviews_Click"
+                                    Content="💬" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -80,14 +85,18 @@
             <!--  Добавление отзыва  -->
             <GroupBox Margin="0,0,0,10" Header="Добавление отзыва">
                 <StackPanel>
-                    <TextBox
-                        x:Name="ReviewLinkBox"
+                    <ComboBox
+                        x:Name="BooksComboBox"
                         Margin="0,0,0,5"
-                        Text="Ссылка на книгу..." />
+                        DisplayMemberPath="Title"
+                        SelectedItem="{Binding SelectedBook}" />
+
                     <TextBox
                         x:Name="ReviewTextBox"
                         Height="60"
+                        Margin="0,0,0,5"
                         AcceptsReturn="True"
+                        Text="Введите ваш отзыв..."
                         TextWrapping="Wrap" />
                     <Button
                         Margin="0,5,0,0"
