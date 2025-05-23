@@ -117,11 +117,6 @@ namespace BookApp
             }
         }
 
-        private void Search_Click(object sender, RoutedEventArgs e)
-        {
-            string query = SearchBox.Text.ToLower();
-            BooksDataGrid.ItemsSource = Books.Where(b => b.Title.ToLower().Contains(query)).ToList();
-        }
 
         private void ViewReviews_Click(object sender, RoutedEventArgs e)
         {
@@ -142,6 +137,60 @@ namespace BookApp
                 BooksDataGrid.Items.Refresh();
             }
         }
+
+        private void SortComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            ApplyFilterAndSort();
+        }
+
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+            ApplyFilterAndSort();
+        }
+
+        private void ApplyFilterAndSort()
+        {
+            if (Books == null) return;
+
+            string query = SearchBox?.Text?.ToLower() ?? "";
+
+            var filtered = Books.Where(b => b.Title.ToLower().Contains(query));
+
+            if (SortComboBox?.SelectedItem is ComboBoxItem selectedItem)
+            {
+                string sortBy = selectedItem.Tag?.ToString();
+
+                switch (sortBy)
+                {
+                    case "Title":
+                        filtered = filtered.OrderBy(b => b.Title);
+                        break;
+                    case "Author":
+                        filtered = filtered.OrderBy(b => b.Author);
+                        break;
+                    case "Rating":
+                        filtered = filtered.OrderByDescending(b => b.Rating);
+                        break;
+                    case "DateAdded":
+                        filtered = filtered.OrderByDescending(b => b.DateAdded);
+                        break;
+                    case "DateEdited":
+                        filtered = filtered.OrderByDescending(b => b.DateEdited ?? DateTime.MinValue);
+                        break;
+                    default:
+                        filtered = filtered.OrderBy(b => b.Title);
+                        break;
+                }
+            }
+            else
+            {
+                // Если сортировка не выбрана, сортируем по названию по умолчанию
+                filtered = filtered.OrderBy(b => b.Title);
+            }
+
+            BooksDataGrid.ItemsSource = filtered.ToList();
+        }
+
     }
 
     public class Book : INotifyPropertyChanged

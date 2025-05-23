@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Книжная база"
     Width="1000"
-    Height="600">
+    Height="600"
+    Icon="rec/icon.ico">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -65,12 +66,31 @@
             Grid.Column="0"
             Margin="5"
             Orientation="Horizontal">
+
             <TextBox
                 x:Name="SearchBox"
                 Width="200"
                 Margin="0,0,5,0"
                 Text="Поиск по названию..." />
-            <Button Click="Search_Click" Content="Поиск" />
+
+            <Button
+                Margin="0,0,10,0"
+                Click="Search_Click"
+                Content="Поиск" />
+
+            <ComboBox
+                x:Name="SortComboBox"
+                Width="150"
+                SelectionChanged="SortComboBox_SelectionChanged">
+                <ComboBoxItem
+                    Content="Сортировать по названию"
+                    IsSelected="True"
+                    Tag="Title" />
+                <ComboBoxItem Content="Сортировать по автору" Tag="Author" />
+                <ComboBoxItem Content="Сортировать по рейтингу" Tag="Rating" />
+                <ComboBoxItem Content="Сортировать по дате добавления" Tag="DateAdded" />
+                <ComboBoxItem Content="Сортировать по дате редактирования" Tag="DateEdited" />
+            </ComboBox>
         </StackPanel>
 
         <!--  Правая панель  -->
