@@ -30,6 +30,8 @@
                 <DataGridTextColumn Binding="{Binding Rating}" Header="Рейтинг" />
                 <DataGridTextColumn Binding="{Binding DateAdded}" Header="Дата добавления" />
                 <DataGridTextColumn Binding="{Binding DateEdited}" Header="Дата редактирования" />
+                <DataGridCheckBoxColumn Binding="{Binding IsRead}" Header="Прочитано" />
+
                 <DataGridTemplateColumn Header="Действия">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -46,6 +48,10 @@
                                     Margin="2"
                                     Click="ViewReviews_Click"
                                     Content="💬" />
+                                <Button
+                                    Margin="2"
+                                    Click="ToggleReadStatus_Click"
+                                    Content="📘" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

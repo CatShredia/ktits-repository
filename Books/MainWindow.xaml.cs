@@ -12,14 +12,14 @@ namespace BookApp
     {
         private ObservableCollection<Book> Books = new ObservableCollection<Book>();
         private Book selectedBook = null;
-        public Book SelectedBook { get; set; } 
+        public Book SelectedBook { get; set; }
 
 
         public MainWindow()
         {
             InitializeComponent();
             BooksDataGrid.ItemsSource = Books;
-            BooksComboBox.ItemsSource = Books; 
+            BooksComboBox.ItemsSource = Books;
             LoadSampleData();
             UpdateStats();
             DataContext = this;
@@ -63,38 +63,37 @@ namespace BookApp
         }
 
         private void EditBook_Click(object sender, RoutedEventArgs e)
-{
-    selectedBook = (sender as Button)?.DataContext as Book;
-    if (selectedBook != null)
-    {
-        EditTitleBox.Text = selectedBook.Title;
-        EditAuthorBox.Text = selectedBook.Author;
-        EditGenreBox.Text = selectedBook.Genre;
-        EditRatingSlider.Value = selectedBook.Rating;
-    }
-}
+        {
+            selectedBook = (sender as Button)?.DataContext as Book;
+            if (selectedBook != null)
+            {
+                EditTitleBox.Text = selectedBook.Title;
+                EditAuthorBox.Text = selectedBook.Author;
+                EditGenreBox.Text = selectedBook.Genre;
+                EditRatingSlider.Value = selectedBook.Rating;
+            }
+        }
 
-private void SaveEdit_Click(object sender, RoutedEventArgs e)
-{
-    if (selectedBook != null)
-    {
-        selectedBook.Title = EditTitleBox.Text;
-        selectedBook.Author = EditAuthorBox.Text;
-        selectedBook.Genre = EditGenreBox.Text;
-        selectedBook.Rating = EditRatingSlider.Value;
-        selectedBook.DateEdited = DateTime.Now;
-        
-        // Обновляем отображение в DataGrid
-        BooksDataGrid.Items.Refresh();
-        UpdateStats();
-        
-        MessageBox.Show("Изменения сохранены");
-    }
-    else
-    {
-        MessageBox.Show("Не выбрана книга для редактирования");
-    }
-}
+        private void SaveEdit_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedBook != null)
+            {
+                selectedBook.Title = EditTitleBox.Text;
+                selectedBook.Author = EditAuthorBox.Text;
+                selectedBook.Genre = EditGenreBox.Text;
+                selectedBook.Rating = EditRatingSlider.Value;
+                selectedBook.DateEdited = DateTime.Now;
+
+                BooksDataGrid.Items.Refresh();
+                UpdateStats();
+
+                MessageBox.Show("Изменения сохранены");
+            }
+            else
+            {
+                MessageBox.Show("Не выбрана книга для редактирования");
+            }
+        }
 
         private void AddReview_Click(object sender, RoutedEventArgs e)
         {
@@ -134,6 +133,15 @@ private void SaveEdit_Click(object sender, RoutedEventArgs e)
                 MessageBox.Show($"Отзывы на книгу \"{book.Title}\":\n\n{reviews}");
             }
         }
+
+        private void ToggleReadStatus_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as Button)?.DataContext is Book book)
+            {
+                book.IsRead = !book.IsRead;
+                BooksDataGrid.Items.Refresh();
+            }
+        }
     }
 
     public class Book : INotifyPropertyChanged
@@ -142,6 +150,13 @@ private void SaveEdit_Click(object sender, RoutedEventArgs e)
         private string _author;
         private string _genre;
         private double _rating;
+        private bool _isRead;
+        public bool IsRead
+        {
+            get => _isRead;
+            set { _isRead = value; OnPropertyChanged(); }
+        }
+
 
         public string Title
         {
