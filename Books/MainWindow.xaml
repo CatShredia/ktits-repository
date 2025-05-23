@@ -91,6 +91,26 @@
                 <ComboBoxItem Content="Сортировать по дате добавления" Tag="DateAdded" />
                 <ComboBoxItem Content="Сортировать по дате редактирования" Tag="DateEdited" />
             </ComboBox>
+
+            <!--  Фильтрация  -->
+            <ComboBox
+                x:Name="FilterFieldComboBox"
+                Width="150"
+                Margin="10,0,5,0"
+                SelectedIndex="2">
+                <ComboBoxItem Content="Название" Tag="Title" />
+                <ComboBoxItem Content="Автор" Tag="Author" />
+                <ComboBoxItem Content="Жанр" Tag="Genre" />
+            </ComboBox>
+
+            <TextBox
+                x:Name="FilterValueTextBox"
+                Width="150"
+                Margin="0,0,5,0"
+                Text="Введите значение для фильтра" />
+
+            <Button Click="Filter_Click" Content="Фильтровать" />
+
         </StackPanel>
 
         <!--  Правая панель  -->

@@ -29,6 +29,8 @@ namespace BookApp
         {
             Books.Add(new Book { Title = "1984", Author = "Джордж Оруэлл", Genre = "Антиутопия", Rating = 4.8, DateAdded = DateTime.Now });
             Books.Add(new Book { Title = "Мастер и Маргарита", Author = "Булгаков", Genre = "Роман", Rating = 4.6, DateAdded = DateTime.Now });
+            Books.Add(new Book { Title = "Мастер и Маргарита2", Author = "Булгаков", Genre = "Роман", Rating = 4.2, DateAdded = DateTime.Now });
+            Books.Add(new Book { Title = "Мастер и Маргарита3", Author = "Булгаков", Genre = "Роман", Rating = 4.1, DateAdded = DateTime.Now });
         }
 
         private void UpdateStats()
@@ -152,13 +154,37 @@ namespace BookApp
         {
             if (Books == null) return;
 
-            string query = SearchBox?.Text?.ToLower() ?? "";
+            string searchQuery = SearchBox?.Text?.ToLower() ?? "";
 
-            var filtered = Books.Where(b => b.Title.ToLower().Contains(query));
+            // Фильтрация по поиску (по названию)
+            var filtered = Books.Where(b => b.Title.ToLower().Contains(searchQuery));
 
-            if (SortComboBox?.SelectedItem is ComboBoxItem selectedItem)
+            // Фильтрация по выбранному полю и значению
+            if (FilterFieldComboBox?.SelectedItem is ComboBoxItem filterFieldItem)
             {
-                string sortBy = selectedItem.Tag?.ToString();
+                string filterField = filterFieldItem.Tag?.ToString();
+                string filterValue = FilterValueTextBox?.Text?.ToLower() ?? "";
+
+                if (!string.IsNullOrWhiteSpace(filterValue))
+                {
+                    switch (filterField)
+                    {
+                        case "Title":
+                            filtered = filtered.Where(b => b.Title.ToLower().Contains(filterValue));
+                            break;
+                        case "Author":
+                            filtered = filtered.Where(b => b.Author.ToLower().Contains(filterValue));
+                            break;
+                        case "Genre":
+                            filtered = filtered.Where(b => b.Genre.ToLower().Contains(filterValue));
+                            break;
+                    }
+                }
+            }
+
+            if (SortComboBox?.SelectedItem is ComboBoxItem sortItem)
+            {
+                string sortBy = sortItem.Tag?.ToString();
 
                 switch (sortBy)
                 {
@@ -184,12 +210,17 @@ namespace BookApp
             }
             else
             {
-                // Если сортировка не выбрана, сортируем по названию по умолчанию
                 filtered = filtered.OrderBy(b => b.Title);
             }
 
             BooksDataGrid.ItemsSource = filtered.ToList();
         }
+
+        private void Filter_Click(object sender, RoutedEventArgs e)
+        {
+            ApplyFilterAndSort();
+        }
+
 
     }
 
