@@ -37,19 +37,26 @@ namespace RecipeApp
     public class Recipe
     {
         public string Name { get; set; }
-        public string Ingredients { get; set; } // Changed to string for simplicity
+        public string Ingredients { get; set; }
         public string Description { get; set; }
         public string Improvements { get; set; }
 
+        // Changed: This will return an array of ingredients
         public string[] IngredientsList
         {
             get
             {
-                return Ingredients?.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
+                if (string.IsNullOrEmpty(Ingredients))
+                {
+                    return new string[0]; // Return empty array if Ingredients is null or empty
+                }
+
+                return Ingredients.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                  .Select(s => s.Trim()) // Trim each ingredient
+                                  .ToArray();
             }
         }
     }
-
     // ViewModel
     public class RecipeViewModel : INotifyPropertyChanged
     {
@@ -245,8 +252,16 @@ namespace RecipeApp
 
         private void SaveRecipe()
         {
+            // Проверка на пустое название
+            if (string.IsNullOrWhiteSpace(RecipeName))
+            {
+                MessageBox.Show("Название рецепта не может быть пустым!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (SelectedRecipe != null)
             {
+                // Редактирование существующего рецепта
                 SelectedRecipe.Name = RecipeName;
                 SelectedRecipe.Ingredients = RecipeIngredients;
                 SelectedRecipe.Description = RecipeDescription;
@@ -254,7 +269,7 @@ namespace RecipeApp
             }
             else
             {
-                // If no recipe is selected, create a new one
+                // Создание нового рецепта
                 Recipes.Add(new Recipe
                 {
                     Name = RecipeName,
@@ -263,9 +278,10 @@ namespace RecipeApp
                     Improvements = RecipeImprovements
                 });
             }
-            ApplySortingAndFiltering();  // Refresh list after save
-        }
 
+            ApplySortingAndFiltering();
+            OnPropertyChanged(nameof(FilteredRecipes));
+        }
         private void ClearEditFields()
         {
             RecipeName = "";

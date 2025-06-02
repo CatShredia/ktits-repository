@@ -14,8 +14,8 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!--  1. Секция поиска и сортировки  -->
@@ -49,45 +49,50 @@
             </Grid.ColumnDefinitions>
 
             <!--  2. Секция просмотра рецепта  -->
-            <StackPanel Grid.Column="0" Margin="5">
-                <TextBlock
-                    Margin="0,0,0,10"
-                    FontSize="16"
-                    FontWeight="Bold"
-                    Text="Просмотр рецепта" />
-                <TextBlock FontWeight="Bold" Text="Название:" />
-                <TextBlock
-                    Margin="0,0,0,5"
-                    Text="{Binding SelectedRecipe.Name}"
-                    TextWrapping="Wrap" />
+            <ScrollViewer
+                Grid.Column="0"
+                Margin="5"
+                VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Text="Просмотр рецепта" />
+                    <TextBlock FontWeight="Bold" Text="Название:" />
+                    <TextBlock
+                        Margin="0,0,0,5"
+                        Text="{Binding SelectedRecipe.Name}"
+                        TextWrapping="NoWrap" />
 
-                <TextBlock FontWeight="Bold" Text="Ингредиенты:" />
-                <ItemsControl Margin="0,0,0,5" ItemsSource="{Binding SelectedRecipe.Ingredients}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}" TextWrapping="Wrap" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                    <TextBlock FontWeight="Bold" Text="Ингредиенты:" />
+                    <ItemsControl Margin="0,0,0,5" ItemsSource="{Binding SelectedRecipe.IngredientsList}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="0,0,0,2" Text="{Binding}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
-                <TextBlock FontWeight="Bold" Text="Описание:" />
-                <TextBlock
-                    Margin="0,0,0,5"
-                    Text="{Binding SelectedRecipe.Description}"
-                    TextWrapping="Wrap" />
+                    <TextBlock FontWeight="Bold" Text="Описание:" />
+                    <TextBlock
+                        Margin="0,0,0,5"
+                        Text="{Binding SelectedRecipe.Description}"
+                        TextWrapping="Wrap" />
 
-                <TextBlock FontWeight="Bold" Text="Улучшения:" />
-                <TextBlock
-                    Margin="0,0,0,10"
-                    Text="{Binding SelectedRecipe.Improvements}"
-                    TextWrapping="Wrap" />
+                    <TextBlock FontWeight="Bold" Text="Улучшения:" />
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        Text="{Binding SelectedRecipe.Improvements}"
+                        TextWrapping="Wrap" />
 
-                <Button
-                    Width="100"
-                    HorizontalAlignment="Left"
-                    Command="{Binding EditRecipeCommand}"
-                    Content="Изменить" />
-            </StackPanel>
+                    <Button
+                        Width="100"
+                        HorizontalAlignment="Left"
+                        Command="{Binding EditRecipeCommand}"
+                        Content="Изменить" />
+                </StackPanel>
+            </ScrollViewer>
 
             <!--  3. Секция создания/редактирования рецепта  -->
             <StackPanel Grid.Column="1" Margin="5">
@@ -125,11 +130,12 @@
         </Grid>
 
         <!--  Отображение списка рецептов  -->
-        <ListBox
-            Grid.Row="2"
-            Margin="0,10,0,0"
-            DisplayMemberPath="Name"
-            ItemsSource="{Binding FilteredRecipes}"
-            SelectedItem="{Binding SelectedRecipe}" />
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ListBox
+                Margin="0,10,0,0"
+                DisplayMemberPath="Name"
+                ItemsSource="{Binding FilteredRecipes}"
+                SelectedItem="{Binding SelectedRecipe}" />
+        </ScrollViewer>
     </Grid>
 </Window>
