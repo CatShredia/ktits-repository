@@ -1,0 +1,135 @@
+﻿<!--  MainWindow.xaml  -->
+<Window
+    x:Class="RecipeApp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RecipeApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Recipe App"
+    Width="800"
+    Height="600"
+    mc:Ignorable="d">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  1. Секция поиска и сортировки  -->
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,10"
+            Orientation="Horizontal">
+            <TextBlock
+                Margin="0,0,5,0"
+                VerticalAlignment="Center"
+                Text="Поиск:" />
+            <TextBox
+                x:Name="SearchTextBox"
+                Width="200"
+                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock
+                Margin="10,0,5,0"
+                VerticalAlignment="Center"
+                Text="Сортировка:" />
+            <ComboBox
+                x:Name="SortComboBox"
+                Width="150"
+                ItemsSource="{Binding SortOptions}"
+                SelectedItem="{Binding SelectedSortOption}" />
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--  2. Секция просмотра рецепта  -->
+            <StackPanel Grid.Column="0" Margin="5">
+                <TextBlock
+                    Margin="0,0,0,10"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Text="Просмотр рецепта" />
+                <TextBlock FontWeight="Bold" Text="Название:" />
+                <TextBlock
+                    Margin="0,0,0,5"
+                    Text="{Binding SelectedRecipe.Name}"
+                    TextWrapping="Wrap" />
+
+                <TextBlock FontWeight="Bold" Text="Ингредиенты:" />
+                <ItemsControl Margin="0,0,0,5" ItemsSource="{Binding SelectedRecipe.Ingredients}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <TextBlock FontWeight="Bold" Text="Описание:" />
+                <TextBlock
+                    Margin="0,0,0,5"
+                    Text="{Binding SelectedRecipe.Description}"
+                    TextWrapping="Wrap" />
+
+                <TextBlock FontWeight="Bold" Text="Улучшения:" />
+                <TextBlock
+                    Margin="0,0,0,10"
+                    Text="{Binding SelectedRecipe.Improvements}"
+                    TextWrapping="Wrap" />
+
+                <Button
+                    Width="100"
+                    HorizontalAlignment="Left"
+                    Command="{Binding EditRecipeCommand}"
+                    Content="Изменить" />
+            </StackPanel>
+
+            <!--  3. Секция создания/редактирования рецепта  -->
+            <StackPanel Grid.Column="1" Margin="5">
+                <TextBlock
+                    Margin="0,0,0,10"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Text="Редактировать рецепт" />
+                <TextBlock FontWeight="Bold" Text="Название:" />
+                <TextBox Margin="0,0,0,5" Text="{Binding RecipeName, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock FontWeight="Bold" Text="Ингредиенты (разделяйте запятыми):" />
+                <TextBox Margin="0,0,0,5" Text="{Binding RecipeIngredients, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock FontWeight="Bold" Text="Описание:" />
+                <TextBox
+                    Height="80"
+                    Margin="0,0,0,5"
+                    Text="{Binding RecipeDescription, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap" />
+
+                <TextBlock FontWeight="Bold" Text="Улучшения:" />
+                <TextBox
+                    Height="50"
+                    Margin="0,0,0,10"
+                    Text="{Binding RecipeImprovements, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap" />
+
+                <Button
+                    Width="100"
+                    HorizontalAlignment="Left"
+                    Command="{Binding SaveRecipeCommand}"
+                    Content="Сохранить" />
+            </StackPanel>
+        </Grid>
+
+        <!--  Отображение списка рецептов  -->
+        <ListBox
+            Grid.Row="2"
+            Margin="0,10,0,0"
+            DisplayMemberPath="Name"
+            ItemsSource="{Binding FilteredRecipes}"
+            SelectedItem="{Binding SelectedRecipe}" />
+    </Grid>
+</Window>
