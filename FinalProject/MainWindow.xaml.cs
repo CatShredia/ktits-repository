@@ -1,15 +1,36 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using wpf_resipe;
 
 namespace RecipeApp
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+
+        public string htmlResponse;
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            string exampleRecipe = "Шоколадно-банановые овсяные блинчики\r\nЭти блинчики - отличный способ начать день вкусно и полезно! Они сочетают в себе насыщенный вкус шоколада, сладость банана и пользу овсяных хлопьев. Готовятся очень быстро и легко, а результат порадует и взрослых, и детей. Идеальны для завтрака или здорового перекуса.\r\n\r\nКалорийность (примерная, на 1 порцию из 3 блинчиков): ~350 ккал\r\n\r\nНеобходимые продукты:\r\n\r\n1 спелый банан\r\n1 яйцо\r\n1/2 стакана овсяных хлопьев (мелкого помола)\r\n1 столовая ложка какао-порошка\r\n1/2 чайной ложки разрыхлителя\r\nЩепотка соли\r\nРастительное масло (для жарки)\r\nПо желанию: ягоды, мед, орехи для украшения\r\nШаги по приготовлению:\r\n\r\nБанан разомните вилкой в глубокой миске до состояния пюре.\r\nДобавьте яйцо и тщательно перемешайте.\r\nВсыпьте овсяные хлопья, какао-порошок, разрыхлитель и соль. Хорошо перемешайте, чтобы не было комков. Тесто должно получиться достаточно густым.\r\nРазогрейте сковороду на среднем огне, смажьте небольшим количеством растительного масла.\r\nВыкладывайте тесто ложкой на сковороду, формируя небольшие блинчики.\r\nЖарьте блинчики с каждой стороны по 2-3 минуты, до золотистого цвета.\r\nПодавайте блинчики теплыми, украсив ягодами, медом, орехами или другими любимыми добавками. Приятного аппетита!";
+
+            try
+            {
+                htmlResponse = await Connection.GetResponseFromAI("Напиши любой рецепт, структура ответа: Название, Небольшое описание (1 абзац), Калорийность, Необходимые продукты, Шаги по приготовлению " + exampleRecipe);
+                Console.WriteLine("HTML от AI:\n" + htmlResponse);
+
+                testWebBrowser.NavigateToString(htmlResponse);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ошибка при обращении к AI: " + ex.Message);
+            }
+        }
         private readonly RecipeViewModel _viewModel = new RecipeViewModel();
         public MainWindow()
         {
