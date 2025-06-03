@@ -1,5 +1,4 @@
-﻿// MainWindow.xaml.cs
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -15,25 +14,22 @@ namespace RecipeApp
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = _viewModel; // Set the DataContext to the ViewModel
+            DataContext = _viewModel;
             Loaded += MainWindow_Loaded;
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await _viewModel.LoadRecipes(); // Загрузка данных при загрузке окна
+            await _viewModel.LoadRecipes();
         }
 
-
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
-    // Model
     public class Recipe
     {
         public string Name { get; set; }
@@ -41,62 +37,58 @@ namespace RecipeApp
         public string Description { get; set; }
         public string Improvements { get; set; }
 
-        // Changed: This will return an array of ingredients
         public string[] IngredientsList
         {
             get
             {
                 if (string.IsNullOrEmpty(Ingredients))
-                {
-                    return new string[0]; // Return empty array if Ingredients is null or empty
-                }
+                    return Array.Empty<string>();
 
                 return Ingredients.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                                  .Select(s => s.Trim()) // Trim each ingredient
-                                  .ToArray();
+                                .Select(s => s.Trim())
+                                .ToArray();
             }
         }
+
+        public int IngredientsCount => IngredientsList.Length;
     }
-    // ViewModel
+
     public class RecipeViewModel : INotifyPropertyChanged
     {
         private ObservableCollection<Recipe> _recipes = new ObservableCollection<Recipe>();
         private Recipe _selectedRecipe;
         private string _searchText;
+        private string _ingredientFilter;
         private string _recipeName;
         private string _recipeIngredients;
         private string _recipeDescription;
         private string _recipeImprovements;
         private string _selectedSortOption;
-        private ObservableCollection<string> _sortOptions;
-
 
         public RecipeViewModel()
         {
-            // Initialize SortOptions
-            SortOptions = new ObservableCollection<string> { "По названию (А-Я)", "По названию (Я-А)" };
-            SelectedSortOption = SortOptions.FirstOrDefault(); // Set default sorting
+            SortOptions = new ObservableCollection<string> 
+            { 
+                "По названию (А-Я)", 
+                "По названию (Я-А)",
+                "По количеству ингредиентов (↑)",
+                "По количеству ингредиентов (↓)"
+            };
+            SelectedSortOption = SortOptions.FirstOrDefault();
 
             EditRecipeCommand = new RelayCommand(EditRecipe);
             SaveRecipeCommand = new RelayCommand(SaveRecipe);
-
-            // Load recipes (example, replace with actual data loading)
-            //Recipes.Add(new Recipe { Name = "Суп", Ingredients = "Картофель,Морковь,Лук", Description = "Вкусно", Improvements = "Со сметаной" });
-            //Recipes.Add(new Recipe { Name = "Пирог", Ingredients = "Мука,Яйца", Description = "Вкусно", Improvements = "С вишней" });
-            // LoadRecipes(); // Move data loading to Loaded event in MainWindow.xaml.cs
         }
 
         public async Task LoadRecipes()
         {
-            // Simulate loading from a database or file
-            await Task.Delay(500); // Simulate delay
-
-            // Replace with your actual data loading logic (e.g., from a database)
+            await Task.Delay(500);
             Recipes = new ObservableCollection<Recipe>
             {
                 new Recipe { Name = "Суп", Ingredients = "Картофель, Морковь, Лук", Description = "Вкусно", Improvements = "Со сметаной" },
-                new Recipe { Name = "Пирог", Ingredients = "Мука, Яйца", Description = "Вкусно", Improvements = "С вишней" },
-                new Recipe { Name = "Борщ", Ingredients = "Свекла, Капуста, Мясо", Description = "Наваристый", Improvements = "Со сметаной и чесноком" }
+                new Recipe { Name = "Пирог", Ingredients = "Мука, Яйца, Сахар", Description = "Вкусно", Improvements = "С вишней" },
+                new Recipe { Name = "Борщ", Ingredients = "Свекла, Капуста, Мясо, Картофель", Description = "Наваристый", Improvements = "Со сметаной и чесноком" },
+                new Recipe { Name = "Омлет", Ingredients = "Яйца, Молоко", Description = "Нежный", Improvements = "С сыром и зеленью" }
             };
             ApplySortingAndFiltering();
         }
@@ -110,7 +102,7 @@ namespace RecipeApp
                 {
                     _recipes = value;
                     OnPropertyChanged(nameof(Recipes));
-                    ApplySortingAndFiltering(); // Apply sorting and filtering when recipes change
+                    ApplySortingAndFiltering();
                 }
             }
         }
@@ -131,6 +123,20 @@ namespace RecipeApp
             }
         }
 
+        public string IngredientFilter
+        {
+            get => _ingredientFilter;
+            set
+            {
+                if (_ingredientFilter != value)
+                {
+                    _ingredientFilter = value;
+                    OnPropertyChanged(nameof(IngredientFilter));
+                    ApplySortingAndFiltering();
+                }
+            }
+        }
+
         public string SelectedSortOption
         {
             get => _selectedSortOption;
@@ -145,19 +151,7 @@ namespace RecipeApp
             }
         }
 
-        public ObservableCollection<string> SortOptions
-        {
-            get => _sortOptions;
-            set
-            {
-                if (_sortOptions != value)
-                {
-                    _sortOptions = value;
-                    OnPropertyChanged(nameof(SortOptions));
-                }
-            }
-        }
-
+        public ObservableCollection<string> SortOptions { get; }
 
         public Recipe SelectedRecipe
         {
@@ -168,11 +162,10 @@ namespace RecipeApp
                 {
                     _selectedRecipe = value;
                     OnPropertyChanged(nameof(SelectedRecipe));
-                    // When a recipe is selected, load its data into the editing fields:
                     if (value != null)
                     {
                         RecipeName = value.Name;
-                        RecipeIngredients = value.Ingredients; // Changed from IngredientsList
+                        RecipeIngredients = value.Ingredients;
                         RecipeDescription = value.Description;
                         RecipeImprovements = value.Improvements;
                     }
@@ -252,16 +245,15 @@ namespace RecipeApp
 
         private void SaveRecipe()
         {
-            // Проверка на пустое название
             if (string.IsNullOrWhiteSpace(RecipeName))
             {
-                MessageBox.Show("Название рецепта не может быть пустым!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Название рецепта не может быть пустым!", "Ошибка", 
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (SelectedRecipe != null)
             {
-                // Редактирование существующего рецепта
                 SelectedRecipe.Name = RecipeName;
                 SelectedRecipe.Ingredients = RecipeIngredients;
                 SelectedRecipe.Description = RecipeDescription;
@@ -269,7 +261,6 @@ namespace RecipeApp
             }
             else
             {
-                // Создание нового рецепта
                 Recipes.Add(new Recipe
                 {
                     Name = RecipeName,
@@ -278,10 +269,10 @@ namespace RecipeApp
                     Improvements = RecipeImprovements
                 });
             }
-
             ApplySortingAndFiltering();
             OnPropertyChanged(nameof(FilteredRecipes));
         }
+
         private void ClearEditFields()
         {
             RecipeName = "";
@@ -294,13 +285,24 @@ namespace RecipeApp
         {
             var filtered = Recipes.AsEnumerable();
 
-            // Filter
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
-                filtered = filtered.Where(r => r.Name.ToLower().Contains(SearchText.ToLower()));
+                filtered = filtered.Where(r => 
+                    r.Name.ToLower().Contains(SearchText.ToLower()));
             }
 
-            // Sort
+            if (!string.IsNullOrWhiteSpace(IngredientFilter))
+            {
+                var filterWords = IngredientFilter.ToLower()
+                    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.Trim());
+                
+                filtered = filtered.Where(r => 
+                    filterWords.All(word => 
+                        r.IngredientsList.Any(ing => 
+                            ing.ToLower().Contains(word))));
+            }
+
             switch (SelectedSortOption)
             {
                 case "По названию (А-Я)":
@@ -308,6 +310,12 @@ namespace RecipeApp
                     break;
                 case "По названию (Я-А)":
                     filtered = filtered.OrderByDescending(r => r.Name);
+                    break;
+                case "По количеству ингредиентов (↑)":
+                    filtered = filtered.OrderBy(r => r.IngredientsCount);
+                    break;
+                case "По количеству ингредиентов (↓)":
+                    filtered = filtered.OrderByDescending(r => r.IngredientsCount);
                     break;
             }
 
@@ -319,15 +327,12 @@ namespace RecipeApp
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
-
-    // Simple RelayCommand (for demonstration purposes)
     public class RelayCommand : ICommand
     {
         private readonly Action _execute;
@@ -339,20 +344,14 @@ namespace RecipeApp
             _canExecute = canExecute;
         }
 
-        public bool CanExecute(object parameter)
-        {
-            return _canExecute == null || _canExecute();
-        }
+        public bool CanExecute(object parameter) => _canExecute == null || _canExecute();
 
-        public void Execute(object parameter)
-        {
-            _execute();
-        }
+        public void Execute(object parameter) => _execute();
 
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
     }
 }

@@ -31,13 +31,23 @@
                 x:Name="SearchTextBox"
                 Width="200"
                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+
+            <TextBlock
+                Margin="10,0,5,0"
+                VerticalAlignment="Center"
+                Text="Фильтр по ингредиентам:" />
+            <TextBox
+                x:Name="IngredientFilterTextBox"
+                Width="200"
+                Text="{Binding IngredientFilter, UpdateSourceTrigger=PropertyChanged}" />
+
             <TextBlock
                 Margin="10,0,5,0"
                 VerticalAlignment="Center"
                 Text="Сортировка:" />
             <ComboBox
                 x:Name="SortComboBox"
-                Width="150"
+                Width="200"
                 ItemsSource="{Binding SortOptions}"
                 SelectedItem="{Binding SelectedSortOption}" />
         </StackPanel>
