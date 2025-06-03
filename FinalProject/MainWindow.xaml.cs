@@ -37,6 +37,8 @@ namespace RecipeApp
             InitializeComponent();
             DataContext = _viewModel;
             Loaded += MainWindow_Loaded;
+
+            // Console.SetOut(new ConsoleWriter(consoleOut));
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)

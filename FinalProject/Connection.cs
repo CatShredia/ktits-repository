@@ -23,6 +23,9 @@ namespace wpf_resipe
                 string apiKey = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
                 string model = Environment.GetEnvironmentVariable("OPENROUTER_MODEL_NAME");
 
+                Console.WriteLine(apiKey);
+                Console.WriteLine(model);
+
                 var request = new
                 {
                     model = model,
