@@ -1,0 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=WDXL+Lubrifont+TC&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+
+    text-decoration: none;
+
+    transition: 1s;
+}
+
+section {
+    border-bottom: 1px solid white;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: white;
+
+    font-family: "WDXL Lubrifont TC", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+
+    font-size: large;
+}
+
+i {
+    color: white;
+
+    font-size: 30px;
+}
+
+a,
+a:hover,
+a:focus {
+    color: black;
+}
+
+ul {
+    display: flex;
+    gap: 15px;
+}
+
+.container {
+    padding: 20px 40px;
+}
+
+.container-video {
+    padding: 0;
+}
+
+.inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header,
+.footer {
+    background-color: rgb(25, 25, 25);
+}
+
+.logo {
+    font-family: "WDXL Lubrifont TC", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    gap: 5px;
+}
+
+.logo img {
+    width: 50px;
+    height: 50px;
+}
+
+.logo h1 {
+    color: white;
+}
+
+li {
+    list-style: none;
+}
+
+.header__link a {
+    color: white;
+
+    font-family: "WDXL Lubrifont TC", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+}
+
+.main {
+    background-color: rgb(50, 50, 50);
+}
+
+.banner {
+    padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 15px;
+
+    width: 100%;
+    min-height: 60vh;
+
+    background-color: rgba(135, 135, 135, 0.2);
+}
+
+.banner-fone {
+    background-image: url(rec/banner.webp);
+    background-size: 100%;
+    background-position: top;
+    background-repeat: no-repeat;
+}
+
+.banner-fone h4 {
+    font-size: large;
+}
+
+.banner__top {
+    display: flex;
+    gap: 10px;
+
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid white;
+}
+
+.banner__top img {
+    width: 50px;
+    height: 100%;
+
+    border-radius: 1px;
+}
+
+.banner__button {
+    background-color: rgb(25, 25, 25);
+
+    padding: 10px 20px;
+
+    color: white;
+
+    border-radius: 1px;
+
+    transition: 0.5s;
+
+    -webkit-box-shadow: 10px 10px 15px 0px rgba(34, 60, 80, 0.5);
+    -moz-box-shadow: 10px 10px 15px 0px rgba(34, 60, 80, 0.5);
+    box-shadow: 10px 10px 15px 0px rgba(34, 60, 80, 0.5);
+}
+
+.banner_text {
+    color: white;
+    text-align: center;
+}
+
+.banner__button:hover {
+    background-color: red;
+
+    color: black;
+
+    -webkit-box-shadow: 20px 20px 15px 0px rgba(34, 60, 80, 1);
+    -moz-box-shadow: 20px 20px 15px 0px rgba(34, 60, 80, 1);
+    box-shadow: 20px 20px 15px 0px rgba(34, 60, 80, 1);
+}
+
+.footer::after {
+    content: "копирайт2025©";
+
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: gray;
+
+    font-family: "WDXL Lubrifont TC", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+
+    font-size: large;
+}
+
+.FIO {
+    color: white;
+
+    font-family: "WDXL Lubrifont TC", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+
+    font-size: large;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+}
+
+.section-videobanner h6 {
+    text-align: center;
+
+    position: sticky;
+
+    right: 50%;
+    top: 50%;
+
+    font-size: large;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.watch ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.choise img {
+    width: 100px;
+    height: 100px;
+
+    border-radius: 50%;
+}
+
+.choise a {
+    color: white;
+    font-family: "WDXL Lubrifont TC", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+
+    font-size: large;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: left;
+
+    gap: 10px;
+}
+
+.watch-title,
+.history-title {
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+
+.history-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.history-section p {
+    color: white;
+    font-family: "WDXL Lubrifont TC", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+
+    font-size: medium;
+}
+
+@media (max-width: 900px) {
+    .history-section p {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    .history-section p {
+        font-size: 10px;
+    }
+
+    .banner_text {
+        font-size: 15px;
+    }
+}
