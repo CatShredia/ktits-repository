@@ -1,1 +1,1 @@
-## Hi, this is public repository to KTITS works
+To show html/css, js practise open index.html in webbrowser
