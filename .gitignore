@@ -1,0 +1,19 @@
+# file directories
+**/.idea/**
+**/.vs/**
+**/.vscode/**
+
+# .net build directories
+**/bin/**
+**/obj/**
+**/packages/**
+
+# libraries
+**/vendor/**
+**/node_modules/**
+
+# settings
+**/.env
+
+UnityProjects/**
+Laravel/**
