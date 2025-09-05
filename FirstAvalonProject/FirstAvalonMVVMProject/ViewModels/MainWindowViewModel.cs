@@ -12,7 +12,13 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
+        RefreshData();
+    }
+    
+    public void RefreshData()
+    {
         var usersFromDb = App.DbContext.Users.ToList();
         Users = usersFromDb;
+        OnPropertyChanged(nameof(Users));
     }
 }
