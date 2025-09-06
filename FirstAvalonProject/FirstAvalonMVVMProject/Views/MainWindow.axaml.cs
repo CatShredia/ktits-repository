@@ -1,9 +1,11 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using FirstAvalonMVVMProject.Data;
 using FirstAvalonMVVMProject.Models;
 using FirstAvalonMVVMProject.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace FirstAvalonMVVMProject.Views;
 
@@ -15,7 +17,7 @@ public partial class MainWindow : Window
         DataContext = new MainWindowViewModel();
     }
 
-    private async void InputElement_OnDoubleTapped(object? sender, TappedEventArgs e)
+    private async void Table_Double_Tab(object? sender, TappedEventArgs e)
     {
         var selectedUser = MainDataGridUsers.SelectedItem as User;
 
@@ -28,14 +30,37 @@ public partial class MainWindow : Window
         
         var viewModel = DataContext as MainWindowViewModel;
         viewModel.RefreshData();
+        
+        Console.WriteLine("Hi");
     }
 
-    private async void Button_OnClick(object? sender, RoutedEventArgs e)
+    private async void Button_Create_OnClick(object? sender, RoutedEventArgs e)
     {
         UserVariableData.selectedUserInMainWindow = null;
         
         var createAndChangeUserWindow = new CreateAndChangeUser();
         await createAndChangeUserWindow.ShowDialog(this);
+        
+        var viewModel = DataContext as MainWindowViewModel;
+        viewModel.RefreshData();
+    }
+
+    private void Button_Delete_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Console.WriteLine("Deleting!");
+        
+        var button = sender as Button;
+        var selectedUser = button?.DataContext as User;
+        // var selectedUser = MainDataGridUsers.SelectedItem as User;
+
+        Console.WriteLine((selectedUser == null) ? "User not found" : "User founded");
+
+        if (selectedUser == null) return;
+
+        UserVariableData.selectedUserInMainWindow = selectedUser;
+        
+        App.DbContext.Users.Remove(selectedUser);
+        App.DbContext.SaveChanges();
         
         var viewModel = DataContext as MainWindowViewModel;
         viewModel.RefreshData();

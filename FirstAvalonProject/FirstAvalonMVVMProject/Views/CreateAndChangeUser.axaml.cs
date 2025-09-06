@@ -13,10 +13,13 @@ public partial class CreateAndChangeUser : Window
     public CreateAndChangeUser()
     {
         InitializeComponent();
-        
-        FistNameTextBox.Text = UserVariableData.selectedUserInMainWindow.FirstName;
-        SecondNameTextBox.Text = UserVariableData.selectedUserInMainWindow.SecondName;
-        DescriptionTextBox.Text = UserVariableData.selectedUserInMainWindow.Description;
+
+        if (UserVariableData.selectedUserInMainWindow != null)
+        {
+            FistNameTextBox.Text = UserVariableData.selectedUserInMainWindow.FirstName;
+            SecondNameTextBox.Text = UserVariableData.selectedUserInMainWindow.SecondName;
+            DescriptionTextBox.Text = UserVariableData.selectedUserInMainWindow.Description;
+        }
     }
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)
