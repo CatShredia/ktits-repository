@@ -40,7 +40,8 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.IdUserNavigation).WithMany(p => p.Logins)
                 .HasForeignKey(d => d.IdUser)
-                .HasConstraintName("FK_Login_User");
+                .HasConstraintName("FK_Login_User")
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<User>(entity =>
