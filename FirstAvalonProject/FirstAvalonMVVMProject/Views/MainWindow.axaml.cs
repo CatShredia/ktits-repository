@@ -25,7 +25,7 @@ public partial class MainWindow : Window
 
         UserVariableData.selectedUserInMainWindow = selectedUser;
 
-        var createAndChangeUserWindow = new CreateAndChangeUser();
+        var createAndChangeUserWindow = new CreateAndChangeUserWindow();
         await createAndChangeUserWindow.ShowDialog(this);
         
         var viewModel = DataContext as MainWindowViewModel;
@@ -38,7 +38,7 @@ public partial class MainWindow : Window
     {
         UserVariableData.selectedUserInMainWindow = null;
         
-        var createAndChangeUserWindow = new CreateAndChangeUser();
+        var createAndChangeUserWindow = new CreateAndChangeUserWindow();
         await createAndChangeUserWindow.ShowDialog(this);
         
         var viewModel = DataContext as MainWindowViewModel;

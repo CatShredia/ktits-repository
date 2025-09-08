@@ -8,9 +8,9 @@ using FirstAvalonMVVMProject.Models;
 
 namespace FirstAvalonMVVMProject.Views;
 
-public partial class CreateAndChangeUser : Window
+public partial class CreateAndChangeUserWindow : Window
 {
-    public CreateAndChangeUser()
+    public CreateAndChangeUserWindow()
     {
         InitializeComponent();
 
@@ -49,5 +49,11 @@ public partial class CreateAndChangeUser : Window
         
         App.DbContext.SaveChanges();
         this.Close();
+    }
+
+    private async void ShowLogins(object? sender, RoutedEventArgs e)
+    {
+        var userLoginsWindow = new UserLoginWindow();
+        await userLoginsWindow.ShowDialog(this);
     }
 }
