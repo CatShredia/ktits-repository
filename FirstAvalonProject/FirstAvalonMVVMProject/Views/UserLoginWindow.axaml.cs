@@ -20,10 +20,15 @@ public partial class UserLoginWindow : Window
 
     private async void Table_Double_Click(object? sender, TappedEventArgs e)
     {
-        User selectedUser = UserVariableData.selectedUserInMainWindow;
+        var selectedLogin = LoginDataGrid.SelectedItem as Login;
 
-        if (selectedUser == null) return;
+        if (selectedLogin == null) return;
 
+        LoginVariableData.selectedLogin = selectedLogin;
+
+        var createAndChangeLoginWindow = new CreateAndChangeLoginWindow();
+        await createAndChangeLoginWindow.ShowDialog(this);
+        
         var viewModel = DataContext as LoginWindowViewModel;
         viewModel.RefreshData();
     }
@@ -42,6 +47,17 @@ public partial class UserLoginWindow : Window
         
         App.DbContext.Logins.Remove(selectedLogin);
         App.DbContext.SaveChanges();
+        
+        var viewModel = DataContext as LoginWindowViewModel;
+        viewModel.RefreshData();
+    }
+
+    private async void Button_Create_OnClick(object? sender, RoutedEventArgs e)
+    {
+        LoginVariableData.selectedLogin = null;
+        
+        var createAndChangeLoginWindow = new CreateAndChangeLoginWindow();
+        await createAndChangeLoginWindow.ShowDialog(this);
         
         var viewModel = DataContext as LoginWindowViewModel;
         viewModel.RefreshData();

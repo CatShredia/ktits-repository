@@ -8,24 +8,25 @@
         x:DataType="vm:LoginWindowViewModel"
         Title="UserLoginWindow">
     <Grid RowDefinitions="* Auto">
-        <DataGrid  Grid.Row="0" ItemsSource="{Binding Logins}" IsReadOnly="True" DoubleTapped="Table_Double_Click" Name="MainDataGridUsers">
+        <DataGrid Grid.Row="0" ItemsSource="{Binding Logins}" IsReadOnly="True" DoubleTapped="Table_Double_Click"
+                  Name="LoginDataGrid">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="id" Binding="{Binding IdLogin}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Логин" Binding="{Binding Login1}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Пароль" Binding="{Binding Password}"></DataGridTextColumn>
-                
+
                 <DataGridTemplateColumn Header="Delete" Width="50">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Click="Button_Delete_OnClick">
                                 <Image Source="avares://FirstAvalonMVVMProject/Assets/bin.png"
-                                       Cursor="Hand"
-                                /> 
+                                       Cursor="Hand" />
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        <Button Grid.Row="1" Click="Button_Create_OnClick">Добавление</Button>
     </Grid>
 </Window>
