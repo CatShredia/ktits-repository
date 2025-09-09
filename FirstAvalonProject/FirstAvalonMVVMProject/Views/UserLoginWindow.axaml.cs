@@ -26,7 +26,7 @@ public partial class UserLoginWindow : Window
 
         LoginVariableData.selectedLogin = selectedLogin;
 
-        var createAndChangeLoginWindow = new CreateAndChangeLoginWindow();
+        var createAndChangeLoginWindow = new CreateAndChangeLoginWindow(UserVariableData.selectedUserInMainWindow.IdUser);
         await createAndChangeLoginWindow.ShowDialog(this);
         
         var viewModel = DataContext as LoginWindowViewModel;
@@ -56,7 +56,7 @@ public partial class UserLoginWindow : Window
     {
         LoginVariableData.selectedLogin = null;
         
-        var createAndChangeLoginWindow = new CreateAndChangeLoginWindow();
+        var createAndChangeLoginWindow = new CreateAndChangeLoginWindow(UserVariableData.selectedUserInMainWindow.IdUser);
         await createAndChangeLoginWindow.ShowDialog(this);
         
         var viewModel = DataContext as LoginWindowViewModel;

@@ -10,9 +10,13 @@ namespace FirstAvalonMVVMProject.Views;
 
 public partial class CreateAndChangeLoginWindow : Window
 {
-    public CreateAndChangeLoginWindow()
+    
+    private int? targetUserId;
+    
+    public CreateAndChangeLoginWindow(int ?targetUserId)
     {
         InitializeComponent();
+        this.targetUserId = targetUserId;
         
         if (LoginVariableData.selectedLogin != null)
         {
@@ -32,6 +36,7 @@ public partial class CreateAndChangeLoginWindow : Window
 
             selectedLogin.Login1 = LoginTextBox.Text;
             selectedLogin.Password = PasswordTextBox.Text;
+            selectedLogin.IdUser = idUser;
         }
         else
         {
@@ -39,6 +44,7 @@ public partial class CreateAndChangeLoginWindow : Window
             {
                 Login1 = LoginTextBox.Text,
                 Password = PasswordTextBox.Text,
+                IdUser = targetUserId
             };
             App.DbContext.Logins.Add(newLogin);
         }
