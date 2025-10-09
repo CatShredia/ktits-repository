@@ -12,6 +12,14 @@
 <body>
 
     <?php
+    require_once 'db/connection.php';
+
+    // Теперь можно использовать $link
+    $stmt = $link->query('SELECT * FROM product');
+    $pets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    print_r($pets);
+
     $page = $_GET['page'] ?? 'start';
 
     $pages = [
