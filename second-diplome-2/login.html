@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - Дом для хвостиков</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="images/dog-house.png" alt="Логотип" class="logo-img">
+                    <span class="logo-text">Дом для хвостиков</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Главная</a></li>
+                    <li><a href="products.html" class="nav-link">Наши питомцы</a></li>
+                    <li><a href="login.html" class="nav-link active">Войти</a></li>
+                    <li><a href="register.html" class="nav-link">Регистрация</a></li>
+                    <li><a href="login.html" class="nav-link logout">Выйти</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <img src="images/dog-house-2.png" alt="Логотип" class="auth-logo">
+                    <h1 class="auth-title">Добро пожаловать обратно!</h1>
+                    <p class="auth-subtitle">Войдите в свой аккаунт, чтобы продолжить заботу о наших питомцах</p>
+                </div>
+                
+                <form class="auth-form">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="Введите ваш email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Пароль</label>
+                        <input type="password" id="password" name="password" class="form-input" placeholder="Введите пароль">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-full">Войти</button>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>Нет аккаунта? <a href="register.html" class="auth-link">Зарегистрироваться</a></p>
+                </div>
+            </div>
+            
+            <div class="auth-image">
+                <img src="images/photo-1548199973-03cce0bbc87b.jpeg" alt="Счастливая собака">
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Дом для хвостиков</h3>
+                    <p>Дарим надежду и любовь каждому питомцу</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Контакты</h4>
+                    <p>📞 +7 (999) 123-45-67</p>
+                    <p>📧 info@doghome.ru</p>
+                    <p>📍 г. Казань, ул. Собачья, 15</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Режим работы</h4>
+                    <p>Пн-Пт: 9:00 - 18:00</p>
+                    <p>Сб-Вс: 10:00 - 16:00</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Дом для хвостиков. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 
