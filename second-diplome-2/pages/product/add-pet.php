@@ -1,107 +1,67 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Добавить питомца - Дом для хвостиков</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <header class="header">
-        <nav class="nav">
-            <div class="nav-container">
-                <div class="logo">
-                    <img src="images/dog-house.png" alt="Логотип" class="logo-img">
-                    <span class="logo-text">Дом для хвостиков</span>
+<?php
+// Handle create product (POST)
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    $name = trim($_POST['name'] ?? '');
+    $coust = trim($_POST['coust'] ?? '');
+    $imageUrl = trim($_POST['image_url'] ?? '');
+
+    if ($name !== '' && $coust !== '') {
+        $stmt = $link->prepare('INSERT INTO product (name, coust, image_url) VALUES (:name, :coust, :image_url)');
+        $stmt->execute([
+            ':name' => $name,
+            ':coust' => $coust,
+            ':image_url' => $imageUrl !== '' ? $imageUrl : null,
+        ]);
+        header('Location: /?page=products');
+        exit;
+    }
+}
+?>
+
+<main class="main">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/?page=start" class="breadcrumb-link">Главная</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="/?page=products" class="breadcrumb-link">Наши питомцы</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Добавить питомца</span>
+        </div>
+
+        <div class="form-page">
+            <div class="form-container">
+                <div class="form-header">
+                    <h1 class="form-title">Добавить нового питомца</h1>
+                    <p class="form-subtitle">Заполните информацию о новом питомце</p>
                 </div>
-                <ul class="nav-menu">
-                    <li><a href="index.html" class="nav-link">Главная</a></li>
-                    <li><a href="products.html" class="nav-link">Наши питомцы</a></li>
-                    <li><a href="login.html" class="nav-link">Войти</a></li>
-                    <li><a href="register.html" class="nav-link">Регистрация</a></li>
-                    <li><a href="login.html" class="nav-link logout">Выйти</a></li>
-                </ul>
-            </div>
-        </nav>
-    </header>
 
-    <main class="main">
-        <div class="container">
-            <div class="breadcrumb">
-                <a href="index.html" class="breadcrumb-link">Главная</a>
-                <span class="breadcrumb-separator">/</span>
-                <a href="products.html" class="breadcrumb-link">Наши питомцы</a>
-                <span class="breadcrumb-separator">/</span>
-                <span class="breadcrumb-current">Добавить питомца</span>
-            </div>
-
-            <div class="form-page">
-                <div class="form-container">
-                    <div class="form-header">
-                        <h1 class="form-title">Добавить нового питомца</h1>
-                        <p class="form-subtitle">Заполните информацию о новом питомце</p>
+                <form class="pet-form" method="post" action="/?page=add-pet">
+                    <div class="form-group">
+                        <label for="petName" class="form-label">Имя питомца</label>
+                        <input type="text" id="petName" name="name" class="form-input" placeholder="Введите имя питомца" required>
                     </div>
 
-                    <form class="pet-form">
-                        <div class="form-group">
-                            <label for="petName" class="form-label">Имя питомца</label>
-                            <input type="text" id="petName" name="name" class="form-input" placeholder="Введите имя питомца">
-                        </div>
+                    <div class="form-group">
+                        <label for="petImageUrl" class="form-label">URL изображения</label>
+                        <input type="url" id="petImageUrl" name="image_url" class="form-input" placeholder="https://...">
+                        <small class="form-hint">Вставьте ссылку на изображение питомца</small>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="petImage" class="form-label">Фото питомца</label>
-                            <input type="file" id="petImage" name="image" class="form-input">
-                            <small class="form-hint">Вставьте ссылку на изображение питомца</small>
-                        </div>
+                    <div class="form-group">
+                        <label for="petPrice" class="form-label">Цена (руб.)</label>
+                        <input type="number" id="petPrice" name="coust" class="form-input" min="0" placeholder="0" required>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="petDescription" class="form-label">Описание</label>
-                            <textarea id="petDescription" name="description" class="form-input" rows="6" placeholder="Опишите характер, особенности и историю питомца..."></textarea>
-                        </div>
+                    <div class="form-actions">
+                        <a href="/?page=products" class="btn btn-secondary">Отмена</a>
+                        <button type="submit" class="btn btn-primary">Добавить питомца</button>
+                    </div>
+                </form>
+            </div>
 
-                        <div class="form-group">
-                            <label for="petPrice" class="form-label">Цена (руб.)</label>
-                            <input type="number" id="petPrice" name="price" class="form-input" min="0" placeholder="0">
-                        </div>
-
-                        <div class="form-actions">
-                            <a href="products.html" class="btn btn-secondary">Отмена</a>
-                            <button type="submit" class="btn btn-primary">Добавить питомца</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="form-image">
-                    <img src="images/photo-1552053831-71594a27632d.jpeg" alt="Новый питомец">
-                </div>
+            <div class="form-image">
+                <img src="images/photo-1552053831-71594a27632d.jpeg" alt="Новый питомец">
             </div>
         </div>
+    </div>
     </main>
-
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Дом для хвостиков</h3>
-                    <p>Дарим надежду и любовь каждому питомцу</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Контакты</h4>
-                    <p>📞 +7 (999) 123-45-67</p>
-                    <p>📧 info@doghome.ru</p>
-                    <p>📍 г. Казань, ул. Собачья, 15</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Режим работы</h4>
-                    <p>Пн-Пт: 9:00 - 18:00</p>
-                    <p>Сб-Вс: 10:00 - 16:00</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Дом для хвостиков. Все права защищены.</p>
-            </div>
-        </div>
-    </footer>
-</body>
-</html> 
