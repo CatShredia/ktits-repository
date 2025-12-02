@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using StudyProject.Data;
@@ -43,7 +44,13 @@ public partial class ExamControl : UserControl
 
     private async void CreateNewExam(object? sender, RoutedEventArgs e)
     {
-        var newEditWindow = new ExamEditWindow();
+        var newEditWindow = new ExamEditWindow(this);
+        var result = await newEditWindow.ShowDialog<bool>(App.MainWindowLink);
+    }
+
+    private async void EditExam(object? sender, TappedEventArgs e)
+    {
+        var newEditWindow = new ExamEditWindow(this, ExamDataGrid.SelectedItem as Exam);
         var result = await newEditWindow.ShowDialog<bool>(App.MainWindowLink);
     }
 }

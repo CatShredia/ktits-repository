@@ -12,7 +12,9 @@
                       Grid.Row="1">
             <DataGrid Name="ExamDataGrid"
                       IsReadOnly="True"
-                      AutoGenerateColumns="False">
+                      AutoGenerateColumns="False"
+                      DoubleTapped="EditExam"
+                      >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Binding="{Binding ExamDate}" />
                     <DataGridTextColumn Header="StudentReg" Binding="{Binding StudentReg}" />
