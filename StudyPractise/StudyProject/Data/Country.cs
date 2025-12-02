@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace StudyProject.Data;
+
+public partial class Country
+{
+    public int IdCountries { get; set; }
+
+    public string? NameCountry { get; set; }
+
+    public string? Capital { get; set; }
+
+    public int? Square { get; set; }
+
+    public int? Population { get; set; }
+
+    public string? Continent { get; set; }
+}
