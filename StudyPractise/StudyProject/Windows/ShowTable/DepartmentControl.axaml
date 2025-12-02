@@ -1,0 +1,37 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="StudyProject.Windows.ShowTable.DepartmentControl">
+    <Grid RowDefinitions="Auto Auto Auto">
+        <TextBlock Grid.Row="0">Departments</TextBlock>
+        <ScrollViewer MaxHeight="1000" 
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Grid.Row="1">
+            <DataGrid Name="DepartmentDataGrid"
+                      IsReadOnly="True"
+                      AutoGenerateColumns="False"
+                      DoubleTapped="EditDepartment">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding IdDepart}" />
+                    <DataGridTextColumn Header="Cipher" Binding="{Binding Cipher}" />
+                    <DataGridTextColumn Header="Name" Binding="{Binding NameDepart}" />
+                    <DataGridTextColumn Header="Faculty ID" Binding="{Binding IdFaculty}" />
+                    <DataGridTemplateColumn Header="" Width="50">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Click="DeleteDepartment">
+                                    <Image Source="avares://StudyProject/Assets/bin.png"
+                                           Cursor="Hand" />
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </ScrollViewer>
+        <Button Grid.Row="2" Click="CreateNewDepartment">Add New</Button>
+    </Grid>
+</UserControl>

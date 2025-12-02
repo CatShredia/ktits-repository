@@ -25,7 +25,7 @@ public partial class Header : UserControl
 
     private void ToDepartmentTable(object? sender, RoutedEventArgs e)
     {
-        throw new System.NotImplementedException();
+        App.MainWindowLink.UpdateContent(new DepartmentControl());
     }
 
     private void ToEmployeeTable(object? sender, RoutedEventArgs e)
