@@ -1,0 +1,37 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="StudyProject.Windows.ShowTable.SpecialtyControl">
+    <Grid RowDefinitions="Auto Auto Auto">
+        <TextBlock Grid.Row="0">Specialties</TextBlock>
+        <ScrollViewer MaxHeight="1000" 
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Grid.Row="1">
+            <DataGrid Name="SpecialtyDataGrid"
+                      IsReadOnly="True"
+                      AutoGenerateColumns="False"
+                      DoubleTapped="EditSpecialty">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding IdSpecialty}" />
+                    <DataGridTextColumn Header="Code" Binding="{Binding Code}" />
+                    <DataGridTextColumn Header="Direction" Binding="{Binding Direction}" />
+                    <DataGridTextColumn Header="Dept ID" Binding="{Binding IdDepart}" />
+                    <DataGridTemplateColumn Header="" Width="50">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Click="DeleteSpecialty">
+                                    <Image Source="avares://StudyProject/Assets/bin.png"
+                                           Cursor="Hand" />
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </ScrollViewer>
+        <Button Grid.Row="2" Click="CreateNewSpecialty">Add New</Button>
+    </Grid>
+</UserControl>

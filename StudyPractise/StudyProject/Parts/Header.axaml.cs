@@ -20,7 +20,7 @@ public partial class Header : UserControl
 
     private void ToSpecialtyTable(object? sender, RoutedEventArgs e)
     {
-        throw new System.NotImplementedException();
+        App.MainWindowLink.UpdateContent(new SpecialtyControl());
     }
 
     private void ToDepartmentTable(object? sender, RoutedEventArgs e)
