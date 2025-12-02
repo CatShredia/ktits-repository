@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using StudyProject.Windows.ShowTable;
 
 namespace StudyProject.Parts;
 
@@ -14,7 +15,7 @@ public partial class Header : UserControl
 
     private void ToExamTable(object? sender, RoutedEventArgs e)
     {
-        throw new System.NotImplementedException();
+        App.MainWindowLink.UpdateContent(new ExamControl());
     }
 
     private void ToSpecialtyTable(object? sender, RoutedEventArgs e)

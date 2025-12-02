@@ -8,4 +8,10 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
     }
+    
+    public void UpdateContent(UserControl control)
+    {
+        ContentGrid.Children.Clear();
+        ContentGrid.Children.Add(control);
+    }
 }

@@ -13,8 +13,7 @@
             <parts:Header></parts:Header>
         </Grid>
 
-        <Grid Grid.Row="1" Margin="10">
-            <TextBlock>Test</TextBlock>
+        <Grid Grid.Row="1" Margin="10" Name="ContentGrid">
         </Grid>
 
         <Grid Grid.Row="2">

@@ -8,6 +8,8 @@ namespace StudyProject;
 public partial class App : Application
 {
     public static AppDbContext DbContext { get; private set; } = new AppDbContext();
+    
+    public static MainWindow? MainWindowLink { get; private set; }
 
     public override void Initialize()
     {
@@ -18,7 +20,8 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow();
+            MainWindowLink = new MainWindow();
+            desktop.MainWindow = MainWindowLink;
         }
 
         base.OnFrameworkInitializationCompleted();
