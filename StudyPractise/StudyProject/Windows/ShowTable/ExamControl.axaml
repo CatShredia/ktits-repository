@@ -6,7 +6,7 @@
              x:Class="StudyProject.Windows.ShowTable.ExamControl">
     <Grid RowDefinitions="Auto Auto Auto">
         <TextBlock Grid.Row="0">Exams</TextBlock>
-        <ScrollViewer MaxHeight="300" 
+        <ScrollViewer MaxHeight="1000" 
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"
                       Grid.Row="1">

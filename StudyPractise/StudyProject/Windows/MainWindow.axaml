@@ -7,7 +7,7 @@
         x:Class="StudyProject.MainWindow"
         Title="StudyProject"
         Icon="avares://StudyProject/Assets/logo.ico">
-    <Grid RowDefinitions="10* 80* 10*">
+    <Grid RowDefinitions="12* 78* 10*">
 
         <Grid Grid.Row="0">
             <parts:Header></parts:Header>
