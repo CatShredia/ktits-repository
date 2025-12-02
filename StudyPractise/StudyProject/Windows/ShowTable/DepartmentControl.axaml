@@ -5,11 +5,12 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StudyProject.Windows.ShowTable.DepartmentControl">
     <Grid RowDefinitions="Auto Auto Auto">
-        <TextBlock Grid.Row="0">Departments</TextBlock>
+        <TextBlock Grid.Row="0" Margin="10">Departments</TextBlock>
+        <Button Grid.Row="1" Click="CreateNewDepartment">Add New</Button>
         <ScrollViewer MaxHeight="1000" 
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"
-                      Grid.Row="1">
+                      Grid.Row="2">
             <DataGrid Name="DepartmentDataGrid"
                       IsReadOnly="True"
                       AutoGenerateColumns="False"
@@ -32,6 +33,5 @@
                 </DataGrid.Columns>
             </DataGrid>
         </ScrollViewer>
-        <Button Grid.Row="2" Click="CreateNewDepartment">Add New</Button>
     </Grid>
 </UserControl>

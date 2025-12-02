@@ -30,6 +30,6 @@ public partial class Header : UserControl
 
     private void ToEmployeeTable(object? sender, RoutedEventArgs e)
     {
-        throw new System.NotImplementedException();
+        App.MainWindowLink.UpdateContent(new EmployeeControl());
     }
 }

@@ -3,29 +3,29 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="StudyProject.Windows.ShowTable.ExamControl">
+             x:Class="StudyProject.Windows.ShowTable.EmployeeControl">
     <Grid RowDefinitions="Auto Auto Auto">
-        <TextBlock Grid.Row="0" Margin="10">Exams</TextBlock>
-        <Button Grid.Row="1" Click="CreateNewExam">Add New</Button>
+        <TextBlock Grid.Row="0" Margin="10">Employees</TextBlock>
+        <Button Grid.Row="1" Click="CreateNewEmployee">Add New</Button>
         <ScrollViewer MaxHeight="1000" 
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"
                       Grid.Row="2">
-            <DataGrid Name="ExamDataGrid"
+            <DataGrid Name="EmployeeDataGrid"
                       IsReadOnly="True"
                       AutoGenerateColumns="False"
-                      DoubleTapped="EditExam"
-                      >
+                      DoubleTapped="EditEmployee">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding ExamDate}" />
-                    <DataGridTextColumn Header="StudentReg" Binding="{Binding StudentReg}" />
-                    <DataGridTextColumn Header="Classroom" Binding="{Binding Classroom}" />
-                    <DataGridTextColumn Header="Grade" Binding="{Binding Grade}" />
-                    
+                    <DataGridTextColumn Header="Tab Num" Binding="{Binding TabNumEmployee}" />
+                    <DataGridTextColumn Header="Fullname" Binding="{Binding Fullname}" />
+                    <DataGridTextColumn Header="Position" Binding="{Binding PositionEmp}" />
+                    <DataGridTextColumn Header="Salary" Binding="{Binding Salary}" />
+                    <DataGridTextColumn Header="Dept ID" Binding="{Binding IdDepart}" />
+                    <DataGridTextColumn Header="Chief Tab" Binding="{Binding Chief}" />
                     <DataGridTemplateColumn Header="" Width="50">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Click="DeleteExam">
+                                <Button Click="DeleteEmployee">
                                     <Image Source="avares://StudyProject/Assets/bin.png"
                                            Cursor="Hand" />
                                 </Button>
@@ -35,6 +35,5 @@
                 </DataGrid.Columns>
             </DataGrid>
         </ScrollViewer>
-        
     </Grid>
 </UserControl>

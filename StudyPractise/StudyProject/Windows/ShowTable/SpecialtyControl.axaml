@@ -5,11 +5,12 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StudyProject.Windows.ShowTable.SpecialtyControl">
     <Grid RowDefinitions="Auto Auto Auto">
-        <TextBlock Grid.Row="0">Specialties</TextBlock>
+        <TextBlock Grid.Row="0" Margin="10">Specialties</TextBlock>
+        <Button Grid.Row="1" Click="CreateNewSpecialty">Add New</Button>
         <ScrollViewer MaxHeight="1000" 
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"
-                      Grid.Row="1">
+                      Grid.Row="2">
             <DataGrid Name="SpecialtyDataGrid"
                       IsReadOnly="True"
                       AutoGenerateColumns="False"
@@ -32,6 +33,5 @@
                 </DataGrid.Columns>
             </DataGrid>
         </ScrollViewer>
-        <Button Grid.Row="2" Click="CreateNewSpecialty">Add New</Button>
     </Grid>
 </UserControl>

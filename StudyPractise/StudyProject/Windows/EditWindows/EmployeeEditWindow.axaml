@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="StudyProject.Windows.EditWindows.EmployeeEditWindow"
+        Title="Edit Employee">
+    <ScrollViewer>
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="15">
+            <TextBlock Grid.Row="0" Text="Fullname:" />
+            <TextBox Grid.Row="1" Name="FullnameBox" />
+            <TextBlock Grid.Row="2" Text="Position:" />
+            <TextBox Grid.Row="3" Name="PositionBox" />
+            <TextBlock Grid.Row="4" Text="Salary:" />
+            <TextBox Grid.Row="5" Name="SalaryBox" />
+            <TextBlock Grid.Row="6" Text="Dept ID:" />
+            <TextBox Grid.Row="7" Name="DeptIdBox" />
+            <TextBlock Grid.Row="8" Text="Chief Tab Num:" />
+            <TextBox Grid.Row="9" Name="ChiefBox" />
+            <TextBlock Grid.Row="10" Name="ErrorMessage" Foreground="Red" TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal" Grid.Row="11" HorizontalAlignment="Right" Margin="0,15,0,0">
+                <Button Content="Save" Click="OnSave" MinWidth="80" Margin="0,0,10,0"/>
+                <Button Content="Cancel" Click="OnCancel" MinWidth="80"/>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Window>
