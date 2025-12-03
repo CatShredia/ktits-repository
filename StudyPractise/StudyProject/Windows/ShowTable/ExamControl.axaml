@@ -4,12 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StudyProject.Windows.ShowTable.ExamControl">
-    <Grid RowDefinitions="Auto Auto Auto Auto Auto Auto">
+    <Grid RowDefinitions="Auto Auto Auto Auto Auto *">
         <TextBlock Grid.Row="0" Margin="10">Exams</TextBlock>
         <ComboBox Grid.Row="1" Name="SearchColumnBox" Margin="10"/>
         <TextBox Grid.Row="2" Name="SearchBox" Watermark="Search..." TextChanged="OnSearchTextChanged" Margin="10"/>
-        <TextBlock Grid.Row="3" Margin="10" Foreground="Red" Name="MessageBox"></TextBlock>
-        <Button Grid.Row="4" Click="CreateNewExam">Add New</Button>
+        <Button Grid.Row="3" Click="CreateNewExam">Add New</Button>
+        <TextBlock Grid.Row="4" Margin="10" Foreground="Red" Name="MessageBox"></TextBlock>
         <ScrollViewer MaxHeight="1000" 
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"

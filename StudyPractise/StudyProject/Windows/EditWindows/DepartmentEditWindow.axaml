@@ -4,7 +4,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         x:Class="StudyProject.Windows.EditWindows.DepartmentEditWindow"
-        Title="Edit Department">
+        Title="Edit Department"
+        Icon="avares://StudyProject/Assets/icon.ico"
+        >
     <ScrollViewer>
         <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="15">
             <TextBlock Grid.Row="0" Text="Cipher:" />
@@ -15,8 +17,8 @@
             <TextBox Grid.Row="5" Name="FacultyIdBox" />
             <TextBlock Grid.Row="6" Name="ErrorMessage" Foreground="Red" TextWrapping="Wrap" />
             <StackPanel Orientation="Horizontal" Grid.Row="7" HorizontalAlignment="Right" Margin="0,15,0,0">
-                <Button Content="Save" Click="OnSave" MinWidth="80" Margin="0,0,10,0"/>
-                <Button Content="Cancel" Click="OnCancel" MinWidth="80"/>
+                <Button Background="#1bfce2" Content="Save" Click="OnSave" MinWidth="80" Margin="0,0,10,0"/>
+                <Button Background="#1bfce2" Content="Cancel" Click="OnCancel" MinWidth="80"/>
             </StackPanel>
         </Grid>
     </ScrollViewer>

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StudyProject.Windows.ShowTable.UserLoginControl">
-    <Grid RowDefinitions="Auto Auto Auto">
+    <Grid RowDefinitions="Auto Auto *">
         <TextBlock Grid.Row="0">Users</TextBlock>
         <ScrollViewer MaxHeight="1000"
                       VerticalScrollBarVisibility="Auto"

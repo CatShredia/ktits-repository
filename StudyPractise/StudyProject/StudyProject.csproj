@@ -68,5 +68,15 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </AvaloniaResource>
     </ItemGroup>
+    <ItemGroup>
+      <None Remove="Assets\user.png" />
+      <AvaloniaResource Include="Assets\user.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </AvaloniaResource>
+      <None Remove="Assets\enter.png" />
+      <AvaloniaResource Include="Assets\enter.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </AvaloniaResource>
+    </ItemGroup>
 
 </Project>

@@ -74,8 +74,9 @@ public partial class Header : UserControl
         // left part
         ExamButton.IsVisible = false;
         SpecialtyButton.IsVisible = false;
-        ExamButton.IsVisible = false;
         StudentButton.IsVisible = false;
+        DepartmentButton.IsVisible = false;
+        EmployeeButton.IsVisible = false;
         if (isAuth)
         {
             // Exam all can see
@@ -130,5 +131,10 @@ public partial class Header : UserControl
     private void ToStudentTable(object? sender, RoutedEventArgs e)
     {
         App.MainWindowLink.UpdateContent(new StudentControl());
+    }
+
+    private void ToClearWindow(object? sender, RoutedEventArgs e)
+    {
+        App.MainWindowLink.DropContent();
     }
 }

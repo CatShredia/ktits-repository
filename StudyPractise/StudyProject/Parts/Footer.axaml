@@ -4,7 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StudyProject.Parts.Footer">
-    <Grid Margin="10" ColumnDefinitions="Auto * Auto" HorizontalAlignment="Left" VerticalAlignment="Center">
-        <TextBlock>Efimov Aleksandr</TextBlock>
+    <Grid ColumnDefinitions="50* 50*">
+        <Grid Grid.Column="0" Margin="10" ColumnDefinitions="Auto * Auto" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <TextBlock>The best platform</TextBlock>
+        </Grid>
+        <Grid Grid.Column="1" Margin="10" ColumnDefinitions="Auto * Auto" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <TextBlock>Author: Efimov Aleksandr 321 group</TextBlock>
+        </Grid>
     </Grid>
+
 </UserControl>

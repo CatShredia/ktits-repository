@@ -6,11 +6,20 @@
              x:Class="StudyProject.Parts.Header">
     <Grid ColumnDefinitions="50* 50*">
         <Grid Margin="10" ColumnDefinitions="Auto Auto Auto Auto" HorizontalAlignment="Left" VerticalAlignment="Center">
-            <Image Grid.Column="0" Margin="10" Height="75" Width="75"
-                   Source="avares://StudyProject/Assets/icon.png" Stretch="UniformToFill" HorizontalAlignment="Center"
-                   VerticalAlignment="Center" />
-            <TextBlock Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center">StudyPractiseProject</TextBlock>
-            
+            <Button Click="ToClearWindow" Background="Transparent"
+                    BorderBrush="Transparent">
+                <Grid ColumnDefinitions="Auto Auto" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <Image Grid.Column="0" Margin="10"
+                           Source="avares://StudyProject/Assets/icon.png" Stretch="UniformToFill"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center"
+                               VerticalAlignment="Center">
+                        SmartFish
+                    </TextBlock>
+                </Grid>
+            </Button>
+
 
             <Grid Grid.Column="2" ColumnDefinitions="Auto Auto Auto Auto Auto">
                 <Button Margin="5" IsVisible="false" Grid.Column="0" Click="ToExamTable" Name="ExamButton">Exams</Button>
@@ -29,7 +38,14 @@
                 </Button>
                 <Button Margin="5" IsVisible="false" Grid.Column="1" Click="ToLogin" Name="LoginButton">Login</Button>
                 <Button Margin="5" IsVisible="false" Grid.Column="2" Click="ToRegister" Name="RegisterButton">Register</Button>
-                <Button Margin="5" IsVisible="false" Grid.Column="3" Click="ToOut" Name="OutButton">Out</Button>
+                <Button Margin="5" IsVisible="false" Grid.Column="3" Click="ToOut" Name="OutButton" Background="Transparent"
+                        BorderBrush="Transparent">
+                    <Image Margin="10"
+                           Source="avares://StudyProject/Assets/enter.png" Stretch="UniformToFill"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" 
+                           Width="30" Height="30"/>
+                </Button>
             </Grid>
         </Grid>
     </Grid>
