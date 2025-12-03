@@ -109,6 +109,13 @@ public partial class Header : UserControl
                 App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 4
                     ? true
                     : false;
+            
+            DepartmentButton.IsVisible =
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 1 ||
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 2 ||
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 4
+                    ? true
+                    : false;
         }
     }
 

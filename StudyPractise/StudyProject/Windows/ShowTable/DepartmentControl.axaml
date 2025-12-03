@@ -4,14 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StudyProject.Windows.ShowTable.DepartmentControl">
-    <Grid RowDefinitions="Auto Auto Auto Auto">
+    <Grid RowDefinitions="Auto Auto Auto Auto Auto">
         <TextBlock Grid.Row="0" Margin="10">Departments</TextBlock>
-        <Button Grid.Row="1" Click="CreateNewDepartment">Add New</Button>
-        <TextBlock Grid.Row="2" Margin="10" Foreground="Red" Name="MessageBox"></TextBlock>
+        <TextBox Grid.Row="1" Name="SearchBox" Watermark="Search..." TextChanged="OnSearchTextChanged" Margin="10"/>
+        <Button Grid.Row="2" Click="CreateNewDepartment">Add New</Button>
+        <TextBlock Grid.Row="3" Margin="10" Foreground="Red" Name="MessageBox"></TextBlock>
         <ScrollViewer MaxHeight="1000" 
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"
-                      Grid.Row="3">
+                      Grid.Row="4">
             <DataGrid Name="DepartmentDataGrid"
                       IsReadOnly="True"
                       AutoGenerateColumns="False"

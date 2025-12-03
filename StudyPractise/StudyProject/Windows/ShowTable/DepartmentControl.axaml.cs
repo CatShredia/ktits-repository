@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -8,9 +9,10 @@ using StudyProject.Data;
 using StudyProject.Windows.EditWindows;
 
 namespace StudyProject.Windows.ShowTable;
-
 public partial class DepartmentControl : UserControl
 {
+    private List<Department> _allDepartments = new();
+
     public DepartmentControl()
     {
         InitializeComponent();
@@ -19,8 +21,22 @@ public partial class DepartmentControl : UserControl
 
     public void RefreshData()
     {
-        var departments = App.DbContext.Departments.ToList();
-        DepartmentDataGrid.ItemsSource = departments;
+        _allDepartments = App.DbContext.Departments.ToList();
+        ApplyFilter(SearchBox.Text);
+    }
+
+    private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        => ApplyFilter(SearchBox.Text);
+
+    private void ApplyFilter(string query)
+    {
+        var filtered = _allDepartments
+            .Where(d => string.IsNullOrWhiteSpace(query) ||
+                        d.Cipher?.Contains(query, StringComparison.OrdinalIgnoreCase) == true ||
+                        d.NameDepart?.Contains(query, StringComparison.OrdinalIgnoreCase) == true ||
+                        d.IdFaculty?.ToString().Contains(query) == true)
+            .ToList();
+        DepartmentDataGrid.ItemsSource = filtered;
     }
 
     private void DeleteDepartment(object? sender, RoutedEventArgs e)
