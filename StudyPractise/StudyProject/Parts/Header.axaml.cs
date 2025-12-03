@@ -73,7 +73,7 @@ public partial class Header : UserControl
         ExamButton.IsVisible = false;
         SpecialtyButton.IsVisible = false;
         ExamButton.IsVisible = false;
-        ExamButton.IsVisible = false;
+        StudentButton.IsVisible = false;
         if (isAuth)
         {
             // Exam all can see
@@ -101,7 +101,12 @@ public partial class Header : UserControl
                     ? true
                     : false;
             
-            // TODO students
+            // Students
+            StudentButton.IsVisible =
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 2 ||
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 4
+                    ? true
+                    : false;
         }
     }
 
@@ -111,5 +116,10 @@ public partial class Header : UserControl
         await window.ShowDialog<bool>(App.MainWindowLink);
 
         RefreshDate();
+    }
+    
+    private void ToStudentTable(object? sender, RoutedEventArgs e)
+    {
+        App.MainWindowLink.UpdateContent(new StudentControl());
     }
 }
