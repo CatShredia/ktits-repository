@@ -14,4 +14,9 @@ public partial class MainWindow : Window
         ContentGrid.Children.Clear();
         ContentGrid.Children.Add(control);
     }
+
+    public void DropContent()
+    {
+        ContentGrid.Children.Clear();
+    }
 }

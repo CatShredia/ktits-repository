@@ -18,8 +18,10 @@
                       DoubleTapped="EditExam"
                       >
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding ExamDate}" />
-                    <DataGridTextColumn Header="StudentReg" Binding="{Binding StudentReg}" />
+                    <DataGridTextColumn Header="Exam Date" Binding="{Binding ExamDate}" />
+                    <DataGridTextColumn Header="Discipline Code" Binding="{Binding DisciplineCode}" />
+                    <DataGridTextColumn Header="Student Reg" Binding="{Binding StudentReg}" />
+                    <DataGridTextColumn Header="Examiner Tab Number" Binding="{Binding ExaminerTabNumber}" />
                     <DataGridTextColumn Header="Classroom" Binding="{Binding Classroom}" />
                     <DataGridTextColumn Header="Grade" Binding="{Binding Grade}" />
                     

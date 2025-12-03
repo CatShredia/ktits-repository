@@ -55,6 +55,8 @@ public partial class Header : UserControl
     {
         App.UserVariable = null;
         RefreshDate();
+        
+        App.MainWindowLink.DropContent();
     }
 
     public void RefreshDate()
@@ -63,7 +65,7 @@ public partial class Header : UserControl
 
         // right part
         LoginButton.IsVisible = !isAuth;
-        RegisterButton.IsVisible = !isAuth;
+        // RegisterButton.IsVisible = !isAuth;
         ProfileButton.IsVisible = isAuth;
         OutButton.IsVisible = isAuth;
 
