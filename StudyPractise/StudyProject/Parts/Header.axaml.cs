@@ -14,7 +14,7 @@ public partial class Header : UserControl
     public Header()
     {
         InitializeComponent();
-    
+
         ProfileButton.Content = "";
         RefreshDate();
     }
@@ -53,29 +53,63 @@ public partial class Header : UserControl
 
     private void ToOut(object? sender, RoutedEventArgs e)
     {
-        UserVariable.authorizedLogin = null;
+        App.UserVariable = null;
         RefreshDate();
     }
 
     public void RefreshDate()
     {
-        bool isAuth = UserVariable.authorizedLogin != null;
+        bool isAuth = App.UserVariable != null;
+
+        // right part
         LoginButton.IsVisible = !isAuth;
         RegisterButton.IsVisible = !isAuth;
         ProfileButton.IsVisible = isAuth;
         OutButton.IsVisible = isAuth;
 
-        ProfileButton.Content = isAuth ? UserVariable.authorizedLogin.Login1 : "";
-        
-        Console.WriteLine(UserVariable.authorizedLogin);
+        ProfileButton.Content = isAuth ? App.UserVariable.authorizedLogin.Login1 : "";
+
+        // left part
+        ExamButton.IsVisible = false;
+        SpecialtyButton.IsVisible = false;
+        ExamButton.IsVisible = false;
+        ExamButton.IsVisible = false;
+        if (isAuth)
+        {
+            // Exam all can see
+            ExamButton.IsVisible =
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 1 ||
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 2 ||
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 3 ||
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 4
+                    ? true
+                    : false;
+            
+            // Specialty all can see
+            SpecialtyButton.IsVisible =
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 1 ||
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 2 ||
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 3 ||
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 4
+                    ? true
+                    : false;
+            
+            // Employee
+            EmployeeButton.IsVisible =
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 3 ||
+                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 4
+                    ? true
+                    : false;
+            
+            // TODO students
+        }
     }
 
     private async void ToProfile(object? sender, RoutedEventArgs e)
     {
-        var window = new UserLoginEditWindow(UserVariable.authorizedLogin.IdUserNavigation, null);
+        var window = new UserLoginEditWindow(App.UserVariable.authorizedLogin.IdUserNavigation, null);
         await window.ShowDialog<bool>(App.MainWindowLink);
-        
+
         RefreshDate();
-        
     }
 }

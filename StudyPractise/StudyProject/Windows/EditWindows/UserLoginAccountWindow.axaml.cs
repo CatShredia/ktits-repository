@@ -45,7 +45,10 @@ public partial class UserLoginAccountWindow : Window
         }
         else if (selectedLogin.Password == PasswordBox.Text)
         {
-            UserVariable.authorizedLogin = selectedLogin;
+            App.UserVariable = new UserVariable
+            {
+                authorizedLogin = selectedLogin
+            };
             _control.RefreshDate();
         
             Close(true);

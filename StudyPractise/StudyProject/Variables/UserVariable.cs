@@ -4,5 +4,10 @@ namespace StudyProject.Variables;
 
 public class UserVariable
 {
-    public static Login authorizedLogin;
+    public Login authorizedLogin;
+
+
+    public UserVariable()
+    {
+    }
 }

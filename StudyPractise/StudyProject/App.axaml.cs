@@ -1,6 +1,7 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using StudyProject.Data;
+using StudyProject.Variables;
 using Application = Avalonia.Application;
 
 namespace StudyProject;
@@ -10,6 +11,8 @@ public partial class App : Application
     public static AppDbContext DbContext { get; private set; } = new AppDbContext();
     
     public static MainWindow? MainWindowLink { get; private set; }
+    
+    public static UserVariable? UserVariable { get; set; }
 
     public override void Initialize()
     {
