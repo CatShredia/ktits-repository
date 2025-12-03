@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -8,9 +9,10 @@ using StudyProject.Data;
 using StudyProject.Windows.EditWindows;
 
 namespace StudyProject.Windows.ShowTable;
-
 public partial class SpecialtyControl : UserControl
 {
+    private List<Specialty> _allSpecialties = new();
+
     public SpecialtyControl()
     {
         InitializeComponent();
@@ -19,8 +21,22 @@ public partial class SpecialtyControl : UserControl
 
     public void RefreshData()
     {
-        var specialties = App.DbContext.Specialties.ToList();
-        SpecialtyDataGrid.ItemsSource = specialties;
+        _allSpecialties = App.DbContext.Specialties.ToList();
+        ApplyFilter(SearchBox.Text);
+    }
+
+    private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        => ApplyFilter(SearchBox.Text);
+
+    private void ApplyFilter(string query)
+    {
+        var filtered = _allSpecialties
+            .Where(s => string.IsNullOrWhiteSpace(query) ||
+                        s.Code?.Contains(query, StringComparison.OrdinalIgnoreCase) == true ||
+                        s.Direction?.Contains(query, StringComparison.OrdinalIgnoreCase) == true ||
+                        s.IdDepart?.ToString().Contains(query) == true)
+            .ToList();
+        SpecialtyDataGrid.ItemsSource = filtered;
     }
 
     private void DeleteSpecialty(object? sender, RoutedEventArgs e)

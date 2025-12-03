@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -8,9 +9,10 @@ using StudyProject.Data;
 using StudyProject.Windows.EditWindows;
 
 namespace StudyProject.Windows.ShowTable;
-
 public partial class EmployeeControl : UserControl
 {
+    private List<Employee> _allEmployees = new();
+
     public EmployeeControl()
     {
         InitializeComponent();
@@ -19,8 +21,24 @@ public partial class EmployeeControl : UserControl
 
     public void RefreshData()
     {
-        var employees = App.DbContext.Employees.ToList();
-        EmployeeDataGrid.ItemsSource = employees;
+        _allEmployees = App.DbContext.Employees.ToList();
+        ApplyFilter(SearchBox.Text);
+    }
+
+    private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        => ApplyFilter(SearchBox.Text);
+
+    private void ApplyFilter(string query)
+    {
+        var filtered = _allEmployees
+            .Where(e => string.IsNullOrWhiteSpace(query) ||
+                        e.Fullname?.Contains(query, StringComparison.OrdinalIgnoreCase) == true ||
+                        e.PositionEmp?.Contains(query, StringComparison.OrdinalIgnoreCase) == true ||
+                        e.Salary?.ToString().Contains(query) == true ||
+                        e.IdDepart?.ToString().Contains(query) == true ||
+                        e.Chief?.ToString().Contains(query) == true)
+            .ToList();
+        EmployeeDataGrid.ItemsSource = filtered;
     }
 
     private void DeleteEmployee(object? sender, RoutedEventArgs e)

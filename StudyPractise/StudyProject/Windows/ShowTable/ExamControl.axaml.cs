@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -9,22 +10,37 @@ using StudyProject.Data;
 using StudyProject.Windows.EditWindows;
 
 namespace StudyProject.Windows.ShowTable;
-
 public partial class ExamControl : UserControl
 {
+    private List<Exam> _allExams = new();
+
     public ExamControl()
     {
         InitializeComponent();
-
-        RefreshDate();
+        RefreshData();
     }
 
-    public void RefreshDate()
+    public void RefreshData()
     {
-        var examLists = App.DbContext.Exams
-            .ToList();
+        _allExams = App.DbContext.Exams.ToList();
+        ApplyFilter(SearchBox.Text);
+    }
 
-        ExamDataGrid.ItemsSource = examLists;
+    private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        => ApplyFilter(SearchBox.Text);
+
+    private void ApplyFilter(string query)
+    {
+        var filtered = _allExams
+            .Where(e => string.IsNullOrWhiteSpace(query) ||
+                        e.Classroom?.Contains(query, StringComparison.OrdinalIgnoreCase) == true ||
+                        e.DisciplineCode?.ToString().Contains(query) == true ||
+                        e.StudentReg?.ToString().Contains(query) == true ||
+                        e.ExaminerTab?.ToString().Contains(query) == true ||
+                        e.Grade?.ToString().Contains(query) == true ||
+                        e.ExamDate?.ToString().Contains(query) == true)
+            .ToList();
+        ExamDataGrid.ItemsSource = filtered;
     }
 
     private void DeleteExam(object? sender, RoutedEventArgs e)
@@ -34,15 +50,10 @@ public partial class ExamControl : UserControl
         {
             var button = sender as Button;
             var selectedExam = button?.DataContext as Exam;
-
-            Console.WriteLine((selectedExam == null) ? "Exam not found" : "Exam founded");
-
             if (selectedExam == null) return;
-
             App.DbContext.Exams.Remove(selectedExam);
             App.DbContext.SaveChanges();
-
-            RefreshDate();
+            RefreshData();
         }
         else
         {
@@ -56,7 +67,7 @@ public partial class ExamControl : UserControl
         if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
         {
             var newEditWindow = new ExamEditWindow(this);
-            var result = await newEditWindow.ShowDialog<bool>(App.MainWindowLink);
+            await newEditWindow.ShowDialog<bool>(App.MainWindowLink);
         }
         else
         {
@@ -70,7 +81,7 @@ public partial class ExamControl : UserControl
         if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
         {
             var newEditWindow = new ExamEditWindow(this, ExamDataGrid.SelectedItem as Exam);
-            var result = await newEditWindow.ShowDialog<bool>(App.MainWindowLink);
+            await newEditWindow.ShowDialog<bool>(App.MainWindowLink);
         }
         else
         {

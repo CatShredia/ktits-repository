@@ -123,7 +123,7 @@ public partial class ExamEditWindow : Window
 
         App.DbContext.SaveChanges();
         
-        _control.RefreshDate();
+        _control.RefreshData();
         Close(true);
     }
 

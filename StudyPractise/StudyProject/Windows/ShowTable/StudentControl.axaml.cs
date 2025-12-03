@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -7,9 +9,10 @@ using StudyProject.Data;
 using StudyProject.Windows.EditWindows;
 
 namespace StudyProject.Windows.ShowTable;
-
 public partial class StudentControl : UserControl
 {
+    private List<Student> _allStudents = new();
+
     public StudentControl()
     {
         InitializeComponent();
@@ -18,8 +21,22 @@ public partial class StudentControl : UserControl
 
     public void RefreshData()
     {
-        var students = App.DbContext.Students.ToList();
-        StudentDataGrid.ItemsSource = students;
+        _allStudents = App.DbContext.Students.ToList();
+        ApplyFilter(SearchBox.Text);
+    }
+
+    private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        => ApplyFilter(SearchBox.Text);
+
+    private void ApplyFilter(string query)
+    {
+        var filtered = _allStudents
+            .Where(s => string.IsNullOrWhiteSpace(query) ||
+                        s.RegNumber.ToString().Contains(query) == true ||
+                        s.Fullname?.Contains(query, StringComparison.OrdinalIgnoreCase) == true ||
+                        s.IdSpeciality?.ToString().Contains(query) == true)
+            .ToList();
+        StudentDataGrid.ItemsSource = filtered;
     }
 
     private void DeleteStudent(object? sender, RoutedEventArgs e)

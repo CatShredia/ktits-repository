@@ -4,13 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StudyProject.Windows.ShowTable.StudentControl">
-    <Grid RowDefinitions="Auto Auto Auto Auto">
-        <TextBlock Grid.Row="0">Students</TextBlock>
-        <TextBlock Grid.Row="1" Margin="10" Foreground="Red" Name="MessageBox"></TextBlock>
+    <Grid RowDefinitions="Auto Auto Auto Auto Auto">
+        <TextBlock Grid.Row="0" Margin="10">Students</TextBlock>
+        <TextBox Grid.Row="1" Name="SearchBox"  Watermark="Search..." TextChanged="OnSearchTextChanged" Margin="10"/>
+        <TextBlock Grid.Row="2" Margin="10" Foreground="Red" Name="MessageBox"></TextBlock>
         <ScrollViewer MaxHeight="1000"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"
-                      Grid.Row="1">
+                      Grid.Row="3">
             <DataGrid Name="StudentDataGrid"
                       IsReadOnly="True"
                       AutoGenerateColumns="False"
@@ -32,6 +33,6 @@
                 </DataGrid.Columns>
             </DataGrid>
         </ScrollViewer>
-        <Button Grid.Row="2" Click="CreateNewStudent">Add New</Button>
+        <Button Grid.Row="4" Click="CreateNewStudent">Add New</Button>
     </Grid>
 </UserControl>
