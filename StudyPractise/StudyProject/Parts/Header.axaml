@@ -21,10 +21,12 @@
             
             <TextBlock Grid.Column="3" Width="200"></TextBlock>
             
-            <Grid Grid.Column="4" ColumnDefinitions="Auto Auto">
-                <Button Margin="5" Grid.Column="0" Click="ToLogin">Login</Button>
-                <Button Margin="5" Grid.Column="1" Click="ToRegister">Register</Button>
-            </Grid>
+            <Grid Grid.Column="4" ColumnDefinitions="Auto Auto Auto Auto">
+                <TextBlock Grid.Column="0" Name="ProfileName">Profile</TextBlock>
+                <Button Margin="5" Opacity="0" Grid.Column="1" Click="ToLogin" Name="LoginButton">Login</Button>
+                <Button Margin="5" Opacity="0" Grid.Column="2" Click="ToRegister" Name="RegisterButton">Register</Button>
+                <Button Margin="5" Opacity="0" Grid.Column="3" Click="ToOut" Name="OutButton">Out</Button>
+            </Grid> 
         </Grid>
     </Grid>
 </UserControl>
