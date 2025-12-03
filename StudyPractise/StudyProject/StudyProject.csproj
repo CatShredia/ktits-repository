@@ -47,16 +47,26 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Assets\logo.ico" />
-      <AvaloniaResource Include="Assets\logo.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </AvaloniaResource>
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="Assets\bin.png" />
       <AvaloniaResource Include="Assets\bin.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </AvaloniaResource>
+      <None Remove="Assets\icon.ico" />
+      <AvaloniaResource Include="Assets\icon.ico">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </AvaloniaResource>
+      <None Remove="Assets\icon.png" />
     </ItemGroup>
+    <ItemGroup>
+      <None Remove="Assets\icon.jpeg" />
+      <AvaloniaResource Include="Assets\icon.jpeg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </AvaloniaResource>
+    </ItemGroup>
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\icon.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </AvaloniaResource>
+    </ItemGroup>
+
 </Project>

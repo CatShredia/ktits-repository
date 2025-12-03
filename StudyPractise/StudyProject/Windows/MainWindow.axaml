@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="StudyProject.MainWindow"
         Title="StudyProject"
-        Icon="avares://StudyProject/Assets/logo.ico"
+        Icon="avares://StudyProject/Assets/icon.ico"
         WindowState="Maximized">
     <Grid RowDefinitions="12* 78* 10*">
 

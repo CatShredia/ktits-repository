@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StudyProject.Parts.Footer">
-    <Grid Margin="10" ColumnDefinitions="Auto * Auto" HorizontalAlignment="Left" VerticalAlignment="Center">
+    <Grid Margin="10" ColumnDefinitions="Auto * Auto" HorizontalAlignment="Left" VerticalAlignment="Center" Background="Aquamarine">
         <TextBlock>Efimov Aleksandr</TextBlock>
     </Grid>
 </UserControl>

@@ -4,14 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StudyProject.Parts.Header">
-    <Grid>
+    <Grid Background="Aquamarine">
         <Grid Margin="10" ColumnDefinitions="Auto * Auto * Auto" HorizontalAlignment="Left" VerticalAlignment="Center">
-            <TextBlock Grid.Column="0" TextAlignment="Center">StudyPractiseProject</TextBlock>
-            <!-- <Image Grid.Column="1" Margin="10" Height="75" Width="75"  -->
-            <!--        Source="avares://StudyProject/Assets/logo.ico" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/> -->
-            
+            <TextBlock Grid.Column="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center">StudyPractiseProject</TextBlock>
+            <Image Grid.Column="1" Margin="10" Height="75" Width="75"
+                   Source="avares://StudyProject/Assets/icon.png" Stretch="UniformToFill" HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+
             <TextBlock Grid.Column="1" Width="200"></TextBlock>
-            
+
             <Grid Grid.Column="2" ColumnDefinitions="Auto Auto Auto Auto Auto">
                 <Button Margin="5" IsVisible="false" Grid.Column="0" Click="ToExamTable" Name="ExamButton">Exams</Button>
                 <Button Margin="5" IsVisible="false" Grid.Column="1" Click="ToSpecialtyTable" Name="SpecialtyButton">Specialty</Button>
@@ -19,15 +20,17 @@
                 <Button Margin="5" IsVisible="false" Grid.Column="3" Click="ToEmployeeTable" Name="EmployeeButton">Employee</Button>
                 <Button Margin="5" IsVisible="false" Grid.Column="4" Click="ToStudentTable" Name="StudentButton">Student</Button>
             </Grid>
-            
+
             <TextBlock Grid.Column="3" Width="200"></TextBlock>
-            
+
             <Grid Grid.Column="4" ColumnDefinitions="Auto Auto Auto Auto">
-                <Button Margin="5" IsVisible="false" Grid.Column="0" Name="ProfileButton" Click="ToProfile" Content="Profile"></Button>
+                <Button Margin="5" IsVisible="false" Grid.Column="0" Name="ProfileButton" Click="ToProfile"
+                        Content="Profile">
+                </Button>
                 <Button Margin="5" IsVisible="false" Grid.Column="1" Click="ToLogin" Name="LoginButton">Login</Button>
                 <Button Margin="5" IsVisible="false" Grid.Column="2" Click="ToRegister" Name="RegisterButton">Register</Button>
                 <Button Margin="5" IsVisible="false" Grid.Column="3" Click="ToOut" Name="OutButton">Out</Button>
-            </Grid> 
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>
