@@ -29,28 +29,52 @@ public partial class ExamControl : UserControl
 
     private void DeleteExam(object? sender, RoutedEventArgs e)
     {
-        var button = sender as Button;
-        var selectedExam = button?.DataContext as Exam;
+        int idRole = App.UserVariable.authorizedLogin.IdUserNavigation.IdRole;
+        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        {
+            var button = sender as Button;
+            var selectedExam = button?.DataContext as Exam;
 
-        Console.WriteLine((selectedExam == null) ? "Exam not found" : "Exam founded");
+            Console.WriteLine((selectedExam == null) ? "Exam not found" : "Exam founded");
 
-        if (selectedExam == null) return;
+            if (selectedExam == null) return;
 
-        App.DbContext.Exams.Remove(selectedExam);
-        App.DbContext.SaveChanges();
+            App.DbContext.Exams.Remove(selectedExam);
+            App.DbContext.SaveChanges();
 
-        RefreshDate();
+            RefreshDate();
+        }
+        else
+        {
+            MessageBox.Text = "You haven't current permissions";
+        }
     }
 
     private async void CreateNewExam(object? sender, RoutedEventArgs e)
     {
-        var newEditWindow = new ExamEditWindow(this);
-        var result = await newEditWindow.ShowDialog<bool>(App.MainWindowLink);
+        int idRole = App.UserVariable.authorizedLogin.IdUserNavigation.IdRole;
+        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        {
+            var newEditWindow = new ExamEditWindow(this);
+            var result = await newEditWindow.ShowDialog<bool>(App.MainWindowLink);
+        }
+        else
+        {
+            MessageBox.Text = "You haven't current permissions";
+        }
     }
 
     private async void EditExam(object? sender, TappedEventArgs e)
     {
-        var newEditWindow = new ExamEditWindow(this, ExamDataGrid.SelectedItem as Exam);
-        var result = await newEditWindow.ShowDialog<bool>(App.MainWindowLink);
+        int idRole = App.UserVariable.authorizedLogin.IdUserNavigation.IdRole;
+        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        {
+            var newEditWindow = new ExamEditWindow(this, ExamDataGrid.SelectedItem as Exam);
+            var result = await newEditWindow.ShowDialog<bool>(App.MainWindowLink);
+        }
+        else
+        {
+            MessageBox.Text = "You haven't current permissions";
+        }
     }
 }
