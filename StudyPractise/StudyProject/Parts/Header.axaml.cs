@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -14,7 +15,7 @@ public partial class Header : UserControl
     {
         InitializeComponent();
     
-        ProfileName.Text = "";
+        ProfileButton.Content = "";
         RefreshDate();
     }
 
@@ -59,10 +60,22 @@ public partial class Header : UserControl
     public void RefreshDate()
     {
         bool isAuth = UserVariable.authorizedLogin != null;
-        LoginButton.Opacity = isAuth ? 0 : 1;
-        RegisterButton.Opacity = isAuth ? 0 : 1;
-        OutButton.Opacity = isAuth ? 1 : 0;
+        LoginButton.IsVisible = !isAuth;
+        RegisterButton.IsVisible = !isAuth;
+        ProfileButton.IsVisible = isAuth;
+        OutButton.IsVisible = isAuth;
 
-        ProfileName.Text = isAuth ? UserVariable.authorizedLogin.Login1 : "";
+        ProfileButton.Content = isAuth ? UserVariable.authorizedLogin.Login1 : "";
+        
+        Console.WriteLine(UserVariable.authorizedLogin);
+    }
+
+    private async void ToProfile(object? sender, RoutedEventArgs e)
+    {
+        var window = new UserLoginEditWindow(UserVariable.authorizedLogin.IdUserNavigation, null);
+        await window.ShowDialog<bool>(App.MainWindowLink);
+        
+        RefreshDate();
+        
     }
 }

@@ -37,7 +37,7 @@ public partial class UserLoginControl : UserControl
     }
     private async void EditUserLogin(object? sender, TappedEventArgs e)
     {
-        var window = new UserLoginEditWindow(this, UserDataGrid.SelectedItem as User);
+        var window = new UserLoginEditWindow(UserDataGrid.SelectedItem as User, this);
         await window.ShowDialog<bool>(App.MainWindowLink);
     }
 }

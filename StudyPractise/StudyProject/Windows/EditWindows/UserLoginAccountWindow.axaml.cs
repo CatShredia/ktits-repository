@@ -46,11 +46,14 @@ public partial class UserLoginAccountWindow : Window
         else if (selectedLogin.Password == PasswordBox.Text)
         {
             UserVariable.authorizedLogin = selectedLogin;
-        }
-
-        _control.RefreshDate();
+            _control.RefreshDate();
         
-        Close(true);
+            Close(true);
+        }
+        else
+        {
+            ErrorMessage.Text = "Invalid login or password.";
+        }
     }
 
     private void OnCancel(object? sender, RoutedEventArgs e) => Close(false);

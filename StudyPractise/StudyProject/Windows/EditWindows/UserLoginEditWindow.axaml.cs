@@ -30,7 +30,7 @@ public partial class UserLoginEditWindow : Window
         InitializeComponent();
     }
 
-    public UserLoginEditWindow(UserLoginControl control, User user)
+    public UserLoginEditWindow(User user, UserLoginControl control)
     {
         _user = user ?? throw new System.ArgumentNullException(nameof(user));
         _login = _user.Logins.FirstOrDefault();
