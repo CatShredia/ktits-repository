@@ -5,18 +5,25 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StudyProject.Parts.Header">
     <Grid>
-        <Grid Margin="10" ColumnDefinitions="Auto * Auto" HorizontalAlignment="Left" VerticalAlignment="Center">
+        <Grid Margin="10" ColumnDefinitions="Auto * Auto * Auto" HorizontalAlignment="Left" VerticalAlignment="Center">
             <TextBlock Grid.Column="0" TextAlignment="Center">StudyPractiseProject</TextBlock>
             <!-- <Image Grid.Column="1" Margin="10" Height="75" Width="75"  -->
             <!--        Source="avares://StudyProject/Assets/logo.ico" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/> -->
             
-            <TextBlock Grid.Column="1"></TextBlock>
+            <TextBlock Grid.Column="1" Width="200"></TextBlock>
             
             <Grid Grid.Column="2" ColumnDefinitions="Auto Auto Auto Auto">
                 <Button Margin="5" Grid.Column="0" Click="ToExamTable">Exams</Button>
                 <Button Margin="5" Grid.Column="1" Click="ToSpecialtyTable">Specialty</Button>
                 <Button Margin="5" Grid.Column="2" Click="ToDepartmentTable">Department</Button>
                 <Button Margin="5" Grid.Column="3" Click="ToEmployeeTable">Employee</Button>
+            </Grid>
+            
+            <TextBlock Grid.Column="3" Width="200"></TextBlock>
+            
+            <Grid Grid.Column="4" ColumnDefinitions="Auto Auto">
+                <Button Margin="5" Grid.Column="0" Click="ToLogin">Login</Button>
+                <Button Margin="5" Grid.Column="1" Click="ToRegister">Register</Button>
             </Grid>
         </Grid>
     </Grid>
