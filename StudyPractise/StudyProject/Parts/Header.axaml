@@ -4,14 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StudyProject.Parts.Header">
-    <Grid Background="Aquamarine">
-        <Grid Margin="10" ColumnDefinitions="Auto * Auto * Auto" HorizontalAlignment="Left" VerticalAlignment="Center">
-            <TextBlock Grid.Column="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center">StudyPractiseProject</TextBlock>
-            <Image Grid.Column="1" Margin="10" Height="75" Width="75"
+    <Grid ColumnDefinitions="50* 50*">
+        <Grid Margin="10" ColumnDefinitions="Auto Auto Auto Auto" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Image Grid.Column="0" Margin="10" Height="75" Width="75"
                    Source="avares://StudyProject/Assets/icon.png" Stretch="UniformToFill" HorizontalAlignment="Center"
                    VerticalAlignment="Center" />
-
-            <TextBlock Grid.Column="1" Width="200"></TextBlock>
+            <TextBlock Grid.Column="1" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center">StudyPractiseProject</TextBlock>
+            
 
             <Grid Grid.Column="2" ColumnDefinitions="Auto Auto Auto Auto Auto">
                 <Button Margin="5" IsVisible="false" Grid.Column="0" Click="ToExamTable" Name="ExamButton">Exams</Button>
@@ -20,10 +19,11 @@
                 <Button Margin="5" IsVisible="false" Grid.Column="3" Click="ToEmployeeTable" Name="EmployeeButton">Employee</Button>
                 <Button Margin="5" IsVisible="false" Grid.Column="4" Click="ToStudentTable" Name="StudentButton">Student</Button>
             </Grid>
+        </Grid>
 
-            <TextBlock Grid.Column="3" Width="200"></TextBlock>
-
-            <Grid Grid.Column="4" ColumnDefinitions="Auto Auto Auto Auto">
+        <Grid Grid.Column="1" Margin="10" ColumnDefinitions="Auto Auto Auto Auto" HorizontalAlignment="Right"
+              VerticalAlignment="Center">
+            <Grid Grid.Column="3" ColumnDefinitions="Auto Auto Auto Auto">
                 <Button Margin="5" IsVisible="false" Grid.Column="0" Name="ProfileButton" Click="ToProfile"
                         Content="Profile">
                 </Button>
