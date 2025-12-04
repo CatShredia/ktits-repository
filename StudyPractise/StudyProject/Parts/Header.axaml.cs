@@ -55,7 +55,7 @@ public partial class Header : UserControl
     {
         App.UserVariable = null;
         RefreshDate();
-        
+
         App.MainWindowLink.DropContent();
     }
 
@@ -63,63 +63,35 @@ public partial class Header : UserControl
     {
         bool isAuth = App.UserVariable != null;
 
-        // right part
         LoginButton.IsVisible = !isAuth;
-        // RegisterButton.IsVisible = !isAuth;
         ProfileButton.IsVisible = isAuth;
         OutButton.IsVisible = isAuth;
-
         ProfileButton.Content = isAuth ? App.UserVariable.authorizedLogin.Login1 : "";
 
-        // left part
         ExamButton.IsVisible = false;
         SpecialtyButton.IsVisible = false;
         StudentButton.IsVisible = false;
         DepartmentButton.IsVisible = false;
         EmployeeButton.IsVisible = false;
+        DisciplineButton.IsVisible = false; 
+
         if (isAuth)
         {
-            // Exam all can see
-            ExamButton.IsVisible =
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 1 ||
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 2 ||
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 3 ||
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 4
-                    ? true
-                    : false;
-            
-            // Specialty all can see
-            SpecialtyButton.IsVisible =
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 1 ||
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 2 ||
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 3 ||
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 4
-                    ? true
-                    : false;
-            
-            // Employee
-            EmployeeButton.IsVisible =
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 3 ||
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 4
-                    ? true
-                    : false;
-            
-            // Students
-            StudentButton.IsVisible =
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 2 ||
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 4
-                    ? true
-                    : false;
-            
-            DepartmentButton.IsVisible =
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 1 ||
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 2 ||
-                App.UserVariable.authorizedLogin.IdUserNavigation.IdRole == 4
-                    ? true
-                    : false;
+            int roleId = App.UserVariable.authorizedLogin.IdUserNavigation.IdRole;
+
+            ExamButton.IsVisible = true;
+            SpecialtyButton.IsVisible = true;
+
+            DisciplineButton.IsVisible = true;
+
+            EmployeeButton.IsVisible = roleId == 1 || roleId == 3 || roleId == 4;
+
+            StudentButton.IsVisible = roleId == 1 || roleId == 2 || roleId == 4;
+
+            DepartmentButton.IsVisible = roleId == 1 || roleId == 2 || roleId == 4;
         }
     }
-
+    
     private async void ToProfile(object? sender, RoutedEventArgs e)
     {
         var window = new UserLoginEditWindow(App.UserVariable.authorizedLogin.IdUserNavigation, null);
@@ -127,7 +99,7 @@ public partial class Header : UserControl
 
         RefreshDate();
     }
-    
+
     private void ToStudentTable(object? sender, RoutedEventArgs e)
     {
         App.MainWindowLink.UpdateContent(new StudentControl());
@@ -136,5 +108,10 @@ public partial class Header : UserControl
     private void ToClearWindow(object? sender, RoutedEventArgs e)
     {
         App.MainWindowLink.DropContent();
+    }
+
+    private void ToDisciplineTable(object? sender, RoutedEventArgs e)
+    {
+        App.MainWindowLink.UpdateContent(new DisciplineControl());
     }
 }

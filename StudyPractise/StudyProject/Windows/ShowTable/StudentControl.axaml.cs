@@ -67,7 +67,7 @@ public partial class StudentControl : UserControl
     private void DeleteStudent(object? sender, RoutedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        if ((idRole == 1 || idRole == 4) && App.UserVariable != null)
         {
             var button = sender as Button;
             var selected = button?.DataContext as Student;
@@ -85,7 +85,7 @@ public partial class StudentControl : UserControl
     private async void CreateNewStudent(object? sender, RoutedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        if ((idRole == 1 || idRole == 4) && App.UserVariable != null)
         {
             var window = new StudentEditWindow(this);
             await window.ShowDialog<bool>(App.MainWindowLink);
@@ -99,7 +99,7 @@ public partial class StudentControl : UserControl
     private async void EditStudent(object? sender, TappedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        if ((idRole == 1 || idRole == 4) && App.UserVariable != null)
         {
             var window = new StudentEditWindow(this, StudentDataGrid.SelectedItem as Student);
             await window.ShowDialog<bool>(App.MainWindowLink);

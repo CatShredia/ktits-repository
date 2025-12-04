@@ -73,7 +73,7 @@ public partial class EmployeeControl : UserControl
     private void DeleteEmployee(object? sender, RoutedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        if ((idRole == 1) && App.UserVariable != null)
         {
             var button = sender as Button;
             var selected = button?.DataContext as Employee;
@@ -91,7 +91,7 @@ public partial class EmployeeControl : UserControl
     private async void CreateNewEmployee(object? sender, RoutedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        if ((idRole == 1) && App.UserVariable != null)
         {
             var window = new EmployeeEditWindow(this);
             await window.ShowDialog<bool>(App.MainWindowLink);
@@ -105,7 +105,7 @@ public partial class EmployeeControl : UserControl
     private async void EditEmployee(object? sender, TappedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        if ((idRole == 1) && App.UserVariable != null)
         {
             var window = new EmployeeEditWindow(this, EmployeeDataGrid.SelectedItem as Employee);
             await window.ShowDialog<bool>(App.MainWindowLink);

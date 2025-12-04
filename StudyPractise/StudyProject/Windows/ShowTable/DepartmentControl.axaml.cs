@@ -73,7 +73,7 @@ public partial class DepartmentControl : UserControl
     private void DeleteDepartment(object? sender, RoutedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        if ((idRole == 1) && App.UserVariable != null)
         {
             var button = sender as Button;
             var selected = button?.DataContext as Department;
@@ -91,7 +91,7 @@ public partial class DepartmentControl : UserControl
     private async void CreateNewDepartment(object? sender, RoutedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        if ((idRole == 1) && App.UserVariable != null)
         {
             var window = new DepartmentEditWindow(this);
             await window.ShowDialog<bool>(App.MainWindowLink);
@@ -105,7 +105,7 @@ public partial class DepartmentControl : UserControl
     private async void EditDepartment(object? sender, TappedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        if ((idRole == 1) && App.UserVariable != null)
         {
             var window = new DepartmentEditWindow(this, DepartmentDataGrid.SelectedItem as Department);
             await window.ShowDialog<bool>(App.MainWindowLink);

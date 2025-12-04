@@ -9,12 +9,13 @@ using StudyProject.Data;
 using StudyProject.Windows.EditWindows;
 
 namespace StudyProject.Windows.ShowTable;
-public partial class SpecialtyControl : UserControl
+
+public partial class DisciplineControl : UserControl
 {
-    private List<Specialty> _allSpecialties = new();
+    private List<Discipline> _allDisciplines = new();
     private string _selectedColumn = "All";
 
-    public SpecialtyControl()
+    public DisciplineControl()
     {
         InitializeComponent();
         SetupSearchColumns();
@@ -23,7 +24,7 @@ public partial class SpecialtyControl : UserControl
 
     private void SetupSearchColumns()
     {
-        var columns = new[] { "All", "ID", "Code", "Direction", "Dept ID" };
+        var columns = new[] { "All", "ID", "Code", "Hours", "Name", "Dept ID" };
         SearchColumnBox.Items.Clear();
         foreach (var col in columns)
             SearchColumnBox.Items.Add(col);
@@ -37,7 +38,7 @@ public partial class SpecialtyControl : UserControl
 
     public void RefreshData()
     {
-        _allSpecialties = App.DbContext.Specialties.ToList();
+        _allDisciplines = App.DbContext.Disciplines.ToList();
         ApplyFilter(SearchBox.Text);
     }
 
@@ -46,35 +47,37 @@ public partial class SpecialtyControl : UserControl
 
     private void ApplyFilter(string query)
     {
-        var filtered = _allSpecialties.Where(s =>
+        var filtered = _allDisciplines.Where(d =>
         {
             if (string.IsNullOrWhiteSpace(query)) return true;
             return _selectedColumn switch
             {
                 "All" =>
-                    s.IdSpecialty.ToString().Contains(query) ||
-                    s.Code?.Contains(query, StringComparison.OrdinalIgnoreCase) == true ||
-                    s.Direction?.Contains(query, StringComparison.OrdinalIgnoreCase) == true ||
-                    s.IdDepart?.ToString().Contains(query) == true,
-                "ID" => s.IdSpecialty.ToString().Contains(query),
-                "Code" => s.Code?.Contains(query, StringComparison.OrdinalIgnoreCase) == true,
-                "Direction" => s.Direction?.Contains(query, StringComparison.OrdinalIgnoreCase) == true,
-                "Dept ID" => s.IdDepart?.ToString().Contains(query) == true,
+                    d.IdDiscipline.ToString().Contains(query) ||
+                    d.Code?.ToString().Contains(query) == true ||
+                    d.Hours?.ToString().Contains(query) == true ||
+                    d.NameDisc?.Contains(query, StringComparison.OrdinalIgnoreCase) == true ||
+                    d.IdDepart?.ToString().Contains(query) == true,
+                "ID" => d.IdDiscipline.ToString().Contains(query),
+                "Code" => d.Code?.ToString().Contains(query) == true,
+                "Hours" => d.Hours?.ToString().Contains(query) == true,
+                "Name" => d.NameDisc?.Contains(query, StringComparison.OrdinalIgnoreCase) == true,
+                "Dept ID" => d.IdDepart?.ToString().Contains(query) == true,
                 _ => false
             };
         }).ToList();
-        SpecialtyDataGrid.ItemsSource = filtered;
+        DisciplineDataGrid.ItemsSource = filtered;
     }
 
-    private void DeleteSpecialty(object? sender, RoutedEventArgs e)
+    private void DeleteDiscipline(object? sender, RoutedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 1) && App.UserVariable != null)
+        if ((idRole == 1 || idRole == 4) && App.UserVariable != null)
         {
             var button = sender as Button;
-            var selected = button?.DataContext as Specialty;
+            var selected = button?.DataContext as Discipline;
             if (selected == null) return;
-            App.DbContext.Specialties.Remove(selected);
+            App.DbContext.Disciplines.Remove(selected);
             App.DbContext.SaveChanges();
             RefreshData();
         }
@@ -84,12 +87,12 @@ public partial class SpecialtyControl : UserControl
         }
     }
 
-    private async void CreateNewSpecialty(object? sender, RoutedEventArgs e)
+    private async void CreateNewDiscipline(object? sender, RoutedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 1) && App.UserVariable != null)
+        if ((idRole == 1 || idRole == 4) && App.UserVariable != null)
         {
-            var window = new SpecialtyEditWindow(this);
+            var window = new DisciplineEditWindow(this);
             await window.ShowDialog<bool>(App.MainWindowLink);
         }
         else
@@ -98,12 +101,12 @@ public partial class SpecialtyControl : UserControl
         }
     }
 
-    private async void EditSpecialty(object? sender, TappedEventArgs e)
+    private async void EditDiscipline(object? sender, TappedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 1) && App.UserVariable != null)
+        if ((idRole == 1 || idRole == 4) && App.UserVariable != null)
         {
-            var window = new SpecialtyEditWindow(this, SpecialtyDataGrid.SelectedItem as Specialty);
+            var window = new DisciplineEditWindow(this, DisciplineDataGrid.SelectedItem as Discipline);
             await window.ShowDialog<bool>(App.MainWindowLink);
         }
         else

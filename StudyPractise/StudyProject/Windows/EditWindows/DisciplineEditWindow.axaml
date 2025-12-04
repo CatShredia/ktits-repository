@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="StudyProject.Windows.EditWindows.DisciplineEditWindow"
+        Title="Edit Discipline"
+        Icon="avares://StudyProject/Assets/icon.ico">
+    <ScrollViewer>
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="15">
+            <TextBlock Grid.Row="0" Text="Code:" />
+            <TextBox Grid.Row="1" Name="CodeBox" />
+            <TextBlock Grid.Row="2" Text="Hours:" />
+            <TextBox Grid.Row="3" Name="HoursBox" />
+            <TextBlock Grid.Row="4" Text="Name:" />
+            <TextBox Grid.Row="5" Name="NameBox" />
+            <TextBlock Grid.Row="6" Text="Department ID:" />
+            <TextBox Grid.Row="7" Name="DeptIdBox" />
+            <TextBlock Grid.Row="8" Name="ErrorMessage" Foreground="Red" TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal" Grid.Row="9" HorizontalAlignment="Right" Margin="0,15,0,0">
+                <Button Background="#1bfce2" Content="Save" Click="OnSave" MinWidth="80" Margin="0,0,10,0"/>
+                <Button Background="#1bfce2" Content="Cancel" Click="OnCancel" MinWidth="80"/>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Window>

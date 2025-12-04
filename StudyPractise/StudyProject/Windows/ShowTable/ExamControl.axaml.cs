@@ -74,7 +74,7 @@ public partial class ExamControl : UserControl
     private void DeleteExam(object? sender, RoutedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        if ((idRole == 1 || idRole == 3 || idRole == 4) && App.UserVariable != null)
         {
             var button = sender as Button;
             var selectedExam = button?.DataContext as Exam;
@@ -92,7 +92,7 @@ public partial class ExamControl : UserControl
     private async void CreateNewExam(object? sender, RoutedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        if ((idRole == 1 || idRole == 3 || idRole == 4) && App.UserVariable != null)
         {
             var window = new ExamEditWindow(this);
             await window.ShowDialog<bool>(App.MainWindowLink);
@@ -106,7 +106,7 @@ public partial class ExamControl : UserControl
     private async void EditExam(object? sender, TappedEventArgs e)
     {
         int idRole = App.UserVariable?.authorizedLogin.IdUserNavigation.IdRole ?? 0;
-        if ((idRole == 2 || idRole == 4 || idRole == 3) && App.UserVariable != null)
+        if ((idRole == 1 || idRole == 3 || idRole == 4) && App.UserVariable != null)
         {
             var window = new ExamEditWindow(this, ExamDataGrid.SelectedItem as Exam);
             await window.ShowDialog<bool>(App.MainWindowLink);
