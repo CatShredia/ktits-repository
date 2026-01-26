@@ -1,256 +1,190 @@
-﻿class ConsoleApplication
+﻿class Program
 {
     public static void Main()
     {
-        foreach (var testArrayVariable in testArray4)
+        Console.WriteLine("Выберите задачу: 2, 3, 4, 6 или C4 (классная работа)");
+        string choice = Console.ReadLine();
+
+        switch (choice)
         {
-            Task4(testArrayVariable);
+            case "2": RunTask2(); break;
+            case "3": RunTask3(); break;
+            case "4": RunTask4(); break;
+            case "6": RunTask6(); break;
+            case "C4": RunClasswork4(); break;
+            default: Console.WriteLine("Неизвестная задача"); break;
         }
-        
-        Task4();
     }
 
-    // Вводятся четыре числа: A, B, C и D — позиции двух фигур на шахматной доске.
-    // Определить, угрожает ли слон, стоящий на клетке A, B фигуре, стоящей на клетке C, D.
-    // Учесть, что размер доски 8 × 8 клеток, и что две фигуры на одной клетке стоять не могут.
-    public static bool Task2()
+    // --- Task 2 ---
+    static void RunTask2()
     {
         try
         {
-            Console.WriteLine("Task 2");
+            Console.WriteLine("Введите a, b, c, d (через Enter):");
+            int a = ReadInt(); CheckBorders(a);
+            int b = ReadInt(); CheckBorders(b);
+            int c = ReadInt(); CheckBorders(c);
+            int d = ReadInt(); CheckBorders(d);
 
-            Console.WriteLine("Введите a:");
-            int a = Convert.ToInt32(Console.ReadLine());
-            CheckBorders(a);
-
-            Console.WriteLine("Введите b:");
-            int b = Convert.ToInt32(Console.ReadLine());
-            CheckBorders(b);
-
-            Console.WriteLine("Введите c:");
-            int c = Convert.ToInt32(Console.ReadLine());
-            CheckBorders(c);
-
-            Console.WriteLine("Введите d:");
-            int d = Convert.ToInt32(Console.ReadLine());
-            CheckBorders(d);
-
-            if (a == c && b == d)
-            {
-                throw new Exception("Фигуры не могут стоять в одной клетке!");
-            }
-
-            bool isThreatening = Math.Abs(a - c) == Math.Abs(b - d);
-
-            Console.WriteLine(isThreatening ? "Слон угрожает фигуре." : "Слон не угрожает фигуре.");
-            return isThreatening;
-        }
-        catch (FormatException)
-        {
-            Console.WriteLine("Необходимо число!");
+            bool result = SolveTask2(a, b, c, d);
+            Console.WriteLine(result ? "Слон угрожает фигуре." : "Слон не угрожает фигуре.");
         }
         catch (Exception e)
         {
-            Console.WriteLine("Произошло исключение: " + e.Message);
+            Console.WriteLine("Ошибка: " + e.Message);
         }
-
-        return false;
     }
 
-    public static bool CheckBorders(int number)
+    // Чистая логика — без Console!
+    public static bool SolveTask2(int a, int b, int c, int d)
     {
-        if (number < 0 || number > 8)
-        {
-            throw new Exception("Проблема с границами");
-        }
+        if (a == c && b == d)
+            throw new ArgumentException("Фигуры не могут стоять в одной клетке!");
+        if (a < 1 || a > 8 || b < 1 || b > 8 || c < 1 || c > 8 || d < 1 || d > 8)
+            throw new ArgumentException("Координаты должны быть от 1 до 8");
 
-        return true;
+        return Math.Abs(a - c) == Math.Abs(b - d);
     }
 
-    // Task3.cs
-    public static bool Task3()
+    // --- Task 3 ---
+    static void RunTask3()
     {
         try
         {
-            Console.WriteLine("Task 3");
+            Console.Write("Скорость за день (см): "); int speed = ReadInt();
+            Console.Write("Расстояние (см): "); int dist = ReadInt();
+            Console.Write("Дней: "); int days = ReadInt();
 
-            Console.WriteLine("Введите сколько улитка проползает за день (см/день):");
-            int speedDay = Convert.ToInt32(Console.ReadLine());
-
-            Console.WriteLine("Введите расстояние от улитки до цели (см):");
-            int distance = Convert.ToInt32(Console.ReadLine());
-
-            Console.WriteLine("Введите количество дней (день):");
-            int countDay = Convert.ToInt32(Console.ReadLine());
-
-            // используется целочисленное деление!
-            bool result = distance / speedDay <= countDay;
-
-            if (result)
-            {
-                Console.WriteLine("Улитка успеет доползти");
-            }
-            else
-            {
-                Console.WriteLine("Улитка не успеет доползти");
-            }
-
-            return result;
-        }
-        catch (FormatException)
-        {
-            Console.WriteLine("Необходимо число!");
-        }
-        catch (DivideByZeroException)
-        {
-            Console.WriteLine("Скорость не может быть нулевой!");
+            bool result = SolveTask3(speed, dist, days);
+            Console.WriteLine(result ? "Успеет" : "Не успеет");
         }
         catch (Exception e)
         {
-            Console.WriteLine("Произошло исключение: " + e.Message);
+            Console.WriteLine("Ошибка: " + e.Message);
+        }
+    }
+
+    public static bool SolveTask3(int speedDay, int distance, int countDay)
+    {
+        if (speedDay <= 0) throw new ArgumentException("Скорость должна быть > 0");
+        if (distance < 0 || countDay < 0) throw new ArgumentException("Значения не могут быть отрицательными");
+        return distance / speedDay <= countDay; // целочисленное деление
+    }
+
+    public static int path = 0;
+    
+    // --- Task 4 ---
+    static void RunTask4()
+    {
+        // Тесты
+        int[][] tests = {
+            [2, 3, -1], [4, 0, 2], [6, 2, 3],
+            [5, 1, 4], [-2, 5, -3], [1, 0, 5]
+        };
+
+        foreach (var t in tests)
+        {
+            try
+            {
+                int y = SolveTask4(t[0], t[1], t[2]);
+                Console.WriteLine($"[{t[0]}, {t[1]}, {t[2]}] → {y} → {path} ветвь");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"[{t[0]}, {t[1]}, {t[2]}] → Ошибка: {e.Message}");
+            }
         }
 
-        return false;
-    }
-
-    public static void Class4()
-    {
-        Console.WriteLine("Classwork 4");
-
-        Console.Write("Введите число вопросов теста: ");
-        int countAll = int.Parse(Console.ReadLine());
-        Console.Write("Введите число правильных ответов на 5: ");
-        int count5 = int.Parse(Console.ReadLine());
-        Console.Write("Введите число правильных ответов на 4: ");
-        int count4 = int.Parse(Console.ReadLine());
-        Console.Write("Введите число правильных ответов на 3: ");
-        int count3 = int.Parse(Console.ReadLine());
-        if (count3 < count4 && count4 < count5 && count5 <= countAll)
-            Console.WriteLine("Критерии оценки корректны");
-        else
-            Console.WriteLine("Критерии оценки некорректны");
-    }
-
-    public static int[][] testArray4 =
-    {
-        [2, 3, -1], // ветка 1
-        [4, 0, 2], // ветка 2
-        [6, 2, 3], // ветка 3
-        [5, 1, 4], // ветка 3
-        [-2, 5, -3], // ветка 1
-        [1, 0, 5], // ветка 2
-        [1, 0, 0], // DivideByZero
-        [0, 0, 2] // ветка 2 DivideByZero
-    };
-
-    public static int Task4(int[] testVariable = null)
-    {
-        Console.WriteLine("Task 4");
-
+        // Интерактивный ввод
+        Console.WriteLine("\nВведите x, a, c:");
+        int x = ReadInt(), a = ReadInt(), c = ReadInt();
         try
         {
-            int x = 0;
-            int a = 0;
-            int c = 0;
-            if (testVariable != null)
-            {
-                x = testVariable[0];
-                a = testVariable[1];
-                c = testVariable[2];
-            }
-            else
-            {
-                Console.WriteLine("Введите x:");
-                x = Convert.ToInt32(Console.ReadLine());
-                Console.WriteLine("Введите a:");
-                a = Convert.ToInt32(Console.ReadLine());
-                Console.WriteLine("Введите c:");
-                c = Convert.ToInt32(Console.ReadLine());
-            }
-
-            int y = 0;
-
-            if (c < 0 && a != 0)
-            {
-                Console.WriteLine($"Ветка 1: -{a} * {x}^2");
-                y = -1 * a * x * x;
-            }
-            else if (c > 0 && a == 0)
-            {
-                Console.WriteLine($"Ветка 2: ({a} - {x}) / ({c} * {x})");
-                y = (a - x) / (c * x);
-            }
-            else
-            {
-                Console.WriteLine($"Ветка 3: {x} / {c}");
-                y = x / c;
-            }
-
-            Console.WriteLine($"{x} {a} {c} : {y}");
-            Console.WriteLine("--------------------");
-            return y;
-        }
-        catch (FormatException)
-        {
-            Console.WriteLine("Необходимо число!");
-        }
-        catch (DivideByZeroException)
-        {
-            Console.WriteLine("Деление на 0!");
+            int y = SolveTask4(x, a, c);
+            Console.WriteLine($"Результат: {y}");
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
-        }
-
-        return 0;
-    }
-
-    public static double[] testArray6 = [-4.01, -4, -3.99, 0, 3.99, 4, 4.01, -10, -9.99];
-
-    public static void Task6()
-    {
-        try
-        {
-            double y = 0;
-            foreach (var doubleNumber in testArray6)
-            {
-                Console.WriteLine("Тестовое значение: " + doubleNumber);
-                y = GetValueTask6(doubleNumber);
-            }
-
-            Console.WriteLine("Введите значение x");
-            double x = Convert.ToDouble(Console.ReadLine());
-            y = GetValueTask6(x);
-        }
-        catch (FormatException)
-        {
-            Console.WriteLine("Необходимо число!");
-        }
-        catch (DivideByZeroException)
-        {
-            Console.WriteLine("Деление на 0!");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Exception happened" + e.Message);
+            Console.WriteLine("Ошибка: " + e.Message);
         }
     }
 
-    public static double GetValueTask6(double x)
+    public static int SolveTask4(int x, int a, int c)
     {
-        double y = (Math.Sqrt(x + 10) / (Math.Sqrt(16 - x * x)));
-
-        if (double.IsNaN(y) || double.IsInfinity(y))
+        path = 0;
+        if (c < 0 && a != 0)
         {
-            Console.WriteLine("Вычисление невозможно");
+            path = 1;
+            return -a * x * x;
+        }
+        else if (c > 0 && a == 0)
+        {
+            path = 2;
+            if (c * x == 0) throw new DivideByZeroException();
+            return (a - x) / (c * x);
         }
         else
         {
-            Console.WriteLine("y:" + y);
+            path = 3;
+            if (c == 0) throw new DivideByZeroException();
+            return x / c;
+        }
+    }
+
+    // --- Task 6 ---
+    static void RunTask6()
+    {
+        double[] testValues = { -4.01, -4, -3.99, 0, 3.99, 4, 4.01, -10, -9.99 };
+        foreach (double x in testValues)
+        {
+            try
+            {
+                double y = SolveTask6(x);
+                Console.WriteLine($"x={x} → y={y:F4}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"x={x} → Ошибка: {e.Message}");
+            }
         }
 
-        return y;
+        Console.Write("\nВведите x: ");
+        double input = Convert.ToDouble(Console.ReadLine());
+        try
+        {
+            double y = SolveTask6(input);
+            Console.WriteLine($"Результат: {y:F4}");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Ошибка: " + e.Message);
+        }
+    }
+
+    public static double SolveTask6(double x)
+    {
+        if (x + 10 < 0) throw new ArgumentException("x + 10 < 0 → корень из отрицательного");
+        if (16 - x * x <= 0) throw new ArgumentException("16 - x² <= 0 → деление на ноль или корень из отриц.");
+        return Math.Sqrt(x + 10) / Math.Sqrt(16 - x * x);
+    }
+
+    // --- Classwork 4 ---
+    static void RunClasswork4()
+    {
+        Console.Write("Всего вопросов: "); int all = ReadInt();
+        Console.Write("На 5: "); int f5 = ReadInt();
+        Console.Write("На 4: "); int f4 = ReadInt();
+        Console.Write("На 3: "); int f3 = ReadInt();
+
+        bool valid = f3 < f4 && f4 < f5 && f5 <= all && all > 0;
+        Console.WriteLine(valid ? "Критерии корректны" : "Критерии некорректны");
+    }
+
+    // Вспомогательные методы
+    static int ReadInt() => Convert.ToInt32(Console.ReadLine());
+    static void CheckBorders(int n)
+    {
+        if (n < 1 || n > 8) throw new ArgumentException("Должно быть от 1 до 8");
     }
 }
