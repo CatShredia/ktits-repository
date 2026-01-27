@@ -1,27 +1,37 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 class ConsoleApplication
 {
     public static void Main()
     {
-        Console.WriteLine("Выберите задачу: 2, 3, 4, 6, 6_1 или C4");
-        string choice = Console.ReadLine();
-
-        switch (choice)
+        while (true)
         {
-            case "2": Task2(); break;
-            case "3": Task3(); break;
-            case "4":
-                foreach (var test in testArray4)
-                {
-                    Task4(test);
-                }
-                Task4();
-                break;
-            case "6": Task6(); break;
-            case "6_1": Task6_1(); break;
-            case "C4": Class4(); break;
-            default: Console.WriteLine("Неизвестная задача"); break;
+            Console.WriteLine("Выберите задачу: 2, 3, 4, 6, 6_1, 7 или C4");
+            // string choice = Console.ReadLine();
+            string choice = "7";
+
+            switch (choice)
+            {
+                case "2": Task2(); break;
+                case "3": Task3(); break;
+                case "4":
+                    foreach (var test in testArray4)
+                    {
+                        Task4(test);
+                    }
+
+                    Task4();
+                    break;
+                case "6": Task6(); break;
+                case "6_1": Task6_1(); break;
+                case "C4": Class4(); break;
+                case "7": Task7(); break;
+                default: Console.WriteLine("Неизвестная задача"); break;
+            }
+
+            Console.WriteLine(
+                "==========================================================================================");
         }
     }
 
@@ -75,6 +85,7 @@ class ConsoleApplication
         {
             throw new Exception("Координата должна быть от 1 до 8");
         }
+
         return true;
     }
 
@@ -146,14 +157,14 @@ class ConsoleApplication
     // Система уравнений | белый ящик
     public static int[][] testArray4 =
     {
-        [2, 3, -1],     // ветка 1
-        [4, 0, 2],      // ветка 2
-        [6, 2, 3],      // ветка 3
-        [5, 1, 4],      // ветка 3
-        [-2, 5, -3],    // ветка 1
-        [1, 0, 5],      // ветка 2
-        [1, 0, 0],      // деление на 0 (else)
-        [0, 0, 2]       // деление на 0 (ветка 2)
+        [2, 3, -1], // ветка 1
+        [4, 0, 2], // ветка 2
+        [6, 2, 3], // ветка 3
+        [5, 1, 4], // ветка 3
+        [-2, 5, -3], // ветка 1
+        [1, 0, 5], // ветка 2
+        [1, 0, 0], // деление на 0 (else)
+        [0, 0, 2] // деление на 0 (ветка 2)
     };
 
     public static int Task4(int[] testVariable = null)
@@ -311,6 +322,49 @@ class ConsoleApplication
         if (arg <= 0)
             throw new ArgumentException("Аргумент логарифма должен быть > 0");
 
-        return Math.Log(arg); 
+        return Math.Log(arg);
+    }
+
+    // =============== Task 7 ===============
+    // Ввод времени в определенном формате.
+    // Вводится строка. Определить, соответствует ли она формату времени суток: **часы и минуты разделены двоеточием, необходимо выполнить проверку на корректность.
+
+    public static string[] testArray7 =
+    {
+        "-1:30", "99:00", "10:-1", "10:60", "1030", "10:30:45", "", "     ", "ab:cd", "01:01", "1:11", "09:30", "9:5",
+        "23:59", "24:00", "10:60"
+    };
+
+    public static void Task7()
+    {
+        try
+        {
+            foreach (var x in testArray7)
+            {
+                Console.WriteLine("Тестовое значение: " + x);
+                GetValueTask7(x);
+            }
+
+            string inputString = Console.ReadLine();
+            GetValueTask7(inputString);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return;
+        }
+    }
+
+    public static void GetValueTask7(string input)
+    {
+        // format: 24:60
+        if (Regex.IsMatch(input, @"^([01]?[0-9]|2[0-3]):[0-5][0-9]$"))
+        {
+            Console.WriteLine("Время имеет корректный формат (ЧЧ:ММ): " + input);
+        }
+        else
+        {
+            Console.WriteLine("Время имеет некорректный формат (ЧЧ:ММ): " + input);
+        }
     }
 }
