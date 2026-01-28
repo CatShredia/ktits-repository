@@ -8,8 +8,8 @@ class ConsoleApplication
         while (true)
         {
             Console.WriteLine("Выберите задачу: 2, 3, 4, 6, 6_1, 7 или C4");
-            // string choice = Console.ReadLine();
-            string choice = "7";
+            string choice = Console.ReadLine();
+            // string choice = "7";
 
             switch (choice)
             {
