@@ -23,7 +23,7 @@ public class MainWindowViewModel : ReactiveObject
 
         private void OnNumberPressed(string digit)
         {
-            // ❌ Mistake 1: Allows multiple decimal points (e.g., "3.14.15")
+            // TODO: Возможен ввод 3.14.14
             if (Display == "0" || Display == "Error")
                 Display = digit;
             else
@@ -32,7 +32,7 @@ public class MainWindowViewModel : ReactiveObject
 
         private void OnOperationPressed(string operation)
         {
-            // ❌ Mistake 2: No check if display is valid before parsing
+            // TODO: No check if display is valid before parsing
             _lastValue = double.Parse(Display);
             _currentOperation = operation;
             Display = "0";
