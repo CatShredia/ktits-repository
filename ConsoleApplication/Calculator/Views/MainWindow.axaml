@@ -7,14 +7,66 @@
         x:Class="Calculator.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Calculator">
+        Title="Calculator"
+        Width="280" Height="360"
+        CanResize="False"
+        KeyDown="MainWindow_KeyDown">
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
+    <Window.DataContext>
+        <vm:MainWindowViewModel />
+    </Window.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Grid RowDefinitions="Auto,*,*,*,*,*"
+          ColumnDefinitions="*,*,*,*"
+          Margin="8">
+        <!-- Display -->
+        <Border Grid.Row="0" Grid.ColumnSpan="4"
+                Background="White"
+                CornerRadius="4"
+                Padding="10"
+                Margin="0,0,0,8">
+            <TextBlock Text="{Binding Display}"
+                       FontSize="24"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center" />
+        </Border>
 
+        <!-- Buttons: use uniform spacing and stretch -->
+        <Button Grid.Row="1" Grid.Column="0" Content="C" Command="{Binding ClearCommand}" Margin="2" />
+        <Button Grid.Row="1" Grid.Column="3" Content="/" Command="{Binding OperationCommand}" CommandParameter="/"
+                Margin="2" />
+
+        <Button Grid.Row="2" Grid.Column="0" Content="7" Command="{Binding NumberCommand}" CommandParameter="7"
+                Margin="2" />
+        <Button Grid.Row="2" Grid.Column="1" Content="8" Command="{Binding NumberCommand}" CommandParameter="8"
+                Margin="2" />
+        <Button Grid.Row="2" Grid.Column="2" Content="9" Command="{Binding NumberCommand}" CommandParameter="9"
+                Margin="2" />
+        <Button Grid.Row="2" Grid.Column="3" Content="*" Command="{Binding OperationCommand}" CommandParameter="*"
+                Margin="2" />
+
+        <Button Grid.Row="3" Grid.Column="0" Content="4" Command="{Binding NumberCommand}" CommandParameter="4"
+                Margin="2" />
+        <Button Grid.Row="3" Grid.Column="1" Content="5" Command="{Binding NumberCommand}" CommandParameter="5"
+                Margin="2" />
+        <Button Grid.Row="3" Grid.Column="2" Content="6" Command="{Binding NumberCommand}" CommandParameter="6"
+                Margin="2" />
+        <Button Grid.Row="3" Grid.Column="3" Content="-" Command="{Binding OperationCommand}" CommandParameter="-"
+                Margin="2" />
+
+        <Button Grid.Row="4" Grid.Column="0" Content="1" Command="{Binding NumberCommand}" CommandParameter="1"
+                Margin="2" />
+        <Button Grid.Row="4" Grid.Column="1" Content="2" Command="{Binding NumberCommand}" CommandParameter="2"
+                Margin="2" />
+        <Button Grid.Row="4" Grid.Column="2" Content="3" Command="{Binding NumberCommand}" CommandParameter="3"
+                Margin="2" />
+        <Button Grid.Row="4" Grid.Column="3" Content="+" Command="{Binding OperationCommand}" CommandParameter="+"
+                Margin="2" />
+
+        <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Content="0" Command="{Binding NumberCommand}"
+                CommandParameter="0" Margin="2" />
+        <Button Grid.Row="5" Grid.Column="2" Content="." Command="{Binding NumberCommand}" CommandParameter="."
+                Margin="2" />
+        <Button Grid.Row="5" Grid.Column="3" Content="=" Command="{Binding EqualsCommand}" Margin="2" />
+    </Grid>
 </Window>
