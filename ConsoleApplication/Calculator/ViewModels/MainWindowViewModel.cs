@@ -75,7 +75,12 @@ public class MainWindowViewModel : ReactiveObject
 
     private void OnEqualsPressed()
     {
-        double currentValue = double.Parse(Display);
+        if (!double.TryParse(Display, out double currentValue))
+        {
+            Display = "Error";
+            return;
+        }
+
         double result = 0;
 
         switch (_currentOperation)
@@ -90,14 +95,25 @@ public class MainWindowViewModel : ReactiveObject
                 result = _lastValue * currentValue;
                 break;
             case "/":
-                // ❌ Mistake 3: Division by zero not handled
+                if (currentValue == 0)
+                {
+                    Display = "Error";
+                    return;
+                }
                 result = _lastValue / currentValue;
                 break;
+            case "^": // ← ADD THIS
+                result = Math.Pow(_lastValue, currentValue);
+                break;
+            default:
+                // If no operation, just keep current value
+                Display = currentValue.ToString("G15");
+                return;
         }
 
-        Display = result.ToString();
+        Display = result.ToString("G15");
     }
-
+    
     private void OnClearPressed()
     {
         Display = "0";
