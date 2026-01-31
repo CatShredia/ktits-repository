@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Calculator.ViewModels;
@@ -102,4 +103,6 @@ public partial class MainWindow : Window
                 break;
         }
     }
+    
+
 }

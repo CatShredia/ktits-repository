@@ -5,87 +5,175 @@ using ReactiveUI;
 namespace Calculator.ViewModels;
 
 public class MainWindowViewModel : ReactiveObject
+{
+    private string _display = "0";
+    private double _lastValue;
+    private string _currentOperation;
+
+    public string Display
     {
-        private string _display = "0";
-        private double _lastValue;
-        private string _currentOperation;
+        get => _display;
+        set => this.RaiseAndSetIfChanged(ref _display, value);
+    }
 
-        public string Display
+    public ICommand NumberCommand => new RelayCommand<string>(OnNumberPressed);
+    public ICommand OperationCommand => new RelayCommand<string>(OnOperationPressed);
+    public ICommand EqualsCommand => new RelayCommand(OnEqualsPressed);
+    public ICommand ClearCommand => new RelayCommand(OnClearPressed);
+    public ICommand ToggleSignCommand => new RelayCommand(OnToggleSignPressed);
+    public ICommand ToggleAdvancedCommand => new RelayCommand(ToggleAdvancedMode);
+    public ICommand ConstantCommand => new RelayCommand<string>(OnConstantPressed);
+    public ICommand UnaryOperationCommand => new RelayCommand<string>(OnUnaryOperationPressed);
+
+    private bool _isAdvanced;
+
+    public bool IsAdvanced
+    {
+        get => _isAdvanced;
+        set => this.RaiseAndSetIfChanged(ref _isAdvanced, value);
+    }
+
+
+    private void ToggleAdvancedMode()
+    {
+        IsAdvanced = !IsAdvanced;
+    }
+
+    private void OnToggleSignPressed()
+    {
+        if (Display == "0" || Display == "Error" || string.IsNullOrEmpty(Display))
+            return;
+
+        if (Display.StartsWith("-"))
         {
-            get => _display;
-            set => this.RaiseAndSetIfChanged(ref _display, value);
+            // Remove minus
+            Display = Display.Substring(1);
+        }
+        else
+        {
+            // Add minus
+            Display = "-" + Display;
+        }
+    }
+
+    private void OnNumberPressed(string digit)
+    {
+        // TODO: Возможен ввод 3.14.14
+        if (Display == "0" || Display == "Error")
+            Display = digit;
+        else
+            Display += digit;
+    }
+
+    private void OnOperationPressed(string operation)
+    {
+        // TODO: No check if display is valid before parsing
+        _lastValue = double.Parse(Display);
+        _currentOperation = operation;
+        Display = "0";
+    }
+
+    private void OnEqualsPressed()
+    {
+        double currentValue = double.Parse(Display);
+        double result = 0;
+
+        switch (_currentOperation)
+        {
+            case "+":
+                result = _lastValue + currentValue;
+                break;
+            case "-":
+                result = _lastValue - currentValue;
+                break;
+            case "*":
+                result = _lastValue * currentValue;
+                break;
+            case "/":
+                // ❌ Mistake 3: Division by zero not handled
+                result = _lastValue / currentValue;
+                break;
         }
 
-        public ICommand NumberCommand => new RelayCommand<string>(OnNumberPressed);
-        public ICommand OperationCommand => new RelayCommand<string>(OnOperationPressed);
-        public ICommand EqualsCommand => new RelayCommand(OnEqualsPressed);
-        public ICommand ClearCommand => new RelayCommand(OnClearPressed);
+        Display = result.ToString();
+    }
 
-        private void OnNumberPressed(string digit)
+    private void OnClearPressed()
+    {
+        Display = "0";
+        _lastValue = 0;
+        _currentOperation = null;
+    }
+
+    private void OnConstantPressed(string constant)
+    {
+        if (Display == "Error") return;
+
+        double value = constant switch
         {
-            // TODO: Возможен ввод 3.14.14
-            if (Display == "0" || Display == "Error")
-                Display = digit;
-            else
-                Display += digit;
-        }
+            "pi" => Math.PI,
+            "e" => Math.E,
+            _ => 0
+        };
 
-        private void OnOperationPressed(string operation)
+        Display = value.ToString("G15"); // Avoid scientific notation
+    }
+
+    private void OnUnaryOperationPressed(string op)
+    {
+        if (Display == "Error") return;
+
+        try
         {
-            // TODO: No check if display is valid before parsing
-            _lastValue = double.Parse(Display);
-            _currentOperation = operation;
-            Display = "0";
-        }
-
-        private void OnEqualsPressed()
-        {
-            double currentValue = double.Parse(Display);
-            double result = 0;
-
-            switch (_currentOperation)
+            if (!double.TryParse(Display, out double x))
             {
-                case "+":
-                    result = _lastValue + currentValue;
-                    break;
-                case "-":
-                    result = _lastValue - currentValue;
-                    break;
-                case "*":
-                    result = _lastValue * currentValue;
-                    break;
-                case "/":
-                    // ❌ Mistake 3: Division by zero not handled
-                    result = _lastValue / currentValue;
-                    break;
+                Display = "Error";
+                return;
             }
 
-            Display = result.ToString();
-        }
+            double result = op switch
+            {
+                "reciprocal" => x == 0 ? throw new DivideByZeroException() : 1.0 / x,
+                "log10" => x <= 0 ? throw new ArgumentException() : Math.Log10(x),
+                "ln" => x <= 0 ? throw new ArgumentException() : Math.Log(x),
+                "factorial" => x < 0 || x != Math.Floor(x) ? throw new ArgumentException() : Factorial((int)x),
+                "abs" => Math.Abs(x),
+                _ => throw new NotSupportedException()
+            };
 
-        private void OnClearPressed()
+            Display = result.ToString("G15");
+        }
+        catch (Exception)
         {
-            Display = "0";
-            _lastValue = 0;
-            _currentOperation = null;
+            Display = "Error";
         }
     }
 
-    // Simple relay command
-    public class RelayCommand<T> : ICommand
+    private static double Factorial(int n)
     {
-        private readonly Action<T> _execute;
-        public RelayCommand(Action<T> execute) => _execute = execute;
-        public bool CanExecute(object parameter) => true;
-        public void Execute(object parameter) => _execute((T)parameter);
-        public event EventHandler CanExecuteChanged;
+        if (n < 0) return double.NaN;
+        double result = 1;
+        for (int i = 2; i <= n; i++)
+            result *= i;
+        return result;
     }
+}
 
-    public class RelayCommand : ICommand
-    {
-        private readonly Action _execute;
-        public RelayCommand(Action execute) => _execute = execute;
-        public bool CanExecute(object parameter) => true;
-        public void Execute(object parameter) => _execute();
-        public event EventHandler CanExecuteChanged;
-    }
+// Simple relay command
+public class RelayCommand<T> : ICommand
+{
+    private readonly Action<T> _execute;
+    public RelayCommand(Action<T> execute) => _execute = execute;
+    public bool CanExecute(object parameter) => true;
+    public void Execute(object parameter) => _execute((T)parameter);
+    public event EventHandler CanExecuteChanged;
+}
+
+public class RelayCommand : ICommand
+{
+    private readonly Action _execute;
+    public RelayCommand(Action execute) => _execute = execute;
+    public bool CanExecute(object parameter) => true;
+    public void Execute(object parameter) => _execute();
+    public event EventHandler CanExecuteChanged;
+}

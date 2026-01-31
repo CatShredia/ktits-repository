@@ -3,7 +3,7 @@
         xmlns:vm="using:Calculator.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d"
         x:Class="Calculator.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
@@ -17,12 +17,13 @@
         <vm:MainWindowViewModel />
     </Window.DataContext>
 
-    <!-- Outer margin reduced to 0 or kept minimal -->
-    <Grid RowDefinitions="Auto,*,*,*,*,*"
-          ColumnDefinitions="*,*,*,*"
+    <!-- Dynamically adjust grid based on mode -->
+    <Grid RowDefinitions="Auto, Auto, *, *, *, *, *"
+          ColumnDefinitions="Auto, *, *, *, *"
           Margin="0">
+        
         <!-- Display -->
-        <Border Grid.Row="0" Grid.ColumnSpan="4"
+        <Border Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4"
                 Background="White"
                 CornerRadius="4"
                 Padding="10"
@@ -33,29 +34,49 @@
                        VerticalAlignment="Center" />
         </Border>
 
-        <!-- All buttons now have Margin="0" -->
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="0" Content="C" Command="{Binding ClearCommand}" Margin="1" />
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="1" Content="±" Command="{Binding ClearCommand}" Margin="1" />
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="2" Content="" Command="{Binding ClearCommand}" Margin="1" IsEnabled="False"/>
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="3" Content="/" Command="{Binding OperationCommand}" CommandParameter="/" Margin="1" />
+        <!-- Advanced top row (exponent, pi, e, 1/x) -->
+        <Button Grid.Row="1" Grid.Column="1" Content="x^y" Command="{Binding OperationCommand}" CommandParameter="^" 
+                IsVisible="{Binding IsAdvanced}" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="1" Grid.Column="2" Content="π" Command="{Binding ConstantCommand}" CommandParameter="pi" 
+                IsVisible="{Binding IsAdvanced}" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="1" Grid.Column="3" Content="e" Command="{Binding ConstantCommand}" CommandParameter="e" 
+                IsVisible="{Binding IsAdvanced}" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="1" Grid.Column="4" Content="1/x" Command="{Binding UnaryOperationCommand}" CommandParameter="reciprocal" 
+                IsVisible="{Binding IsAdvanced}" Margin="0" Padding="0" BorderThickness="0"/>
 
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="0" Content="7" Command="{Binding NumberCommand}" CommandParameter="7" Margin="1" />
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="1" Content="8" Command="{Binding NumberCommand}" CommandParameter="8" Margin="1" />
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="2" Content="9" Command="{Binding NumberCommand}" CommandParameter="9" Margin="1" />
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="3" Content="*" Command="{Binding OperationCommand}" CommandParameter="*" Margin="1" />
+        <!-- Left column: log, ln, n!, |n| -->
+        <Button Grid.Row="2" Grid.Column="0" Content="log" Command="{Binding UnaryOperationCommand}" CommandParameter="log10" 
+                IsVisible="{Binding IsAdvanced}" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="3" Grid.Column="0" Content="ln" Command="{Binding UnaryOperationCommand}" CommandParameter="ln" 
+                IsVisible="{Binding IsAdvanced}" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="4" Grid.Column="0" Content="n!" Command="{Binding UnaryOperationCommand}" CommandParameter="factorial" 
+                IsVisible="{Binding IsAdvanced}" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="5" Grid.Column="0" Content="|x|" Command="{Binding UnaryOperationCommand}" CommandParameter="abs" 
+                IsVisible="{Binding IsAdvanced}" Margin="0" Padding="0" BorderThickness="0"/>
 
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="3" Grid.Column="0" Content="4" Command="{Binding NumberCommand}" CommandParameter="4" Margin="1" />
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="3" Grid.Column="1" Content="5" Command="{Binding NumberCommand}" CommandParameter="5" Margin="1" />
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="3" Grid.Column="2" Content="6" Command="{Binding NumberCommand}" CommandParameter="6" Margin="1" />
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="3" Grid.Column="3" Content="-" Command="{Binding OperationCommand}" CommandParameter="-" Margin="1" />
+        <!-- Standard buttons (shifted right by 1 column due to left panel) -->
+        <Button Grid.Row="2" Grid.Column="1" Content="C" Command="{Binding ClearCommand}" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="2" Grid.Column="2" Content="±" Command="{Binding ToggleSignCommand}" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="2" Grid.Column="3" Content="Adv" Command="{Binding ToggleAdvancedCommand}" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="2" Grid.Column="4" Content="/" Command="{Binding OperationCommand}" CommandParameter="/" Margin="0" Padding="0" BorderThickness="0"/>
 
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="4" Grid.Column="0" Content="1" Command="{Binding NumberCommand}" CommandParameter="1" Margin="1" />
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="4" Grid.Column="1" Content="2" Command="{Binding NumberCommand}" CommandParameter="2" Margin="1" />
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="4" Grid.Column="2" Content="3" Command="{Binding NumberCommand}" CommandParameter="3" Margin="1" />
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="4" Grid.Column="3" Content="+" Command="{Binding OperationCommand}" CommandParameter="+" Margin="1" />
+        <Button Grid.Row="3" Grid.Column="1" Content="7" Command="{Binding NumberCommand}" CommandParameter="7" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="3" Grid.Column="2" Content="8" Command="{Binding NumberCommand}" CommandParameter="8" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="3" Grid.Column="3" Content="9" Command="{Binding NumberCommand}" CommandParameter="9" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="3" Grid.Column="4" Content="*" Command="{Binding OperationCommand}" CommandParameter="*" Margin="0" Padding="0" BorderThickness="0"/>
 
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Content="0" Command="{Binding NumberCommand}" CommandParameter="0" Margin="1" />
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="5" Grid.Column="2" Content="." Command="{Binding NumberCommand}" CommandParameter="." Margin="1" />
-        <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="5" Grid.Column="3" Content="=" Command="{Binding EqualsCommand}" Margin="1" />
+        <Button Grid.Row="4" Grid.Column="1" Content="4" Command="{Binding NumberCommand}" CommandParameter="4" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="4" Grid.Column="2" Content="5" Command="{Binding NumberCommand}" CommandParameter="5" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="4" Grid.Column="3" Content="6" Command="{Binding NumberCommand}" CommandParameter="6" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="4" Grid.Column="4" Content="-" Command="{Binding OperationCommand}" CommandParameter="-" Margin="0" Padding="0" BorderThickness="0"/>
+
+        <Button Grid.Row="5" Grid.Column="1" Content="1" Command="{Binding NumberCommand}" CommandParameter="1" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="5" Grid.Column="2" Content="2" Command="{Binding NumberCommand}" CommandParameter="2" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="5" Grid.Column="3" Content="3" Command="{Binding NumberCommand}" CommandParameter="3" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="5" Grid.Column="4" Content="+" Command="{Binding OperationCommand}" CommandParameter="+" Margin="0" Padding="0" BorderThickness="0"/>
+
+        <Button Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Content="0" Command="{Binding NumberCommand}" CommandParameter="0" Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="6" Grid.Column="3" Content="." Command="{Binding NumberCommand}" CommandParameter="." Margin="0" Padding="0" BorderThickness="0"/>
+        <Button Grid.Row="6" Grid.Column="4" Content="=" Command="{Binding EqualsCommand}" Margin="0" Padding="0" BorderThickness="0"/>
     </Grid>
 </Window>
