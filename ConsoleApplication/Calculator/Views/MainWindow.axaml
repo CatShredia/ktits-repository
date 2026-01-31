@@ -10,7 +10,8 @@
         Title="Calculator"
         Width="280" Height="360"
         CanResize="False"
-        KeyDown="MainWindow_KeyDown">
+        KeyDown="MainWindow_KeyDown"
+        TextInput="MainWindow_TextInput">
 
     <Window.DataContext>
         <vm:MainWindowViewModel />

@@ -10,61 +10,96 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
     }
-    
+
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)
     {
         if (DataContext is not MainWindowViewModel vm)
             return;
 
-        // Handle digits
+        // Top-row digits
         if (e.Key >= Key.D0 && e.Key <= Key.D9)
         {
             vm.NumberCommand.Execute(((int)e.Key - (int)Key.D0).ToString());
             e.Handled = true;
+            return;
         }
-        else if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9)
+
+        // Numpad digits
+        if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9)
         {
             vm.NumberCommand.Execute(((int)e.Key - (int)Key.NumPad0).ToString());
             e.Handled = true;
+            return;
         }
-        // Handle decimal point
-        else if (e.Key == Key.OemPeriod || e.Key == Key.Decimal)
+
+        // Decimal point
+        if (e.Key == Key.OemPeriod || e.Key == Key.Decimal || e.Key == Key.OemComma)
         {
             vm.NumberCommand.Execute(".");
             e.Handled = true;
+            return;
         }
-        // Handle operations
-        else if (e.Key == Key.Add)
+
+        // Numpad operations
+        if (e.Key == Key.Add || e.Key == Key.Subtract ||
+            e.Key == Key.Multiply || e.Key == Key.Divide)
         {
-            vm.OperationCommand.Execute("+");
+            string op = e.Key switch
+            {
+                Key.Add => "+",
+                Key.Subtract => "-",
+                Key.Multiply => "*",
+                Key.Divide => "/",
+                _ => null
+            };
+            vm.OperationCommand.Execute(op);
             e.Handled = true;
         }
-        else if (e.Key == Key.Subtract)
-        {
-            vm.OperationCommand.Execute("-");
-            e.Handled = true;
-        }
-        else if (e.Key == Key.Multiply)
-        {
-            vm.OperationCommand.Execute("*");
-            e.Handled = true;
-        }
-        else if (e.Key == Key.Divide)
-        {
-            vm.OperationCommand.Execute("/");
-            e.Handled = true;
-        }
-        // Equals / Enter
         else if (e.Key == Key.Enter || e.Key == Key.Return)
         {
             vm.EqualsCommand.Execute(null);
             e.Handled = true;
         }
-        // Clear / Escape
         else if (e.Key == Key.Escape)
         {
             vm.ClearCommand.Execute(null);
             e.Handled = true;
+        }
+    }
+
+    private void MainWindow_TextInput(object sender, TextInputEventArgs e)
+    {
+        if (DataContext is not MainWindowViewModel vm)
+            return;
+
+        string text = e.Text;
+        if (string.IsNullOrEmpty(text) || text.Length != 1)
+            return;
+
+        char c = text[0];
+        switch (c)
+        {
+            case '0': case '1': case '2': case '3': case '4':
+            case '5': case '6': case '7': case '8': case '9':
+                vm.NumberCommand.Execute(c.ToString());
+                e.Handled = true;
+                break;
+            case '.':
+            case ',':
+                vm.NumberCommand.Execute(".");
+                e.Handled = true;
+                break;
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+                vm.OperationCommand.Execute(c.ToString());
+                e.Handled = true;
+                break;
+            case '\r': // Enter as text (rare, but safe)
+                vm.EqualsCommand.Execute(null);
+                e.Handled = true;
+                break;
         }
     }
 }
