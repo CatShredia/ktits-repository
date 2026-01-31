@@ -35,12 +35,14 @@ public class MainWindowViewModel : ReactiveObject
 
     private void OnNumberPressed(string digit)
     {
+        // TODO #1: Отсутствие валидации на ввод, возможно например ввести 3.14.14
         if (Display == "0" || Display == "Error")
             Display = digit;
         else
             Display += digit;
     }
 
+    // TODO #2: Отсутствие try_catch на практически всех методах
     private void OnOperationPressed(string operation)
     {
         _lastValue = double.Parse(Display);
@@ -48,6 +50,8 @@ public class MainWindowViewModel : ReactiveObject
         Display = "0";
     }
 
+    // TODO #3: Неправильная обработка деления на 0
+    // TODO #4: Неправильная обработка возведения в степень (-2)^0.5 = NaN) хз почему
     private void OnEqualsPressed()
     {
         double currentValue = double.Parse(Display); 
