@@ -17,7 +17,6 @@ public partial class MainWindow : Window
         if (DataContext is not MainWindowViewModel vm)
             return;
 
-        // Top-row digits
         if (e.Key >= Key.D0 && e.Key <= Key.D9)
         {
             vm.NumberCommand.Execute(((int)e.Key - (int)Key.D0).ToString());
@@ -25,7 +24,6 @@ public partial class MainWindow : Window
             return;
         }
 
-        // Numpad digits
         if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9)
         {
             vm.NumberCommand.Execute(((int)e.Key - (int)Key.NumPad0).ToString());
@@ -33,7 +31,6 @@ public partial class MainWindow : Window
             return;
         }
 
-        // Decimal point
         if (e.Key == Key.OemPeriod || e.Key == Key.Decimal || e.Key == Key.OemComma)
         {
             vm.NumberCommand.Execute(".");
@@ -41,7 +38,6 @@ public partial class MainWindow : Window
             return;
         }
 
-        // Numpad operations
         if (e.Key == Key.Add || e.Key == Key.Subtract ||
             e.Key == Key.Multiply || e.Key == Key.Divide)
         {
@@ -97,12 +93,10 @@ public partial class MainWindow : Window
                 vm.OperationCommand.Execute(c.ToString());
                 e.Handled = true;
                 break;
-            case '\r': // Enter as text (rare, but safe)
+            case '\r':
                 vm.EqualsCommand.Execute(null);
                 e.Handled = true;
                 break;
         }
     }
-    
-
 }

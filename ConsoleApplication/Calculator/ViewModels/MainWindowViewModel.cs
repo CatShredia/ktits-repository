@@ -33,7 +33,6 @@ public class MainWindowViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _isAdvanced, value);
     }
 
-
     private void ToggleAdvancedMode()
     {
         IsAdvanced = !IsAdvanced;
@@ -46,19 +45,16 @@ public class MainWindowViewModel : ReactiveObject
 
         if (Display.StartsWith("-"))
         {
-            // Remove minus
             Display = Display.Substring(1);
         }
         else
         {
-            // Add minus
             Display = "-" + Display;
         }
     }
 
     private void OnNumberPressed(string digit)
     {
-        // TODO: Возможен ввод 3.14.14
         if (Display == "0" || Display == "Error")
             Display = digit;
         else
@@ -67,7 +63,6 @@ public class MainWindowViewModel : ReactiveObject
 
     private void OnOperationPressed(string operation)
     {
-        // TODO: No check if display is valid before parsing
         _lastValue = double.Parse(Display);
         _currentOperation = operation;
         Display = "0";
@@ -102,11 +97,10 @@ public class MainWindowViewModel : ReactiveObject
                 }
                 result = _lastValue / currentValue;
                 break;
-            case "^": // ← ADD THIS
+            case "^":
                 result = Math.Pow(_lastValue, currentValue);
                 break;
             default:
-                // If no operation, just keep current value
                 Display = currentValue.ToString("G15");
                 return;
         }
@@ -132,7 +126,7 @@ public class MainWindowViewModel : ReactiveObject
             _ => 0
         };
 
-        Display = value.ToString("G15"); // Avoid scientific notation
+        Display = value.ToString("G15");
     }
 
     private void OnUnaryOperationPressed(string op)
@@ -175,7 +169,6 @@ public class MainWindowViewModel : ReactiveObject
     }
 }
 
-// Simple relay command
 public class RelayCommand<T> : ICommand
 {
     private readonly Action<T> _execute;

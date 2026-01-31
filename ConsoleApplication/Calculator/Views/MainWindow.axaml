@@ -17,12 +17,10 @@
         <vm:MainWindowViewModel />
     </Window.DataContext>
 
-    <!-- Dynamically adjust grid based on mode -->
     <Grid RowDefinitions="Auto, Auto, *, *, *, *, *"
           ColumnDefinitions="Auto, *, *, *, *"
           Margin="0">
         
-        <!-- Display -->
         <Border Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4"
                 Background="White"
                 CornerRadius="4"
@@ -34,7 +32,6 @@
                        VerticalAlignment="Center" />
         </Border>
 
-        <!-- Advanced top row (exponent, pi, e, 1/x) -->
         <Button Grid.Row="1" Grid.Column="1" Content="x^y" Command="{Binding OperationCommand}" CommandParameter="^" 
                 IsVisible="{Binding IsAdvanced}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1" Padding="0" BorderThickness="0"/>
         <Button Grid.Row="1" Grid.Column="2" Content="π" Command="{Binding ConstantCommand}" CommandParameter="pi" 
@@ -44,7 +41,6 @@
         <Button Grid.Row="1" Grid.Column="4" Content="1/x" Command="{Binding UnaryOperationCommand}" CommandParameter="reciprocal" 
                 IsVisible="{Binding IsAdvanced}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1" Padding="0" BorderThickness="0"/>
 
-        <!-- Left column: log, ln, n!, |n| -->
         <Button Grid.Row="2" Grid.Column="0" Content="log" Command="{Binding UnaryOperationCommand}" CommandParameter="log10" 
                 IsVisible="{Binding IsAdvanced}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1" Padding="0" BorderThickness="0"/>
         <Button Grid.Row="3" Grid.Column="0" Content="ln" Command="{Binding UnaryOperationCommand}" CommandParameter="ln" 
@@ -54,7 +50,6 @@
         <Button Grid.Row="5" Grid.Column="0" Content="|x|" Command="{Binding UnaryOperationCommand}" CommandParameter="abs" 
                 IsVisible="{Binding IsAdvanced}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1" Padding="0" BorderThickness="0"/>
 
-        <!-- Standard buttons (shifted right by 1 column due to left panel) -->
         <Button Grid.Row="2" Grid.Column="1" Content="C" Command="{Binding ClearCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1" Padding="0" BorderThickness="0"/>
         <Button Grid.Row="2" Grid.Column="2" Content="±" Command="{Binding ToggleSignCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1" Padding="0" BorderThickness="0"/>
         <Button Grid.Row="2" Grid.Column="3" Content="Adv" Command="{Binding ToggleAdvancedCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1" Padding="0" BorderThickness="0"/>
