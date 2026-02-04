@@ -28,7 +28,7 @@ class ConsoleApplication
                 case "C4": Class4(); break;
                 case "7": Task7(); break;
                 case "10": Task10(); break;
-                // case "11": Task10(); break;
+                case "11": Task11(); break;
                 default: Console.WriteLine("Неизвестная задача"); break;
             }
 
@@ -409,5 +409,68 @@ class ConsoleApplication
 
         Console.WriteLine("TRUE Строка не имеет одинаковых символов");
         return true;
+    }
+
+    // =============== Task 11 ===============
+    // Метод, определяющий объем сферы
+
+    public static double[][] testArray11 =
+    {
+        [0, 0],
+        [1, 2],
+        [3, 1],
+        [2.5, 3],
+        [-1, 2],
+        [1, -1],
+        [100, 0]
+    };
+
+    public static void Task11()
+    {
+        try
+        {
+            foreach (var VARIABLE in testArray11)
+            {
+                CalculateSphereVolume(VARIABLE[0], (int)VARIABLE[1]);
+                Console.WriteLine("----------------");
+            }
+
+            Console.WriteLine("Введите радиус (double):");
+            double radius = Convert.ToDouble(Console.ReadLine());
+
+            Console.WriteLine("Введите точность (int):");
+            int precision = Convert.ToInt32(Console.ReadLine());
+
+            CalculateSphereVolume(radius, precision);
+        }
+        catch (FormatException e)
+        {
+            Console.WriteLine("Неправильный формат");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    public static double CalculateSphereVolume(double radius, int precision)
+    {
+        if (radius < 0)
+        {
+            Console.WriteLine("Радиус не может быть отрицательным.");
+            return 0;
+        }
+
+        if (precision < 0)
+        {
+            Console.WriteLine("Точность должна быть неотрицательной.");
+            return 0;
+        }
+
+        const double Pi = Math.PI;
+        double volume = (4.0 / 3.0) * Pi * Math.Pow(radius, 3);
+
+        Console.WriteLine($"Ответ: {Math.Round(volume, precision)} для {radius} : {precision}");
+        return Math.Round(volume, precision);
     }
 }
