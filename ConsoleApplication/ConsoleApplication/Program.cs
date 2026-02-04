@@ -7,9 +7,9 @@ class ConsoleApplication
     {
         while (true)
         {
-            Console.WriteLine("Выберите задачу: 2, 3, 4, 6, 6_1, 7 или C4");
-            // string choice = Console.ReadLine();
-            string choice = "7";
+            Console.WriteLine("Выберите задачу: 2, 3, 4, 6, 6_1, 7, 10, 11 или C4");
+            string choice = Console.ReadLine();
+            // string choice = "7";
 
             switch (choice)
             {
@@ -27,6 +27,8 @@ class ConsoleApplication
                 case "6_1": Task6_1(); break;
                 case "C4": Class4(); break;
                 case "7": Task7(); break;
+                case "10": Task10(); break;
+                // case "11": Task10(); break;
                 default: Console.WriteLine("Неизвестная задача"); break;
             }
 
@@ -366,5 +368,46 @@ class ConsoleApplication
         {
             Console.WriteLine("Время имеет некорректный формат (ЧЧ:ММ): " + input);
         }
+    }
+
+    // =============== Task 10 ===============
+    // Метод, определяющий введена ли строка с разными символами.
+
+    public static string[] testArray10 =
+    {
+        // пустая, один, все уникальные, повтор, все одинаковые, регистр, null
+        "", "a", "abc", "aab", "777", "Aa", null
+    };
+
+    public static void Task10()
+    {
+        foreach (var VARIABLE in testArray10)
+        {
+            HasUniqueSymbols(VARIABLE);
+            Console.WriteLine("----------------");
+        }
+
+        HasUniqueSymbols(Console.ReadLine());
+    }
+
+    public static bool HasUniqueSymbols(string s)
+    {
+        Console.Write($"\"{s}\" ");
+        if (s == null) return false;
+
+        for (int i = 0; i < s.Length; i++)
+        {
+            for (int j = i + 1; j < s.Length; j++)
+            {
+                if (s[i] == s[j])
+                {
+                    Console.WriteLine("FALSE Строка имеет одинаковые символы");
+                    return false;
+                }
+            }
+        }
+
+        Console.WriteLine("TRUE Строка не имеет одинаковых символов");
+        return true;
     }
 }
