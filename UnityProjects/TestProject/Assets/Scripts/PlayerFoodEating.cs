@@ -10,7 +10,8 @@ public class PlayerFoodEating : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            spawner?.SpawnFood(); // создаёт новую еду
+            ScoreManager.Instance?.AddScore(); 
+            spawner?.SpawnFood();
         }
     }
 }
