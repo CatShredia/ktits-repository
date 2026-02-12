@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
     public Transform[] spawnPoints;
     private int activeOranges = 0;
     public int maxOranges = 4;
+    public int score = 0;
 
     void Awake()
     {
@@ -23,6 +24,12 @@ public class GameController : MonoBehaviour
     public void OnOrangeDestroyed()
     {
         activeOranges--;
+    }
+
+    public void OnOrangeCollected()
+    {
+        score++;
+        Debug.Log("Orange collected! Score: " + score);
     }
 
     void TrySpawnOrange()

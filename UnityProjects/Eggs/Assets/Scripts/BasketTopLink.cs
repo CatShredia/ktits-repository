@@ -47,10 +47,19 @@ public class BasketTopLink : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("12211221Orange entered the top trigger!");
         if (other.CompareTag("Orange"))
         {
             Debug.Log("Orange entered the top trigger!");
+
+            // Увеличиваем счёт
+            if (GameController.Instance != null)
+            {
+                GameController.Instance.OnOrangeCollected();
+                GameController.Instance.OnOrangeDestroyed(); // уменьшаем счётчик активных апельсинов
+            }
+
+            // Удаляем апельсин
+            Destroy(other.gameObject);
         }
     }
 }
