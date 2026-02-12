@@ -52,6 +52,7 @@
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\BasketMoving.cs" />
     <Compile Include="Assets\Scripts\OrangeMoving.cs" />
+    <Compile Include="Assets\Scripts\BasketTopLink.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

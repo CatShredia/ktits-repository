@@ -30,7 +30,18 @@ public class GameController : MonoBehaviour
         if (activeOranges < maxOranges && spawnPoints.Length >= 4)
         {
             int i = Random.Range(0, 4);
-            Instantiate(orangePrefab, spawnPoints[i].position, Quaternion.identity);
+            GameObject obj = Instantiate(orangePrefab, spawnPoints[i].position, Quaternion.identity) as GameObject;
+            if (obj != null)
+            {
+                try
+                {
+                    obj.tag = "Orange";
+                }
+                catch (UnityException)
+                {
+                    Debug.LogWarning("GameController: Tag 'Orange' is not defined. Add it in Tags and Layers if you want to use it.");
+                }
+            }
             activeOranges++;
         }
     }

@@ -106,7 +106,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 2
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
@@ -170,6 +170,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OrangeMoving
   torque: 1000
-  prefabToSpawn: {fileID: 0}
-  spawnPoints:
-  - {fileID: 0}
+  rightBoundary: 9
+  leftBoundary: -9
