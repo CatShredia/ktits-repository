@@ -8,7 +8,8 @@ public class OrangeMoving : MonoBehaviour
 
     void Start()
     {
-        GetComponent<Rigidbody2D>().AddTorque(-torque);
+        float direction = (transform.position.x >= 0) ? 1f : -1f;
+        GetComponent<Rigidbody2D>().AddTorque(direction * torque);
     }
 
     void Update()

@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\GameController.cs" />
+    <Compile Include="Assets\Scripts\BasketMoving.cs" />
     <Compile Include="Assets\Scripts\OrangeMoving.cs" />
   </ItemGroup>
   <ItemGroup>
