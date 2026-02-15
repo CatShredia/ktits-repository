@@ -19,6 +19,8 @@ public class OrangeMoving : MonoBehaviour
             if (GameController.Instance != null)
             {
                 GameController.Instance.OnOrangeDestroyed();
+                HeartsSystem.Instance.heartCount--;
+                HeartsSystem.Instance.RedrawHearts();
             }
             Destroy(gameObject);
         }
