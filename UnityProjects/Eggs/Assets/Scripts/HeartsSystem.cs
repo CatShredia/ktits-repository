@@ -59,6 +59,8 @@ public class HeartsSystem : MonoBehaviour
         spawnedHearts.Remove(heart);
         heartCount = spawnedHearts.Count;
 
+        Debug.Log("Сердце: " + heartCount);
+
         // Проверить, остались ли сердца
         if (heartCount < 1 && !isGameOver)
         {
@@ -68,12 +70,16 @@ public class HeartsSystem : MonoBehaviour
 
     private void GameOver()
     {
+        Debug.Log("Поражение");
+
         isGameOver = true;
         Time.timeScale = 0f; // Остановить игру
 
         // Показать UI с сообщением о поражении
         if (gameOverPrefab != null)
         {
+            Debug.Log("Условие поражения");
+
             GameObject gameOverUI = Instantiate(gameOverPrefab);
             ButtonListener buttonListener = gameOverUI.GetComponent<ButtonListener>();
             if (buttonListener != null)
