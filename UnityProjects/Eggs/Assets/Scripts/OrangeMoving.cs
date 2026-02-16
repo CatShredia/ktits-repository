@@ -14,15 +14,27 @@ public class OrangeMoving : MonoBehaviour
 
     void Update()
     {
-        if (transform.position.x <= leftBoundary || transform.position.x >= rightBoundary)
+        // if (transform.position.x <= leftBoundary || transform.position.x >= rightBoundary)
+        // {
+        //     if (GameController.Instance != null)
+        //     {
+        //         GameController.Instance.OnOrangeDestroyed();
+        //         HeartsSystem.Instance.heartCount--;
+        //         HeartsSystem.Instance.RedrawHearts();
+        //     }
+        //     Destroy(gameObject);
+        // }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Danger"))
         {
-            if (GameController.Instance != null)
-            {
-                GameController.Instance.OnOrangeDestroyed();
-                HeartsSystem.Instance.heartCount--;
-                HeartsSystem.Instance.RedrawHearts();
-            }
+            GameController.Instance.OnOrangeDestroyed();
+            HeartsSystem.Instance.heartCount--;
+            HeartsSystem.Instance.RedrawHearts();
             Destroy(gameObject);
+            Debug.Log("Object destroyed by touching: " + collision.gameObject.name);
         }
     }
 }
