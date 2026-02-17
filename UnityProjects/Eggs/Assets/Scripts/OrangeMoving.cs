@@ -14,16 +14,6 @@ public class OrangeMoving : MonoBehaviour
 
     void Update()
     {
-        // if (transform.position.x <= leftBoundary || transform.position.x >= rightBoundary)
-        // {
-        //     if (GameController.Instance != null)
-        //     {
-        //         GameController.Instance.OnOrangeDestroyed();
-        //         HeartsSystem.Instance.heartCount--;
-        //         HeartsSystem.Instance.RedrawHearts();
-        //     }
-        //     Destroy(gameObject);
-        // }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

@@ -13,13 +13,11 @@ public class ScoreDisplay : MonoBehaviour
             return;
         }
 
-        // Обновляем текст при старте
         UpdateScore();
     }
 
     void Update()
     {
-        // Обновляем счёт каждый кадр (или можно использовать события для оптимизации)
         UpdateScore();
     }
 

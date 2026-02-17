@@ -13,7 +13,6 @@ public class Heart : MonoBehaviour
     {
         if (!isBeingRemoved && HeartsSystem.Instance != null)
         {
-            Debug.Log("on destroy");
             isBeingRemoved = true;
             HeartsSystem.Instance.RemoveHeart(gameObject);
         }

@@ -28,7 +28,6 @@ public class BasketMoving : MonoBehaviour
         HandlePositionInput();
     }
 
-    // Заменяет вращение: по нажатию клавиш объект зеркалится по X (flip)
     void HandleMirror()
     {
         Transform target = playerToMirror != null ? playerToMirror : basket;
@@ -48,10 +47,9 @@ public class BasketMoving : MonoBehaviour
         }
     }
 
-    // Каждая кнопка задаёт конкретную позицию корзины (по X и Y), Z сохраняется
     void HandlePositionInput()
     {
-        if (basket == null) return; // positions apply only to the basket
+        if (basket == null) return;
 
         if (Input.GetKeyDown(KeyCode.Q))
         {

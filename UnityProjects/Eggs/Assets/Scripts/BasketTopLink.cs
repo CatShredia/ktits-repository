@@ -19,21 +19,15 @@ public class BasketTopLink : MonoBehaviour
             return;
         }
 
-        // Толщина триггера по вертикали (Y)
         float thickness = 1f;
 
-        // В 2D не меняем localScale, используем collider.size/offset
         transform.localScale = Vector3.one;
 
-        // Сделаем объект дочерним ParentObject, чтобы локальная позиция и offset совпадали
         transform.SetParent(ParentObject.transform, false);
 
-        // Позиция — на верхней грани родителя (локальные координаты относительно родителя)
-        // Учтём offset и size из BoxCollider2D
         Vector2 topLocal2D = parentCollider.offset + Vector2.up * (parentCollider.size.y / 2f + thickness / 2f);
         transform.localPosition = new Vector3(topLocal2D.x, topLocal2D.y, transform.localPosition.z);
 
-        // Настрой коллайдер триггера 2D: разместим коллайдер в центре этого объекта (offset = zero)
         var triggerCollider = GetComponent<BoxCollider2D>();
         if (triggerCollider == null) triggerCollider = gameObject.AddComponent<BoxCollider2D>();
         triggerCollider.isTrigger = true;
@@ -51,14 +45,12 @@ public class BasketTopLink : MonoBehaviour
         {
             Debug.Log("Orange entered the top trigger!");
 
-            // Увеличиваем счёт
             if (GameController.Instance != null)
             {
                 GameController.Instance.OnOrangeCollected();
-                GameController.Instance.OnOrangeDestroyed(); // уменьшаем счётчик активных апельсинов
+                GameController.Instance.OnOrangeDestroyed();
             }
 
-            // Удаляем апельсин
             Destroy(other.gameObject);
         }
     }

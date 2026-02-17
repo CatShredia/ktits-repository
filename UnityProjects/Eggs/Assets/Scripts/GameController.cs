@@ -46,7 +46,7 @@ public class GameController : MonoBehaviour
                 }
                 catch (UnityException)
                 {
-                    Debug.LogWarning("GameController: Tag 'Orange' is not defined. Add it in Tags and Layers if you want to use it.");
+                    Debug.LogWarning("GameController: Tag 'Orange' is not defined.");
                 }
             }
             activeOranges++;

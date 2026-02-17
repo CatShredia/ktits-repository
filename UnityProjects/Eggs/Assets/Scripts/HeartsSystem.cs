@@ -11,8 +11,8 @@ public class HeartsSystem : MonoBehaviour
     [SerializeField] private Vector3 firstHeartPosition = Vector3.zero;
     [SerializeField] private float heartSpacing = 1f;
     [SerializeField] private GameObject gameOverPrefab;
-    [SerializeField] private GameObject madnessEffectPrefab; // Красный фильтр безумия
-    [SerializeField] private GameObject pausePrefab; // Префаб паузы
+    [SerializeField] private GameObject madnessEffectPrefab;
+    [SerializeField] private GameObject pausePrefab;
     private List<GameObject> spawnedHearts = new List<GameObject>();
     private bool isGameOver = false;
     private bool isPaused = false;
@@ -36,7 +36,6 @@ public class HeartsSystem : MonoBehaviour
     {
         SpawnHearts();
 
-        // Создать панель GameOver и скрыть её изначально
         if (gameOverPrefab != null)
         {
             gameOverUI = Instantiate(gameOverPrefab);
@@ -48,7 +47,6 @@ public class HeartsSystem : MonoBehaviour
             Debug.LogWarning("gameOverPrefab не назначен!");
         }
 
-        // Создать эффект безумия и скрыть его изначально
         if (madnessEffectPrefab != null)
         {
             madnessEffectUI = Instantiate(madnessEffectPrefab);
@@ -60,7 +58,6 @@ public class HeartsSystem : MonoBehaviour
             Debug.LogWarning("madnessEffectPrefab не назначен!");
         }
 
-        // Создать префаб паузы и скрыть его изначально
         if (pausePrefab != null)
         {
             pauseUI = Instantiate(pausePrefab);
@@ -87,7 +84,6 @@ public class HeartsSystem : MonoBehaviour
 
     public void RedrawHearts()
     {
-        // Отключить слушателей перед уничтожением
         foreach (GameObject heart in spawnedHearts)
         {
             Heart heartComponent = heart.GetComponent<Heart>();
@@ -97,7 +93,6 @@ public class HeartsSystem : MonoBehaviour
             }
         }
 
-        // Удалить старые сердца
         foreach (GameObject heart in spawnedHearts)
         {
             Destroy(heart);
@@ -106,10 +101,8 @@ public class HeartsSystem : MonoBehaviour
 
         Debug.Log("RedrawHearts");
 
-        // Создать новые сердца
         SpawnHearts();
 
-        // Обновить эффект безумия
         UpdateMadnessEffect();
     }
 
@@ -126,37 +119,30 @@ public class HeartsSystem : MonoBehaviour
     {
         Debug.Log("Попытка удалить сердце. Всего в списке: " + spawnedHearts.Count);
 
-        // Вариант 1: Удаление по ссылке (проверьте, тот ли это объект)
         bool removed = spawnedHearts.Remove(heart);
 
         if (!removed)
         {
             Debug.LogWarning("Сердце не найдено в списке! Возможно, передан неверный GameObject.");
-            // Попытка найти и удалить уничтоженный объект или использовать другой подход
             return;
         }
 
-        // Обновляем счетчик
         heartCount = spawnedHearts.Count;
         Debug.Log("Сердец осталось: " + heartCount);
 
-        // Отключить слушатель перед уничтожением
         Heart heartComponent = heart.GetComponent<Heart>();
         if (heartComponent != null)
         {
             heartComponent.DisableHeartListener();
         }
 
-        // Проверка поражения до уничтожения объекта
         if (heartCount <= 0 && !isGameOver)
         {
             GameOver();
         }
 
-        // Уничтожаем визуальный объект
         Destroy(heart);
 
-        // Обновить эффект безумия
         UpdateMadnessEffect();
     }
 
@@ -173,9 +159,8 @@ public class HeartsSystem : MonoBehaviour
         Debug.Log("Поражение вызвано");
 
         isGameOver = true;
-        Time.timeScale = 0f; // Остановить игру
+        Time.timeScale = 0f;
 
-        // Показать UI с сообщением о поражении
         if (gameOverUI != null)
         {
             Debug.Log("gameOverUI найдена, показываю панель");
@@ -200,13 +185,13 @@ public class HeartsSystem : MonoBehaviour
 
     private void RestartGame()
     {
-        Time.timeScale = 1f; // Возобновить время
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void TogglePause()
     {
-        if (isGameOver) return; // Не ставим паузу если игра закончилась
+        if (isGameOver) return;
 
         isPaused = !isPaused;
         Time.timeScale = isPaused ? 0f : 1f;
@@ -234,13 +219,11 @@ public class HeartsSystem : MonoBehaviour
 
     void Update()
     {
-        // Проверка нажатия Esc для паузы
         if (Input.GetKeyDown(KeyCode.Escape) && !isGameOver)
         {
             TogglePause();
         }
 
-        // Перезапуск при нажатии любой кнопки кроме Enter (если игра закончилась)
         if (isGameOver && Input.anyKeyDown && !Input.GetKeyDown(KeyCode.Return))
         {
             RestartGame();
