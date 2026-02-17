@@ -12,10 +12,13 @@ public class HeartsSystem : MonoBehaviour
     [SerializeField] private float heartSpacing = 1f;
     [SerializeField] private GameObject gameOverPrefab;
     [SerializeField] private GameObject madnessEffectPrefab; // Красный фильтр безумия
+    [SerializeField] private GameObject pausePrefab; // Префаб паузы
     private List<GameObject> spawnedHearts = new List<GameObject>();
     private bool isGameOver = false;
+    private bool isPaused = false;
     private GameObject gameOverUI;
     private GameObject madnessEffectUI;
+    private GameObject pauseUI;
 
     void Awake()
     {
@@ -55,6 +58,18 @@ public class HeartsSystem : MonoBehaviour
         else
         {
             Debug.LogWarning("madnessEffectPrefab не назначен!");
+        }
+
+        // Создать префаб паузы и скрыть его изначально
+        if (pausePrefab != null)
+        {
+            pauseUI = Instantiate(pausePrefab);
+            pauseUI.SetActive(false);
+            Debug.Log("Pause UI создана и скрыта");
+        }
+        else
+        {
+            Debug.LogWarning("pausePrefab не назначен!");
         }
 
         UpdateMadnessEffect();
@@ -189,8 +204,42 @@ public class HeartsSystem : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    public void TogglePause()
+    {
+        if (isGameOver) return; // Не ставим паузу если игра закончилась
+
+        isPaused = !isPaused;
+        Time.timeScale = isPaused ? 0f : 1f;
+
+        if (pauseUI != null)
+        {
+            pauseUI.SetActive(isPaused);
+            Debug.Log(isPaused ? "Игра на паузе" : "Игра продолжена");
+        }
+    }
+
+    public void Resume()
+    {
+        if (isPaused)
+        {
+            isPaused = false;
+            Time.timeScale = 1f;
+            if (pauseUI != null)
+            {
+                pauseUI.SetActive(false);
+                Debug.Log("Игра продолжена");
+            }
+        }
+    }
+
     void Update()
     {
+        // Проверка нажатия Esc для паузы
+        if (Input.GetKeyDown(KeyCode.Escape) && !isGameOver)
+        {
+            TogglePause();
+        }
+
         // Перезапуск при нажатии любой кнопки кроме Enter (если игра закончилась)
         if (isGameOver && Input.anyKeyDown && !Input.GetKeyDown(KeyCode.Return))
         {

@@ -800,6 +800,7 @@ MonoBehaviour:
   heartSpacing: 1.2
   gameOverPrefab: {fileID: 5292452875315569199, guid: c4c29945f29521644a07ce5990ebd585, type: 3}
   madnessEffectPrefab: {fileID: 4612388822881179794, guid: f7bfe298391f8dd41815c20b492c6e51, type: 3}
+  pausePrefab: {fileID: 3708359920829044738, guid: 02f45e5efef5c004d95662d2a8cfbb53, type: 3}
 --- !u!1 &967042421
 GameObject:
   m_ObjectHideFlags: 0
