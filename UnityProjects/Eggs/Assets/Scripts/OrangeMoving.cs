@@ -31,8 +31,7 @@ public class OrangeMoving : MonoBehaviour
         if (collision.gameObject.CompareTag("Danger"))
         {
             GameController.Instance.OnOrangeDestroyed();
-            HeartsSystem.Instance.heartCount--;
-            HeartsSystem.Instance.RedrawHearts();
+            HeartsSystem.Instance.LoseHeart();
             Destroy(gameObject);
             Debug.Log("Object destroyed by touching: " + collision.gameObject.name);
         }
