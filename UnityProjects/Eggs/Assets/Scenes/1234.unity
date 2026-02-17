@@ -799,6 +799,7 @@ MonoBehaviour:
   firstHeartPosition: {x: -3.45, y: 3, z: 0}
   heartSpacing: 1.2
   gameOverPrefab: {fileID: 5292452875315569199, guid: c4c29945f29521644a07ce5990ebd585, type: 3}
+  madnessEffectPrefab: {fileID: 4612388822881179794, guid: f7bfe298391f8dd41815c20b492c6e51, type: 3}
 --- !u!1 &967042421
 GameObject:
   m_ObjectHideFlags: 0

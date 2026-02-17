@@ -14,15 +14,19 @@ public class ButtonListener : MonoBehaviour
         {
             button.onClick.AddListener(OnButtonClicked);
         }
+        Debug.Log("ButtonListener инициализирован, найдено кнопок: " + buttons.Length);
     }
 
     public void SetOnClickAction(Action action)
     {
         onClickAction = action;
+        Debug.Log("SetOnClickAction установлена");
     }
 
     void OnButtonClicked()
     {
+        Debug.Log("Кнопка нажата!");
         onClickAction?.Invoke();
     }
 }
+

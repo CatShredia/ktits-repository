@@ -11,9 +11,11 @@ public class HeartsSystem : MonoBehaviour
     [SerializeField] private Vector3 firstHeartPosition = Vector3.zero;
     [SerializeField] private float heartSpacing = 1f;
     [SerializeField] private GameObject gameOverPrefab;
+    [SerializeField] private GameObject madnessEffectPrefab; // Красный фильтр безумия
     private List<GameObject> spawnedHearts = new List<GameObject>();
     private bool isGameOver = false;
     private GameObject gameOverUI;
+    private GameObject madnessEffectUI;
 
     void Awake()
     {
@@ -42,6 +44,20 @@ public class HeartsSystem : MonoBehaviour
         {
             Debug.LogWarning("gameOverPrefab не назначен!");
         }
+
+        // Создать эффект безумия и скрыть его изначально
+        if (madnessEffectPrefab != null)
+        {
+            madnessEffectUI = Instantiate(madnessEffectPrefab);
+            madnessEffectUI.SetActive(false);
+            Debug.Log("Madness effect создан и скрыт");
+        }
+        else
+        {
+            Debug.LogWarning("madnessEffectPrefab не назначен!");
+        }
+
+        UpdateMadnessEffect();
     }
 
     void SpawnHearts()
@@ -77,6 +93,9 @@ public class HeartsSystem : MonoBehaviour
 
         // Создать новые сердца
         SpawnHearts();
+
+        // Обновить эффект безумия
+        UpdateMadnessEffect();
     }
 
     public void LoseHeart()
@@ -121,11 +140,22 @@ public class HeartsSystem : MonoBehaviour
 
         // Уничтожаем визуальный объект
         Destroy(heart);
+
+        // Обновить эффект безумия
+        UpdateMadnessEffect();
+    }
+
+    private void UpdateMadnessEffect()
+    {
+        if (madnessEffectUI != null)
+        {
+            madnessEffectUI.SetActive(heartCount < 2);
+        }
     }
 
     private void GameOver()
     {
-        Debug.Log("Поражение");
+        Debug.Log("Поражение вызвано");
 
         isGameOver = true;
         Time.timeScale = 0f; // Остановить игру
@@ -133,14 +163,23 @@ public class HeartsSystem : MonoBehaviour
         // Показать UI с сообщением о поражении
         if (gameOverUI != null)
         {
-            Debug.Log("Условие поражения");
-
+            Debug.Log("gameOverUI найдена, показываю панель");
             gameOverUI.SetActive(true);
+
             ButtonListener buttonListener = gameOverUI.GetComponent<ButtonListener>();
             if (buttonListener != null)
             {
+                Debug.Log("ButtonListener найден, устанавливаю действие");
                 buttonListener.SetOnClickAction(RestartGame);
             }
+            else
+            {
+                Debug.LogWarning("ButtonListener не найден на gameOverUI!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("gameOverUI = null! Панель не была создана.");
         }
     }
 
