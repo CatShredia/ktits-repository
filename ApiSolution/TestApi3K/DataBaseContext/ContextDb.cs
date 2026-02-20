@@ -12,5 +12,6 @@ namespace TestApi3K.DataBaseContext
 
         public DbSet<Users> Users { get; set; }
         public DbSet<Logins> Logins { get; set; }
+        public DbSet<Roles> Roles { get; set; }
     }
 }

@@ -6,11 +6,24 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace TestApi3K.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class InitialTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    id_Role = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.id_Role);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -18,11 +31,18 @@ namespace TestApi3K.Migrations
                     id_User = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Descrioption = table.Column<string>(type: "text", nullable: false)
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    id_Role = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.id_User);
+                    table.ForeignKey(
+                        name: "FK_Users_Roles_id_Role",
+                        column: x => x.id_Role,
+                        principalTable: "Roles",
+                        principalColumn: "id_Role",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,6 +70,11 @@ namespace TestApi3K.Migrations
                 name: "IX_Logins_User_id",
                 table: "Logins",
                 column: "User_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_id_Role",
+                table: "Users",
+                column: "id_Role");
         }
 
         /// <inheritdoc />
@@ -60,6 +85,9 @@ namespace TestApi3K.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
         }
     }
 }
