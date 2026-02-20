@@ -1,0 +1,34 @@
+// lib/main.dart
+import 'package:flutter/material.dart';
+import 'auth_page.dart';
+import 'register_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: 'https://mjjncjvuexsneazjajph.supabase.co',
+    anonKey: 'sb_publishable_G0-YAme8jkW4KAxteNz1PQ_MIDM-Ld0',
+  );
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Benova',
+      theme: ThemeData.light(),
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      routes:
+        '/': (context) => CheckPage(),
+        '/auth': (context) => AuthPage(),
+        '/reg': (context) => RegPage(),
+        '/home': (context) => HomePage(),
+        '/recovery': (context) => RecoveryPage(),
+  }
+    );
+  }
+}
