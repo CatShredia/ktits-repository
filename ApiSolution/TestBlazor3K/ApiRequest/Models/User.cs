@@ -1,4 +1,4 @@
-﻿namespace TestBlazor3K.ApiRequest.Model
+﻿namespace TestBlazor3K.ApiRequest.Models
 {
     public class UserDataShort
     {

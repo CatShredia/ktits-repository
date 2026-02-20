@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using TestBlazor3K.ApiRequest.Model;
+using TestBlazor3K.ApiRequest.Models;
 
 namespace TestBlazor3K.ApiRequest
 {

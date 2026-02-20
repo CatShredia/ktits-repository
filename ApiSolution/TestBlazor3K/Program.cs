@@ -9,8 +9,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddScoped<ApiRequestService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5039/") });
-builder.Services.AddSingleton<UserService>();
 
 var app = builder.Build();
 
