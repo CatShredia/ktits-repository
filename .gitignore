@@ -16,3 +16,7 @@
 **/.env
 
 UnityProjects/
+Laravel/
+
+flutter*/
+~$*
