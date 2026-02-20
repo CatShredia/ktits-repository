@@ -16,6 +16,26 @@ namespace TestApi3K.Service
             _context = context;
         }
 
+        public async Task<Users?> GetUserByLoginAsync(string login)
+        {
+            if (string.IsNullOrWhiteSpace(login))
+            {
+                return null;
+            }
+
+            var selectedLogin = await _context.Logins
+                .AsNoTracking()
+                .Include(logins => logins.Users)
+                .FirstOrDefaultAsync(logins => logins.Login == login);
+
+            if (selectedLogin == null)
+            {
+                return null;
+            }
+            
+            return selectedLogin.Users;
+        }
+
         public async Task<IActionResult> GetAllUsersAsync()
         {
             var users = await _context.Users.ToListAsync();

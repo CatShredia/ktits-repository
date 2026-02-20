@@ -3,7 +3,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using TestApi3K.Interfaces;
 using TestApi3K.Requests;
+using TestApi3K.Service;
 
 namespace TestBlazor3K.ApiRequest.Controllers;
 
@@ -12,12 +14,12 @@ namespace TestBlazor3K.ApiRequest.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IConfiguration _config;
-    // private readonly UserService _userService; // Инжекция сервиса для работы с БД
+    private readonly IUsersLoginsService _userService;
 
-    public AuthController(IConfiguration config) // , UserService userService
+    public AuthController(IConfiguration config, IUsersLoginsService service) 
     {
         _config = config;
-        // _userService = userService;
+        _userService = service;
     }
 
     [HttpPost("login")]
@@ -32,21 +34,10 @@ public class AuthController : ControllerBase
             });
         }
 
-        // TODO: ЗАМЕНИТЬ ЭТУ ЧАСТЬ НА РЕАЛЬНУЮ ПРОВЕРКУ В БАЗЕ ДАННЫХ
-        // Пример: var user = await _userService.GetUserByLoginAsync(request.Login);
-        // if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) ...
+        var user = await _userService.GetUserByLoginAsync(request.Login);
         
-        // Для теста хардкодим пользователя (удалите это в продакшене!)
-        if (request.Login != "admin" || request.Password != "12345")
-        {
-            return Unauthorized(new AuthResponse 
-            { 
-                Success = false, 
-                Message = "Invalid login or password." 
-            });
-        }
+        if (user == null) return NotFound();
 
-        // Генерация токена
         var token = GenerateJwtToken(request.Login);
 
         return Ok(new AuthResponse
