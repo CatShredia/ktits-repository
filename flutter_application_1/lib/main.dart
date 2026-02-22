@@ -22,13 +22,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.light(),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
-      routes:
-        '/': (context) => CheckPage(),
-        '/auth': (context) => AuthPage(),
-        '/reg': (context) => RegPage(),
-        '/home': (context) => HomePage(),
-        '/recovery': (context) => RecoveryPage(),
-  }
+      routes: {
+        '/': (context) => AuthPage(),
+        '/register': (context) => RegisterPage(),
+      },
     );
   }
 }
