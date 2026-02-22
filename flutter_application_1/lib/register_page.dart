@@ -1,5 +1,6 @@
 // lib/register_page.dart
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -9,6 +10,71 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _showMessage(String message) async {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _register() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+    final confirm = _confirmController.text;
+
+    if (email.isEmpty || password.isEmpty || confirm.isEmpty) {
+      _showMessage('Заполните все поля');
+      return;
+    }
+    if (password != confirm) {
+      _showMessage('Пароли не совпадают');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      final res = await Supabase.instance.client.auth.signUp(
+        email: email,
+        password: password,
+      );
+      final user = res.user;
+      if (user == null) {
+        // If no user returned, show a generic error. More detailed handling
+        // can inspect `res` for messages depending on the gotrue version.
+        _showMessage('Не удалось зарегистрироваться');
+      } else {
+        // Optionally insert a profile row into the `profiles` table
+        try {
+          await Supabase.instance.client.from('profiles').insert({
+            'id': user.id,
+            'email': email,
+          }).select();
+        } catch (_) {
+          // ignore profile insertion errors for now
+        }
+
+        _showMessage('Регистрация успешна. Проверьте почту для подтверждения.');
+        if (mounted) Navigator.pushNamed(context, '/');
+      }
+    } catch (e) {
+      _showMessage(e.toString());
+    }
+    if (mounted) setState(() => _isLoading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,6 +92,8 @@ class _RegisterPageState extends State<RegisterPage> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
                 cursorColor: Colors.black,
                 style: TextStyle(color: Colors.orange),
                 decoration: InputDecoration(
@@ -48,6 +116,8 @@ class _RegisterPageState extends State<RegisterPage> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextField(
+                controller: _passwordController,
+                obscureText: true,
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   labelStyle: TextStyle(color: Colors.black),
@@ -73,6 +143,8 @@ class _RegisterPageState extends State<RegisterPage> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextField(
+                controller: _confirmController,
+                obscureText: true,
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   labelStyle: TextStyle(color: Colors.black),
@@ -96,16 +168,16 @@ class _RegisterPageState extends State<RegisterPage> {
               width: MediaQuery.of(context).size.width * 0.8,
               child: ElevatedButton(
                 style: ButtonStyle(
-                  shape: WidgetStatePropertyAll(
+                  shape: MaterialStatePropertyAll(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  backgroundColor: WidgetStatePropertyAll(Colors.orange),
+                  backgroundColor: MaterialStatePropertyAll(Colors.orange),
                 ),
-                onPressed: () {},
+                onPressed: _isLoading ? null : _register,
                 child: Text(
-                  'Зарегистрироваться',
+                  _isLoading ? 'Подождите...' : 'Зарегистрироваться',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
