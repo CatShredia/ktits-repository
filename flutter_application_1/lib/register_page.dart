@@ -1,8 +1,6 @@
 // lib/register_page.dart
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:convert';
-import 'package:crypto/crypto.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -48,24 +46,33 @@ class _RegisterPageState extends State<RegisterPage> {
 
     setState(() => _isLoading = true);
     try {
-      // Для прототипа: хешируем пароль и сохраняем запись в таблице `users`.
-      // Схема `users`: id (uuid), created_at (timestampz), full_name, avatar, email, password
-      // В production используйте защищённый серверный endpoint с service_role ключом
-      // для создания аутентификационных записей.
-      final passwordHash = sha256.convert(utf8.encode(password)).toString();
+      // Регистрация через Supabase Auth, затем создаём запись в таблице `users`
+      // с `id = auth.user.id`. Это гарантирует, что `id` не будет NULL
+      // если в базе используется auth.uid() в DEFAULT или RLS.
+      final signUpRes = await Supabase.instance.client.auth.signUp(
+        email: email,
+        password: password,
+      );
 
-      final response = await Supabase.instance.client.from('users').insert({
+      // Получаем user id. Иногда signUp возвращает user, иногда нужно взять currentUser.
+      final user = signUpRes?.user ?? Supabase.instance.client.auth.currentUser;
+      if (user == null || user.id == null) {
+        _showMessage('Не удалось зарегистрировать пользователя');
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      // Создаём профиль/строку в таблице `users`. Передаём `id` явным образом.
+      final insertRes = await Supabase.instance.client.from('users').insert({
+        'id': user.id,
         'email': email,
-        'password': passwordHash,
-        'created_at': DateTime.now().toIso8601String(),
+        'password': password,
       }).select();
 
-      // Проверяем результат вставки. На разных версиях клиента response может быть
-      // списком вставленных строк или Map с ошибкой.
-      if (response == null || (response is List && response.isEmpty)) {
-        _showMessage('Не удалось сохранить пользователя в базе');
+      if (insertRes == null || (insertRes is List && insertRes.isEmpty)) {
+        _showMessage('Не удалось сохранить профиль пользователя в базе');
       } else {
-        _showMessage('Регистрация успешна (без подтверждения по почте)');
+        _showMessage('Регистрация успешна');
         if (mounted) Navigator.pushNamed(context, '/');
       }
     } catch (e) {
