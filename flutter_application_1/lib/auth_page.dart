@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -8,6 +9,67 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+  bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _showMessage(String message) async {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _login() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      _showMessage('Заполните email и пароль');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      final response = await Supabase.instance.client.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+
+      // Проверяем, что пользователь успешно вошёл
+      final user = response.user;
+      if (user == null) {
+        _showMessage('Ошибка входа: пользователь не найден или пароль неверен');
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      _showMessage('Вход успешен');
+      if (mounted) Navigator.pushNamed(context, '/');
+    } catch (e) {
+      String errorMsg = 'Ошибка входа';
+      if (e.toString().contains('Invalid login')) {
+        errorMsg = 'Неверный email или пароль';
+      } else if (e.toString().contains('User not found')) {
+        errorMsg = 'Пользователь не найден';
+      } else if (e.toString().contains('Email not confirmed')) {
+        errorMsg = 'Email не подтверждён. Проверьте ваш почтовый ящик.';
+      } else {
+        errorMsg = 'Ошибка: ${e.toString()}';
+      }
+      _showMessage(errorMsg);
+    }
+    if (mounted) setState(() => _isLoading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,6 +87,8 @@ class _AuthPageState extends State<AuthPage> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
                 cursorColor: Colors.black,
                 style: TextStyle(color: Colors.orange),
                 decoration: InputDecoration(
@@ -47,6 +111,8 @@ class _AuthPageState extends State<AuthPage> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   labelStyle: TextStyle(color: Colors.black),
@@ -54,8 +120,13 @@ class _AuthPageState extends State<AuthPage> {
                   hintText: 'Введите пароль',
                   prefixIcon: Icon(Icons.lock),
                   suffixIcon: IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.visibility),
+                    onPressed: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -90,14 +161,14 @@ class _AuthPageState extends State<AuthPage> {
                 style: ButtonStyle(
                   shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(15),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
                   backgroundColor: WidgetStatePropertyAll(Colors.orange),
                 ),
-                onPressed: () {},
+                onPressed: _isLoading ? null : _login,
                 child: Text(
-                  'Войти',
+                  _isLoading ? 'Подождите...' : 'Войти',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

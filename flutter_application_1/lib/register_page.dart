@@ -46,15 +46,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
     setState(() => _isLoading = true);
     try {
-      // Регистрация через Supabase Auth, затем создаём запись в таблице `users`
-      // с `id = auth.user.id`. Это гарантирует, что `id` не будет NULL
-      // если в базе используется auth.uid() в DEFAULT или RLS.
       final signUpRes = await Supabase.instance.client.auth.signUp(
         email: email,
         password: password,
       );
 
-      // Получаем user id. Иногда signUp возвращает user, иногда нужно взять currentUser.
       final user = signUpRes?.user ?? Supabase.instance.client.auth.currentUser;
       if (user == null || user.id == null) {
         _showMessage('Не удалось зарегистрировать пользователя');
@@ -62,7 +58,6 @@ class _RegisterPageState extends State<RegisterPage> {
         return;
       }
 
-      // Создаём профиль/строку в таблице `users`. Передаём `id` явным образом.
       final insertRes = await Supabase.instance.client.from('users').insert({
         'id': user.id,
         'email': email,
