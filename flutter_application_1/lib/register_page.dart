@@ -1,6 +1,8 @@
 // lib/register_page.dart
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -46,31 +48,28 @@ class _RegisterPageState extends State<RegisterPage> {
 
     setState(() => _isLoading = true);
     try {
-      final res = await Supabase.instance.client.auth.signUp(
-        email: email,
-        password: password,
-      );
-      final user = res.user;
-      if (user == null) {
-        // If no user returned, show a generic error. More detailed handling
-        // can inspect `res` for messages depending on the gotrue version.
-        _showMessage('Не удалось зарегистрироваться');
-      } else {
-        // Optionally insert a profile row into the `profiles` table
-        try {
-          await Supabase.instance.client.from('profiles').insert({
-            'id': user.id,
-            'email': email,
-          }).select();
-        } catch (_) {
-          // ignore profile insertion errors for now
-        }
+      // Для прототипа: хешируем пароль и сохраняем запись в таблице `users`.
+      // Схема `users`: id (uuid), created_at (timestampz), full_name, avatar, email, password
+      // В production используйте защищённый серверный endpoint с service_role ключом
+      // для создания аутентификационных записей.
+      final passwordHash = sha256.convert(utf8.encode(password)).toString();
 
-        _showMessage('Регистрация успешна. Проверьте почту для подтверждения.');
+      final response = await Supabase.instance.client.from('users').insert({
+        'email': email,
+        'password': passwordHash,
+        'created_at': DateTime.now().toIso8601String(),
+      }).select();
+
+      // Проверяем результат вставки. На разных версиях клиента response может быть
+      // списком вставленных строк или Map с ошибкой.
+      if (response == null || (response is List && response.isEmpty)) {
+        _showMessage('Не удалось сохранить пользователя в базе');
+      } else {
+        _showMessage('Регистрация успешна (без подтверждения по почте)');
         if (mounted) Navigator.pushNamed(context, '/');
       }
     } catch (e) {
-      _showMessage(e.toString());
+      _showMessage('Ошибка: ${e.toString()}');
     }
     if (mounted) setState(() => _isLoading = false);
   }
