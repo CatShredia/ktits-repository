@@ -72,7 +72,6 @@
     private string? errorMessage;
     private bool isLoggingIn = false;
 
-    // Модель для данных формы
     public class LoginModel
     {
         public string Login { get; set; } = string.Empty;
@@ -81,42 +80,20 @@
 
     private async Task HandleLogin()
     {
+        Console.WriteLine("iugbbihervbiuhvei==========");
         if (string.IsNullOrWhiteSpace(model.Login) || string.IsNullOrWhiteSpace(model.Password))
         {
             errorMessage = "Login and password are required.";
             return;
         }
 
-        isLoggingIn = true;
-        errorMessage = null;
-
         try
         {
-            // Вызов вашего API сервиса
-            // Предполагается, что метод возвращает объект с свойством Token
-            var response = await UserService.LoginAsync(model.Login, model.Password);
-
-            if (response != null && !string.IsNullOrEmpty(response.Token))
-            {
-                // 1. Сохраняем JWT токен в LocalStorage браузера
-                await JS.InvokeVoidAsync("localStorage.setItem", "authToken", response.Token);
-
-                // 2. Перенаправляем пользователя на главную страницу или панель управления
-                Navigation.NavigateTo("/", forceLoad: true); 
-                // forceLoad: true важен, чтобы перезагрузить состояние авторизации
-            }
-            else
-            {
-                errorMessage = "Invalid login or password.";
-            }
+            
         }
         catch (Exception ex)
         {
             errorMessage = $"Error: {ex.Message}";
-        }
-        finally
-        {
-            isLoggingIn = false;
         }
     }
 }
