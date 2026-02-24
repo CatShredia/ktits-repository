@@ -53,6 +53,7 @@ namespace TestApi3K.Service
             {
                 Name = newUser.Name,
                 Description = newUser.Description,
+                id_Role = newUser.id_Role
             };
 
             await _context.Users.AddAsync(user);
