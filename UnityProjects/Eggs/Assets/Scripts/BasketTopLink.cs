@@ -4,6 +4,9 @@ public class BasketTopLink : MonoBehaviour
 {
     public GameObject ParentObject;
 
+    // Добавляем поле для выбора, кто владеет этой корзиной
+    public GameController.Collector collectorType = GameController.Collector.Gena;
+
     void Start()
     {
         if (ParentObject == null)
@@ -20,9 +23,7 @@ public class BasketTopLink : MonoBehaviour
         }
 
         float thickness = 1f;
-
         transform.localScale = Vector3.one;
-
         transform.SetParent(ParentObject.transform, false);
 
         Vector2 topLocal2D = parentCollider.offset + Vector2.up * (parentCollider.size.y / 2f + thickness / 2f);
@@ -30,24 +31,22 @@ public class BasketTopLink : MonoBehaviour
 
         var triggerCollider = GetComponent<BoxCollider2D>();
         if (triggerCollider == null) triggerCollider = gameObject.AddComponent<BoxCollider2D>();
+
         triggerCollider.isTrigger = true;
         triggerCollider.size = new Vector2(parentCollider.size.x, thickness);
         triggerCollider.offset = Vector2.zero;
-    }
-
-    void Update()
-    {
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Orange"))
         {
-            Debug.Log("Orange entered the top trigger!");
+            Debug.Log($"Orange entered {collectorType}'s basket!");
 
             if (GameController.Instance != null)
             {
-                GameController.Instance.OnOrangeCollected();
+                // Передаем тип коллектора из поля
+                GameController.Instance.OnOrangeCollected(collectorType);
                 GameController.Instance.OnOrangeDestroyed();
             }
 

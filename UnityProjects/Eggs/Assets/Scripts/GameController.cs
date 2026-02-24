@@ -8,7 +8,12 @@ public class GameController : MonoBehaviour
     public Transform[] spawnPoints;
     private int activeOranges = 0;
     public int maxOranges = 4;
-    public int score = 0;
+
+    // Separate scores
+    public int genaScore = 0;
+    public int cheburashkaScore = 0;
+
+    public enum Collector { Gena, Cheburashka }
 
     void Awake()
     {
@@ -26,28 +31,33 @@ public class GameController : MonoBehaviour
         activeOranges--;
     }
 
-    public void OnOrangeCollected()
+    // New unified method with collector type
+    public void OnOrangeCollected(Collector collector)
     {
-        score++;
-        Debug.Log("Orange collected! Score: " + score);
+        switch (collector)
+        {
+            case Collector.Gena:
+                genaScore++;
+                Debug.Log($"Gena caught an orange! Gena Score: {genaScore}");
+                break;
+            case Collector.Cheburashka:
+                cheburashkaScore++;
+                Debug.Log($"Cheburashka caught an orange! Cheburashka Score: {cheburashkaScore}");
+                break;
+        }
     }
 
     void TrySpawnOrange()
     {
         if (activeOranges < maxOranges && spawnPoints.Length >= 4)
         {
-            int i = Random.Range(0, 4);
-            GameObject obj = Instantiate(orangePrefab, spawnPoints[i].position, Quaternion.identity) as GameObject;
+            int i = Random.Range(0, spawnPoints.Length); // Fixed index range
+            GameObject obj = Instantiate(orangePrefab, spawnPoints[i].position, Quaternion.identity);
+
             if (obj != null)
             {
-                try
-                {
-                    obj.tag = "Orange";
-                }
-                catch (UnityException)
-                {
-                    Debug.LogWarning("GameController: Tag 'Orange' is not defined.");
-                }
+                try { obj.tag = "Orange"; }
+                catch (UnityException) { Debug.LogWarning("Tag 'Orange' not defined."); }
             }
             activeOranges++;
         }

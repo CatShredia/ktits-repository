@@ -1034,7 +1034,8 @@ MonoBehaviour:
   - {fileID: 1187529824}
   - {fileID: 284592663}
   maxOranges: 4
-  score: 0
+  genaScore: 0
+  cheburashkaScore: 0
 --- !u!4 &916489866
 Transform:
   m_ObjectHideFlags: 0
@@ -1325,7 +1326,7 @@ Transform:
   m_GameObject: {fileID: 1099448450}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.10452837, w: 0.9945219}
-  m_LocalPosition: {x: -1.4195385, y: 1.0621539, z: 0}
+  m_LocalPosition: {x: -1.28, y: 0.38, z: 0}
   m_LocalScale: {x: 0.09390905, y: 0.09390905, z: 0.093909055}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2243,6 +2244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasketTopLink
   ParentObject: {fileID: 1429081032}
+  collectorType: 1
 --- !u!50 &1627829960
 Rigidbody2D:
   serializedVersion: 5
@@ -2589,7 +2591,7 @@ Transform:
   m_GameObject: {fileID: 1980825273}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1, y: -4, z: 0}
+  m_LocalPosition: {x: -1, y: -2.78, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2715,6 +2717,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasketTopLink
   ParentObject: {fileID: 1099448450}
+  collectorType: 0
 --- !u!1 &2120214698
 GameObject:
   m_ObjectHideFlags: 0

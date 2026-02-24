@@ -26,12 +26,12 @@ public class ScoreDisplay : MonoBehaviour
     {
         if (GameController.Instance != null && scoreText != null)
         {
-            scoreText.text = "Score: " + GameController.Instance.score;
+            scoreText.text = "Score: " + GameController.Instance.cheburashkaScore;
         }
 
         if (GameController.Instance != null && genaText != null)
         {
-            genaText.text = "Score: " + GameController.Instance.score;
+            genaText.text = "Score: " + GameController.Instance.genaScore;
         }
     }
 }
