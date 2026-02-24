@@ -78,7 +78,6 @@ else
     private List<UserDataShort>? users;
     private ReqDataUser reqDataUser = new();
     
-    // State management
     private bool isLoading = true;
     private bool isSubmitting = false;
     private string? errorMessage;
@@ -113,7 +112,7 @@ else
 
     private async Task HandleSubmit()
     {
-        if (isSubmitting) return; // Prevent double clicks
+        if (isSubmitting) return; 
 
         isSubmitting = true;
         errorMessage = null;
@@ -124,9 +123,7 @@ else
 
             if (result.status)
             {
-                // Reset form
                 reqDataUser = new ReqDataUser();
-                // Refresh list
                 await GetAllUsersAsync();
             }
             else
