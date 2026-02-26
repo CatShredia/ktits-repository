@@ -1,0 +1,92 @@
+﻿@page "/login"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@using TestBlazorAssembly.ApiRequest.Services
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@inject UserService UserService
+
+<PageTitle>Login</PageTitle>
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="row border rounded-5 p-3 bg-white shadow box-area" style="max-width: 400px; width: 100%;">
+        <div class="col-md-12">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold">Welcome Back</h3>
+                <p class="text-muted">Please enter your credentials</p>
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <div>@errorMessage</div>
+                </div>
+            }
+
+            <form @onsubmit="HandleLogin">
+                <div class="mb-3">
+                    <label for="loginInput" class="form-label">Login</label>
+                    <input type="text"                id="loginInput"               class="form-control form-control-lg"
+                           placeholder="Enter your login"                 @bind="model.Login"                 disabled="@isLoggingIn" />
+                </div>
+
+                <div class="mb-4">
+                    <label for="passwordInput" class="form-label">Password</label>
+                    <input type="password"                id="passwordInput"               class="form-control form-control-lg"
+                           placeholder="Enter your password"                 @bind="model.Password"                 disabled="@isLoggingIn" />
+                </div>
+
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-primary btn-lg" disabled="@isLoggingIn">
+                        @if (isLoggingIn)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>Signing in...</span>
+                        }
+                        else
+                        {
+                            <span>Sign In</span>
+                        }
+                    </button>
+                </div>
+
+                <div class="text-center">
+                    <small class="text-muted">Don't have an account? <a href="/register"
+                                                                            class="text-decoration-none">Register</a></small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+@code {
+    private LoginModel model = new();
+    private string? errorMessage;
+    private bool isLoggingIn = false;
+
+    public class LoginModel
+    {
+        public string Login { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    private async Task HandleLogin()
+    {
+        Console.WriteLine("iugbbihervbiuhvei==========");
+        if (string.IsNullOrWhiteSpace(model.Login) || string.IsNullOrWhiteSpace(model.Password))
+        {
+            errorMessage = "Login and password are required.";
+            return;
+        }
+
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+    }
+}
