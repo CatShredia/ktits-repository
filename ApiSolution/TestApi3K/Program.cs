@@ -16,6 +16,16 @@ builder.Services.AddDbContext<ContextDb>(options =>
 
 builder.Services.AddScoped<IUsersLoginsService, UserLoginService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyPort", policy =>
+    {
+        policy.SetIsOriginAllowed(origin => true)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
 
 var app = builder.Build();
@@ -28,6 +38,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAnyPort");
 
 app.UseAuthorization();
 
