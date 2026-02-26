@@ -27,14 +27,14 @@
             <form @onsubmit="HandleLogin">
                 <div class="mb-3">
                     <label for="loginInput" class="form-label">Login</label>
-                    <input type="text"                id="loginInput"               class="form-control form-control-lg"
-                           placeholder="Enter your login"                 @bind="model.Login"                 disabled="@isLoggingIn" />
+                    <input type="text" id="loginInput" class="form-control form-control-lg"
+                           placeholder="Enter your login" @bind="model.Login" disabled="@isLoggingIn" />
                 </div>
 
                 <div class="mb-4">
                     <label for="passwordInput" class="form-label">Password</label>
-                    <input type="password"                id="passwordInput"               class="form-control form-control-lg"
-                           placeholder="Enter your password"                 @bind="model.Password"                 disabled="@isLoggingIn" />
+                    <input type="password" id="passwordInput" class="form-control form-control-lg"
+                           placeholder="Enter your password" @bind="model.Password" disabled="@isLoggingIn" />
                 </div>
 
                 <div class="d-grid mb-3">
@@ -73,20 +73,38 @@
 
     private async Task HandleLogin()
     {
-        Console.WriteLine("iugbbihervbiuhvei==========");
         if (string.IsNullOrWhiteSpace(model.Login) || string.IsNullOrWhiteSpace(model.Password))
         {
             errorMessage = "Login and password are required.";
             return;
         }
 
+        isLoggingIn = true;
+        errorMessage = null;
+
         try
         {
+            // в сервис запрос к API
+            var response = await UserService.LoginAsync(model.Login, model.Password);
 
+            if (response != null && !string.IsNullOrEmpty(response.Token))
+            {
+                await JS.InvokeVoidAsync("localStorage.setItem", "authToken", response.Token);
+
+                Navigation.NavigateTo("/", forceLoad: true);
+            }
+            else
+            {
+                errorMessage = "Invalid login or password.";
+            }
         }
         catch (Exception ex)
         {
             errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isLoggingIn = false;
         }
     }
 }
