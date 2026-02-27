@@ -49,6 +49,60 @@ public class AuthController : ControllerBase
         });
     }
 
+    [HttpPost("register")]
+    public async Task<ActionResult<AuthResponse>> Register([FromBody] CreateNewUserAndLogin request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Password))
+        {
+            return BadRequest(new AuthResponse
+            {
+                Success = false,
+                Message = "Login and password are required."
+            });
+        }
+
+        if (request.Password != request.ConfirmPassword)
+        {
+            return BadRequest(new AuthResponse
+            {
+                Success = false,
+                Message = "Passwords do not match."
+            });
+        }
+
+        var existingUser = await _userService.GetUserByLoginAsync(request.Login);
+        if (existingUser != null)
+        {
+            return BadRequest(new AuthResponse
+            {
+                Success = false,
+                Message = "Login already exists."
+            });
+        }
+
+        // Создаём пользователя
+        var result = await _userService.CreateUserAsync(request);
+
+        if (!result)
+        {
+            return BadRequest(new AuthResponse
+            {
+                Success = false,
+                Message = "Failed to create user."
+            });
+        }
+
+        var token = GenerateJwtToken(request.Login);
+
+        return Ok(new AuthResponse
+        {
+            Token = token,
+            UserName = request.Login,
+            Success = true,
+            Message = "Registration successful"
+        });
+    }
+
     private string GenerateJwtToken(string login)
     {
         var secretKey = _config["Jwt:SecretKey"]

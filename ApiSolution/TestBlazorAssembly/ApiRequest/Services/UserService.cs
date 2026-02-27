@@ -52,6 +52,46 @@ public class UserService
         };
     }
 
+    public async Task<AuthResponse> RegisterAsync(string login, string password, string confirmPassword, string userName)
+    {
+        if (password != confirmPassword)
+        {
+            return new AuthResponse
+            {
+                Success = false,
+                Message = "Passwords do not match."
+            };
+        }
+
+        var request = new
+        {
+            Name = userName,
+            Description = string.Empty,
+            Login = login,
+            Password = password,
+            ConfirmPassword = confirmPassword,
+            id_Role = 1
+        };
+
+        var response = await _httpClient.PostAsJsonAsync("api/Auth/register", request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
+            if (result != null)
+            {
+                return result;
+            }
+        }
+
+        var errorContent = await response.Content.ReadAsStringAsync();
+        return new AuthResponse
+        {
+            Success = false,
+            Message = $"Registration failed: {response.StatusCode}. {errorContent}"
+        };
+    }
+
     public async Task LogoutAsync()
     {
         await RemoveTokenAsync();

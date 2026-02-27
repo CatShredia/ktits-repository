@@ -1,0 +1,157 @@
+@page "/register"
+@using Microsoft.AspNetCore.Components.Authorization
+@using TestBlazorAssembly.ApiRequest.Services
+@inject NavigationManager Navigation
+@inject UserService UserService
+
+<PageTitle>Register</PageTitle>
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="row border rounded-5 p-3 bg-white shadow box-area" style="max-width: 400px; width: 100%;">
+        <div class="col-md-12">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold">Create Account</h3>
+                <p class="text-muted">Please fill in your details</p>
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <div>@errorMessage</div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(successMessage))
+            {
+                <div class="alert alert-success d-flex align-items-center" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <div>@successMessage</div>
+                </div>
+            }
+
+            <form @onsubmit="HandleRegister">
+                <div class="mb-3">
+                    <label for="userNameInput" class="form-label">User Name</label>
+                    <input type="text" id="userNameInput" class="form-control form-control-lg"
+                           placeholder="Enter your user name" @bind="model.UserName" disabled="@isRegistering" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="loginInput" class="form-label">Login</label>
+                    <input type="text" id="loginInput" class="form-control form-control-lg"
+                           placeholder="Enter your login" @bind="model.Login" disabled="@isRegistering" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="passwordInput" class="form-label">Password</label>
+                    <input type="password" id="passwordInput" class="form-control form-control-lg"
+                           placeholder="Enter your password" @bind="model.Password" disabled="@isRegistering" />
+                </div>
+
+                <div class="mb-4">
+                    <label for="confirmPasswordInput" class="form-label">Confirm Password</label>
+                    <input type="password" id="confirmPasswordInput" class="form-control form-control-lg"
+                           placeholder="Confirm your password" @bind="model.ConfirmPassword" disabled="@isRegistering" />
+                </div>
+
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-primary btn-lg" disabled="@isRegistering">
+                        @if (isRegistering)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>Creating account...</span>
+                        }
+                        else
+                        {
+                            <span>Sign Up</span>
+                        }
+                    </button>
+                </div>
+
+                <div class="text-center">
+                    <small class="text-muted">Already have an account? <a href="/login"
+                                                                              class="text-decoration-none">Login</a></small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+@code {
+    private RegisterModel model = new();
+    private string? errorMessage;
+    private string? successMessage;
+    private bool isRegistering = false;
+
+    public class RegisterModel
+    {
+        public string Login { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
+    }
+
+    private async Task HandleRegister()
+    {
+        errorMessage = null;
+        successMessage = null;
+
+        // Валидация полей
+        if (string.IsNullOrWhiteSpace(model.Login))
+        {
+            errorMessage = "Login is required.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(model.UserName))
+        {
+            errorMessage = "User name is required.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(model.Password))
+        {
+            errorMessage = "Password is required.";
+            return;
+        }
+
+        if (model.Password.Length < 6)
+        {
+            errorMessage = "Password must be at least 6 characters long.";
+            return;
+        }
+
+        if (model.Password != model.ConfirmPassword)
+        {
+            errorMessage = "Passwords do not match.";
+            return;
+        }
+
+        isRegistering = true;
+
+        try
+        {
+            var response = await UserService.RegisterAsync(model.Login, model.Password, model.ConfirmPassword, model.UserName);
+
+            if (response.Success || !string.IsNullOrEmpty(response.Token))
+            {
+                successMessage = "Registration successful! Redirecting to login...";
+                await Task.Delay(2000); // Show message for 2 seconds
+                Navigation.NavigateTo("/login");
+            }
+            else
+            {
+                errorMessage = response.Message ?? "Registration failed. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isRegistering = false;
+        }
+    }
+}

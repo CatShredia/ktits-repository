@@ -9,5 +9,6 @@ namespace TestApi3K.Interfaces
         Task<IActionResult> GetAllUsersAsync();
         Task<IActionResult> CreateNewUserAndLoginAsync(CreateNewUserAndLogin newUser);
         Task<Users?> GetUserByLoginAsync(string login);
+        Task<bool> CreateUserAsync(CreateNewUserAndLogin newUser);
     }
 }
