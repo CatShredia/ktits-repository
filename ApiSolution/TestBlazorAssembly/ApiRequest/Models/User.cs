@@ -27,8 +27,25 @@
         public int id_Role { get; set; } = 2;
     }
 
+    public class EditDataUser
+    {
+        public int id_User { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Login { get; set; }
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
+        public int id_Role { get; set; } = 2;
+    }
+
     public class UserAddData
     {
         public bool status { get; set; }
+    }
+
+    public class UserOperationResponse
+    {
+        public bool Success { get; set; }
+        public string? Message { get; set; }
     }
 }

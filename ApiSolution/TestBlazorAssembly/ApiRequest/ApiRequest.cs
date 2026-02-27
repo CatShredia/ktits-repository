@@ -69,5 +69,69 @@ namespace TestBlazorAssembly.ApiRequest
                 return new UserAddData();
             }
         }
+
+        public async Task<UserOperationResponse> UpdateUser(EditDataUser user)
+        {
+            var url = "api/UsersLogins/putUserAndLogin";
+
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync(url, user);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var result = JsonSerializer.Deserialize<UserOperationResponse>(responseContent);
+                    return result ?? new UserOperationResponse { Success = true };
+                }
+
+                return new UserOperationResponse
+                {
+                    Success = false,
+                    Message = $"Failed to update user. Status: {response.StatusCode}"
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при запросе: {ex.Message}");
+                return new UserOperationResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<UserOperationResponse> DeleteUser(int userId)
+        {
+            var url = $"api/UsersLogins/deleteUser/{userId}";
+
+            try
+            {
+                var response = await _httpClient.DeleteAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var result = JsonSerializer.Deserialize<UserOperationResponse>(responseContent);
+                    return result ?? new UserOperationResponse { Success = true };
+                }
+
+                return new UserOperationResponse
+                {
+                    Success = false,
+                    Message = $"Failed to delete user. Status: {response.StatusCode}"
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при запросе: {ex.Message}");
+                return new UserOperationResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+            }
+        }
     }
 }

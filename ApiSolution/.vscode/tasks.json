@@ -1,0 +1,66 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "run-api",
+      "type": "dotnet",
+      "command": "run",
+      "args": [
+        "--project",
+        "TestApi3K/TestApi3K.csproj",
+        "--launch-profile",
+        "http"
+      ],
+      "problemMatcher": "$msCompile",
+      "isBackground": true
+    },
+    {
+      "label": "run-blazor",
+      "type": "dotnet",
+      "command": "run",
+      "args": [
+        "--project",
+        "TestBlazorAssembly/TestBlazorAssembly.csproj"
+      ],
+      "problemMatcher": "$msCompile",
+      "isBackground": true
+    },
+    {
+      "label": "watch-api",
+      "type": "dotnet",
+      "command": "watch",
+      "args": [
+        "--project",
+        "TestApi3K/TestApi3K.csproj",
+        "--",
+        "run",
+        "--launch-profile",
+        "http"
+      ],
+      "problemMatcher": "$msCompile",
+      "isBackground": true
+    },
+    {
+      "label": "watch-blazor",
+      "type": "dotnet",
+      "command": "watch",
+      "args": [
+        "--project",
+        "TestBlazorAssembly/TestBlazorAssembly.csproj",
+        "run"
+      ],
+      "problemMatcher": "$msCompile",
+      "isBackground": true
+    },
+    {
+      "label": "run-all",
+      "dependsOn": ["run-api", "run-blazor"],
+      "problemMatcher": []
+    },
+    {
+      "label": "watch-all",
+      "dependsOn": ["watch-api", "watch-blazor"],
+      "problemMatcher": []
+    }
+  ]
+}
