@@ -8,49 +8,49 @@ public class UnitTests
     public void HasUniqueSymbols_EmptyString_ReturnsTrue()
     {
         var result = TestConsoleProject.Program.HasUniqueSymbols("");
-        Assert.IsTrue(result);
+        Assert.That(result, Is.True);
     }
 
     [Test]
     public void HasUniqueSymbols_SingleCharacter_ReturnsTrue()
     {
         var result = TestConsoleProject.Program.HasUniqueSymbols("a");
-        Assert.IsTrue(result);
+        Assert.That(result, Is.True);
     }
 
     [Test]
     public void HasUniqueSymbols_AllUniqueCharacters_ReturnsTrue()
     {
         var result = TestConsoleProject.Program.HasUniqueSymbols("abc");
-        Assert.IsTrue(result);
+        Assert.That(result, Is.True);
     }
 
     [Test]
     public void HasUniqueSymbols_HasDuplicateCharacters_ReturnsFalse()
     {
         var result = TestConsoleProject.Program.HasUniqueSymbols("aab");
-        Assert.IsFalse(result);
+        Assert.That(result, Is.False);
     }
 
     [Test]
     public void HasUniqueSymbols_AllSameCharacters_ReturnsFalse()
     {
         var result = TestConsoleProject.Program.HasUniqueSymbols("777");
-        Assert.IsFalse(result);
+        Assert.That(result, Is.False);
     }
 
     [Test]
     public void HasUniqueSymbols_DifferentCase_ReturnsTrue()
     {
         var result = TestConsoleProject.Program.HasUniqueSymbols("Aa");
-        Assert.IsTrue(result);
+        Assert.That(result, Is.True);
     }
 
     [Test]
     public void HasUniqueSymbols_NullString_ReturnsFalse()
     {
         var result = TestConsoleProject.Program.HasUniqueSymbols(null);
-        Assert.IsFalse(result);
+        Assert.That(result, Is.False);
     }
 
     // =============== Task 11: CalculateSphereVolume Tests ===============
@@ -59,7 +59,7 @@ public class UnitTests
     public void CalculateSphereVolume_ZeroRadius_ReturnsZero()
     {
         var result = TestConsoleProject.Program.CalculateSphereVolume(0, 0);
-        Assert.AreEqual(0, result);
+        Assert.That(result, Is.EqualTo(0));
     }
 
     [Test]
@@ -67,7 +67,7 @@ public class UnitTests
     {
         var result = TestConsoleProject.Program.CalculateSphereVolume(1, 2);
         var expected = Math.Round((4.0 / 3.0) * Math.PI * Math.Pow(1, 3), 2);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [Test]
@@ -75,7 +75,7 @@ public class UnitTests
     {
         var result = TestConsoleProject.Program.CalculateSphereVolume(3, 1);
         var expected = Math.Round((4.0 / 3.0) * Math.PI * Math.Pow(3, 3), 1);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [Test]
@@ -83,21 +83,21 @@ public class UnitTests
     {
         var result = TestConsoleProject.Program.CalculateSphereVolume(2.5, 3);
         var expected = Math.Round((4.0 / 3.0) * Math.PI * Math.Pow(2.5, 3), 3);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 
     [Test]
     public void CalculateSphereVolume_NegativeRadius_ReturnsZero()
     {
         var result = TestConsoleProject.Program.CalculateSphereVolume(-1, 2);
-        Assert.AreEqual(0, result);
+        Assert.That(result, Is.EqualTo(0));
     }
 
     [Test]
     public void CalculateSphereVolume_NegativePrecision_ReturnsZero()
     {
         var result = TestConsoleProject.Program.CalculateSphereVolume(1, -1);
-        Assert.AreEqual(0, result);
+        Assert.That(result, Is.EqualTo(0));
     }
 
     [Test]
@@ -105,6 +105,6 @@ public class UnitTests
     {
         var result = TestConsoleProject.Program.CalculateSphereVolume(100, 0);
         var expected = Math.Round((4.0 / 3.0) * Math.PI * Math.Pow(100, 3), 0);
-        Assert.AreEqual(expected, result);
+        Assert.That(result, Is.EqualTo(expected));
     }
 }
