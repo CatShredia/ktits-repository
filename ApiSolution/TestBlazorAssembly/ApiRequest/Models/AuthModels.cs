@@ -17,6 +17,7 @@ public class RegisterRequest
 public class AuthResponse
 {
     public int UserId { get; set; }
+    public int RoleId { get; set; }
     public string UserName { get; set; } = string.Empty;
     public bool Success { get; set; }
     public string? Message { get; set; }
