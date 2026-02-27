@@ -32,7 +32,7 @@ namespace TestApi3K.Service
             {
                 return null;
             }
-            
+
             return selectedLogin.Users;
         }
 
@@ -73,6 +73,38 @@ namespace TestApi3K.Service
             {
                 status = true
             });
+        }
+
+        public async Task<bool> CreateUserAsync(CreateNewUserAndLogin newUser)
+        {
+            try
+            {
+                var user = new Users()
+                {
+                    Name = newUser.Name ?? newUser.Login,
+                    Description = string.Empty,
+                    id_Role = newUser.id_Role > 0 ? newUser.id_Role : 1 // Default role
+                };
+
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
+
+                var login = new Logins()
+                {
+                    User_id = user.id_User,
+                    Login = newUser.Login,
+                    Password = newUser.Password,
+                };
+
+                await _context.Logins.AddAsync(login);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
