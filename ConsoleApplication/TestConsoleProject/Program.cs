@@ -1,7 +1,12 @@
 ﻿namespace TestConsoleProject
 {
-    class Program
+    public class Program
     {
+        static void Main(string[] args)
+        {
+            // Entry point for console application
+        }
+
         // =============== Task 10 ===============
         // Метод, определяющий введена ли строка с разными символами.
 
