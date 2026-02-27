@@ -89,7 +89,7 @@
 
             if (response != null && !string.IsNullOrEmpty(response.Token))
             {
-                await JS.InvokeVoidAsync("localStorage.setItem", "authToken", response.Token);
+                @* await JS.InvokeVoidAsync("localStorage.setItem", "authToken", response.Token); *@
 
                 Navigation.NavigateTo("/", forceLoad: true);
             }
