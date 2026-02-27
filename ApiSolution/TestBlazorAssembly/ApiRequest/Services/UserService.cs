@@ -13,6 +13,7 @@ public class UserService
     private readonly IJSRuntime _js;
     private readonly AuthenticationStateProvider _authStateProvider;
 
+    // ключ шифрование токена с API
     private const string StorageKey = "l6yQQw5MnLP5";
 
     public UserService(HttpClient httpClient, IJSRuntime js, AuthenticationStateProvider authStateProvider)
@@ -22,6 +23,7 @@ public class UserService
         _authStateProvider = authStateProvider;
     }
 
+    // основной метод входа и регистрации токена
     public async Task<AuthResponse> LoginAsync(string login, string password)
     {
         var request = new LoginRequest { Login = login, Password = password };
