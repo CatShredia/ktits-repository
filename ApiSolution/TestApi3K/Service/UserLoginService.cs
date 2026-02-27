@@ -107,7 +107,7 @@ namespace TestApi3K.Service
             {
                 User_id = user.id_User,
                 Login = newUser.Login,
-                Password = newUser.Password,
+                Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password),
             };
 
             await _context.Logins.AddAsync(login);
@@ -125,9 +125,9 @@ namespace TestApi3K.Service
             {
                 var user = new Users()
                 {
-                    Name = newUser.Name ?? newUser.Login,
-                    Description = string.Empty,
-                    id_Role = newUser.id_Role > 0 ? newUser.id_Role : 1
+                    Name = newUser.Name,
+                    Description = newUser.Description,
+                    id_Role = newUser.id_Role
                 };
 
                 await _context.Users.AddAsync(user);
@@ -150,5 +150,70 @@ namespace TestApi3K.Service
                 return false;
             }
         }
+
+        public async Task<IActionResult> UpdateExitingUserAndLoginAsync(EditUserAndLogin newUser)
+        {
+            try
+            {
+                if (newUser.id_User <= 0)
+                {
+                    return new BadRequestObjectResult("User ID is required.");
+                }
+
+                var user = await _context.Users.FindAsync(newUser.id_User);
+                if (user == null)
+                {
+                    return new NotFoundObjectResult("User not found.");
+                }
+
+                user.Name = newUser.Name;
+                user.Description = newUser.Description;
+                user.id_Role = newUser.id_Role > 0 ? newUser.id_Role : 1;
+
+                var login = await _context.Logins.FirstOrDefaultAsync(l => l.User_id == newUser.id_User);
+                if (login != null)
+                {
+                    login.Login = newUser.Login;
+                    if (!string.IsNullOrWhiteSpace(newUser.Password) && newUser.Password == newUser.ConfirmPassword)
+                    {
+                        login.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                return new OkObjectResult(new { Success = true, Message = "User updated successfully." });
+            }
+            catch (Exception)
+            {
+                return new StatusCodeResult(500);
+            }
+        }
+
+        public async Task<IActionResult> DeleteUserAsync(int userId)
+        {
+            if (userId <= 0)
+            {
+                return new BadRequestObjectResult("User ID is required.");
+            }
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return new NotFoundObjectResult("User not found.");
+            }
+
+            var login = await _context.Logins.FirstOrDefaultAsync(l => l.User_id == userId);
+            if (login != null)
+            {
+                _context.Logins.Remove(login);
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return new OkObjectResult(new { Success = true, Message = "User deleted successfully." });
+        }
+
     }
 }

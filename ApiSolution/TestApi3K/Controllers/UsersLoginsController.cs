@@ -28,5 +28,19 @@ namespace TestApi3K.Controllers
         {
             return await _userLoginService.CreateNewUserAndLoginAsync(newUser);
         }
+
+        [HttpPut]
+        [Route("putUserAndLogin")]
+        public async Task<IActionResult> UpdateExitingUserAndLogin(EditUserAndLogin newUser)
+        {
+            return await _userLoginService.UpdateExitingUserAndLoginAsync(newUser);
+        }
+
+        [HttpDelete]
+        [Route("deleteUser/{userId}")]
+        public async Task<IActionResult> DeleteUser(int userId)
+        {
+            return await _userLoginService.DeleteUserAsync(userId);
+        }
     }
 }
