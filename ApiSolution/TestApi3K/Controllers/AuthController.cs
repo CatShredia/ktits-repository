@@ -1,9 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using TestApi3K.Interfaces;
 using TestApi3K.Requests;
 using TestApi3K.Service;
@@ -14,17 +9,14 @@ namespace TestBlazor3K.ApiRequest.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly IConfiguration _config;
     private readonly IUsersLoginsService _userService;
 
-    public AuthController(IConfiguration config, IUsersLoginsService service)
+    public AuthController(IUsersLoginsService service)
     {
-        _config = config;
         _userService = service;
     }
 
     [HttpPost("login")]
-    [AllowAnonymous]
     public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Password))
@@ -36,23 +28,28 @@ public class AuthController : ControllerBase
             });
         }
 
-        var user = await _userService.GetUserByLoginAsync(request.Login);
+        var user = await _userService.GetUserWithLoginDetailsAsync(request.Login, request.Password);
 
-        if (user == null) return NotFound();
-
-        var token = GenerateJwtToken(request.Login, user.id_Role);
+        if (user == null)
+        {
+            return Unauthorized(new AuthResponse
+            {
+                Success = false,
+                Message = "Invalid login or password."
+            });
+        }
 
         return Ok(new AuthResponse
         {
-            Token = token,
+            UserId = user.id_User,
             UserName = request.Login,
+            RoleId = user.id_Role,
             Success = true,
             Message = "Login successful"
         });
     }
 
     [HttpPost("register")]
-    [AllowAnonymous]
     public async Task<ActionResult<AuthResponse>> Register([FromBody] CreateNewUserAndLogin request)
     {
         if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Password))
@@ -83,7 +80,6 @@ public class AuthController : ControllerBase
             });
         }
 
-        // Создаём пользователя
         var result = await _userService.CreateUserAsync(request);
 
         if (!result)
@@ -95,43 +91,15 @@ public class AuthController : ControllerBase
             });
         }
 
-        var token = GenerateJwtToken(request.Login, request.id_Role);
+        var createdUser = await _userService.GetUserByLoginAsync(request.Login);
 
         return Ok(new AuthResponse
         {
-            Token = token,
+            UserId = createdUser?.id_User ?? 0,
             UserName = request.Login,
+            RoleId = request.id_Role,
             Success = true,
             Message = "Registration successful"
         });
-    }
-
-    private string GenerateJwtToken(string login, int? roleId)
-    {
-        var secretKey = _config["Jwt:SecretKey"]
-            ?? throw new Exception("Jwt:SecretKey not found in configuration");
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        // Определяем роль: если id_Role = 1, то "Admin", иначе "User"
-        var roleName = roleId == 1 ? "Admin" : "User";
-
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.Name, login),
-            new Claim(ClaimTypes.Role, roleName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
-        var token = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.Now.AddHours(2),
-            signingCredentials: creds
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

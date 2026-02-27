@@ -134,10 +134,10 @@
         {
             var response = await UserService.RegisterAsync(model.Login, model.Password, model.ConfirmPassword, model.UserName);
 
-            if (response.Success || !string.IsNullOrEmpty(response.Token))
+            if (response.Success)
             {
                 successMessage = "Registration successful! Redirecting to login...";
-                await Task.Delay(2000); // Show message for 2 seconds
+                await Task.Delay(2000);
                 Navigation.NavigateTo("/login");
             }
             else

@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using TestBlazorAssembly.ApiRequest.Models;
@@ -13,9 +12,6 @@ public class UserService
     private readonly IJSRuntime _js;
     private readonly AuthenticationStateProvider _authStateProvider;
 
-    // ключ шифрование токена с API
-    private const string StorageKey = "l6yQQw5MnLP5";
-
     public UserService(HttpClient httpClient, IJSRuntime js, AuthenticationStateProvider authStateProvider)
     {
         _httpClient = httpClient;
@@ -23,7 +19,6 @@ public class UserService
         _authStateProvider = authStateProvider;
     }
 
-    // основной метод входа и регистрации токена
     public async Task<AuthResponse> LoginAsync(string login, string password)
     {
         var request = new LoginRequest { Login = login, Password = password };
@@ -34,9 +29,9 @@ public class UserService
         {
             var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
 
-            if (result != null && !string.IsNullOrEmpty(result.Token))
+            if (result != null && result.UserId > 0)
             {
-                await SetTokenAsync(result.Token);
+                await SetUserIdAsync(result.UserId);
 
                 ((CustomAuthStateProvider)_authStateProvider).NotifyAuthenticationStateChanged();
 
@@ -94,31 +89,29 @@ public class UserService
 
     public async Task LogoutAsync()
     {
-        await RemoveTokenAsync();
+        await RemoveUserIdAsync();
         ((CustomAuthStateProvider)_authStateProvider).NotifyAuthenticationStateChanged();
     }
 
     public async Task<bool> IsAuthenticatedAsync()
     {
-        var token = await GetTokenAsync();
-        return !string.IsNullOrEmpty(token);
+        var userId = await GetUserIdAsync();
+        return userId > 0;
     }
 
-
-    private async Task SetTokenAsync(string token)
+    private async Task SetUserIdAsync(int userId)
     {
-        await _js.InvokeVoidAsync("localStorage.setItem", StorageKey, token);
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        await _js.InvokeVoidAsync("localStorage.setItem", "userId", userId.ToString());
     }
 
-    private async Task<string?> GetTokenAsync()
+    private async Task<int> GetUserIdAsync()
     {
-        return await _js.InvokeAsync<string>("localStorage.getItem", StorageKey);
+        var userIdStr = await _js.InvokeAsync<string>("localStorage.getItem", "userId");
+        return int.TryParse(userIdStr, out var userId) ? userId : 0;
     }
 
-    private async Task RemoveTokenAsync()
+    private async Task RemoveUserIdAsync()
     {
-        await _js.InvokeVoidAsync("localStorage.removeItem", StorageKey);
-        _httpClient.DefaultRequestHeaders.Authorization = null;
+        await _js.InvokeVoidAsync("localStorage.removeItem", "userId");
     }
 }

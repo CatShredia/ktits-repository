@@ -36,9 +36,53 @@ namespace TestApi3K.Service
             return selectedLogin.Users;
         }
 
-        public async Task<IActionResult> GetAllUsersAsync()
+        public async Task<Users?> GetUserWithLoginDetailsAsync(string login, string password)
         {
-            var users = await _context.Users.ToListAsync();
+            if (string.IsNullOrWhiteSpace(login) || string.IsNullOrWhiteSpace(password))
+            {
+                return null;
+            }
+
+            var selectedLogin = await _context.Logins
+                .AsNoTracking()
+                .Include(logins => logins.Users)
+                .FirstOrDefaultAsync(logins => logins.Login == login);
+
+            if (selectedLogin == null)
+            {
+                return null;
+            }
+
+            return selectedLogin.Users;
+        }
+
+        public async Task<bool> IsUserAdminAsync(int userId)
+        {
+            var user = await _context.Users
+                .AsNoTracking()
+                .Include(u => u.Roles)
+                .FirstOrDefaultAsync(u => u.id_User == userId);
+
+            if (user == null || user.Roles == null)
+            {
+                return false;
+            }
+
+            return user.Roles.Name.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public async Task<IActionResult> GetAllUsersAsync(int userId)
+        {
+            var isAdmin = await IsUserAdminAsync(userId);
+
+            if (!isAdmin)
+            {
+                return new StatusCodeResult(403);
+            }
+
+            var users = await _context.Users
+                .Include(u => u.Roles)
+                .ToListAsync();
 
             return new OkObjectResult(new
             {
@@ -83,7 +127,7 @@ namespace TestApi3K.Service
                 {
                     Name = newUser.Name ?? newUser.Login,
                     Description = string.Empty,
-                    id_Role = newUser.id_Role > 0 ? newUser.id_Role : 1 // Default role
+                    id_Role = newUser.id_Role > 0 ? newUser.id_Role : 1
                 };
 
                 await _context.Users.AddAsync(user);
@@ -93,7 +137,7 @@ namespace TestApi3K.Service
                 {
                     User_id = user.id_User,
                     Login = newUser.Login,
-                    Password = newUser.Password,
+                    Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password),
                 };
 
                 await _context.Logins.AddAsync(login);

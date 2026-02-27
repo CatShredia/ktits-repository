@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using TestApi3K.Interfaces;
 using TestApi3K.Requests;
 
@@ -7,7 +6,6 @@ namespace TestApi3K.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]
     public class UsersLoginsController
     {
         private readonly IUsersLoginsService _userLoginService;
@@ -19,9 +17,9 @@ namespace TestApi3K.Controllers
 
         [HttpGet]
         [Route("getAllUsers")]
-        public async Task<IActionResult> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers([FromHeader(Name = "X-User-Id")] int? userId)
         {
-            return await _userLoginService.GetAllUsersAsync();
+            return await _userLoginService.GetAllUsersAsync(userId ?? 0);
         }
 
         [HttpPost]

@@ -1,9 +1,6 @@
 ﻿@page "/login"
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Components.Authorization
 @using TestBlazorAssembly.ApiRequest.Services
 @inject NavigationManager Navigation
-@inject IJSRuntime JS
 @inject UserService UserService
 
 <PageTitle>Login</PageTitle>
@@ -54,11 +51,11 @@
                 <div class="text-center">
                     <small class="text-muted">Don't have an account? <a href="/register"
                                                                             class="text-decoration-none">Register</a></small>
-                    </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
 @code {
     private LoginModel model = new();
@@ -84,18 +81,15 @@
 
         try
         {
-            // в сервис запрос к API
             var response = await UserService.LoginAsync(model.Login, model.Password);
 
-            if (response != null && !string.IsNullOrEmpty(response.Token))
+            if (response != null && response.Success)
             {
-                @* await JS.InvokeVoidAsync("localStorage.setItem", "authToken", response.Token); *@
-
                 Navigation.NavigateTo("/", forceLoad: true);
             }
             else
             {
-                errorMessage = "Invalid login or password.";
+                errorMessage = response?.Message ?? "Invalid login or password.";
             }
         }
         catch (Exception ex)

@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 
@@ -18,18 +17,19 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token = await _js.InvokeAsync<string>("localStorage.getItem", "authToken");
+        var userId = await _js.InvokeAsync<string>("localStorage.getItem", "userId");
 
-        if (string.IsNullOrWhiteSpace(token))
+        if (string.IsNullOrWhiteSpace(userId))
         {
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
 
-        _httpClient.DefaultRequestHeaders.Authorization =
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, userId)
+        };
 
-        var claims = ParseClaimsFromJwt(token);
-        var user = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));
+        var user = new ClaimsPrincipal(new ClaimsIdentity(claims, "local"));
 
         return new AuthenticationState(user);
     }
@@ -37,40 +37,5 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
     public void NotifyAuthenticationStateChanged()
     {
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-    }
-
-    private static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
-    {
-        var claims = new List<Claim>();
-
-        var payload = jwt.Split('.')[1];
-
-        var padLength = 4 - (payload.Length % 4);
-        if (padLength != 4)
-        {
-            payload += new string('=', padLength);
-        }
-
-        var bytes = Convert.FromBase64String(payload);
-
-        using var document = JsonDocument.Parse(bytes);
-        var root = document.RootElement;
-
-        foreach (var prop in root.EnumerateObject())
-        {
-            if (prop.Value.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var item in prop.Value.EnumerateArray())
-                {
-                    claims.Add(new Claim(prop.Name, item.ToString()));
-                }
-            }
-            else
-            {
-                claims.Add(new Claim(prop.Name, prop.Value.ToString()));
-            }
-        }
-
-        return claims;
     }
 }
