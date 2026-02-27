@@ -2,12 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using TestApi3K.DataBaseContext;
 using TestApi3K.Interfaces;
 using TestApi3K.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -15,6 +15,32 @@ builder.Services.AddDbContext<ContextDb>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("TestDbString")));
 
 builder.Services.AddScoped<IUsersLoginsService, UserLoginService>();
+
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var secretKey = jwtSettings["SecretKey"] ?? throw new Exception("Jwt:SecretKey not found");
+var issuer = jwtSettings["Issuer"];
+var audience = jwtSettings["Audience"];
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = issuer,
+        ValidAudience = audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+    };
+});
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddCors(options =>
 {
@@ -30,7 +56,6 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -42,6 +67,8 @@ else
 }
 
 app.UseCors("AllowAnyPort");
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
