@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -23,6 +24,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Password))
@@ -38,7 +40,7 @@ public class AuthController : ControllerBase
 
         if (user == null) return NotFound();
 
-        var token = GenerateJwtToken(request.Login);
+        var token = GenerateJwtToken(request.Login, user.id_Role);
 
         return Ok(new AuthResponse
         {
@@ -50,6 +52,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<ActionResult<AuthResponse>> Register([FromBody] CreateNewUserAndLogin request)
     {
         if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Password))
@@ -92,7 +95,7 @@ public class AuthController : ControllerBase
             });
         }
 
-        var token = GenerateJwtToken(request.Login);
+        var token = GenerateJwtToken(request.Login, request.id_Role);
 
         return Ok(new AuthResponse
         {
@@ -103,7 +106,7 @@ public class AuthController : ControllerBase
         });
     }
 
-    private string GenerateJwtToken(string login)
+    private string GenerateJwtToken(string login, int? roleId)
     {
         var secretKey = _config["Jwt:SecretKey"]
             ?? throw new Exception("Jwt:SecretKey not found in configuration");
@@ -111,10 +114,13 @@ public class AuthController : ControllerBase
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+        // Определяем роль: если id_Role = 1, то "Admin", иначе "User"
+        var roleName = roleId == 1 ? "Admin" : "User";
+
         var claims = new[]
         {
             new Claim(ClaimTypes.Name, login),
-            new Claim(ClaimTypes.Role, "User"),
+            new Claim(ClaimTypes.Role, roleName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
