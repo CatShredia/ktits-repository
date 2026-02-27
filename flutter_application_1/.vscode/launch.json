@@ -5,9 +5,16 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "flutter_application_1",
+      "name": "flutter_application_1 (auto select device)",
       "request": "launch",
       "type": "dart"
+    },
+    {
+      "name": "flutter_application_1 (hot reload)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "toolArgs": ["--hot"]
     },
     {
       "name": "flutter_application_1 (profile mode)",
@@ -20,6 +27,18 @@
       "request": "launch",
       "type": "dart",
       "flutterMode": "release"
+    },
+    {
+      "name": "flutter_application_1 (Android physical)",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "android"
+    },
+    {
+      "name": "flutter_application_1 (iOS physical)",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "ios"
     }
   ]
 }

@@ -149,7 +149,7 @@ class _AuthPageState extends State<AuthPage> {
                   'Забыли пароль?',
                   style: TextStyle(color: Colors.blue),
                 ),
-                onTap: () {},
+                onTap: () => Navigator.pushNamed(context, '/forgot-password'),
               ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
