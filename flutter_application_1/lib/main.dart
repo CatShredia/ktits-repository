@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'auth_page.dart';
 import 'register_page.dart';
 import 'forgot_password.dart';
+import 'home.dart';
 import 'debug_connection.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => AuthPage(),
         '/register': (context) => RegisterPage(),
         '/forgot-password': (context) => RecoveryPage(),
+        '/home': (context) => const HomePage(),
       },
     );
   }

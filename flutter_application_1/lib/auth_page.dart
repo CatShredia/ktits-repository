@@ -53,7 +53,7 @@ class _AuthPageState extends State<AuthPage> {
       }
 
       _showMessage('Вход успешен');
-      if (mounted) Navigator.pushNamed(context, '/');
+      if (mounted) Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
     } catch (e) {
       String errorMsg = 'Ошибка входа';
       if (e.toString().contains('Invalid login')) {

@@ -68,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
         _showMessage('Не удалось сохранить профиль пользователя в базе');
       } else {
         _showMessage('Регистрация успешна');
-        if (mounted) Navigator.pushNamed(context, '/');
+        if (mounted) Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       }
     } catch (e) {
       _showMessage('Ошибка: ${e.toString()}');
