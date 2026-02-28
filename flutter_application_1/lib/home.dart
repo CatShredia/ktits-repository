@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'database/services/userservice.dart';
+import 'pages/home_tab.dart';
+import 'pages/search_tab.dart';
+import 'pages/sell_tab.dart';
+import 'pages/profile_tab.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,10 +18,10 @@ class _HomePageState extends State<HomePage> {
   final UserService _userService = UserService();
 
   final List<Widget> _screens = [
-    const Center(child: Text('Home', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Search', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Sell', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Profile', style: TextStyle(fontSize: 24))),
+    const HomeTab(),
+    const SearchTab(),
+    const SellTab(),
+    const ProfileTab(),
   ];
 
   Future<void> _logout(BuildContext context) async {
@@ -31,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Benova'),
+        title: const Text('Ala Avito'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
