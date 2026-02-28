@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'database/services/userservice.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -11,6 +11,7 @@ class AuthPage extends StatefulWidget {
 class _AuthPageState extends State<AuthPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final UserService _userService = UserService();
   bool _isLoading = false;
   bool _obscurePassword = true;
 
@@ -39,12 +40,8 @@ class _AuthPageState extends State<AuthPage> {
 
     setState(() => _isLoading = true);
     try {
-      final response = await Supabase.instance.client.auth.signInWithPassword(
-        email: email,
-        password: password,
-      );
+      final response = await _userService.signIn(email, password);
 
-      // Проверяем, что пользователь успешно вошёл
       final user = response.user;
       if (user == null) {
         _showMessage('Ошибка входа: пользователь не найден или пароль неверен');
@@ -53,7 +50,9 @@ class _AuthPageState extends State<AuthPage> {
       }
 
       _showMessage('Вход успешен');
-      if (mounted) Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      if (mounted) {
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      }
     } catch (e) {
       String errorMsg = 'Ошибка входа';
       if (e.toString().contains('Invalid login')) {

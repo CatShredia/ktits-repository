@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'database/services/userservice.dart';
 
 class RecoveryPage extends StatefulWidget {
   const RecoveryPage({super.key});
@@ -10,6 +11,7 @@ class RecoveryPage extends StatefulWidget {
 
 class _RecoveryPageState extends State<RecoveryPage> {
   final TextEditingController _emailController = TextEditingController();
+  final UserService _userService = UserService();
   bool _isLoading = false;
 
   @override
@@ -42,7 +44,7 @@ class _RecoveryPageState extends State<RecoveryPage> {
     setState(() => _isLoading = true);
 
     try {
-      await Supabase.instance.client.auth.resetPasswordForEmail(email);
+      await _userService.resetPassword(email);
       _showMessage('Письмо для восстановления отправлено на $email');
       _emailController.clear();
     } on AuthException catch (e) {

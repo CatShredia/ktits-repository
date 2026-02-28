@@ -1,7 +1,8 @@
 // lib/debug_connection.dart
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 import 'dart:async' show TimeoutException;
-import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Запустите эту функцию из main() для проверки подключения
@@ -45,7 +46,7 @@ Future<void> debugSupabaseConnection() async {
   } on SocketException catch (e) {
     print('   ✗ Ошибка сети: ${e.message}');
     print('   → Устройство не имеет доступа к интернету');
-  } on TimeoutException catch (e) {
+  } on TimeoutException {
     print('   ✗ Таймаут (5 сек)');
     print('   → Сервер не отвечает или блокирует соединение');
     print('   → Проверьте статус проекта в https://supabase.com/dashboard');

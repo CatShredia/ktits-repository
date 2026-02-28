@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'database/services/userservice.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,6 +11,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  final UserService _userService = UserService();
 
   final List<Widget> _screens = [
     const Center(child: Text('Home', style: TextStyle(fontSize: 24))),
@@ -20,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   ];
 
   Future<void> _logout(BuildContext context) async {
-    await Supabase.instance.client.auth.signOut();
+    await _userService.signOut();
     if (context.mounted) {
       Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
     }

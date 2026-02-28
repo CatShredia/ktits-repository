@@ -1,6 +1,6 @@
 // lib/register_page.dart
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'database/services/userservice.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -13,6 +13,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmController = TextEditingController();
+  final UserService _userService = UserService();
   bool _isLoading = false;
 
   @override
@@ -46,29 +47,29 @@ class _RegisterPageState extends State<RegisterPage> {
 
     setState(() => _isLoading = true);
     try {
-      final signUpRes = await Supabase.instance.client.auth.signUp(
-        email: email,
-        password: password,
-      );
+      final signUpRes = await _userService.signUp(email, password);
 
-      final user = signUpRes?.user ?? Supabase.instance.client.auth.currentUser;
-      if (user == null || user.id == null) {
+      final user = signUpRes.user ?? _userService.getCurrentUser();
+      if (user == null) {
         _showMessage('Не удалось зарегистрировать пользователя');
         if (mounted) setState(() => _isLoading = false);
         return;
       }
 
-      final insertRes = await Supabase.instance.client.from('users').insert({
-        'id': user.id,
-        'email': email,
-        'password': password,
-      }).select();
+      final insertRes = await _userService.createUserProfile(
+        id: user.id,
+        email: email,
+        password: password,
+      );
 
-      if (insertRes == null || (insertRes is List && insertRes.isEmpty)) {
+      // ignore: unnecessary_null_comparison, dead_code
+      if (insertRes == null) {
         _showMessage('Не удалось сохранить профиль пользователя в базе');
       } else {
         _showMessage('Регистрация успешна');
-        if (mounted) Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        }
       }
     } catch (e) {
       _showMessage('Ошибка: ${e.toString()}');
@@ -169,12 +170,12 @@ class _RegisterPageState extends State<RegisterPage> {
               width: MediaQuery.of(context).size.width * 0.8,
               child: ElevatedButton(
                 style: ButtonStyle(
-                  shape: MaterialStatePropertyAll(
+                  shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  backgroundColor: MaterialStatePropertyAll(Colors.orange),
+                  backgroundColor: WidgetStatePropertyAll(Colors.orange),
                 ),
                 onPressed: _isLoading ? null : _register,
                 child: Text(
