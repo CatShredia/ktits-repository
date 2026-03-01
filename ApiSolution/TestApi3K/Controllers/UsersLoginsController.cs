@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TestApi3K.Interfaces;
-using TestApi3K.Requests;
+using TestApi3K.Services.Interfaces;
+using TestApi3K.Database.Requests;
 
 namespace TestApi3K.Controllers
 {

@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TestApi3K.Model;
+using Microsoft.EntityFrameworkCore;
+using TestApi3K.Database.Models;
 
-namespace TestApi3K.DataBaseContext
+namespace TestApi3K.Database
 {
     public class ContextDb : DbContext
     {

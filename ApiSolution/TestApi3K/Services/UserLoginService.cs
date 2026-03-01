@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TestApi3K.DataBaseContext;
-using TestApi3K.Interfaces;
-using TestApi3K.Model;
-using TestApi3K.Requests;
+using TestApi3K.Database;
+using TestApi3K.Services.Interfaces;
+using TestApi3K.Database.Models;
+using TestApi3K.Database.Requests;
 
-namespace TestApi3K.Service
+namespace TestApi3K.Services
 {
     public class UserLoginService : IUsersLoginsService
     {

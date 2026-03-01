@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using TestApi3K.Interfaces;
-using TestApi3K.Model;
-using TestApi3K.Requests;
+using TestApi3K.Services.Interfaces;
+using TestApi3K.Database.Models;
+using TestApi3K.Database.Requests;
 
-namespace TestApi3K.Service;
+namespace TestApi3K.Services;
 
 public class AuthService : IAuthService
 {

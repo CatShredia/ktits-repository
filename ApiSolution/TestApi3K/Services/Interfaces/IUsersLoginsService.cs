@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TestApi3K.Model;
-using TestApi3K.Requests;
+using Microsoft.AspNetCore.Mvc;
+using TestApi3K.Database.Models;
+using TestApi3K.Database.Requests;
 
-namespace TestApi3K.Interfaces
+namespace TestApi3K.Services.Interfaces
 {
     public interface IUsersLoginsService
     {

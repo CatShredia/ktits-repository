@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace TestApi3K.Migrations
+namespace TestApi3K.Database.Migrations
 {
     /// <inheritdoc />
     public partial class InitialTables : Migration

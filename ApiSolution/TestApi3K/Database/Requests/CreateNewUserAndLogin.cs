@@ -1,4 +1,4 @@
-﻿namespace TestApi3K.Requests
+namespace TestApi3K.Database.Requests
 {
     public class CreateNewUserAndLogin
     {

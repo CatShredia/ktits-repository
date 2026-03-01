@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using TestApi3K.DataBaseContext;
-using TestApi3K.Interfaces;
-using TestApi3K.Service;
+using TestApi3K.Database;
+using TestApi3K.Services.Interfaces;
+using TestApi3K.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
