@@ -235,14 +235,14 @@ else
         {
             var result = await ApiRequest.UpdateUser(editDataUser);
 
-            if (result.Success)
+            if (result.success)
             {
                 CloseEditModal();
                 await GetAllUsersAsync();
             }
             else
             {
-                editErrorMessage = result.Message ?? "Failed to update user.";
+                editErrorMessage = result.message ?? "Failed to update user.";
             }
         }
         catch (Exception ex)
@@ -265,13 +265,13 @@ else
         {
             var result = await ApiRequest.DeleteUser(userId);
 
-            if (result.Success)
+            if (result.success)
             {
                 await GetAllUsersAsync();
             }
             else
             {
-                errorMessage = result.Message ?? "Failed to delete user.";
+                errorMessage = result.message ?? "Failed to delete user.";
             }
         }
         catch (Exception ex)

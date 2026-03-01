@@ -82,13 +82,13 @@ namespace TestBlazorAssembly.ApiRequest
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
                     var result = JsonSerializer.Deserialize<UserOperationResponse>(responseContent);
-                    return result ?? new UserOperationResponse { Success = true };
+                    return result ?? new UserOperationResponse { success = true };
                 }
 
                 return new UserOperationResponse
                 {
-                    Success = false,
-                    Message = $"Failed to update user. Status: {response.StatusCode}"
+                    success = false,
+                    message = $"Failed to update user. Status: {response.StatusCode}"
                 };
             }
             catch (Exception ex)
@@ -96,8 +96,8 @@ namespace TestBlazorAssembly.ApiRequest
                 Console.WriteLine($"Ошибка при запросе: {ex.Message}");
                 return new UserOperationResponse
                 {
-                    Success = false,
-                    Message = ex.Message
+                    success = false,
+                    message = ex.Message
                 };
             }
         }
@@ -114,13 +114,13 @@ namespace TestBlazorAssembly.ApiRequest
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
                     var result = JsonSerializer.Deserialize<UserOperationResponse>(responseContent);
-                    return result ?? new UserOperationResponse { Success = true };
+                    return result ?? new UserOperationResponse { success = true };
                 }
 
                 return new UserOperationResponse
                 {
-                    Success = false,
-                    Message = $"Failed to delete user. Status: {response.StatusCode}"
+                    success = false,
+                    message = $"Failed to delete user. Status: {response.StatusCode}"
                 };
             }
             catch (Exception ex)
@@ -128,8 +128,8 @@ namespace TestBlazorAssembly.ApiRequest
                 Console.WriteLine($"Ошибка при запросе: {ex.Message}");
                 return new UserOperationResponse
                 {
-                    Success = false,
-                    Message = ex.Message
+                    success = false,
+                    message = ex.Message
                 };
             }
         }
