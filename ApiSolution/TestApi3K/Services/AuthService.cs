@@ -7,9 +7,9 @@ namespace TestApi3K.Services;
 
 public class AuthService : IAuthService
 {
-    private readonly IUsersLoginsService _userService;
+    private readonly IUserRepository _userService;
 
-    public AuthService(IUsersLoginsService userService)
+    public AuthService(IUserRepository userService)
     {
         _userService = userService;
     }

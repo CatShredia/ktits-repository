@@ -7,7 +7,7 @@ using TestApi3K.Database.Requests;
 
 namespace TestApi3K.Services
 {
-    public class UserLoginService : IUsersLoginsService
+    public class UserLoginService : IUserRepository
     {
         private readonly ContextDb _context;
 

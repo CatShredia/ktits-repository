@@ -8,9 +8,9 @@ namespace TestApi3K.Controllers
     [Route("api/[controller]")]
     public class UsersLoginsController
     {
-        private readonly IUsersLoginsService _userLoginService;
+        private readonly IUserRepository _userLoginService;
 
-        public UsersLoginsController(IUsersLoginsService userLoginService)
+        public UsersLoginsController(IUserRepository userLoginService)
         {
             _userLoginService = userLoginService;
         }

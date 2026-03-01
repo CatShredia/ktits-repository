@@ -11,7 +11,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ContextDb>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("TestDbString")));
 
-builder.Services.AddScoped<IUsersLoginsService, UserLoginService>();
+builder.Services.AddScoped<IUserRepository, UserLoginService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddCors(options =>

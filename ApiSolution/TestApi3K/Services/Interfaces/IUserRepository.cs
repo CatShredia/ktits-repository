@@ -4,7 +4,7 @@ using TestApi3K.Database.Requests;
 
 namespace TestApi3K.Services.Interfaces
 {
-    public interface IUsersLoginsService
+    public interface IUserRepository
     {
         Task<IActionResult> GetAllUsersAsync(int userId);
         Task<IActionResult> CreateNewUserAndLoginAsync(CreateNewUserAndLogin newUser);
