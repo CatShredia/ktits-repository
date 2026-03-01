@@ -16,6 +16,38 @@ namespace TestBlazorAssembly.ApiRequest
             _logger = logger;
         }
 
+        public async Task<AuthResponse> LoginAsync(LoginRequest request)
+        {
+            var url = "api/auth/login";
+
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(url, request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
+                    return result ?? new AuthResponse { Success = false, Message = "Login failed." };
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return new AuthResponse
+                {
+                    Success = false,
+                    Message = $"Login failed: {response.StatusCode}. {errorContent}"
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при логине");
+                return new AuthResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+            }
+        }
+
         public async Task<UserData> GetAllUsersAsync()
         {
             var url = "api/UsersLogins/getAllUsers";
@@ -121,6 +153,48 @@ namespace TestBlazorAssembly.ApiRequest
                 {
                     success = false,
                     message = $"Failed to delete user. Status: {response.StatusCode}"
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при запросе: {ex.Message}");
+                return new UserOperationResponse
+                {
+                    success = false,
+                    message = ex.Message
+                };
+            }
+        }
+
+        public async Task<UserOperationResponse> RegisterAsync(string login, string password, string userName)
+        {
+            var url = "api/Auth/register";
+
+            var request = new
+            {
+                Name = userName,
+                Description = string.Empty,
+                Login = login,
+                Password = password,
+                id_Role = 2
+            };
+
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(url, request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var result = JsonSerializer.Deserialize<UserOperationResponse>(responseContent);
+                    return result ?? new UserOperationResponse { success = true };
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return new UserOperationResponse
+                {
+                    success = false,
+                    message = $"Registration failed: {response.StatusCode}. {errorContent}"
                 };
             }
             catch (Exception ex)

@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Json;
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using TestBlazorAssembly.ApiRequest.Models;
 using TestBlazorAssembly.Services;
@@ -8,13 +7,13 @@ namespace TestBlazorAssembly.ApiRequest.Services;
 
 public class UserService
 {
-    private readonly HttpClient _httpClient;
+    private readonly ApiRequestService _apiRequest;
     private readonly IJSRuntime _js;
     private readonly AuthenticationStateProvider _authStateProvider;
 
-    public UserService(HttpClient httpClient, IJSRuntime js, AuthenticationStateProvider authStateProvider)
+    public UserService(ApiRequestService apiRequest, IJSRuntime js, AuthenticationStateProvider authStateProvider)
     {
-        _httpClient = httpClient;
+        _apiRequest = apiRequest;
         _js = js;
         _authStateProvider = authStateProvider;
     }
@@ -23,59 +22,43 @@ public class UserService
     {
         var request = new LoginRequest { Login = login, Password = password };
 
-        var response = await _httpClient.PostAsJsonAsync("api/auth/login", request);
+        var response = await _apiRequest.LoginAsync(request);
 
-        if (response.IsSuccessStatusCode)
+        if (response != null && response.UserId > 0)
         {
-            var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
+            await SetUserIdAsync(response.UserId);
+            await SetRoleIdAsync(response.RoleId);
+            await SetUserNameAsync(response.UserName);
 
-            if (result != null && result.UserId > 0)
-            {
-                await SetUserIdAsync(result.UserId);
-                await SetRoleIdAsync(result.RoleId);
-                await SetUserNameAsync(result.UserName);
+            ((CustomAuthStateProvider)_authStateProvider).NotifyAuthenticationStateChanged();
 
-                ((CustomAuthStateProvider)_authStateProvider).NotifyAuthenticationStateChanged();
-
-                return result;
-            }
+            return response;
         }
 
-        var errorContent = await response.Content.ReadAsStringAsync();
-        return new AuthResponse
+        return response ?? new AuthResponse
         {
             Success = false,
-            Message = $"Login failed: {response.StatusCode}. {errorContent}"
+            Message = "Login failed."
         };
     }
 
     public async Task<AuthResponse> RegisterAsync(string login, string password, string userName)
     {
-        var request = new
-        {
-            Name = userName,
-            Description = string.Empty,
-            Login = login,
-            Password = password,
-            id_Role = 1
-        };
+        var result = await _apiRequest.RegisterAsync(login, password, userName);
 
-        var response = await _httpClient.PostAsJsonAsync("api/Auth/register", request);
-
-        if (response.IsSuccessStatusCode)
+        if (result.success)
         {
-            var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
-            if (result != null)
+            return new AuthResponse
             {
-                return result;
-            }
+                Success = true,
+                Message = "Registration successful"
+            };
         }
 
-        var errorContent = await response.Content.ReadAsStringAsync();
         return new AuthResponse
         {
             Success = false,
-            Message = $"Registration failed: {response.StatusCode}. {errorContent}"
+            Message = result.message ?? "Registration failed."
         };
     }
 

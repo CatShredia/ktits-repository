@@ -83,7 +83,7 @@
         {
             var response = await UserService.LoginAsync(model.Login, model.Password);
 
-            if (response != null && response.Success)
+            if (response != null && response.UserId > 0)
             {
                 Navigation.NavigateTo("/", forceLoad: true);
             }
