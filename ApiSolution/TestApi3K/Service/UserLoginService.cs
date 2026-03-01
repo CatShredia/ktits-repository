@@ -107,7 +107,7 @@ namespace TestApi3K.Service
             {
                 User_id = user.id_User,
                 Login = newUser.Login,
-                Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password),
+                Password = newUser.Password,
             };
 
             await _context.Logins.AddAsync(login);
@@ -137,7 +137,7 @@ namespace TestApi3K.Service
                 {
                     User_id = user.id_User,
                     Login = newUser.Login,
-                    Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password),
+                    Password = newUser.Password,
                 };
 
                 await _context.Logins.AddAsync(login);
@@ -174,9 +174,9 @@ namespace TestApi3K.Service
                 if (login != null)
                 {
                     login.Login = newUser.Login;
-                    if (!string.IsNullOrWhiteSpace(newUser.Password) && newUser.Password == newUser.ConfirmPassword)
+                    if (!string.IsNullOrWhiteSpace(newUser.Password))
                     {
-                        login.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
+                        login.Password = newUser.Password;
                     }
                 }
 

@@ -48,24 +48,14 @@ public class UserService
         };
     }
 
-    public async Task<AuthResponse> RegisterAsync(string login, string password, string confirmPassword, string userName)
+    public async Task<AuthResponse> RegisterAsync(string login, string password, string userName)
     {
-        if (password != confirmPassword)
-        {
-            return new AuthResponse
-            {
-                Success = false,
-                Message = "Passwords do not match."
-            };
-        }
-
         var request = new
         {
             Name = userName,
             Description = string.Empty,
             Login = login,
             Password = password,
-            ConfirmPassword = confirmPassword,
             id_Role = 1
         };
 

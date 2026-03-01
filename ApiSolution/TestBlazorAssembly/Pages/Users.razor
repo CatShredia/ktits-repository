@@ -116,10 +116,6 @@ else
                         <input type="password" @bind="editDataUser.Password" class="form-control" />
                     </div>
                     <div class="form-outline mb-3">
-                        <label class="form-label">Confirm Password</label>
-                        <input type="password" @bind="editDataUser.ConfirmPassword" class="form-control" />
-                    </div>
-                    <div class="form-outline mb-3">
                         <label class="form-label">Name</label>
                         <input type="text" @bind="editDataUser.Name" class="form-control" />
                     </div>
@@ -217,7 +213,6 @@ else
             Description = user.Description,
             Login = user.Name,
             Password = "",
-            ConfirmPassword = "",
             id_Role = 2
         };
         editErrorMessage = null;
@@ -262,7 +257,8 @@ else
 
     private async Task DeleteUser(int userId)
     {
-        if (!Confirm("Are you sure you want to delete this user?"))
+        var confirmed = await Confirm("Are you sure you want to delete this user?");
+        if (!confirmed)
             return;
 
         try
@@ -284,9 +280,9 @@ else
         }
     }
 
-    private bool Confirm(string message)
+    private async Task<bool> Confirm(string message)
     {
-        return JSRuntime.InvokeAsync<bool>("confirm", message).Result;
+        return await JSRuntime.InvokeAsync<bool>("confirm", message);
     }
 
     [Inject] private Microsoft.JSInterop.IJSRuntime JSRuntime { get; set; } = default!;

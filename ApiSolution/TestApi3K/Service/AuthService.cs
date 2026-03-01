@@ -57,15 +57,6 @@ public class AuthService : IAuthService
             };
         }
 
-        if (request.Password != request.ConfirmPassword)
-        {
-            return new AuthResponse
-            {
-                Success = false,
-                Message = "Passwords do not match."
-            };
-        }
-
         var existingUser = await _userService.GetUserByLoginAsync(request.Login);
         if (existingUser != null)
         {
