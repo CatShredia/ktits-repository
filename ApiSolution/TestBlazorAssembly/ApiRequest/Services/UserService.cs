@@ -33,6 +33,7 @@ public class UserService
             {
                 await SetUserIdAsync(result.UserId);
                 await SetRoleIdAsync(result.RoleId);
+                await SetUserNameAsync(result.UserName);
 
                 ((CustomAuthStateProvider)_authStateProvider).NotifyAuthenticationStateChanged();
 
@@ -82,6 +83,7 @@ public class UserService
     {
         await RemoveUserIdAsync();
         await RemoveRoleIdAsync();
+        await RemoveUserNameAsync();
         ((CustomAuthStateProvider)_authStateProvider).NotifyAuthenticationStateChanged();
     }
 
@@ -121,5 +123,20 @@ public class UserService
     private async Task RemoveRoleIdAsync()
     {
         await _js.InvokeVoidAsync("localStorage.removeItem", "roleId");
+    }
+
+    private async Task SetUserNameAsync(string userName)
+    {
+        await _js.InvokeVoidAsync("localStorage.setItem", "userName", userName);
+    }
+
+    private async Task<string> GetUserNameAsync()
+    {
+        return await _js.InvokeAsync<string>("localStorage.getItem", "userName") ?? string.Empty;
+    }
+
+    private async Task RemoveUserNameAsync()
+    {
+        await _js.InvokeVoidAsync("localStorage.removeItem", "userName");
     }
 }

@@ -19,6 +19,7 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
     {
         var userId = await _js.InvokeAsync<string>("localStorage.getItem", "userId");
         var roleId = await _js.InvokeAsync<string>("localStorage.getItem", "roleId");
+        var userName = await _js.InvokeAsync<string>("localStorage.getItem", "userName");
 
         if (string.IsNullOrWhiteSpace(userId))
         {
@@ -29,6 +30,11 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
         {
             new Claim(ClaimTypes.NameIdentifier, userId)
         };
+
+        if (!string.IsNullOrWhiteSpace(userName))
+        {
+            claims.Add(new Claim(ClaimTypes.Name, userName));
+        }
 
         if (!string.IsNullOrWhiteSpace(roleId))
         {
