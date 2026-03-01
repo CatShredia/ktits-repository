@@ -5,10 +5,16 @@
       "name": "Debug API",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "Start API",
-      "program": "${workspaceFolder}/TestApi3K/bin/Debug/net8.0/TestApi3K.dll",
-      "args": [],
-      "cwd": "${workspaceFolder}/TestApi3K",
+      "preLaunchTask": "Build API",
+      "program": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "TestApi3K/TestApi3K.csproj",
+        "--launch-profile",
+        "http"
+      ],
+      "cwd": "${workspaceFolder}",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
@@ -17,29 +23,41 @@
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "sourceFileMap": {
-        "/Views": "${workspaceFolder}/Views"
+      "console": "internalConsole"
+    },
+    {
+      "name": "Debug Blazor WebAssembly",
+      "type": "blazorwasm",
+      "request": "launch",
+      "hosted": false,
+      "program": "${workspaceFolder}/TestBlazorAssembly/bin/Debug/net8.0/TestBlazorAssembly.dll",
+      "cwd": "${workspaceFolder}/TestBlazorAssembly",
+      "browser": "chrome",
+      "url": "http://localhost:5156",
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     {
-      "name": "Debug Blazor",
+      "name": "Debug All (API + Blazor)",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "Start Blazor",
-      "program": "${workspaceFolder}/TestBlazorAssembly/bin/Debug/net8.0/TestBlazorAssembly.dll",
-      "args": [],
-      "cwd": "${workspaceFolder}/TestBlazorAssembly",
+      "preLaunchTask": "Start All (API + Blazor)",
+      "program": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "TestApi3K/TestApi3K.csproj",
+        "--launch-profile",
+        "http"
+      ],
+      "cwd": "${workspaceFolder}",
       "stopAtEntry": false,
-      "serverReadyAction": {
-        "action": "openExternally",
-        "pattern": "Now listening on:\\s+(https?://\\S+)"
-      },
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "sourceFileMap": {
-        "/Views": "${workspaceFolder}/Views"
-      }
+      "console": "internalConsole"
     }
   ]
 }

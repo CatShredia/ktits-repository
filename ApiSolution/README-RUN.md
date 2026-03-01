@@ -32,11 +32,19 @@
 
 ### Способ 3: Отладка
 
-1. Выберите конфигурацию в VS Code:
-   - **Debug API** — для отладки API
-   - **Debug Blazor** — для отладки Blazor
+1. **Debug API** — отладка API проекта
+   - Выберите конфигурацию "Debug API"
+   - Нажмите `F5`
+   - Откроется Swagger на http://localhost:5039/swagger
 
-2. Нажмите `F5`
+2. **Debug Blazor WebAssembly** — отладка Blazor
+   - Выберите конфигурацию "Debug Blazor WebAssembly"
+   - Нажмите `F5`
+   - Откроется браузер с Blazor приложением
+
+3. **Debug All** — запуск обоих проектов
+   - Выберите конфигурацию "Debug All (API + Blazor)"
+   - Нажмите `F5`
 
 ---
 

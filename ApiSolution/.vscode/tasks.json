@@ -1,0 +1,82 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start API",
+      "type": "dotnet",
+      "command": "run",
+      "project": "TestApi3K/TestApi3K.csproj",
+      "args": [
+        "--launch-profile",
+        "http"
+      ],
+      "problemMatcher": "$msCompile",
+      "isBackground": true,
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "Start Blazor",
+      "type": "dotnet",
+      "command": "run",
+      "project": "TestBlazorAssembly/TestBlazorAssembly.csproj",
+      "args": [
+        "--launch-profile",
+        "http"
+      ],
+      "problemMatcher": "$msCompile",
+      "isBackground": true,
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "Build API",
+      "type": "dotnet",
+      "command": "build",
+      "project": "TestApi3K/TestApi3K.csproj",
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Build Blazor",
+      "type": "dotnet",
+      "command": "build",
+      "project": "TestBlazorAssembly/TestBlazorAssembly.csproj",
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+    {
+      "label": "Build All",
+      "dependsOn": [
+        "Build API",
+        "Build Blazor"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Start All (API + Blazor)",
+      "dependsOn": [
+        "Start API",
+        "Start Blazor"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Open Browser Tabs",
+      "type": "shell",
+      "command": "start chrome http://localhost:5039/swagger && timeout /t 2 /nobreak >nul && start chrome http://localhost:5156",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "dependsOn": "Start All (API + Blazor)",
+      "problemMatcher": []
+    }
+  ]
+}
