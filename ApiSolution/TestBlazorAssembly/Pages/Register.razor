@@ -49,6 +49,12 @@
                            placeholder="Enter your password" @bind="model.Password" disabled="@isRegistering" />
                 </div>
 
+                <div class="mb-4">
+                    <label for="confirmPasswordInput" class="form-label">Confirm Password</label>
+                    <input type="password" id="confirmPasswordInput" class="form-control form-control-lg"
+                           placeholder="Confirm your password" @bind="model.ConfirmPassword" disabled="@isRegistering" />
+                </div>
+
                 <div class="d-grid mb-3">
                     <button type="submit" class="btn btn-primary btn-lg" disabled="@isRegistering">
                         @if (isRegistering)
@@ -82,6 +88,7 @@
     {
         public string Login { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; } = string.Empty;
         public string UserName { get; set; } = string.Empty;
     }
 
@@ -115,16 +122,22 @@
             return;
         }
 
+        if (model.Password != model.ConfirmPassword)
+        {
+            errorMessage = "Passwords do not match.";
+            return;
+        }
+
         isRegistering = true;
 
         try
         {
-            var response = await UserService.RegisterAsync(model.Login, model.Password, model.UserName);
+            var response = await UserService.RegisterAsync(model.Login, model.Password, model.ConfirmPassword, model.UserName);
 
-            if (response.Success)
+            if (response.Success || !string.IsNullOrEmpty(response.Token))
             {
                 successMessage = "Registration successful! Redirecting to login...";
-                await Task.Delay(2000);
+                await Task.Delay(2000); // Show message for 2 seconds
                 Navigation.NavigateTo("/login");
             }
             else

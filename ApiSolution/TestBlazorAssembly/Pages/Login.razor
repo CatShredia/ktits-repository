@@ -1,4 +1,6 @@
 ﻿@page "/login"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
 @using TestBlazorAssembly.ApiRequest.Services
 @inject NavigationManager Navigation
 @inject UserService UserService
@@ -81,9 +83,10 @@
 
         try
         {
+            // в сервис запрос к API
             var response = await UserService.LoginAsync(model.Login, model.Password);
 
-            if (response != null && response.UserId > 0)
+            if (response != null && !string.IsNullOrEmpty(response.Token))
             {
                 Navigation.NavigateTo("/", forceLoad: true);
             }

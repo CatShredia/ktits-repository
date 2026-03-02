@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TestApi3K.Services.Interfaces;
 using TestApi3K.Database.Requests;
 
@@ -6,6 +7,7 @@ namespace TestApi3K.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     public class UsersLoginsController
     {
         private readonly IUserRepository _userLoginService;

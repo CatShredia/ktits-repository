@@ -56,6 +56,7 @@ else
 }
 
 <div class="d-flex align-items-center h-custom-2 px-5 ms-xl-4 mt-5 pt-5 pt-xl-0 mt-xl-n5">
+    @* Use EditForm or standard form with onsubmit *@
     <form style="width: 23rem;" @onsubmit="HandleSubmit">
         <div class="form-outline mb-4">
             <label class="form-label" for="loginInput">Login</label>
@@ -154,6 +155,8 @@ else
 
     private async Task GetAllUsersAsync()
     {
+        Console.WriteLine("rveevrevr");
+
         isLoading = true;
         errorMessage = null;
 
@@ -161,6 +164,7 @@ else
         {
             var userData = await ApiRequest.GetAllUsersAsync();
             users = userData?.data?.users ?? new List<UserDataShort>();
+            Console.WriteLine(users[0]);
         }
         catch (Exception ex)
         {

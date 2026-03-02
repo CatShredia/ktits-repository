@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using TestBlazorAssembly.ApiRequest.Models;
 using TestBlazorAssembly.Services;
@@ -7,119 +9,116 @@ namespace TestBlazorAssembly.ApiRequest.Services;
 
 public class UserService
 {
-    private readonly ApiRequestService _apiRequest;
+    private readonly HttpClient _httpClient;
     private readonly IJSRuntime _js;
     private readonly AuthenticationStateProvider _authStateProvider;
 
-    public UserService(ApiRequestService apiRequest, IJSRuntime js, AuthenticationStateProvider authStateProvider)
+    // ключ шифрование токена с API
+    private const string StorageKey = "authToken";
+
+    public UserService(HttpClient httpClient, IJSRuntime js, AuthenticationStateProvider authStateProvider)
     {
-        _apiRequest = apiRequest;
+        _httpClient = httpClient;
         _js = js;
         _authStateProvider = authStateProvider;
     }
 
+    // основной метод входа и регистрации токена
     public async Task<AuthResponse> LoginAsync(string login, string password)
     {
         var request = new LoginRequest { Login = login, Password = password };
 
-        var response = await _apiRequest.LoginAsync(request);
+        var response = await _httpClient.PostAsJsonAsync("api/auth/login", request);
 
-        if (response != null && response.UserId > 0)
+        if (response.IsSuccessStatusCode)
         {
-            await SetUserIdAsync(response.UserId);
-            await SetRoleIdAsync(response.RoleId);
-            await SetUserNameAsync(response.UserName);
+            var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
 
-            ((CustomAuthStateProvider)_authStateProvider).NotifyAuthenticationStateChanged();
-
-            return response;
-        }
-
-        return response ?? new AuthResponse
-        {
-            Success = false,
-            Message = "Login failed."
-        };
-    }
-
-    public async Task<AuthResponse> RegisterAsync(string login, string password, string userName)
-    {
-        var result = await _apiRequest.RegisterAsync(login, password, userName);
-
-        if (result.success)
-        {
-            return new AuthResponse
+            if (result != null && !string.IsNullOrEmpty(result.Token))
             {
-                Success = true,
-                Message = "Registration successful"
-            };
+                await SetTokenAsync(result.Token);
+
+                ((CustomAuthStateProvider)_authStateProvider).NotifyAuthenticationStateChanged();
+
+                return result;
+            }
         }
 
+        var errorContent = await response.Content.ReadAsStringAsync();
         return new AuthResponse
         {
             Success = false,
-            Message = result.message ?? "Registration failed."
+            Message = $"Login failed: {response.StatusCode}. {errorContent}"
+        };
+    }
+
+    public async Task<AuthResponse> RegisterAsync(string login, string password, string confirmPassword, string userName)
+    {
+        if (password != confirmPassword)
+        {
+            return new AuthResponse
+            {
+                Success = false,
+                Message = "Passwords do not match."
+            };
+        }
+
+        var request = new
+        {
+            Name = userName,
+            Description = string.Empty,
+            Login = login,
+            Password = password,
+            ConfirmPassword = confirmPassword,
+            id_Role = 1
+        };
+
+        var response = await _httpClient.PostAsJsonAsync("api/Auth/register", request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
+            if (result != null)
+            {
+                return result;
+            }
+        }
+
+        var errorContent = await response.Content.ReadAsStringAsync();
+        return new AuthResponse
+        {
+            Success = false,
+            Message = $"Registration failed: {response.StatusCode}. {errorContent}"
         };
     }
 
     public async Task LogoutAsync()
     {
-        await RemoveUserIdAsync();
-        await RemoveRoleIdAsync();
-        await RemoveUserNameAsync();
+        await RemoveTokenAsync();
         ((CustomAuthStateProvider)_authStateProvider).NotifyAuthenticationStateChanged();
     }
 
     public async Task<bool> IsAuthenticatedAsync()
     {
-        var userId = await GetUserIdAsync();
-        return userId > 0;
+        var token = await GetTokenAsync();
+        return !string.IsNullOrEmpty(token);
     }
 
-    private async Task SetUserIdAsync(int userId)
+
+    private async Task SetTokenAsync(string token)
     {
-        await _js.InvokeVoidAsync("localStorage.setItem", "userId", userId.ToString());
+        await _js.InvokeVoidAsync("localStorage.setItem", StorageKey, token);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
-    private async Task<int> GetUserIdAsync()
+    private async Task<string?> GetTokenAsync()
     {
-        var userIdStr = await _js.InvokeAsync<string>("localStorage.getItem", "userId");
-        return int.TryParse(userIdStr, out var userId) ? userId : 0;
+        return await _js.InvokeAsync<string>("localStorage.getItem", StorageKey);
     }
 
-    private async Task RemoveUserIdAsync()
+    private async Task RemoveTokenAsync()
     {
-        await _js.InvokeVoidAsync("localStorage.removeItem", "userId");
-    }
-
-    private async Task SetRoleIdAsync(int roleId)
-    {
-        await _js.InvokeVoidAsync("localStorage.setItem", "roleId", roleId.ToString());
-    }
-
-    private async Task<int> GetRoleIdAsync()
-    {
-        var roleIdStr = await _js.InvokeAsync<string>("localStorage.getItem", "roleId");
-        return int.TryParse(roleIdStr, out var roleId) ? roleId : 0;
-    }
-
-    private async Task RemoveRoleIdAsync()
-    {
-        await _js.InvokeVoidAsync("localStorage.removeItem", "roleId");
-    }
-
-    private async Task SetUserNameAsync(string userName)
-    {
-        await _js.InvokeVoidAsync("localStorage.setItem", "userName", userName);
-    }
-
-    private async Task<string> GetUserNameAsync()
-    {
-        return await _js.InvokeAsync<string>("localStorage.getItem", "userName") ?? string.Empty;
-    }
-
-    private async Task RemoveUserNameAsync()
-    {
-        await _js.InvokeVoidAsync("localStorage.removeItem", "userName");
+        await _js.InvokeVoidAsync("localStorage.removeItem", StorageKey);
+        _httpClient.DefaultRequestHeaders.Authorization = null;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 
@@ -17,31 +18,18 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var userId = await _js.InvokeAsync<string>("localStorage.getItem", "userId");
-        var roleId = await _js.InvokeAsync<string>("localStorage.getItem", "roleId");
-        var userName = await _js.InvokeAsync<string>("localStorage.getItem", "userName");
+        var token = await _js.InvokeAsync<string>("localStorage.getItem", "authToken");
 
-        if (string.IsNullOrWhiteSpace(userId))
+        if (string.IsNullOrWhiteSpace(token))
         {
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
 
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, userId)
-        };
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-        if (!string.IsNullOrWhiteSpace(userName))
-        {
-            claims.Add(new Claim(ClaimTypes.Name, userName));
-        }
-
-        if (!string.IsNullOrWhiteSpace(roleId))
-        {
-            claims.Add(new Claim(ClaimTypes.Role, roleId));
-        }
-
-        var user = new ClaimsPrincipal(new ClaimsIdentity(claims, "local"));
+        var claims = ParseClaimsFromJwt(token);
+        var user = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));
 
         return new AuthenticationState(user);
     }
@@ -49,5 +37,40 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
     public void NotifyAuthenticationStateChanged()
     {
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+    }
+
+    private static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
+    {
+        var claims = new List<Claim>();
+
+        var payload = jwt.Split('.')[1];
+
+        var padLength = 4 - (payload.Length % 4);
+        if (padLength != 4)
+        {
+            payload += new string('=', padLength);
+        }
+
+        var bytes = Convert.FromBase64String(payload);
+
+        using var document = JsonDocument.Parse(bytes);
+        var root = document.RootElement;
+
+        foreach (var prop in root.EnumerateObject())
+        {
+            if (prop.Value.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var item in prop.Value.EnumerateArray())
+                {
+                    claims.Add(new Claim(prop.Name, item.ToString()));
+                }
+            }
+            else
+            {
+                claims.Add(new Claim(prop.Name, prop.Value.ToString()));
+            }
+        }
+
+        return claims;
     }
 }
