@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace TestApi3K.Database.Models
 {
+    [Index(nameof(Login), IsUnique = true)]
     public class Logins
     {
         [Key]
