@@ -2,96 +2,6 @@
   "version": "2.0.0",
   "tasks": [
     {
-<<<<<<< HEAD
-      "label": "run-api",
-      "type": "dotnet",
-      "command": "run",
-      "args": [
-        "--project",
-        "TestApi3K/TestApi3K.csproj",
-=======
-      "label": "Start API",
-      "type": "dotnet",
-      "command": "run",
-      "project": "TestApi3K/TestApi3K.csproj",
-      "args": [
->>>>>>> api_frol_jwt-t001
-        "--launch-profile",
-        "http"
-      ],
-      "problemMatcher": "$msCompile",
-<<<<<<< HEAD
-      "isBackground": true
-    },
-    {
-      "label": "run-blazor",
-      "type": "dotnet",
-      "command": "run",
-      "args": [
-        "--project",
-        "TestBlazorAssembly/TestBlazorAssembly.csproj"
-      ],
-      "problemMatcher": "$msCompile",
-      "isBackground": true
-    },
-    {
-      "label": "watch-api",
-      "type": "dotnet",
-      "command": "watch",
-      "args": [
-        "--project",
-        "TestApi3K/TestApi3K.csproj",
-        "--",
-        "run",
-=======
-      "isBackground": true,
-      "group": {
-        "kind": "build",
-        "isDefault": false
-      }
-    },
-    {
-      "label": "Start Blazor",
-      "type": "dotnet",
-      "command": "run",
-      "project": "TestBlazorAssembly/TestBlazorAssembly.csproj",
-      "args": [
->>>>>>> api_frol_jwt-t001
-        "--launch-profile",
-        "http"
-      ],
-      "problemMatcher": "$msCompile",
-<<<<<<< HEAD
-      "isBackground": true
-    },
-    {
-      "label": "watch-blazor",
-      "type": "dotnet",
-      "command": "watch",
-      "args": [
-        "--project",
-        "TestBlazorAssembly/TestBlazorAssembly.csproj",
-        "run"
-      ],
-      "problemMatcher": "$msCompile",
-      "isBackground": true
-    },
-    {
-      "label": "run-all",
-      "dependsOn": ["run-api", "run-blazor"],
-      "problemMatcher": []
-    },
-    {
-      "label": "watch-all",
-      "dependsOn": ["watch-api", "watch-blazor"],
-=======
-      "isBackground": true,
-      "group": {
-        "kind": "build",
-        "isDefault": false
-      }
-    },
-    {
       "label": "Build API",
       "type": "dotnet",
       "command": "build",
@@ -99,7 +9,7 @@
       "problemMatcher": "$msCompile",
       "group": {
         "kind": "build",
-        "isDefault": true
+        "isDefault": false
       }
     },
     {
@@ -108,33 +18,37 @@
       "command": "build",
       "project": "TestBlazorAssembly/TestBlazorAssembly.csproj",
       "problemMatcher": "$msCompile",
-      "group": "build"
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
     },
     {
       "label": "Build All",
-      "dependsOn": [
-        "Build API",
-        "Build Blazor"
-      ],
+      "dependsOn": ["Build API", "Build Blazor"],
       "problemMatcher": []
     },
     {
-      "label": "Start All (API + Blazor)",
-      "dependsOn": [
-        "Start API",
-        "Start Blazor"
-      ],
-      "problemMatcher": []
+      "label": "Run API",
+      "type": "dotnet",
+      "command": "run",
+      "project": "TestApi3K/TestApi3K.csproj",
+      "args": ["--launch-profile", "http"],
+      "problemMatcher": "$msCompile",
+      "isBackground": true
     },
     {
-      "label": "Open Browser Tabs",
-      "type": "shell",
-      "command": "start chrome http://localhost:5039/swagger && timeout /t 2 /nobreak >nul && start chrome http://localhost:5156",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "dependsOn": "Start All (API + Blazor)",
->>>>>>> api_frol_jwt-t001
+      "label": "Run Blazor",
+      "type": "dotnet",
+      "command": "run",
+      "project": "TestBlazorAssembly/TestBlazorAssembly.csproj",
+      "args": ["--launch-profile", "http"],
+      "problemMatcher": "$msCompile",
+      "isBackground": true
+    },
+    {
+      "label": "Run All (API + Blazor)",
+      "dependsOn": ["Run API", "Run Blazor"],
       "problemMatcher": []
     }
   ]

@@ -41,7 +41,7 @@ public class AuthService : IAuthService
             };
         }
 
-        var token = GenerateJwtToken(request.Login, user.id_Role);
+        var token = GenerateJwtToken(request.Login, user.id_Role, user.id_User);
 
         return new AuthResponse
         {
@@ -97,7 +97,7 @@ public class AuthService : IAuthService
 
         var createdUser = await _userRepository.GetUserByLoginAsync(request.Login);
 
-        var token = GenerateJwtToken(request.Login, request.id_Role);
+        var token = GenerateJwtToken(request.Login, request.id_Role, createdUser?.id_User ?? 0);
 
         return new AuthResponse
         {
@@ -110,7 +110,7 @@ public class AuthService : IAuthService
         };
     }
 
-    private string GenerateJwtToken(string login, int? roleId)
+    private string GenerateJwtToken(string login, int? roleId, int userId)
     {
         var secretKey = _config["Jwt:SecretKey"]
             ?? throw new Exception("Jwt:SecretKey not found in configuration");
@@ -124,6 +124,7 @@ public class AuthService : IAuthService
         {
             new Claim(ClaimTypes.Name, login),
             new Claim(ClaimTypes.Role, roleName),
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

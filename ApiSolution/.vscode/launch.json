@@ -2,65 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-<<<<<<< HEAD
-      "name": "Blazor WebAssembly",
-      "type": "blazorwasm",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/TestBlazorAssembly",
-      "browser": "chrome"
-    },
-    {
-      "name": "Web API",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "run-api",
-      "program": "${workspaceFolder}/TestApi3K/bin/Debug/net8.0/TestApi3K.dll",
-      "args": [],
-      "cwd": "${workspaceFolder}/TestApi3K",
-      "stopAtEntry": false,
-      "console": "internalConsole"
-    },
-    {
-      "name": "Run All (API + Blazor)",
-      "type": "blazorwasm",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/TestBlazorAssembly",
-      "browser": "chrome",
-      "preLaunchTask": "run-all"
-    },
-    {
-      "name": "Watch All (Hot Reload)",
-      "type": "blazorwasm",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/TestBlazorAssembly",
-      "browser": "chrome",
-      "preLaunchTask": "watch-all",
-      "hotReloadEnabled": true
-    }
-  ],
-  "compounds": [
-    {
-      "name": "API + Blazor",
-      "configurations": ["Web API", "Blazor WebAssembly"],
-      "presentation": {
-        "hidden": false,
-        "group": "1_compound",
-        "order": 1
-      }
-=======
-      "name": "Debug API",
+      "name": "🚀 Debug API",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "Build API",
-      "program": "dotnet",
-      "args": [
-        "run",
-        "--project",
-        "TestApi3K/TestApi3K.csproj",
-        "--launch-profile",
-        "http"
-      ],
-      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/TestApi3K/bin/Debug/net8.0/TestApi3K.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/TestApi3K",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
@@ -72,11 +20,11 @@
       "console": "internalConsole"
     },
     {
-      "name": "Debug Blazor WebAssembly",
+      "name": "🎨 Debug Blazor WebAssembly",
       "type": "blazorwasm",
       "request": "launch",
+      "preLaunchTask": "Build Blazor",
       "hosted": false,
-      "program": "${workspaceFolder}/TestBlazorAssembly/bin/Debug/net8.0/TestBlazorAssembly.dll",
       "cwd": "${workspaceFolder}/TestBlazorAssembly",
       "browser": "chrome",
       "url": "http://localhost:5156",
@@ -86,25 +34,35 @@
       }
     },
     {
-      "name": "Debug All (API + Blazor)",
+      "name": "⚡ Debug All (API + Blazor)",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "Start All (API + Blazor)",
-      "program": "dotnet",
-      "args": [
-        "run",
-        "--project",
-        "TestApi3K/TestApi3K.csproj",
-        "--launch-profile",
-        "http"
-      ],
-      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "Build All",
+      "program": "${workspaceFolder}/TestApi3K/bin/Debug/net8.0/TestApi3K.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/TestApi3K",
       "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "Now listening on:\\s+(https?://\\S+)"
+      },
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "console": "internalConsole"
->>>>>>> api_frol_jwt-t001
+      "console": "internalConsole",
+      "justMyCode": false
+    }
+  ],
+  "compounds": [
+    {
+      "name": "🔥 Run All with Debug (API + Blazor)",
+      "configurations": ["⚡ Debug All (API + Blazor)", "🎨 Debug Blazor WebAssembly"],
+      "presentation": {
+        "hidden": false,
+        "group": "1_run-all",
+        "order": 1
+      },
+      "stopAll": false
     }
   ]
 }

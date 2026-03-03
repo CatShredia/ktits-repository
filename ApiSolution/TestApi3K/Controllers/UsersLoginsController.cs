@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestApi3K.Services.Interfaces;
 using TestApi3K.Database.Requests;
@@ -8,7 +9,7 @@ namespace TestApi3K.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "Admin")]
-    public class UsersLoginsController
+    public class UsersLoginsController : ControllerBase
     {
         private readonly IUserRepository _userLoginService;
 
@@ -19,9 +20,16 @@ namespace TestApi3K.Controllers
 
         [HttpGet]
         [Route("getAllUsers")]
-        public async Task<IActionResult> GetAllUsers([FromHeader(Name = "X-User-Id")] int? userId)
+        public async Task<IActionResult> GetAllUsers()
         {
-            return await _userLoginService.GetAllUsersAsync(userId ?? 0);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            if (string.IsNullOrWhiteSpace(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                return Unauthorized(new { Success = false, Message = "User ID not found in token" });
+            }
+
+            return await _userLoginService.GetAllUsersAsync(userId);
         }
 
         [HttpPost]
