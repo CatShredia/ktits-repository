@@ -155,8 +155,6 @@ else
 
     private async Task GetAllUsersAsync()
     {
-        Console.WriteLine("rveevrevr");
-
         isLoading = true;
         errorMessage = null;
 
@@ -164,7 +162,15 @@ else
         {
             var userData = await ApiRequest.GetAllUsersAsync();
             users = userData?.data?.users ?? new List<UserDataShort>();
-            Console.WriteLine(users[0]);
+            
+            if (users.Any())
+            {
+                Console.WriteLine($"Loaded {users.Count} users. First user: {users.First().Name}");
+            }
+            else
+            {
+                Console.WriteLine("No users found.");
+            }
         }
         catch (Exception ex)
         {

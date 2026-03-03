@@ -16,7 +16,7 @@
 
     public class UserDataContainer
     {
-        public List<UserDataShort> users { get; set; }
+        public List<UserDataShort> users { get; set; } = new List<UserDataShort>();
     }
 
     public class ReqDataUser

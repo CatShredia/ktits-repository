@@ -43,7 +43,18 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
     {
         var claims = new List<Claim>();
 
-        var payload = jwt.Split('.')[1];
+        if (string.IsNullOrWhiteSpace(jwt))
+        {
+            return claims;
+        }
+
+        var parts = jwt.Split('.');
+        if (parts.Length != 3)
+        {
+            return claims;
+        }
+
+        var payload = parts[1];
 
         var padLength = 4 - (payload.Length % 4);
         if (padLength != 4)
@@ -67,7 +78,15 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
             }
             else
             {
-                claims.Add(new Claim(prop.Name, prop.Value.ToString()));
+                // Нормализуем имя claim для роли
+                var claimName = prop.Name;
+                if (claimName == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+                    || claimName == "role")
+                {
+                    claimName = ClaimTypes.Role;
+                }
+
+                claims.Add(new Claim(claimName, prop.Value.ToString()));
             }
         }
 

@@ -36,6 +36,6 @@
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        isAdmin = user.IsInRole("1");
+        isAdmin = user.IsInRole("Admin");
     }
 }
