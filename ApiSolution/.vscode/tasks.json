@@ -2,65 +2,57 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "run-api",
-      "type": "dotnet",
-      "command": "run",
-      "args": [
-        "--project",
-        "TestApi3K/TestApi3K.csproj",
-        "--launch-profile",
-        "http"
-      ],
+      "label": "Build API",
+      "type": "shell",
+      "command": "dotnet build",
+      "options": {
+        "cwd": "${workspaceFolder}/TestApi3K"
+      },
       "problemMatcher": "$msCompile",
-      "isBackground": true
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
     },
     {
-      "label": "run-blazor",
-      "type": "dotnet",
-      "command": "run",
-      "args": [
-        "--project",
-        "TestBlazorAssembly/TestBlazorAssembly.csproj"
-      ],
+      "label": "Build Blazor",
+      "type": "shell",
+      "command": "dotnet build",
+      "options": {
+        "cwd": "${workspaceFolder}/TestBlazorAssembly"
+      },
       "problemMatcher": "$msCompile",
-      "isBackground": true
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
     },
     {
-      "label": "watch-api",
-      "type": "dotnet",
-      "command": "watch",
-      "args": [
-        "--project",
-        "TestApi3K/TestApi3K.csproj",
-        "--",
-        "run",
-        "--launch-profile",
-        "http"
-      ],
-      "problemMatcher": "$msCompile",
-      "isBackground": true
-    },
-    {
-      "label": "watch-blazor",
-      "type": "dotnet",
-      "command": "watch",
-      "args": [
-        "--project",
-        "TestBlazorAssembly/TestBlazorAssembly.csproj",
-        "run"
-      ],
-      "problemMatcher": "$msCompile",
-      "isBackground": true
-    },
-    {
-      "label": "run-all",
-      "dependsOn": ["run-api", "run-blazor"],
+      "label": "Build All",
+      "dependsOn": ["Build API", "Build Blazor"],
       "problemMatcher": []
     },
     {
-      "label": "watch-all",
-      "dependsOn": ["watch-api", "watch-blazor"],
-      "problemMatcher": []
+      "label": "Run API",
+      "type": "shell",
+      "command": "dotnet run",
+      "options": {
+        "cwd": "${workspaceFolder}/TestApi3K"
+      },
+      "args": ["--launch-profile", "http"],
+      "problemMatcher": "$msCompile",
+      "isBackground": true
+    },
+    {
+      "label": "Run Blazor",
+      "type": "shell",
+      "command": "dotnet run",
+      "options": {
+        "cwd": "${workspaceFolder}/TestBlazorAssembly"
+      },
+      "args": ["--launch-profile", "http"],
+      "problemMatcher": "$msCompile",
+      "isBackground": true
     }
   ]
 }

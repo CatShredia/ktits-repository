@@ -2,50 +2,70 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Blazor WebAssembly",
-      "type": "blazorwasm",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/TestBlazorAssembly",
-      "browser": "chrome"
-    },
-    {
-      "name": "Web API",
+      "name": "🚀 Debug API",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "run-api",
+      "preLaunchTask": "Build API",
       "program": "${workspaceFolder}/TestApi3K/bin/Debug/net8.0/TestApi3K.dll",
       "args": [],
       "cwd": "${workspaceFolder}/TestApi3K",
       "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "Now listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
       "console": "internalConsole"
     },
     {
-      "name": "Run All (API + Blazor)",
+      "name": "🎨 Debug Blazor WebAssembly",
       "type": "blazorwasm",
       "request": "launch",
+      "preLaunchTask": "Build Blazor",
+      "hosted": false,
       "cwd": "${workspaceFolder}/TestBlazorAssembly",
       "browser": "chrome",
-      "preLaunchTask": "run-all"
+      "url": "http://localhost:5156",
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     },
     {
-      "name": "Watch All (Hot Reload)",
-      "type": "blazorwasm",
+      "name": "⚡ Debug All (API + Blazor)",
+      "type": "coreclr",
       "request": "launch",
-      "cwd": "${workspaceFolder}/TestBlazorAssembly",
-      "browser": "chrome",
-      "preLaunchTask": "watch-all",
-      "hotReloadEnabled": true
+      "preLaunchTask": "Build All",
+      "program": "${workspaceFolder}/TestApi3K/bin/Debug/net8.0/TestApi3K.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/TestApi3K",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "Now listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "console": "internalConsole",
+      "justMyCode": false
     }
   ],
   "compounds": [
     {
-      "name": "API + Blazor",
-      "configurations": ["Web API", "Blazor WebAssembly"],
+      "name": "🔥 Run All with Debug (API + Blazor)",
+      "configurations": [
+        "⚡ Debug All (API + Blazor)",
+        "🎨 Debug Blazor WebAssembly"
+      ],
       "presentation": {
         "hidden": false,
-        "group": "1_compound",
+        "group": "1_run-all",
         "order": 1
-      }
+      },
+      "stopAll": false
     }
   ]
 }
