@@ -8,6 +8,7 @@ public class BallController : MonoBehaviour
     private Vector2 ballInitialForce;
 
     public GameObject playerObject;
+    public float boundary = 10f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -35,6 +36,16 @@ public class BallController : MonoBehaviour
         {
             rb.AddForce(ballInitialForce);
             isActiveBalls = !isActiveBalls;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // отскок от стен
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            Vector2 reflectDir = Vector2.Reflect(rb.linearVelocity, collision.contacts[0].normal);
+            rb.linearVelocity = reflectDir;
         }
     }
 }
