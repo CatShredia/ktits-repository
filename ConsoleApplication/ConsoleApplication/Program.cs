@@ -27,8 +27,6 @@ class ConsoleApplication
                 case "6_1": Task6_1(); break;
                 case "C4": Class4(); break;
                 case "7": Task7(); break;
-                case "10": Task10(); break;
-                case "11": Task11(); break;
                 default: Console.WriteLine("Неизвестная задача"); break;
             }
 
