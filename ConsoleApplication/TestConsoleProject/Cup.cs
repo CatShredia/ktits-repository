@@ -1,6 +1,6 @@
-namespace practise12
+namespace TestConsoleProject
 {
-    class Cup
+    public class Cup
     {
         // высота
         public double Height { get; set; }
