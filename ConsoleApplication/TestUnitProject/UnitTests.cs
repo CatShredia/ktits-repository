@@ -5,6 +5,13 @@ namespace TestConsoleProject
     {
         // ! =============== Task 10: HasUniqueSymbols Tests ===============
         // Count: 7
+        // 1. Пустая строка - считается, что все символы уникальны (возвращает true)
+        // 2. Строка из одного символа - всегда уникальна (возвращает true)
+        // 3. Строка с полностью уникальными символами - возвращает true
+        // 4. Строка с повторяющимися символами - возвращает false
+        // 5. Строка из одинаковых символов - возвращает false
+        // 6. Строка с символами разного регистра - считается, что символы уникальны (A и a - разные)
+        // 7. Null строка - возвращает false как некорректный ввод
 
         [Test]
         public void Task10HasUniqueSymbols_EmptyString_ReturnsTrue()
@@ -57,6 +64,13 @@ namespace TestConsoleProject
 
         // ! =============== Task 11: CalculateSphereVolume Tests ===============
         // Count: 7
+        // 1. Нулевой радиус - объем равен 0
+        // 2. Радиус = 1, точность = 2 - проверка корректности вычисления с заданной точностью
+        // 3. Радиус = 3, точность = 1 - проверка вычисления для другого радиуса
+        // 4. Радиус = 2.5, точность = 3 - проверка вычисления с дробным радиусом
+        // 5. Отрицательный радиус - возвращает 0 как некорректный ввод
+        // 6. Отрицательная точность - возвращает 0 как некорректный ввод
+        // 7. Большой радиус (100), точность = 0 - проверка вычисления для больших значений
 
         [Test]
         public void Task11CalculateSphereVolume_ZeroRadius_ReturnsZero()
@@ -113,12 +127,14 @@ namespace TestConsoleProject
 
 
         // ! =============== Task 12: Cup class Test ===============
-        // Опишите класс «стакан». Поля класса: высота стакана, диаметр дна стакана.
-        // Предполагается, что стакан прямой (представляет собой цилиндр). 
-        // Методы: определить объем стакана, определить,
-        // какой процент стакана занимает жидкость, налитая на заданную высоту,
-        // определить массу жидкости с заданной плотностью, налитую на заданную высоту.
         // Count: 7
+        // 1. Вычисление полного объема стакана - проверка корректности формулы
+        // 2. Пустой стакан (высота жидкости = 0) - процент заполнения равен 0
+        // 3. Половина высоты стакана - процент заполнения равен 50%
+        // 4. Полный стакан - процент заполнения равен 100%
+        // 5. Перелив (высота жидкости больше высоты стакана) - процент заполнения равен 100%
+        // 6. Масса жидкости при нулевой высоте - масса равна 0
+        // 7. Масса жидкости на половине высоты - проверка корректности вычисления массы
 
         [Test]
         public void Task12Cup_VolumeTest()
@@ -176,6 +192,122 @@ namespace TestConsoleProject
             var result = cup.LiquidMass(5, 1.0);
             var expected = 1.0 * Math.PI * Math.Pow(2.5, 2) * 5;
             Assert.That(result, Is.EqualTo(expected).Within(0.01));
+        }
+
+        // ! =============== Task 13: LandPlotList class Test ===============
+        // Count: 7
+        // 1. Добавление трех участков - проверка корректности добавления и подсчета количества
+        // 2. Сортировка участков по возрастанию - проверка корректности сортировки
+        // 3. Удаление участков ниже порога - проверка удаления маленьких участков
+        // 4. Удаление при высоком пороге - все участки удаляются
+        // 5. Удаление при низком пороге - ни один участок не удаляется
+        // 6. Полный сценарий: сортировка с последующим удалением - проверка комбинации методов
+        // 7. Добавление участка с отрицательной площадью - выбрасывает ArgumentException
+
+        [Test]
+        public void Task13TaskLandPlot_AddPlots_CountIsCorrect()
+        {
+            var list = new TestConsoleProject.LandPlotList();
+            list.AddPlot(100.0);
+            list.AddPlot(200.0);
+            list.AddPlot(50.0);
+
+            var count = list.Count;
+            var expected = 3;
+
+            Assert.That(count, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Task13TaskLandPlot_SortAscending_OrderIsCorrect()
+        {
+            var list = new TestConsoleProject.LandPlotList();
+            list.AddPlot(300.0);
+            list.AddPlot(100.0);
+            list.AddPlot(200.0);
+
+            list.SortByAreaAscending();
+
+            var result = list.GetPlots();
+            var expected = new List<double> { 100.0, 200.0, 300.0 };
+
+            Assert.That(result, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Task13TaskLandPlot_RemoveBelowThreshold_RemovesSmallPlots()
+        {
+            var list = new TestConsoleProject.LandPlotList();
+            list.AddPlot(50.0);
+            list.AddPlot(150.0);
+            list.AddPlot(80.0);
+            list.AddPlot(200.0);
+
+            list.RemovePlotsBelowThreshold(100.0);
+
+            var result = list.GetPlots();
+            var expected = new List<double> { 150.0, 200.0 };
+
+            Assert.That(result, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Task13TaskLandPlot_RemoveBelowThreshold_AllRemoved_WhenThresholdHigh()
+        {
+            var list = new TestConsoleProject.LandPlotList();
+            list.AddPlot(10.0);
+            list.AddPlot(20.0);
+
+            list.RemovePlotsBelowThreshold(100.0);
+
+            var count = list.Count;
+            var expected = 0;
+
+            Assert.That(count, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Task13TaskLandPlot_RemoveBelowThreshold_NoneRemoved_WhenThresholdLow()
+        {
+            var list = new TestConsoleProject.LandPlotList();
+            list.AddPlot(100.0);
+            list.AddPlot(200.0);
+
+            list.RemovePlotsBelowThreshold(50.0);
+
+            var count = list.Count;
+            var expected = 2;
+
+            Assert.That(count, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Task13TaskLandPlot_FullScenario_SortThenRemove()
+        {
+            var list = new TestConsoleProject.LandPlotList();
+            list.AddPlot(500.0);
+            list.AddPlot(10.0);
+            list.AddPlot(300.0);
+            list.AddPlot(50.0);
+
+            list.SortByAreaAscending();
+            list.RemovePlotsBelowThreshold(100.0);
+
+            var result = list.GetPlots();
+            var expected = new List<double> { 300.0, 500.0 };
+
+            Assert.That(result, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void Task13TaskLandPlot_AddNegativeArea_ThrowsArgumentException()
+        {
+            var list = new TestConsoleProject.LandPlotList();
+
+            Assert.Throws<ArgumentException>(() =>
+            {
+                list.AddPlot(-10.0);
+            });
         }
     }
 }
