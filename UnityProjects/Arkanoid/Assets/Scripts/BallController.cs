@@ -3,12 +3,19 @@ using UnityEngine;
 public class BallController : MonoBehaviour
 {
     private Rigidbody2D rb;
-    private bool isActiveBalls;
+    public bool isActiveBalls;
     private Vector3 ballPosition;
     private Vector2 ballInitialForce;
 
     public GameObject playerObject;
     public float boundary = 10f;
+
+    public static BallController Instance { get; private set; }
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -39,5 +46,11 @@ public class BallController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("test");
+        if (collision.gameObject.CompareTag("WallDown"))
+        {
+            Debug.Log("WallDown");
+            GameController.Instance.DescreaseHeart();
+        }
     }
 }
