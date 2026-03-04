@@ -24,14 +24,12 @@ public class BallController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // следование за платформой до запуска
         if (!isActiveBalls && playerObject != null)
         {
             ballPosition.x = playerObject.transform.position.x;
             transform.position = ballPosition;
         }
 
-        // проверка нажатия на пробел
         if (Input.GetButtonDown("Jump") && !isActiveBalls)
         {
             rb.AddForce(ballInitialForce);
@@ -41,11 +39,5 @@ public class BallController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // отскок от стен
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            Vector2 reflectDir = Vector2.Reflect(rb.linearVelocity, collision.contacts[0].normal);
-            rb.linearVelocity = reflectDir;
-        }
     }
 }
