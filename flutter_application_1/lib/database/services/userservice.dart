@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase_flutter;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user.dart' as app_models;
@@ -74,18 +75,30 @@ class UserService {
     Uint8List imageBytes,
     String fileName,
   ) async {
-    await _client.storage
+    final path = '$userId/$fileName';
+
+    debugPrint('Загрузка файла: $path');
+
+    // Загружаем файл
+    final response = await _client.storage
         .from('avatars')
         .uploadBinary(
-          '$userId/$fileName',
+          path,
           imageBytes,
           fileOptions: const FileOptions(upsert: true),
         );
 
-    // Получаем публичный URL
-    final publicUrl = _client.storage
-        .from('avatars')
-        .getPublicUrl('$userId/$fileName');
+    debugPrint('Ответ от загрузки: $response');
+
+    // Проверяем успешность загрузки
+    if (response.isEmpty) {
+      throw Exception('Файл не загрузился');
+    }
+
+    // Получаем публичный URL через встроенный метод
+    final publicUrl = _client.storage.from('avatars').getPublicUrl(path);
+
+    debugPrint('Публичный URL: $publicUrl');
 
     return publicUrl;
   }

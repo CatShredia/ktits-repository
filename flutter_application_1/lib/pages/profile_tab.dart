@@ -90,22 +90,26 @@ class _ProfileTabState extends State<ProfileTab> {
       final imageBytes = await pickedFile.readAsBytes();
       final fileName = 'avatar_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
+      debugPrint('Загрузка аватара для пользователя: ${_authUser!.id}');
+      debugPrint('Имя файла: $fileName');
+
       final avatarUrl = await _userService.uploadAvatar(
         _authUser!.id,
         imageBytes,
         fileName,
       );
 
-      await _userService.updateUserAvatar(_authUser!.id, avatarUrl);
+      debugPrint('Получен URL: $avatarUrl');
 
+      await _userService.updateUserAvatar(_authUser!.id, avatarUrl);
+      debugPrint('Avatar URL обновлён в БД');
+
+      // Перезагружаем профиль из БД для корректного обновления
+      final updatedProfile = await _userService.getUserProfile(_authUser!.id);
+      
       if (mounted) {
         setState(() {
-          _profileUser = app_models.User(
-            id: _profileUser?.id ?? _authUser!.id,
-            email: _profileUser?.email ?? _authUser!.email ?? '',
-            name: _profileUser?.name ?? '',
-            avatarUrl: avatarUrl,
-          );
+          _profileUser = updatedProfile;
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -116,7 +120,7 @@ class _ProfileTabState extends State<ProfileTab> {
       debugPrint('Ошибка загрузки изображения: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ошибка при загрузке аватара')),
+          SnackBar(content: Text('Ошибка при загрузке аватара: $e')),
         );
       }
     } finally {
