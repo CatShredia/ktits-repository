@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase_flutter;
@@ -106,7 +104,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
       // Перезагружаем профиль из БД для корректного обновления
       final updatedProfile = await _userService.getUserProfile(_authUser!.id);
-      
+
       if (mounted) {
         setState(() {
           _profileUser = updatedProfile;

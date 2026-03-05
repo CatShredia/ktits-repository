@@ -24,6 +24,24 @@ class _HomePageState extends State<HomePage> {
     const ProfileTab(),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _checkSession();
+  }
+
+  void _checkSession() {
+    final user = _userService.getCurrentUser();
+    if (user == null) {
+      // Пользователь не авторизован
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+        }
+      });
+    }
+  }
+
   Future<void> _logout(BuildContext context) async {
     await _userService.signOut();
     if (context.mounted) {

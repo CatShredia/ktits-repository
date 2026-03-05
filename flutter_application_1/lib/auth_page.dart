@@ -16,6 +16,24 @@ class _AuthPageState extends State<AuthPage> {
   bool _obscurePassword = true;
 
   @override
+  void initState() {
+    super.initState();
+    _checkSession();
+  }
+
+  void _checkSession() {
+    final user = _userService.getCurrentUser();
+    if (user != null) {
+      // Пользователь уже авторизован
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        }
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();

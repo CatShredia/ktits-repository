@@ -22,15 +22,23 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
+    // Проверяем текущую сессию (восстанавливается из хранилища)
+    final session = Supabase.instance.client.auth.currentSession;
+    final isLoggedIn = session != null && session.user != null;
+
+    debugPrint('Session: $session');
+    debugPrint('Is logged in: $isLoggedIn');
+
     return MaterialApp(
       title: 'Ala Avito',
       theme: ThemeData.light(),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => AuthPage(),
+        '/': (context) => isLoggedIn ? const HomePage() : AuthPage(),
         '/register': (context) => RegisterPage(),
         '/forgot-password': (context) => RecoveryPage(),
         '/home': (context) => const HomePage(),
