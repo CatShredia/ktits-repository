@@ -1,4 +1,7 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase_flutter;
 import '../database/services/userservice.dart';
 import '../database/models/user.dart' as app_models;
@@ -12,9 +15,11 @@ class ProfileTab extends StatefulWidget {
 
 class _ProfileTabState extends State<ProfileTab> {
   final UserService _userService = UserService();
+  final ImagePicker _imagePicker = ImagePicker();
   app_models.User? _profileUser;
   supabase_flutter.User? _authUser;
   bool _isLoading = true;
+  bool _isUploading = false;
 
   @override
   void initState() {
@@ -44,6 +49,81 @@ class _ProfileTabState extends State<ProfileTab> {
     }
   }
 
+  Future<void> _pickAndUploadImage() async {
+    final showModal = <Future<XFile?>?>[
+      _imagePicker.pickImage(source: ImageSource.camera),
+      _imagePicker.pickImage(source: ImageSource.gallery),
+    ];
+
+    final source = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Выберите источник'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'camera'),
+            child: const Text('Камера'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'gallery'),
+            child: const Text('Галерея'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Отмена'),
+          ),
+        ],
+      ),
+    );
+
+    if (source == null) return;
+
+    final XFile? pickedFile = source == 'camera'
+        ? await _imagePicker.pickImage(source: ImageSource.camera)
+        : await _imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile == null || _authUser == null) return;
+
+    setState(() => _isUploading = true);
+
+    try {
+      final imageBytes = await pickedFile.readAsBytes();
+      final fileName = 'avatar_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      final avatarUrl = await _userService.uploadAvatar(
+        _authUser!.id,
+        imageBytes,
+        fileName,
+      );
+
+      await _userService.updateUserAvatar(_authUser!.id, avatarUrl);
+
+      if (mounted) {
+        setState(() {
+          _profileUser = app_models.User(
+            id: _profileUser?.id ?? _authUser!.id,
+            email: _profileUser?.email ?? _authUser!.email ?? '',
+            name: _profileUser?.name ?? '',
+            avatarUrl: avatarUrl,
+          );
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Аватар успешно загружен')),
+        );
+      }
+    } catch (e) {
+      debugPrint('Ошибка загрузки изображения: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ошибка при загрузке аватара')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isUploading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -61,13 +141,43 @@ class _ProfileTabState extends State<ProfileTab> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.3,
-              width: MediaQuery.of(context).size.width * 0.4,
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(avatarUrl),
-                radius: 60,
-              ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(avatarUrl),
+                    radius: 60,
+                  ),
+                ),
+                if (_isUploading)
+                  const CircleAvatar(
+                    radius: 30,
+                    child: CircularProgressIndicator(),
+                  )
+                else
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: InkWell(
+                      onTap: _pickAndUploadImage,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: const BoxDecoration(
+                          color: Colors.blue,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.camera_alt,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             Text(

@@ -1,9 +1,11 @@
+import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase_flutter;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user.dart' as app_models;
 
 class UserService {
   final SupabaseClient _client = Supabase.instance.client;
+  static const String _avatarBucket = 'avatars';
 
   // Авторизация
   Future<supabase_flutter.AuthResponse> signIn(
@@ -64,5 +66,32 @@ class UserService {
   // Сброс пароля
   Future<void> resetPassword(String email) async {
     await _client.auth.resetPasswordForEmail(email);
+  }
+
+  // Загрузка аватара в Supabase Storage
+  Future<String> uploadAvatar(
+    String userId,
+    Uint8List imageBytes,
+    String fileName,
+  ) async {
+    await _client.storage
+        .from('avatars')
+        .uploadBinary(
+          '$userId/$fileName',
+          imageBytes,
+          fileOptions: const FileOptions(upsert: true),
+        );
+
+    // Получаем публичный URL
+    final publicUrl = _client.storage
+        .from('avatars')
+        .getPublicUrl('$userId/$fileName');
+
+    return publicUrl;
+  }
+
+  // Обновление URL аватара в базе данных
+  Future<void> updateUserAvatar(String userId, String avatarUrl) async {
+    await _client.from('users').update({'avatar': avatarUrl}).eq('id', userId);
   }
 }

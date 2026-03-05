@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Нужен доступ к фото для загрузки аватара</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Нужен доступ к камере для загрузки аватара</string>
 </dict>
 </plist>
