@@ -69,7 +69,7 @@ class UserService {
     await _client.auth.resetPasswordForEmail(email);
   }
 
-  // Загрузка аватара в Supabase Storage
+  // Загрузка аватара
   Future<String> uploadAvatar(
     String userId,
     Uint8List imageBytes,
@@ -77,7 +77,7 @@ class UserService {
   ) async {
     final path = '$userId/$fileName';
 
-    debugPrint('Загрузка файла: $path');
+    print('Загрузка файла: $path');
 
     // Загружаем файл
     final response = await _client.storage
@@ -88,22 +88,19 @@ class UserService {
           fileOptions: const FileOptions(upsert: true),
         );
 
-    debugPrint('Ответ от загрузки: $response');
+    print('Ответ от загрузки: $response');
 
-    // Проверяем успешность загрузки
     if (response.isEmpty) {
       throw Exception('Файл не загрузился');
     }
 
-    // Получаем публичный URL через встроенный метод
     final publicUrl = _client.storage.from('avatars').getPublicUrl(path);
 
-    debugPrint('Публичный URL: $publicUrl');
+    print('Публичный URL: $publicUrl');
 
     return publicUrl;
   }
 
-  // Обновление URL аватара в базе данных
   Future<void> updateUserAvatar(String userId, String avatarUrl) async {
     await _client.from('users').update({'avatar': avatarUrl}).eq('id', userId);
   }

@@ -34,7 +34,7 @@ class _ProfileTabState extends State<ProfileTab> {
         _profileUser = await _userService.getUserProfile(_authUser!.id);
       }
     } catch (e) {
-      debugPrint('Ошибка загрузки профиля: $e');
+      print('Ошибка загрузки профиля: $e');
     }
 
     if (mounted) setState(() => _isLoading = false);
@@ -48,11 +48,7 @@ class _ProfileTabState extends State<ProfileTab> {
   }
 
   Future<void> _pickAndUploadImage() async {
-    final showModal = <Future<XFile?>?>[
-      _imagePicker.pickImage(source: ImageSource.camera),
-      _imagePicker.pickImage(source: ImageSource.gallery),
-    ];
-
+    // модальное окно для выбора источника изображения (камера/галерея/отмена)
     final source = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
@@ -88,8 +84,8 @@ class _ProfileTabState extends State<ProfileTab> {
       final imageBytes = await pickedFile.readAsBytes();
       final fileName = 'avatar_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-      debugPrint('Загрузка аватара для пользователя: ${_authUser!.id}');
-      debugPrint('Имя файла: $fileName');
+      print('Загрузка аватара для пользователя: ${_authUser!.id}');
+      print('Имя файла: $fileName');
 
       final avatarUrl = await _userService.uploadAvatar(
         _authUser!.id,
@@ -97,10 +93,10 @@ class _ProfileTabState extends State<ProfileTab> {
         fileName,
       );
 
-      debugPrint('Получен URL: $avatarUrl');
+      print('Получен URL: $avatarUrl');
 
       await _userService.updateUserAvatar(_authUser!.id, avatarUrl);
-      debugPrint('Avatar URL обновлён в БД');
+      print('Avatar URL обновлён в БД');
 
       // Перезагружаем профиль из БД для корректного обновления
       final updatedProfile = await _userService.getUserProfile(_authUser!.id);
@@ -115,7 +111,7 @@ class _ProfileTabState extends State<ProfileTab> {
         );
       }
     } catch (e) {
-      debugPrint('Ошибка загрузки изображения: $e');
+      print('Ошибка загрузки изображения: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Ошибка при загрузке аватара: $e')),

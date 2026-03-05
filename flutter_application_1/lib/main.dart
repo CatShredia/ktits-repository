@@ -29,8 +29,8 @@ class MyApp extends StatelessWidget {
     final session = Supabase.instance.client.auth.currentSession;
     final isLoggedIn = session != null && session.user != null;
 
-    debugPrint('Session: $session');
-    debugPrint('Is logged in: $isLoggedIn');
+    print('Session: $session');
+    print('Is logged in: $isLoggedIn');
 
     return MaterialApp(
       title: 'Ala Avito',
