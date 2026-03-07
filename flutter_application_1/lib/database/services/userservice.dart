@@ -104,4 +104,35 @@ class UserService {
   Future<void> updateUserAvatar(String userId, String avatarUrl) async {
     await _client.from('users').update({'avatar': avatarUrl}).eq('id', userId);
   }
+
+  // Обновление профиля пользователя
+  Future<app_models.User?> updateUserProfile({
+    required String userId,
+    String? email,
+    String? password,
+    String? name,
+  }) async {
+    final Map<String, dynamic> updateData = {};
+    if (email != null) updateData['email'] = email;
+    if (password != null) updateData['password'] = password;
+    if (name != null) updateData['full_name'] = name;
+
+    if (updateData.isEmpty) return null;
+
+    final response = await _client
+        .from('users')
+        .update(updateData)
+        .eq('id', userId)
+        .select()
+        .single();
+
+    return app_models.User.fromJson(response);
+  }
+
+  // Обновление email в Supabase Auth
+  Future<void> updateUserEmail(String newEmail) async {
+    await _client.auth.updateUser(
+      supabase_flutter.UserAttributes(email: newEmail),
+    );
+  }
 }

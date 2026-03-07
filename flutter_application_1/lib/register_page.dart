@@ -179,7 +179,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 onPressed: _isLoading ? null : _register,
                 child: Text(
-                  _isLoading ? 'Подождите...' : 'Зарегистрироваться',
+                  _isLoading ? 'Подождите...' : 'Изменить данные',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

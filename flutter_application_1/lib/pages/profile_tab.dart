@@ -190,7 +190,7 @@ class _ProfileTabState extends State<ProfileTab> {
             SizedBox(height: MediaQuery.of(context).size.height * 0.01),
             InkWell(
               onTap: () {
-                // Редактирование профиля
+                Navigator.pushNamed(context, '/profile-edit');
               },
               child: const Text(
                 'Редактирование',

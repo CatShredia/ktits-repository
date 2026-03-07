@@ -20,7 +20,7 @@ class User {
       id: json['id'] as String,
       email: json['email'] as String,
       password: json['password'] as String?,
-      name: json['name'] as String?,
+      name: json['full_name'] as String?,
       avatarUrl: json['avatar'] as String?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
@@ -33,7 +33,7 @@ class User {
       'id': id,
       'email': email,
       'password': password,
-      'name': name,
+      'full_name': name,
       'avatar': avatarUrl,
       if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
     };
