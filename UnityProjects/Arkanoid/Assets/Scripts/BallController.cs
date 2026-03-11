@@ -47,7 +47,6 @@ public class BallController : MonoBehaviour
 
     void Update()
     {
-        // Block input until game starts
         if (MenuController.Instance != null && !MenuController.Instance.IsGameStarted) return;
 
         if (!isActiveBalls && playerObject != null)
@@ -66,7 +65,9 @@ public class BallController : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (isActiveBalls && rb.linearVelocity.magnitude > 0)
+        {
             rb.linearVelocity = rb.linearVelocity.normalized * ballSpeed;
+        }
 
         if (collision.gameObject.CompareTag("WallDown"))
         {

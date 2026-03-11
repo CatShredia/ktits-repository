@@ -1,8 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-// Empty GameObject in scene
-[DefaultExecutionOrder(-1)]
+// GameManager
 public class GameController : MonoBehaviour
 {
     [SerializeField] private int heartCount = 2;
@@ -10,17 +9,14 @@ public class GameController : MonoBehaviour
     public static GameController Instance { get; private set; }
 
     private GameObject heartContainer;
-    private readonly List<BallController> activeBalls = new List<BallController>();
+    private readonly List<BallController> activeBalls = new();
 
     public GameObject heartPrefab;
     public GameObject ballPrefab;
     public GameObject ballClonePrefab;
     public Transform playerTransform;
 
-    void Awake()
-    {
-        Instance = this;
-    }
+    void Awake() => Instance = this;
 
     void Start()
     {
@@ -40,7 +36,9 @@ public class GameController : MonoBehaviour
     public void RegisterBall(BallController ball)
     {
         if (!activeBalls.Contains(ball))
+        {
             activeBalls.Add(ball);
+        }
     }
 
     public void UnregisterBall(BallController ball)
@@ -59,11 +57,6 @@ public class GameController : MonoBehaviour
         heartCount--;
         ClearHearts();
         SpawnHeartUI();
-
-        if (heartCount <= 0)
-        {
-            // Game Over
-        }
     }
 
     public void IncreaseHearts()
@@ -78,7 +71,9 @@ public class GameController : MonoBehaviour
         foreach (var ball in activeBalls)
         {
             if (ball != null && ball.isClone)
+            {
                 Destroy(ball.gameObject);
+            }
         }
         activeBalls.RemoveAll(b => b == null || b.isClone);
     }
@@ -100,13 +95,13 @@ public class GameController : MonoBehaviour
     void ClearHearts()
     {
         foreach (Transform child in heartContainer.transform)
+        {
             Destroy(child.gameObject);
+        }
     }
 
     public void SpawnHeartUI()
     {
-        if (heartContainer == null) return;
-
         for (int i = 0; i < heartCount; i++)
         {
             var heartXYZ = new Vector3(

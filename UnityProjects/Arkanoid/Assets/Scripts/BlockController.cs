@@ -1,9 +1,12 @@
 using UnityEngine;
 
-// Block sprites
+// Blocks
 // Collider2D
 public class BlockController : MonoBehaviour
 {
+    // normal - обычный блок
+    // красный - увеличивает жизни
+    // синий - спавнит дополнительный шарик
     public enum BlockType { Normal, Red, Blue }
 
     [SerializeField] private BlockType blockType = BlockType.Normal;
@@ -12,22 +15,12 @@ public class BlockController : MonoBehaviour
     {
         if (!collision.gameObject.CompareTag("Ball")) return;
 
-        switch (blockType)
-        {
-            case BlockType.Normal:
-                Destroy(gameObject);
-                LevelController.Instance?.BlockDestroyed();
-                break;
-            case BlockType.Red:
-                GameController.Instance.IncreaseHearts();
-                Destroy(gameObject);
-                LevelController.Instance?.BlockDestroyed();
-                break;
-            case BlockType.Blue:
-                GameController.Instance.SpawnExtraBall(transform.position);
-                Destroy(gameObject);
-                LevelController.Instance?.BlockDestroyed();
-                break;
-        }
+        Destroy(gameObject);
+        LevelController.Instance?.BlockDestroyed();
+
+        if (blockType == BlockType.Red)
+            GameController.Instance.IncreaseHearts();
+        else if (blockType == BlockType.Blue)
+            GameController.Instance.SpawnExtraBall(transform.position);
     }
 }
