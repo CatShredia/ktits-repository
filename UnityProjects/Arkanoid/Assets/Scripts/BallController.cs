@@ -47,6 +47,9 @@ public class BallController : MonoBehaviour
 
     void Update()
     {
+        // Block input until game starts
+        if (MenuController.Instance != null && !MenuController.Instance.IsGameStarted) return;
+
         if (!isActiveBalls && playerObject != null)
         {
             ballPosition.x = playerObject.transform.position.x;

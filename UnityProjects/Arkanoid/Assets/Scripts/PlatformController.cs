@@ -16,6 +16,9 @@ public class PlatformController : MonoBehaviour
 
     void Update()
     {
+        // Block input until game starts
+        if (MenuController.Instance != null && !MenuController.Instance.IsGameStarted) return;
+
         playerPosition.x += Input.GetAxis("Horizontal") * playerVelocity;
 
         if (Input.GetKeyDown(KeyCode.Escape))
