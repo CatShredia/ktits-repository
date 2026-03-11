@@ -15,6 +15,8 @@ public class BonusController : MonoBehaviour
     [SerializeField] private BonusType bonusType;
     [SerializeField] private float fallSpeed = 3f;
     [SerializeField] private float effectDuration = 10f;
+    [SerializeField] private float speedMultiplier = 1.3f;
+    [SerializeField] private float platformExpandAmount = 0.5f;
 
     private Rigidbody2D rb;
 
@@ -25,6 +27,34 @@ public class BonusController : MonoBehaviour
         {
             rb.gravityScale = 0;
             rb.linearVelocity = Vector2.down * fallSpeed;
+        }
+    }
+
+    void Update()
+    {
+        // Debug hotkeys (using non-conflicting keys)
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+        {
+            if (Input.GetKeyDown(KeyCode.F1))  // F1 pressed (not held)
+            {
+                Debug.Log("Debug: Ball Speed Up (Ctrl+F1)");
+                ApplyBallSpeedChange(1.5f);
+            }
+            else if (Input.GetKeyDown(KeyCode.F2))  // F2 pressed (not held)
+            {
+                Debug.Log("Debug: Ball Speed Down (Ctrl+F2)");
+                ApplyBallSpeedChange(0.7f);
+            }
+            else if (Input.GetKeyDown(KeyCode.F3))  // F3 pressed (not held)
+            {
+                Debug.Log("Debug: Platform Expand (Ctrl+F3)");
+                ApplyPlatformChange(true);
+            }
+            else if (Input.GetKeyDown(KeyCode.F4))  // F4 pressed (not held)
+            {
+                Debug.Log("Debug: Platform Shrink (Ctrl+F4)");
+                ApplyPlatformChange(false);
+            }
         }
     }
 
@@ -50,21 +80,21 @@ public class BonusController : MonoBehaviour
         {
             case BonusType.BallSpeedUp:
                 foreach (var ball in balls)
-                    ball?.ChangeSpeed(1.1f);
+                    ball?.ChangeSpeed(speedMultiplier);
                 break;
 
             case BonusType.BallSpeedDown:
                 foreach (var ball in balls)
-                    ball?.ChangeSpeed(0.7f);
+                    ball?.ChangeSpeed(1f / speedMultiplier);
                 break;
 
             case BonusType.PlatformExpand:
-                platform?.ExpandPlatform();
+                platform?.ExpandPlatform(platformExpandAmount);
                 Invoke(nameof(ResetPlatform), effectDuration);
                 break;
 
             case BonusType.PlatformShrink:
-                platform?.ShrinkPlatform();
+                platform?.ShrinkPlatform(platformExpandAmount);
                 Invoke(nameof(ResetPlatform), effectDuration);
                 break;
         }
@@ -74,5 +104,24 @@ public class BonusController : MonoBehaviour
     {
         var platform = FindObjectOfType<PlatformController>();
         platform?.ResetPlatform();
+    }
+
+    void ApplyBallSpeedChange(float multiplier)
+    {
+        var balls = FindObjectsOfType<BallController>();
+        foreach (var ball in balls)
+            ball?.ChangeSpeed(multiplier);
+    }
+
+    void ApplyPlatformChange(bool expand)
+    {
+        var platform = FindObjectOfType<PlatformController>();
+        if (platform != null)
+        {
+            if (expand)
+                platform.ExpandPlatform(platformExpandAmount);
+            else
+                platform.ShrinkPlatform(platformExpandAmount);
+        }
     }
 }

@@ -6,19 +6,21 @@ public class PlatformController : MonoBehaviour
 {
     [SerializeField] private float playerVelocity = 0.5f;
     [SerializeField] private float boundary = 9.8f;
-    [SerializeField] private float baseWidth = 2f;
-    [SerializeField] private float expandWidth = 3f;
-    [SerializeField] private float shrinkWidth = 1f;
+    [SerializeField] private float baseScaleX = 2f;
+    [SerializeField] private float expandScaleX = 3f;
+    [SerializeField] private float shrinkScaleX = 1f;
 
     private Vector3 playerPosition;
-    private float currentWidth;
     private Vector3 originalScale;
+    private float currentScaleOffset = 0f;
 
     void Start()
     {
         playerPosition = transform.position;
         originalScale = transform.localScale;
-        currentWidth = baseWidth;
+        
+        // Set initial scale
+        transform.localScale = new Vector3(baseScaleX, originalScale.y, originalScale.z);
     }
 
     void Update()
@@ -40,21 +42,23 @@ public class PlatformController : MonoBehaviour
         playerPosition = transform.position;
     }
 
-    public void ExpandPlatform()
+    public void ExpandPlatform(float amount)
     {
-        currentWidth = expandWidth;
-        transform.localScale = new Vector3(expandWidth / baseWidth, originalScale.y, originalScale.z);
+        currentScaleOffset += amount;
+        float newScaleX = baseScaleX + currentScaleOffset;
+        transform.localScale = new Vector3(Mathf.Max(newScaleX, 0.5f), originalScale.y, originalScale.z);
     }
 
-    public void ShrinkPlatform()
+    public void ShrinkPlatform(float amount)
     {
-        currentWidth = shrinkWidth;
-        transform.localScale = new Vector3(shrinkWidth / baseWidth, originalScale.y, originalScale.z);
+        currentScaleOffset -= amount;
+        float newScaleX = baseScaleX + currentScaleOffset;
+        transform.localScale = new Vector3(Mathf.Max(newScaleX, 0.5f), originalScale.y, originalScale.z);
     }
 
     public void ResetPlatform()
     {
-        currentWidth = baseWidth;
-        transform.localScale = originalScale;
+        currentScaleOffset = 0f;
+        transform.localScale = new Vector3(baseScaleX, originalScale.y, originalScale.z);
     }
 }
