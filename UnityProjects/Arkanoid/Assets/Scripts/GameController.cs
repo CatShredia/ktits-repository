@@ -20,6 +20,7 @@ public class GameController : MonoBehaviour
 
     public GameObject heartPrefab;
     public GameObject ballPrefab;
+    public GameObject ballClonePrefab;
     public Transform playerTransform;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -82,20 +83,36 @@ public class GameController : MonoBehaviour
         SpawnHeartUI();
     }
 
+    public void DestroyAllBalls()
+    {
+        foreach (var ball in activeBalls)
+        {
+            if (ball != null && ball.isClone)
+            {
+                Destroy(ball.gameObject);
+            }
+        }
+        activeBalls.RemoveAll(b => b == null || b.isClone);
+    }
+
     public void SpawnExtraBall(Vector3 position)
     {
-        if (ballPrefab == null)
+        Debug.Log($"[GameController] SpawnExtraBall at {position}");
+        
+        if (ballClonePrefab == null)
         {
-            Debug.LogError("BallPrefab not set!");
+            Debug.LogError("BallClonePrefab not set!");
             return;
         }
 
-        var newBall = Instantiate(ballPrefab, position, Quaternion.identity);
+        var newBall = Instantiate(ballClonePrefab, position, Quaternion.identity);
+        Debug.Log($"[GameController] Instantiated ball at {newBall.transform.position}");
         var ballController = newBall.GetComponent<BallController>();
         if (ballController != null)
         {
+            Debug.Log($"[GameController] Setting isActiveBalls=true, isClone=true");
             ballController.isActiveBalls = true;
-            ballController.playerObject = GameObject.FindWithTag("Player"); ;
+            ballController.isClone = true;
             ballController.LaunchBall();
         }
     }

@@ -153,6 +153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BallController
   isActiveBalls: 0
+  isClone: 0
+  ballSpeed: 5
   playerObject: {fileID: 8150623482628355015, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
   boundary: 1
 --- !u!50 &6715089583797424475
@@ -167,11 +169,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.0001
+  m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 83f3a2fecd015dd4cb0329bab040a76e, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
