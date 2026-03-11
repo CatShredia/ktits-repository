@@ -1,29 +1,27 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using System.Collections.Generic;
 
+// Empty GameObject in scene
 [DefaultExecutionOrder(-1)]
 public class GameController : MonoBehaviour
 {
-
     [SerializeField] private int heartCount = 2;
 
     public static GameController Instance { get; private set; }
 
     private GameObject heartContainer;
-    private List<BallController> activeBalls = new List<BallController>();
-
-    void Awake()
-    {
-        Instance = this;
-    }
+    private readonly List<BallController> activeBalls = new List<BallController>();
 
     public GameObject heartPrefab;
     public GameObject ballPrefab;
     public GameObject ballClonePrefab;
     public Transform playerTransform;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Awake()
+    {
+        Instance = this;
+    }
+
     void Start()
     {
         heartContainer = new GameObject("HeartContainer");
@@ -39,18 +37,10 @@ public class GameController : MonoBehaviour
         SpawnHeartUI();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void RegisterBall(BallController ball)
     {
         if (!activeBalls.Contains(ball))
-        {
             activeBalls.Add(ball);
-        }
     }
 
     public void UnregisterBall(BallController ball)
@@ -65,20 +55,20 @@ public class GameController : MonoBehaviour
             if (ball != null)
                 ball.isActiveBalls = false;
         }
+
         heartCount--;
-        Debug.Log("Heart count: " + heartCount);
         ClearHearts();
         SpawnHeartUI();
+
         if (heartCount <= 0)
         {
-            Debug.Log("Game Over");
+            // Game Over
         }
     }
 
     public void IncreaseHearts()
     {
         heartCount++;
-        Debug.Log("Heart count: " + heartCount);
         ClearHearts();
         SpawnHeartUI();
     }
@@ -88,50 +78,34 @@ public class GameController : MonoBehaviour
         foreach (var ball in activeBalls)
         {
             if (ball != null && ball.isClone)
-            {
                 Destroy(ball.gameObject);
-            }
         }
         activeBalls.RemoveAll(b => b == null || b.isClone);
     }
 
     public void SpawnExtraBall(Vector3 position)
     {
-        Debug.Log($"[GameController] SpawnExtraBall at {position}");
-        
-        if (ballClonePrefab == null)
-        {
-            Debug.LogError("BallClonePrefab not set!");
-            return;
-        }
+        if (ballClonePrefab == null) return;
 
         var newBall = Instantiate(ballClonePrefab, position, Quaternion.identity);
-        Debug.Log($"[GameController] Instantiated ball at {newBall.transform.position}");
         var ballController = newBall.GetComponent<BallController>();
         if (ballController != null)
         {
-            Debug.Log($"[GameController] Setting isActiveBalls=true, isClone=true");
             ballController.isActiveBalls = true;
             ballController.isClone = true;
             ballController.LaunchBall();
         }
     }
 
-    private void ClearHearts()
+    void ClearHearts()
     {
         foreach (Transform child in heartContainer.transform)
-        {
             Destroy(child.gameObject);
-        }
     }
 
     public void SpawnHeartUI()
     {
-        if (heartContainer == null)
-        {
-            Debug.LogError("Canvas not found!");
-            return;
-        }
+        if (heartContainer == null) return;
 
         for (int i = 0; i < heartCount; i++)
         {
