@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\PlatformController.cs" />
+    <Compile Include="Assets\Scripts\BlockController.cs" />
     <Compile Include="Assets\Scripts\BallController.cs" />
   </ItemGroup>
   <ItemGroup>
