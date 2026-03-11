@@ -16,14 +16,17 @@ public class BlockController : MonoBehaviour
         {
             case BlockType.Normal:
                 Destroy(gameObject);
+                LevelController.Instance?.BlockDestroyed();
                 break;
             case BlockType.Red:
                 GameController.Instance.IncreaseHearts();
                 Destroy(gameObject);
+                LevelController.Instance?.BlockDestroyed();
                 break;
             case BlockType.Blue:
                 GameController.Instance.SpawnExtraBall(transform.position);
                 Destroy(gameObject);
+                LevelController.Instance?.BlockDestroyed();
                 break;
         }
     }

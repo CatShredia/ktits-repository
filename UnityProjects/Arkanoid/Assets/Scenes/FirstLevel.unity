@@ -864,6 +864,7 @@ MonoBehaviour:
   gameplayUI: {fileID: 1801467480}
   mainMenuAnimator: {fileID: 8864673}
   boolParameterName: Open
+  hideAnimationDuration: 0.3
 --- !u!1001 &213839492
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3162,6 +3163,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1830780211}
   - component: {fileID: 1830780212}
+  - component: {fileID: 1830780213}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -3201,6 +3203,22 @@ MonoBehaviour:
   ballPrefab: {fileID: 5357291768563538972, guid: 6b6ff040679b92741bea5d709af40929, type: 3}
   ballClonePrefab: {fileID: 5357291768563538972, guid: cb373d5e539b68c40b092abbe3b2aff7, type: 3}
   playerTransform: {fileID: 5191726466286821712}
+--- !u!114 &1830780213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830780210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7de41281754943e4d9daa03a40a08156, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelController
+  sceneOrder:
+  - FirstLevel
+  - SecondLevel
+  - ThirdLevel
 --- !u!4 &1832915473 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5037387902963115473, guid: 8cba5bd2d20032040bd4b1aae8c5650a, type: 3}
