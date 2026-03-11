@@ -6,6 +6,8 @@ using UnityEngine;
 public class BallController : MonoBehaviour
 {
     [SerializeField] private float ballSpeed = 10f;
+    [SerializeField] private float minSpeed = 5f;
+    [SerializeField] private float maxSpeed = 20f;
     [SerializeField] private Vector2 ballInitialForce = new Vector2(150f, 300f);
 
     public bool isActiveBalls;
@@ -43,6 +45,12 @@ public class BallController : MonoBehaviour
         if (rb == null) return;
         rb.WakeUp();
         rb.linearVelocity = ballInitialForce.normalized * ballSpeed;
+    }
+
+    public void ChangeSpeed(float multiplier)
+    {
+        ballSpeed *= multiplier;
+        ballSpeed = Mathf.Clamp(ballSpeed, minSpeed, maxSpeed);
     }
 
     void Update()
