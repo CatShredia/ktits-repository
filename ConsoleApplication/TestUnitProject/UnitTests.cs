@@ -1,6 +1,7 @@
 namespace TestConsoleProject
 {
 
+    [TestFixture]
     public class UnitTests
     {
         // ! =============== Task 10: HasUniqueSymbols Tests ===============
@@ -12,6 +13,8 @@ namespace TestConsoleProject
         // 5. Строка из одинаковых символов - возвращает false
         // 6. Строка с символами разного регистра - считается, что символы уникальны (A и a - разные)
         // 7. Null строка - возвращает false как некорректный ввод
+
+        private string _testFolder = null!;
 
         [Test]
         public void Task10HasUniqueSymbols_EmptyString_ReturnsTrue()
@@ -308,6 +311,68 @@ namespace TestConsoleProject
             {
                 list.AddPlot(-10.0);
             });
+        }
+
+        // ! =============== Task 14: Export Data Class ===============
+        // Count: 
+
+        public string textTxt;
+
+        [Test]
+        public void Task14CreateTestFileDesktopFolder()
+        {
+            string testString = "Test Date Desctop Folder";
+            var dataExport = new TestConsoleProject.DataExport();
+            string path = dataExport.ExportDataToFile(testString);
+
+            string result = File.ReadAllText(path);
+
+            Assert.That(result, Is.EqualTo(testString));
+        }
+
+        [Test]
+        public void Task14CreateTestFileTempFolder()
+        {
+            string testString = "Test Date Temp Folder";
+            var dataExport = new TestConsoleProject.DataExport();
+            string path = dataExport.ExportDataToFile(testString, Path.Combine(_testFolder, "text.txt"));
+
+            string result = File.ReadAllText(path);
+            textTxt = result;
+
+            Assert.That(result, Is.EqualTo(testString));
+        }
+
+        [Test]
+        public void Task14OnlyReadDateFromTxtFile()
+        {
+            string testString = "Test Data Import";
+            string filePath = Path.Combine(_testFolder, "text_import.txt");
+
+            var dataExport = new TestConsoleProject.DataExport();
+            dataExport.ExportDataToFile(testString, filePath);
+
+            var dataImporter = new TestConsoleProject.DataImporter();
+            string readResult = dataImporter.ImportDateFromTxt(filePath);
+
+            Assert.That(readResult, Is.EqualTo(testString));
+        }
+
+        // ! =============== temp folder ===============
+        [SetUp]
+        public void SetUp()
+        {
+            _testFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(_testFolder);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            if (Directory.Exists(_testFolder))
+            {
+                Directory.Delete(_testFolder, recursive: true);
+            }
         }
     }
 }
