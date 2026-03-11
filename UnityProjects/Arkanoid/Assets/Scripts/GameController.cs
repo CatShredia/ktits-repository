@@ -1,6 +1,8 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections.Generic;
 
+[DefaultExecutionOrder(-1)]
 public class GameController : MonoBehaviour
 {
 
@@ -9,7 +11,7 @@ public class GameController : MonoBehaviour
     public static GameController Instance { get; private set; }
 
     private GameObject heartContainer;
-
+    private List<BallController> activeBalls = new List<BallController>();
 
     void Awake()
     {
@@ -17,12 +19,21 @@ public class GameController : MonoBehaviour
     }
 
     public GameObject heartPrefab;
+    public GameObject ballPrefab;
+    public Transform playerTransform;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         heartContainer = new GameObject("HeartContainer");
         heartContainer.transform.position = new Vector3(-8, 3, 0);
+
+        if (playerTransform == null)
+        {
+            var platform = GameObject.FindWithTag("Player");
+            if (platform != null)
+                playerTransform = platform.transform;
+        }
 
         SpawnHeartUI();
     }
@@ -33,9 +44,26 @@ public class GameController : MonoBehaviour
 
     }
 
+    public void RegisterBall(BallController ball)
+    {
+        if (!activeBalls.Contains(ball))
+        {
+            activeBalls.Add(ball);
+        }
+    }
+
+    public void UnregisterBall(BallController ball)
+    {
+        activeBalls.Remove(ball);
+    }
+
     public void DescreaseHeart()
     {
-        BallController.Instance.isActiveBalls = false;
+        foreach (var ball in activeBalls)
+        {
+            if (ball != null)
+                ball.isActiveBalls = false;
+        }
         heartCount--;
         Debug.Log("Heart count: " + heartCount);
         ClearHearts();
@@ -43,6 +71,32 @@ public class GameController : MonoBehaviour
         if (heartCount <= 0)
         {
             Debug.Log("Game Over");
+        }
+    }
+
+    public void IncreaseHearts()
+    {
+        heartCount++;
+        Debug.Log("Heart count: " + heartCount);
+        ClearHearts();
+        SpawnHeartUI();
+    }
+
+    public void SpawnExtraBall(Vector3 position)
+    {
+        if (ballPrefab == null)
+        {
+            Debug.LogError("BallPrefab not set!");
+            return;
+        }
+
+        var newBall = Instantiate(ballPrefab, position, Quaternion.identity);
+        var ballController = newBall.GetComponent<BallController>();
+        if (ballController != null)
+        {
+            ballController.isActiveBalls = true;
+            ballController.playerObject = GameObject.FindWithTag("Player"); ;
+            ballController.LaunchBall();
         }
     }
 

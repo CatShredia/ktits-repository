@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Wall
   - WallDown
+  - Player
+  - Block
   layers:
   - Default
   - TransparentFX

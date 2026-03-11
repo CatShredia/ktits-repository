@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class BallController : MonoBehaviour
 {
     private Rigidbody2D rb;
@@ -10,22 +11,45 @@ public class BallController : MonoBehaviour
     public GameObject playerObject;
     public float boundary = 10f;
 
-    public static BallController Instance { get; private set; }
-
     void Awake()
-    {
-        Instance = this;
-    }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
     {
         rb = GetComponent<Rigidbody2D>();
 
-        ballInitialForce = new Vector2(100.0f, 300.0f);
-        isActiveBalls = false;
+        if (rb == null)
+        {
+            Debug.LogError("Rigidbody2D not found on " + gameObject.name);
+            rb = gameObject.AddComponent<Rigidbody2D>();
+        }
 
+        ballInitialForce = new Vector2(150.0f, 300.0f);
+    }
+
+    void Start()
+    {
+        playerObject = GameObject.FindWithTag("Player");
+        isActiveBalls = false;
         ballPosition = transform.position;
+        
+        if (GameController.Instance != null)
+        {
+            GameController.Instance.RegisterBall(this);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        GameController.Instance.UnregisterBall(this);
+    }
+
+    public void LaunchBall()
+    {
+        if (rb == null)
+        {
+            Debug.LogError("Rigidbody2D is null on " + gameObject.name);
+            return;
+        }
+        rb.WakeUp();
+        rb.AddForce(ballInitialForce);
     }
 
     // Update is called once per frame
