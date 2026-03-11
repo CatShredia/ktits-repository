@@ -86,6 +86,7 @@ public class MenuController : MonoBehaviour
         StartCoroutine(HidePanelAfterAnimation());
     }
 
+    //TODOЖ нер оп
     private System.Collections.IEnumerator HidePanelAfterAnimation()
     {
         yield return new WaitForSecondsRealtime(hideAnimationDuration);
@@ -118,9 +119,9 @@ public class MenuController : MonoBehaviour
 
     public void PauseGame()
     {
-        if (gameplayUI is { activeSelf: true })
+        if (gameplayUI != null && gameplayUI.activeSelf)
         {
-            pausePanel?.SetActive(true);
+            if (pausePanel != null) pausePanel.SetActive(true);
             Time.timeScale = 0f;
             isGamePaused = true;
         }
@@ -128,7 +129,7 @@ public class MenuController : MonoBehaviour
 
     public void ResumeGame()
     {
-        pausePanel?.SetActive(false);
+        if (pausePanel != null) pausePanel.SetActive(false);
         Time.timeScale = 1f;
         isGamePaused = false;
     }
