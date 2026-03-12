@@ -1,76 +1,136 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-// GameManager
+// GameManager or empty GameObject in scene
+// Assign: All level prefabs from Assets/Prefabs/Levels/
 public class LevelController : MonoBehaviour
 {
     public static LevelController Instance { get; private set; }
 
-    [Header("Scene Names")]
-    [SerializeField] private string[] sceneOrder = { "FirstLevel", "SecondLevel", "ThirdLevel" };
+    [Header("Level Prefabs")]
+    [SerializeField] private GameObject[] levelPrefabs;  // FirstLevel, SecondLevel, ThirdLevel
 
-    private int remainingBlocks;
+    [Header("Spawn Position")]
+    [SerializeField] private Vector3 spawnPosition = new Vector3(-4f, 2f, 0f);
 
-    void Awake() { Instance = this; }
+    [Header("Debug")]
+    [SerializeField] private int currentLevelIndex = 0;
 
-    void Start() { CountBlocks(); }
+    private GameObject currentLevelInstance;
+    private BlockController[] currentBlocks;
+    private int totalBlocksAtStart = 0;
 
-    void Update()
+    void Awake()
     {
-        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+        Instance = this;
+    }
+
+    void Start()
+    {
+        LoadLevel(0);  // Start with first level
+    }
+
+    public void LoadLevel(int index)
+    {
+        // Reset bonus effects before loading new level (except first load)
+        if (currentLevelInstance != null)
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                SceneManager.LoadScene(sceneOrder[0]);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                SceneManager.LoadScene(sceneOrder[1]);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                SceneManager.LoadScene(sceneOrder[2]);
-            }
+            ResetBonusEffects();
+        }
+
+        // Clear current level
+        if (currentLevelInstance != null)
+        {
+            Destroy(currentLevelInstance);
+        }
+
+        // Clamp index (handle negative and overflow)
+        currentLevelIndex = (index % levelPrefabs.Length + levelPrefabs.Length) % levelPrefabs.Length;
+
+        // Spawn new level
+        if (levelPrefabs[currentLevelIndex] != null)
+        {
+            currentLevelInstance = Instantiate(levelPrefabs[currentLevelIndex], spawnPosition, Quaternion.identity);
+            currentBlocks = currentLevelInstance.GetComponentsInChildren<BlockController>(true);
+            totalBlocksAtStart = currentBlocks.Length;
+            
+            Debug.Log($"[Level] Loaded level {currentLevelIndex + 1}: {levelPrefabs[currentLevelIndex].name}");
+            Debug.Log($"[Level] Total blocks at start: {totalBlocksAtStart}");
+        }
+        else
+        {
+            Debug.LogError($"[Level] Level prefab at index {currentLevelIndex} is null!");
         }
     }
 
-    void CountBlocks()
+    public void LoadNextLevel()
     {
-        remainingBlocks = FindObjectsByType<BlockController>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length;
+        int nextIndex = (currentLevelIndex + 1) % levelPrefabs.Length;
+        LoadLevel(nextIndex);
     }
 
     public void BlockDestroyed()
     {
-        remainingBlocks--;
+        if (currentBlocks == null) return;
 
-        if (remainingBlocks <= 0)
-            LoadNextLevel();
+        // Count remaining active blocks with a small delay
+        Invoke(nameof(CheckRemainingBlocks), 0.1f);
     }
 
-    void LoadNextLevel()
+    void CheckRemainingBlocks()
     {
-        string currentSceneName = SceneManager.GetActiveScene().name;
-        int currentIndexInArray = -1;
+        if (currentBlocks == null) return;
 
-        for (int i = 0; i < sceneOrder.Length; i++)
+        // Count remaining active blocks
+        int remainingBlocks = 0;
+        foreach (var block in currentBlocks)
         {
-            if (sceneOrder[i] == currentSceneName)
+            if (block != null && block.gameObject.activeInHierarchy)
+                remainingBlocks++;
+        }
+
+        Debug.Log($"[Level] Blocks remaining: {remainingBlocks} / {totalBlocksAtStart}");
+
+        if (remainingBlocks <= 0)
+        {
+            Debug.Log("[Level] Level complete!");
+            Invoke(nameof(LoadNextLevel), 1f);  // Delay before next level
+        }
+    }
+
+    void ResetBonusEffects()
+    {
+        // Reset platform
+        var platform = FindObjectOfType<PlatformController>();
+        platform?.ResetPlatform();
+
+        // Reset ball to platform
+        var balls = FindObjectsOfType<BallController>();
+        foreach (var ball in balls)
+        {
+            if (ball != null && !ball.isClone && ball.playerObject != null)
             {
-                currentIndexInArray = i;
-                break;
+                ball.isActiveBalls = false;
+                var platformPos = ball.playerObject.transform.position;
+                ball.transform.position = new Vector3(platformPos.x, ball.transform.position.y, ball.transform.position.z);
             }
         }
 
-        if (currentIndexInArray == -1)
-            currentIndexInArray = 0;
+        // Clear bonus UI
+        BonusUIManager.Instance?.ClearEffectText();
 
-        currentIndexInArray++;
-
-        if (currentIndexInArray >= sceneOrder.Length)
-            currentIndexInArray = 0;
-
-        SceneManager.LoadScene(sceneOrder[currentIndexInArray]);
+        Debug.Log("[Level] Bonus effects reset");
     }
 
-    public void RestartLevel() { SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); }
+    public int GetCurrentLevelIndex()
+    {
+        return currentLevelIndex;
+    }
+
+    public string GetCurrentLevelName()
+    {
+        if (levelPrefabs == null || levelPrefabs.Length == 0 || currentLevelIndex >= levelPrefabs.Length)
+            return "Unknown";
+
+        return levelPrefabs[currentLevelIndex].name;
+    }
 }

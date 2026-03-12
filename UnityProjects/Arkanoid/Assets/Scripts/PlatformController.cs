@@ -19,8 +19,12 @@ public class PlatformController : MonoBehaviour
         playerPosition = transform.position;
         originalScale = transform.localScale;
         
+        Debug.Log($"[Platform] Start() - originalScale: {originalScale}, baseScaleX: {baseScaleX}");
+
         // Set initial scale
         transform.localScale = new Vector3(baseScaleX, originalScale.y, originalScale.z);
+        
+        Debug.Log($"[Platform] Start() - new scale: {transform.localScale}");
     }
 
     void Update()
@@ -59,6 +63,9 @@ public class PlatformController : MonoBehaviour
     public void ResetPlatform()
     {
         currentScaleOffset = 0f;
-        transform.localScale = new Vector3(baseScaleX, originalScale.y, originalScale.z);
+        float newY = originalScale.y > 0 ? originalScale.y : 1f;
+        float newZ = originalScale.z > 0 ? originalScale.z : 1f;
+        transform.localScale = new Vector3(baseScaleX, newY, newZ);
+        Debug.Log($"[Platform] ResetPlatform() - scale: {transform.localScale}");
     }
 }
