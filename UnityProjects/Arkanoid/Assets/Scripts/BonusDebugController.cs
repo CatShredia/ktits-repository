@@ -41,6 +41,7 @@ public class BonusDebugController : MonoBehaviour
         foreach (var ball in balls)
             ball?.ChangeSpeed(multiplier);
         Debug.Log($"[Debug] Ball speed changed by x{multiplier:F2}");
+        BonusUIManager.Instance?.ShowEffect(multiplier > 1 ? "Ball Speed Up" : "Ball Speed Down", 10f);
     }
 
     void ApplyPlatformChange(bool expand)
@@ -52,11 +53,13 @@ public class BonusDebugController : MonoBehaviour
             {
                 platform.ExpandPlatform(platformExpandAmount);
                 Debug.Log($"[Debug] Platform expanded (+{platformExpandAmount})");
+                BonusUIManager.Instance?.ShowEffect("Platform Expand", 10f);
             }
             else
             {
                 platform.ShrinkPlatform(platformExpandAmount);
                 Debug.Log($"[Debug] Platform shrunk (-{platformExpandAmount})");
+                BonusUIManager.Instance?.ShowEffect("Platform Shrink", 10f);
             }
         }
     }

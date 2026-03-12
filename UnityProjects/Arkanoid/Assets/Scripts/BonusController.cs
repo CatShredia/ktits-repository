@@ -56,24 +56,28 @@ public class BonusController : MonoBehaviour
                 foreach (var ball in balls)
                     ball?.ChangeSpeed(speedMultiplier);
                 Debug.Log($"[Bonus] Ball speed increased by x{speedMultiplier}");
+                BonusUIManager.Instance?.ShowEffect("Ball Speed Up", effectDuration);
                 break;
 
             case BonusType.BallSpeedDown:
                 foreach (var ball in balls)
                     ball?.ChangeSpeed(1f / speedMultiplier);
                 Debug.Log($"[Bonus] Ball speed decreased by x{1f / speedMultiplier:F2}");
+                BonusUIManager.Instance?.ShowEffect("Ball Speed Down", effectDuration);
                 break;
 
             case BonusType.PlatformExpand:
                 platform?.ExpandPlatform(platformExpandAmount);
                 Invoke(nameof(ResetPlatform), effectDuration);
                 Debug.Log($"[Bonus] Platform expanded (+{platformExpandAmount}) for {effectDuration}s");
+                BonusUIManager.Instance?.ShowEffect("Platform Expand", effectDuration);
                 break;
 
             case BonusType.PlatformShrink:
                 platform?.ShrinkPlatform(platformExpandAmount);
                 Invoke(nameof(ResetPlatform), effectDuration);
                 Debug.Log($"[Bonus] Platform shrunk (-{platformExpandAmount}) for {effectDuration}s");
+                BonusUIManager.Instance?.ShowEffect("Platform Shrink", effectDuration);
                 break;
         }
     }
