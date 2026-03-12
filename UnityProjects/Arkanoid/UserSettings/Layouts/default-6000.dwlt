@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1918
     height: 988
   m_ShowMode: 4
-  m_Title: Game
+  m_Title: Console
   m_RootView: {fileID: 6}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 112}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 44
+  controlID: 49
   draggingID: 0
 --- !u!114 &3
 MonoBehaviour:
@@ -224,7 +224,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 112}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 45
+  controlID: 50
   draggingID: 0
 --- !u!114 &10
 MonoBehaviour:
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 56}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 46
+  controlID: 51
   draggingID: 0
 --- !u!114 &11
 MonoBehaviour:
@@ -725,7 +725,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Prefabs
+    - Assets/Scripts
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -735,7 +735,7 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Prefabs
+  - Assets/Scripts
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\directory-git\ktits-repository-1\UnityProjects\Arkanoid
   m_LockTracker:
@@ -744,13 +744,13 @@ MonoBehaviour:
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs:
-    - m_Data: 49406
+    - m_Data: 52324
     m_LastClickedID:
-      m_Data: 49406
+      m_Data: 52324
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 46944
-    - m_Data: 52378
+    - m_Data: 46952
+    - m_Data: 52386
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -783,8 +783,8 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 46944
-    - m_Data: 52378
+    - m_Data: 46952
+    - m_Data: 52386
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -811,9 +811,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs:
-    - m_Data: -51214
-    m_LastClickedInstanceID: -51214
+    m_SelectedInstanceIDs: []
+    m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs:
     - m_Data: 40098
@@ -944,10 +943,16 @@ MonoBehaviour:
       m_LastClickedID:
         m_Data: 0
       m_ExpandedIDs:
+      - m_Data: -67732
+      - m_Data: -66694
       - m_Data: -39400
       - m_Data: 53900
       - m_Data: 53918
-      - m_Data: 54086
+      - m_Data: 54096
+      - m_Data: 70042
+      - m_Data: 70052
+      - m_Data: 70516
+      - m_Data: 70720
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1484,9 +1489,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -2.4659586, y: 0.6115811, z: -9.940273}
+    m_Target: {x: -2.1134439, y: 0.89967835, z: -9.942651}
     speed: 2
-    m_Value: {x: -2.4659586, y: 0.6115811, z: -9.940273}
+    m_Value: {x: -2.1134439, y: 0.89967835, z: -9.942651}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1536,9 +1541,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 6.151807
+    m_Target: 6.3896637
     speed: 2
-    m_Value: 6.151807
+    m_Value: 6.3896637
   m_Ortho:
     m_Target: 1
     speed: 2

@@ -68,23 +68,15 @@ public class BonusController : MonoBehaviour
 
             case BonusType.PlatformExpand:
                 platform?.ExpandPlatform(platformExpandAmount);
-                Invoke(nameof(ResetPlatform), effectDuration);
                 Debug.Log($"[Bonus] Platform expanded (+{platformExpandAmount}) for {effectDuration}s");
                 BonusUIManager.Instance?.ShowEffect("Platform Expand", effectDuration);
                 break;
 
             case BonusType.PlatformShrink:
                 platform?.ShrinkPlatform(platformExpandAmount);
-                Invoke(nameof(ResetPlatform), effectDuration);
                 Debug.Log($"[Bonus] Platform shrunk (-{platformExpandAmount}) for {effectDuration}s");
                 BonusUIManager.Instance?.ShowEffect("Platform Shrink", effectDuration);
                 break;
         }
-    }
-
-    void ResetPlatform()
-    {
-        var platform = FindObjectOfType<PlatformController>();
-        platform?.ResetPlatform();
     }
 }
