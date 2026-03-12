@@ -45,6 +45,7 @@ public class BallController : MonoBehaviour
         if (rb == null) return;
         rb.WakeUp();
         rb.linearVelocity = ballInitialForce.normalized * ballSpeed;
+        SoundManager.Instance?.PlayBallStarted();
     }
 
     public void ChangeSpeed(float multiplier)

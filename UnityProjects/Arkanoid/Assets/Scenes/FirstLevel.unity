@@ -3047,6 +3047,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 8a637d842a2e27d47962d4b5815d9c1c, type: 3}
   - {fileID: 8300000, guid: 36d501110cd275643b0565046478e84f, type: 3}
   - {fileID: 8300000, guid: 2c3879bfd467e2d40bb0a2996b62e519, type: 3}
+  - {fileID: 8300000, guid: 70cc43bf50c8244419dc50ddf2f3f436, type: 3}
+  - {fileID: 8300000, guid: 453dff321263ce741841b7ec6e67a7c4, type: 3}
   audioSource: {fileID: 1369606467}
   trackTitle: {fileID: 713924181}
   musicImage: {fileID: 185526799}
@@ -3055,13 +3057,15 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 38772ce43940e184a978ee1a2a180a40, type: 3}
   - {fileID: 2800000, guid: 7cd09a16ea9b9a24d800d4632c728bb5, type: 3}
   - {fileID: 2800000, guid: 8e32dd00dcfbf7f4aad748c139dc249b, type: 3}
+  - {fileID: 2800000, guid: 9e85b7ea071554949818d5920f021562, type: 3}
+  - {fileID: 2800000, guid: 336846fdcec7cec4fb0af10464f92123, type: 3}
   lastTrackBtn: {fileID: 1872775540}
   nextTrackBtn: {fileID: 1832471131}
   pauseTrackBtn: {fileID: 560166466}
   pauseButtonImage: {fileID: 560166467}
   pauseSprite: {fileID: 21300000, guid: 3a247e76741b8194f83f0ca3b47c4e0d, type: 3}
   playSprite: {fileID: -7256113396414557325, guid: fe234fc6eaf308c43bd28efc4575449c, type: 3}
-  volume: 0.5
+  musicVolume: 0.3
 --- !u!82 &1369606467
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3756,6 +3760,7 @@ GameObject:
   - component: {fileID: 1830780212}
   - component: {fileID: 1830780213}
   - component: {fileID: 1830780214}
+  - component: {fileID: 1830780215}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -3824,6 +3829,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BonusUIManager
   effectText: {fileID: 12603900}
+--- !u!114 &1830780215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1830780210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2ada98428dd6694e9dc252ed7cfa181, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundManager
+  ballStartedSound: {fileID: 8300000, guid: abc516d4bae4f7c4e801e27c22311471, type: 3}
+  blockDestroyedSound: {fileID: 8300000, guid: f5505a74170dc92478d32211b7d565c1, type: 3}
+  heartCollectedSound: {fileID: 8300000, guid: e67dab4f06fa95e48aea773ea5fe0a85, type: 3}
+  startGameSound: {fileID: 8300000, guid: aea23b30f4b3783458e49679e2178cb4, type: 3}
+  sfxVolume: 0.5
 --- !u!1 &1832471129
 GameObject:
   m_ObjectHideFlags: 0

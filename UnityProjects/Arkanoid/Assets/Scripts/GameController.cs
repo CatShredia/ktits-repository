@@ -30,6 +30,7 @@ public class GameController : MonoBehaviour
                 playerTransform = platform.transform;
         }
 
+        SoundManager.Instance?.PlayStartGame();
         SpawnHeartUI();
     }
 
@@ -62,6 +63,7 @@ public class GameController : MonoBehaviour
     public void IncreaseHearts()
     {
         heartCount++;
+        SoundManager.Instance?.PlayHeartCollected();
         ClearHearts();
         SpawnHeartUI();
     }

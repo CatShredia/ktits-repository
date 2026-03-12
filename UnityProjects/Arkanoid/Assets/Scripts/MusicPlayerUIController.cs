@@ -29,7 +29,7 @@ public class MusicPlayerUIController : MonoBehaviour
     [SerializeField] private Sprite playSprite;
 
     [Header("Settings")]
-    [SerializeField] private float volume = 0.5f;
+    [SerializeField] private float musicVolume = 0.1f;
 
     private int currentTrackIndex = 0;
     private bool isPaused = false;
@@ -45,7 +45,7 @@ public class MusicPlayerUIController : MonoBehaviour
 
         audioSource.playOnAwake = false;
         audioSource.loop = false;
-        audioSource.volume = volume;
+        audioSource.volume = musicVolume;
     }
 
     void Start()
@@ -135,9 +135,9 @@ public class MusicPlayerUIController : MonoBehaviour
 
     public void SetVolume(float newVolume)
     {
-        volume = Mathf.Clamp01(newVolume);
+        musicVolume = Mathf.Clamp01(newVolume);
         if (audioSource != null)
-            audioSource.volume = volume;
+            audioSource.volume = musicVolume;
     }
 
     void UpdateUI()

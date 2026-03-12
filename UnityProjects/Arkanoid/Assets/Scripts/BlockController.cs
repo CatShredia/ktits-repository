@@ -17,6 +17,7 @@ public class BlockController : MonoBehaviour
     {
         if (!collision.gameObject.CompareTag("Ball")) return;
 
+        SoundManager.Instance?.PlayBlockDestroyed();
         Destroy(gameObject);
         LevelController.Instance?.BlockDestroyed();
 
