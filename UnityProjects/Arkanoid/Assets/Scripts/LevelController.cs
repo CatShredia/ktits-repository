@@ -1,13 +1,12 @@
 using UnityEngine;
 
-// GameManager or empty GameObject in scene
-// Assign: All level prefabs from Assets/Prefabs/Levels/
+// GameManager
 public class LevelController : MonoBehaviour
 {
     public static LevelController Instance { get; private set; }
 
     [Header("Level Prefabs")]
-    [SerializeField] private GameObject[] levelPrefabs;  // FirstLevel, SecondLevel, ThirdLevel
+    [SerializeField] private GameObject[] levelPrefabs;
 
     [Header("Spawn Position")]
     [SerializeField] private Vector3 spawnPosition = new Vector3(-4f, 2f, 0f);
@@ -26,35 +25,28 @@ public class LevelController : MonoBehaviour
 
     void Start()
     {
-        LoadLevel(0);  // Start with first level
+        LoadLevel(0);
     }
 
     public void LoadLevel(int index)
     {
-        // Reset bonus effects before loading new level (except first load)
         if (currentLevelInstance != null)
         {
             ResetBonusEffects();
         }
 
-        // Clear current level
         if (currentLevelInstance != null)
         {
             Destroy(currentLevelInstance);
         }
 
-        // Clamp index (handle negative and overflow)
         currentLevelIndex = (index % levelPrefabs.Length + levelPrefabs.Length) % levelPrefabs.Length;
 
-        // Spawn new level
         if (levelPrefabs[currentLevelIndex] != null)
         {
             currentLevelInstance = Instantiate(levelPrefabs[currentLevelIndex], spawnPosition, Quaternion.identity);
             currentBlocks = currentLevelInstance.GetComponentsInChildren<BlockController>(true);
             totalBlocksAtStart = currentBlocks.Length;
-            
-            Debug.Log($"[Level] Loaded level {currentLevelIndex + 1}: {levelPrefabs[currentLevelIndex].name}");
-            Debug.Log($"[Level] Total blocks at start: {totalBlocksAtStart}");
         }
         else
         {
@@ -72,7 +64,6 @@ public class LevelController : MonoBehaviour
     {
         if (currentBlocks == null) return;
 
-        // Count remaining active blocks with a small delay
         Invoke(nameof(CheckRemainingBlocks), 0.1f);
     }
 
@@ -80,7 +71,6 @@ public class LevelController : MonoBehaviour
     {
         if (currentBlocks == null) return;
 
-        // Count remaining active blocks
         int remainingBlocks = 0;
         foreach (var block in currentBlocks)
         {
@@ -88,22 +78,21 @@ public class LevelController : MonoBehaviour
                 remainingBlocks++;
         }
 
+        // TODO: счетчик
         Debug.Log($"[Level] Blocks remaining: {remainingBlocks} / {totalBlocksAtStart}");
 
         if (remainingBlocks <= 0)
         {
             Debug.Log("[Level] Level complete!");
-            Invoke(nameof(LoadNextLevel), 1f);  // Delay before next level
+            Invoke(nameof(LoadNextLevel), 1f);
         }
     }
 
     void ResetBonusEffects()
     {
-        // Reset platform
         var platform = FindObjectOfType<PlatformController>();
         platform?.ResetPlatform();
 
-        // Reset ball to platform
         var balls = FindObjectsOfType<BallController>();
         foreach (var ball in balls)
         {
@@ -115,7 +104,6 @@ public class LevelController : MonoBehaviour
             }
         }
 
-        // Clear bonus UI
         BonusUIManager.Instance?.ClearEffectText();
 
         Debug.Log("[Level] Bonus effects reset");

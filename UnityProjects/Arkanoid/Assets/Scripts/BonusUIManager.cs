@@ -10,7 +10,20 @@ public class BonusUIManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI effectText;
 
-    private Dictionary<string, float> activeEffects = new Dictionary<string, float>();
+    private Dictionary<string, EffectData> activeEffects = new Dictionary<string, EffectData>();
+
+    [System.Serializable]
+    public class EffectData
+    {
+        public float duration;
+        public int count;
+
+        public EffectData(float duration, int count)
+        {
+            this.duration = duration;
+            this.count = count;
+        }
+    }
 
     void Awake() => Instance = this;
 
@@ -20,8 +33,8 @@ public class BonusUIManager : MonoBehaviour
     {
         foreach (var kvp in activeEffects.ToList())
         {
-            activeEffects[kvp.Key] -= Time.deltaTime;
-            if (activeEffects[kvp.Key] <= 0)
+            kvp.Value.duration -= Time.deltaTime;
+            if (kvp.Value.duration <= 0)
             {
                 OnEffectExpired(kvp.Key);
                 activeEffects.Remove(kvp.Key);
@@ -33,7 +46,7 @@ public class BonusUIManager : MonoBehaviour
 
     void OnEffectExpired(string effectName)
     {
-        if (effectName == "Platform Expand" || effectName == "Platform Shrink")
+        if (effectName == "Увеличение платформы" || effectName == "Уменьшение платформы")
         {
             var platform = FindObjectOfType<PlatformController>();
             platform?.ResetPlatform();
@@ -47,7 +60,6 @@ public class BonusUIManager : MonoBehaviour
         if (!string.IsNullOrEmpty(oppositeEffect) && activeEffects.ContainsKey(oppositeEffect))
         {
             activeEffects.Remove(oppositeEffect);
-            Debug.Log($"[BonusUI] {effectName} canceled {oppositeEffect}");
 
             if (effectName.Contains("Platform"))
             {
@@ -57,9 +69,19 @@ public class BonusUIManager : MonoBehaviour
         }
 
         if (activeEffects.ContainsKey(effectName))
-            activeEffects[effectName] = duration;
+        {
+            activeEffects[effectName].duration = duration;
+            activeEffects[effectName].count++;
+        }
         else
-            activeEffects.Add(effectName, duration);
+        {
+            activeEffects.Add(effectName, new EffectData(duration, 1));
+        }
+
+        foreach (var kvp in activeEffects)
+        {
+            Debug.Log($"  - {kvp.Key}: {kvp.Value.duration:F1}s (x{kvp.Value.count})");
+        }
 
         UpdateEffectText();
     }
@@ -68,10 +90,10 @@ public class BonusUIManager : MonoBehaviour
     {
         switch (effectName)
         {
-            case "Ball Speed Up": return "Ball Speed Down";
-            case "Ball Speed Down": return "Ball Speed Up";
-            case "Platform Expand": return "Platform Shrink";
-            case "Platform Shrink": return "Platform Expand";
+            case "Ускорение мяча": return "Замедление мяча";
+            case "Замедление мяча": return "Ускорение мяча";
+            case "Увеличение платформы": return "Уменьшение платформы";
+            case "Уменьшение платформы": return "Увеличение платформы";
             default: return null;
         }
     }
@@ -91,7 +113,9 @@ public class BonusUIManager : MonoBehaviour
         {
             if (!string.IsNullOrEmpty(text))
                 text += "\n";
-            text += $"{kvp.Key}: {kvp.Value:F1}s";
+
+            string countText = kvp.Value.count > 1 ? $" (x{kvp.Value.count})" : "";
+            text += $"{kvp.Key}: {kvp.Value.duration:F1}s{countText}";
         }
 
         effectText.text = text;

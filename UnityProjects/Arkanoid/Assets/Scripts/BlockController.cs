@@ -26,7 +26,6 @@ public class BlockController : MonoBehaviour
         else if (blockType == BlockType.Blue)
             GameController.Instance.SpawnExtraBall(transform.position);
 
-        // Spawn bonus
         if (bonusDropChance > 0 && bonusPrefabs != null && bonusPrefabs.Length > 0)
         {
             if (Random.value < bonusDropChance)

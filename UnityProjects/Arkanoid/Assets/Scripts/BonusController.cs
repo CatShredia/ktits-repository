@@ -48,34 +48,29 @@ public class BonusController : MonoBehaviour
         var platform = FindObjectOfType<PlatformController>();
         var balls = FindObjectsOfType<BallController>();
 
-        Debug.Log($"[Bonus] Picked up: {bonusType}");
 
         switch (bonusType)
         {
             case BonusType.BallSpeedUp:
                 foreach (var ball in balls)
                     ball?.ChangeSpeed(speedMultiplier);
-                Debug.Log($"[Bonus] Ball speed increased by x{speedMultiplier}");
-                BonusUIManager.Instance?.ShowEffect("Ball Speed Up", effectDuration);
+                BonusUIManager.Instance?.ShowEffect("Ускорение мяча", effectDuration);
                 break;
 
             case BonusType.BallSpeedDown:
                 foreach (var ball in balls)
                     ball?.ChangeSpeed(1f / speedMultiplier);
-                Debug.Log($"[Bonus] Ball speed decreased by x{1f / speedMultiplier:F2}");
-                BonusUIManager.Instance?.ShowEffect("Ball Speed Down", effectDuration);
+                BonusUIManager.Instance?.ShowEffect("Замедление мяча", effectDuration);
                 break;
 
             case BonusType.PlatformExpand:
                 platform?.ExpandPlatform(platformExpandAmount);
-                Debug.Log($"[Bonus] Platform expanded (+{platformExpandAmount}) for {effectDuration}s");
-                BonusUIManager.Instance?.ShowEffect("Platform Expand", effectDuration);
+                BonusUIManager.Instance?.ShowEffect("Увеличение платформы", effectDuration);
                 break;
 
             case BonusType.PlatformShrink:
                 platform?.ShrinkPlatform(platformExpandAmount);
-                Debug.Log($"[Bonus] Platform shrunk (-{platformExpandAmount}) for {effectDuration}s");
-                BonusUIManager.Instance?.ShowEffect("Platform Shrink", effectDuration);
+                BonusUIManager.Instance?.ShowEffect("Уменьшение платформы", effectDuration);
                 break;
         }
     }

@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// MusicPlayer GameObject in MusicPanel Canvas
-// RequiredAudioSource
+// MusicPlayer
+// AudioSource
 public class MusicPlayerUIController : MonoBehaviour
 {
     public static MusicPlayerUIController Instance { get; private set; }

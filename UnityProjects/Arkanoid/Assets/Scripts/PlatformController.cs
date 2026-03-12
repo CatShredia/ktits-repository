@@ -18,12 +18,11 @@ public class PlatformController : MonoBehaviour
     {
         playerPosition = transform.position;
         originalScale = transform.localScale;
-        
+
         Debug.Log($"[Platform] Start() - originalScale: {originalScale}, baseScaleX: {baseScaleX}");
 
-        // Set initial scale
         transform.localScale = new Vector3(baseScaleX, originalScale.y, originalScale.z);
-        
+
         Debug.Log($"[Platform] Start() - new scale: {transform.localScale}");
     }
 

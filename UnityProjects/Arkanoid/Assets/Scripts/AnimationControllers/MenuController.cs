@@ -29,29 +29,29 @@ public class MenuController : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        
-        // Find all blocks in scene
+
+        // TODO: Криво считает
         allBlocks = FindObjectsOfType<BlockController>(true);
         HideAllBlocks();
     }
 
     void Start() => ShowMainMenu();
-    
+
     void HideAllBlocks()
     {
         if (allBlocks == null) return;
-        
+
         foreach (var block in allBlocks)
         {
             if (block != null)
                 block.gameObject.SetActive(false);
         }
     }
-    
+
     void ShowAllBlocks()
     {
         if (allBlocks == null) return;
-        
+
         foreach (var block in allBlocks)
         {
             if (block != null)
@@ -80,8 +80,8 @@ public class MenuController : MonoBehaviour
 
         gameplayUI?.SetActive(true);
         Time.timeScale = 1f;
-        
-        ShowAllBlocks();  // Show blocks when game starts
+
+        ShowAllBlocks();
 
         StartCoroutine(HidePanelAfterAnimation());
     }
@@ -112,8 +112,8 @@ public class MenuController : MonoBehaviour
         mainMenuPanel?.SetActive(true);
         gameplayUI?.SetActive(false);
         pausePanel?.SetActive(false);
-        
-        HideAllBlocks();  // Hide blocks when returning to menu
+
+        HideAllBlocks();
     }
 
     public void PauseGame()
