@@ -27,7 +27,7 @@ public class LevelController : MonoBehaviour
             {
                 SceneManager.LoadScene(sceneOrder[1]);
             }
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
             {
                 SceneManager.LoadScene(sceneOrder[2]);
             }
