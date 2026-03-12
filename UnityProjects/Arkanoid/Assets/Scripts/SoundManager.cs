@@ -1,8 +1,7 @@
 using UnityEngine;
 
-// Attach to: SoundManager GameObject (persistent in scene)
-// Required: AudioSource component (auto-added if missing)
-// Assign: All sound effect clips
+// GameManager
+// AudioSource
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance { get; private set; }
@@ -14,7 +13,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip startGameSound;
 
     [Header("Settings")]
-    [SerializeField] private float sfxVolume = 0.7f;  // Louder than music
+    [SerializeField] private float sfxVolume = 0.7f;
 
     private AudioSource audioSource;
 
@@ -37,37 +36,49 @@ public class SoundManager : MonoBehaviour
     public void PlaySound(AudioClip clip)
     {
         if (clip == null) return;
-        audioSource.PlayOneShot(clip);
+        {
+            audioSource.PlayOneShot(clip);
+        }
     }
 
     public void PlayBallStarted()
     {
         if (ballStartedSound != null)
+        {
             audioSource.PlayOneShot(ballStartedSound);
+        }
     }
 
     public void PlayBlockDestroyed()
     {
         if (blockDestroyedSound != null)
+        {
             audioSource.PlayOneShot(blockDestroyedSound);
+        }
     }
 
     public void PlayHeartCollected()
     {
         if (heartCollectedSound != null)
+        {
             audioSource.PlayOneShot(heartCollectedSound);
+        }
     }
 
     public void PlayStartGame()
     {
         if (startGameSound != null)
+        {
             audioSource.PlayOneShot(startGameSound);
+        }
     }
 
     public void SetVolume(float volume)
     {
         sfxVolume = Mathf.Clamp01(volume);
         if (audioSource != null)
+        {
             audioSource.volume = sfxVolume;
+        }
     }
 }

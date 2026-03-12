@@ -38,7 +38,9 @@ public class BonusDebugController : MonoBehaviour
     {
         var balls = FindObjectsOfType<BallController>();
         foreach (var ball in balls)
+        {
             ball?.ChangeSpeed(multiplier);
+        }
         Debug.Log($"[Debug] Ball speed changed by x{multiplier:F2}");
         BonusUIManager.Instance?.ShowEffect(multiplier > 1 ? "Ball Speed Up" : "Ball Speed Down", 10f);
     }
