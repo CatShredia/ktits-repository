@@ -4,6 +4,46 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="DataTxtProject.MainWindow"
-        Title="DataTxtProject">
-    Welcome to Avalonia!
+        Title="DataTxtProject"
+        Width="800" Height="450">
+
+    <StackPanel Orientation="Vertical">
+        <TabControl Margin="10" Name="MainTabControl">
+            <TabItem Header="Write">
+                <StackPanel Orientation="Vertical" Margin="10">
+                    <TextBox Name="WriteFileNameTextBox" 
+                             Watermark="Название файла" 
+                             Margin="5"/>
+                    <TextBox Name="WriteTextTextBox" 
+                             Watermark="Текст файла" 
+                             Margin="5" 
+                             AcceptsReturn="True" 
+                             TextWrapping="Wrap" 
+                             MinHeight="150"/>
+                    <Button Content="OK" 
+                            Margin="5" 
+                            HorizontalAlignment="Right" 
+                            Name="WriteButton"/>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Read">
+                <StackPanel Orientation="Vertical" Margin="10">
+                    <TextBox Name="ReadFileNameTextBox" 
+                             Watermark="Название файла" 
+                             Margin="5"/>
+                    <Button Content="OK" 
+                            Margin="5" 
+                            HorizontalAlignment="Right" 
+                            Name="ReadButton"/>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+
+        <TextBlock Name="FooterTextBlock" 
+                   Margin="10" 
+                   TextWrapping="Wrap" 
+                   Background="LightGray" 
+                   Padding="5" 
+                   MinHeight="40"/>
+    </StackPanel>
 </Window>
