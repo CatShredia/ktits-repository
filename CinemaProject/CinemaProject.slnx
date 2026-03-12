@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="CinemaAPI\CinemaAPI.csproj" Type="Classic C#" />
+  <Project Path="CinemaBlazor\CinemaBlazor.csproj" Type="Classic C#" />
+</Solution>
