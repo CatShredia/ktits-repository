@@ -17,6 +17,9 @@ public class MenuController : MonoBehaviour
     [SerializeField] private string boolParameterName = "Open";
     [SerializeField] private float hideAnimationDuration = 0.3f;
 
+    [Header("Game Objects")]
+    [SerializeField] private BlockController[] allBlocks;
+
     private bool isGamePaused;
     private bool gameStarted;
     private bool isMenuHiding;
@@ -26,9 +29,35 @@ public class MenuController : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        
+        // Find all blocks in scene
+        allBlocks = FindObjectsOfType<BlockController>(true);
+        HideAllBlocks();
     }
 
     void Start() => ShowMainMenu();
+    
+    void HideAllBlocks()
+    {
+        if (allBlocks == null) return;
+        
+        foreach (var block in allBlocks)
+        {
+            if (block != null)
+                block.gameObject.SetActive(false);
+        }
+    }
+    
+    void ShowAllBlocks()
+    {
+        if (allBlocks == null) return;
+        
+        foreach (var block in allBlocks)
+        {
+            if (block != null)
+                block.gameObject.SetActive(true);
+        }
+    }
 
     void Update()
     {
@@ -51,6 +80,8 @@ public class MenuController : MonoBehaviour
 
         gameplayUI?.SetActive(true);
         Time.timeScale = 1f;
+        
+        ShowAllBlocks();  // Show blocks when game starts
 
         StartCoroutine(HidePanelAfterAnimation());
     }
@@ -81,6 +112,8 @@ public class MenuController : MonoBehaviour
         mainMenuPanel?.SetActive(true);
         gameplayUI?.SetActive(false);
         pausePanel?.SetActive(false);
+        
+        HideAllBlocks();  // Hide blocks when returning to menu
     }
 
     public void PauseGame()
