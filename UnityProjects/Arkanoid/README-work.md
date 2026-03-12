@@ -47,3 +47,38 @@ First, Second Levels are required!
 - удали все Debug.Log()
 - оптимизируй код где возможно
   Перед участками, которые ты поменяешь в последнем пункте поставь TODO.
+
+---
+
+Я добавил на сцену следующие объекты:
+
+MusicPanel - Canvas
+имееет MusicPlayerUIController
+В него входят:
+MusicImage - изображение обложки
+TrackTitle - TextMeshPro Text
+last-track-btn - TextMeshPro Button
+second-track-btn - TextMeshPro Button
+pause-track-btn - TextMeshPro Button
+Сделай мне скрипт/скрипты, которые будут вначале включать первую песню, а потом следующие. Кнопки тоже должны работать в соответсвии с названиями.
+
+​Треки находятся:Arkanoid\Assets\Images\Music
+Directory: C:\directory-git\ktits-repository-1\UnityProjects\Arkanoid\Assets\Images\Music
+
+Mode LastWriteTime Length Name
+
+---
+
+-a--- 3/12/2026 12:24 AM 314653 1track - Arkanoid Sound.jpg
+-a--- 3/12/2026 9:39 AM 3228 1track - Arkanoid Sound.jpg.meta
+-a--- 3/12/2026 12:20 AM 7199391 1track - Arkanoid Sound.mp3
+-a--- 3/12/2026 9:39 AM 485 1track - Arkanoid Sound.mp3.meta
+-a--- 3/12/2026 12:25 AM 368773 2track - Arkanoid Sound.jpg
+-a--- 3/12/2026 9:39 AM 3228 2track - Arkanoid Sound.jpg.meta
+-a--- 3/12/2026 12:24 AM 7199391 2track - Arkanoid Sound.mp3
+-a--- 3/12/2026 9:39 AM 485 2track - Arkanoid Sound.mp3.meta
+-a--- 3/12/2026 12:26 AM 136388 3track - Arkanoid Sound.jpg
+-a--- 3/12/2026 9:39 AM 3231 3track - Arkanoid Sound.jpg.meta
+-a--- 3/12/2026 12:27 AM 7199391 3track - Arkanoid Sound.mp3
+-a--- 3/12/2026 9:39 AM 485 3track - Arkanoid Sound.mp3.meta
+Сделай сначала новый план выполнения.
