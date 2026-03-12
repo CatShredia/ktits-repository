@@ -23,6 +23,11 @@ public class MusicPlayerUIController : MonoBehaviour
     [SerializeField] private Button nextTrackBtn;
     [SerializeField] private Button pauseTrackBtn;
 
+    [Header("Pause Button Images")]
+    [SerializeField] private Image pauseButtonImage;
+    [SerializeField] private Sprite pauseSprite;
+    [SerializeField] private Sprite playSprite;
+
     [Header("Settings")]
     [SerializeField] private float volume = 0.5f;
 
@@ -164,11 +169,26 @@ public class MusicPlayerUIController : MonoBehaviour
         if (pauseTrackBtn == null)
             return;
 
+        // Update text
         var textComp = pauseTrackBtn.GetComponentInChildren<TextMeshProUGUI>();
         if (textComp != null)
         {
             textComp.text = isPaused ? "▶ Resume" : "⏸ Pause";
         }
+
+        // Update image
+        UpdatePauseButtonImage();
+    }
+
+    void UpdatePauseButtonImage()
+    {
+        if (pauseButtonImage == null)
+            return;
+
+        if (isPaused && playSprite != null)
+            pauseButtonImage.sprite = playSprite;
+        else if (!isPaused && pauseSprite != null)
+            pauseButtonImage.sprite = pauseSprite;
     }
 
     void OnDestroy()

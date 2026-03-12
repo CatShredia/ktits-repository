@@ -3046,6 +3046,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: c56b0341a15e719438dafd78bbcad4be, type: 3}
   - {fileID: 8300000, guid: 8a637d842a2e27d47962d4b5815d9c1c, type: 3}
   - {fileID: 8300000, guid: 36d501110cd275643b0565046478e84f, type: 3}
+  - {fileID: 8300000, guid: 2c3879bfd467e2d40bb0a2996b62e519, type: 3}
   audioSource: {fileID: 1369606467}
   trackTitle: {fileID: 713924181}
   musicImage: {fileID: 185526799}
@@ -3053,9 +3054,13 @@ MonoBehaviour:
   - {fileID: 2800000, guid: daee189af1461ee44b85b97a8fb759dd, type: 3}
   - {fileID: 2800000, guid: 38772ce43940e184a978ee1a2a180a40, type: 3}
   - {fileID: 2800000, guid: 7cd09a16ea9b9a24d800d4632c728bb5, type: 3}
+  - {fileID: 2800000, guid: 8e32dd00dcfbf7f4aad748c139dc249b, type: 3}
   lastTrackBtn: {fileID: 1872775540}
   nextTrackBtn: {fileID: 1832471131}
   pauseTrackBtn: {fileID: 560166466}
+  pauseButtonImage: {fileID: 560166467}
+  pauseSprite: {fileID: 21300000, guid: 3a247e76741b8194f83f0ca3b47c4e0d, type: 3}
+  playSprite: {fileID: -7256113396414557325, guid: fe234fc6eaf308c43bd28efc4575449c, type: 3}
   volume: 0.5
 --- !u!82 &1369606467
 AudioSource:
