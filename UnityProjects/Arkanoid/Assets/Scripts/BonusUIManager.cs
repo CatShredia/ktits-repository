@@ -3,8 +3,7 @@ using TMPro;
 using System.Collections.Generic;
 using System.Linq;
 
-// Attach to: SystemCanvas or UI_Manager
-// Required: Reference to EffectText (TextMeshPro)
+// SystemCanvas
 public class BonusUIManager : MonoBehaviour
 {
     public static BonusUIManager Instance { get; private set; }
@@ -19,7 +18,6 @@ public class BonusUIManager : MonoBehaviour
 
     void Update()
     {
-        // Update timers and remove expired (using ToList to avoid modification during iteration)
         foreach (var kvp in activeEffects.ToList())
         {
             activeEffects[kvp.Key] -= Time.deltaTime;
@@ -30,33 +28,27 @@ public class BonusUIManager : MonoBehaviour
             }
         }
 
-        // Update UI
         UpdateEffectText();
     }
 
     void OnEffectExpired(string effectName)
     {
-        // Reset platform effects
         if (effectName == "Platform Expand" || effectName == "Platform Shrink")
         {
             var platform = FindObjectOfType<PlatformController>();
             platform?.ResetPlatform();
         }
-        // Ball speed effects don't have automatic reset
     }
 
     public void ShowEffect(string effectName, float duration)
     {
-        // Check for opposite effects and cancel them
         string oppositeEffect = GetOppositeEffect(effectName);
-        
+
         if (!string.IsNullOrEmpty(oppositeEffect) && activeEffects.ContainsKey(oppositeEffect))
         {
-            // Remove opposite effect (they cancel each other)
             activeEffects.Remove(oppositeEffect);
             Debug.Log($"[BonusUI] {effectName} canceled {oppositeEffect}");
-            
-            // Reset platform for opposite effects
+
             if (effectName.Contains("Platform"))
             {
                 var platform = FindObjectOfType<PlatformController>();
@@ -64,7 +56,6 @@ public class BonusUIManager : MonoBehaviour
             }
         }
 
-        // Add or update the effect
         if (activeEffects.ContainsKey(effectName))
             activeEffects[effectName] = duration;
         else

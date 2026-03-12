@@ -1,7 +1,7 @@
 using UnityEngine;
 
-// Attach to: Bonus prefabs
-// Required: Collider2D (Is Trigger), Rigidbody2D
+// Bonus prefabs
+// Collider2D, Rigidbody2D
 public class BonusController : MonoBehaviour
 {
     public enum BonusType

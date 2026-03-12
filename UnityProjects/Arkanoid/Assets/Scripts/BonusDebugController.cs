@@ -1,6 +1,5 @@
 
-// Attach to: GameManager or any persistent GameObject in scene
-// Only ONE instance should exist in the scene
+// GameManager
 using UnityEngine;
 
 public class BonusDebugController : MonoBehaviour
