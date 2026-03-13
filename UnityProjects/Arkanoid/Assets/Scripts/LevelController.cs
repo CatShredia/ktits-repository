@@ -5,13 +5,10 @@ public class LevelController : MonoBehaviour
 {
     public static LevelController Instance { get; private set; }
 
-    [Header("Level Prefabs")]
     [SerializeField] private GameObject[] levelPrefabs;
 
-    [Header("Spawn Position")]
     [SerializeField] private Vector3 spawnPosition = new Vector3(-4f, 2f, 0f);
 
-    [Header("Debug")]
     [SerializeField] private int currentLevelIndex = 0;
 
     private GameObject currentLevelInstance;
@@ -47,6 +44,12 @@ public class LevelController : MonoBehaviour
             currentLevelInstance = Instantiate(levelPrefabs[currentLevelIndex], spawnPosition, Quaternion.identity);
             currentBlocks = currentLevelInstance.GetComponentsInChildren<BlockController>(true);
             totalBlocksAtStart = currentBlocks.Length;
+
+            Debug.Log($"[Level] Loaded level {currentLevelIndex + 1}: {levelPrefabs[currentLevelIndex].name}");
+            Debug.Log($"[Level] Total blocks at start: {totalBlocksAtStart}");
+
+            // Play video for this level
+            VideoBackgroundController.Instance?.PlayVideoForLevel(currentLevelIndex);
         }
         else
         {

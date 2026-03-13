@@ -1,128 +1,140 @@
 using UnityEngine;
 using UnityEngine.Video;
-using UnityEngine.SceneManagement;
 
-// Attach to: SystemCanvas or BackGroundImage GameObject
-// Required: VideoPlayer component on BackGroundImage
-// Assign: 3 video clips for each level
+// BackGroundImage
+// VideoPlayer
 public class VideoBackgroundController : MonoBehaviour
 {
     public static VideoBackgroundController Instance { get; private set; }
 
-    [Header("Video Clips")]
-    [SerializeField] private VideoClip[] levelVideos = new VideoClip[3];
+    [SerializeField] private VideoClip[] levelVideos = new VideoClip[4];
+
+    [SerializeField] private bool autoPlayOnStart = true;
+
+    [SerializeField] private UnityEngine.UI.RawImage backgroundRawImage;
 
     private VideoPlayer videoPlayer;
+    private int currentLevelIndex = -1;
 
     void Awake()
     {
         Instance = this;
 
-        videoPlayer = GetComponent<VideoPlayer>();
         if (videoPlayer == null)
-        {
-            Debug.LogError("[VideoBackground] VideoPlayer component not found! Adding one...");
+            videoPlayer = GetComponent<VideoPlayer>();
+
+        if (videoPlayer == null)
             videoPlayer = gameObject.AddComponent<VideoPlayer>();
-        }
 
-        // Enable VideoPlayer
+        if (backgroundRawImage == null)
+            backgroundRawImage = GetComponent<UnityEngine.UI.RawImage>();
+
         videoPlayer.enabled = true;
+        videoPlayer.gameObject.SetActive(true);
 
-        // Setup video player
         videoPlayer.playOnAwake = false;
         videoPlayer.isLooping = true;
         videoPlayer.skipOnDrop = true;
-        videoPlayer.waitForFirstFrame = true;
-
-        // Debug: Check Render Texture
-        Debug.Log("[VideoBackground] Render Mode: " + videoPlayer.renderMode);
-        Debug.Log("[VideoBackground] Target Texture: " + videoPlayer.targetTexture);
-        Debug.Log("[VideoBackground] VideoPlayer.enabled: " + videoPlayer.enabled);
-        Debug.Log("[VideoBackground] Initialized. VideoPlayer: " + (videoPlayer != null));
+        videoPlayer.waitForFirstFrame = false;
     }
 
     void Start()
     {
-        Debug.Log("[VideoBackground] Start() - Current scene: " + SceneManager.GetActiveScene().name);
-        Invoke(nameof(PlayVideoForCurrentLevel), 0.1f);
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        if (autoPlayOnStart)
+        {
+            Invoke(nameof(PlayFirstVideo), 1f);
+        }
     }
 
-    void OnDestroy()
+    void PlayFirstVideo()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        PlayVideo(0);
     }
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    public void PlayVideoForLevel(int levelIndex)
     {
-        PlayVideoForCurrentLevel();
-    }
+        if (levelIndex == currentLevelIndex)
+        {
+            return;
+        }
 
-    public void PlayVideoForCurrentLevel()
-    {
-        string sceneName = SceneManager.GetActiveScene().name;
-        int levelIndex = -1;
-
-        Debug.Log("[VideoBackground] PlayVideoForCurrentLevel() - Scene: " + sceneName);
-
-        // Find level index from scene name
-        if (sceneName.Contains("FirstLevel"))
-            levelIndex = 0;
-        else if (sceneName.Contains("SecondLevel"))
-            levelIndex = 1;
-        else if (sceneName.Contains("ThirdLevel"))
-            levelIndex = 2;
-
-        Debug.Log("[VideoBackground] Level index: " + levelIndex);
-
-        if (levelIndex >= 0 && levelIndex < levelVideos.Length)
-            PlayVideo(levelIndex);
-        else
-            Debug.LogWarning("[VideoBackground] Invalid level index or no video assigned");
+        PlayVideo(levelIndex);
     }
 
     public void PlayVideo(int levelIndex)
     {
-        Debug.Log("[VideoBackground] PlayVideo(" + levelIndex + ")");
-
-        if (levelIndex < 0 || levelIndex >= levelVideos.Length)
-        {
-            Debug.LogError("[VideoBackground] Invalid level index: " + levelIndex);
-            return;
-        }
+        Debug.Log(levelIndex);
+        Debug.Log(levelVideos.Length);
 
         if (levelVideos[levelIndex] == null)
         {
-            Debug.LogError("[VideoBackground] Video clip at index " + levelIndex + " is null!");
+            Debug.LogWarning($"[Video] No video assigned for level {levelIndex}!");
+        }
+
+        if (levelVideos == null || levelVideos.Length == 0)
+        {
+            return;
+        }
+
+        levelIndex = (levelIndex % levelVideos.Length + levelVideos.Length) % levelVideos.Length;
+
+        if (levelVideos[levelIndex] == null)
+        {
             return;
         }
 
         if (videoPlayer == null)
         {
-            Debug.LogError("[VideoBackground] VideoPlayer is null!");
             return;
         }
 
-        Debug.Log("[VideoBackground] Playing clip: " + levelVideos[levelIndex].name);
-        Debug.Log("[VideoBackground] Clip length: " + levelVideos[levelIndex].length + "s");
+        videoPlayer.enabled = true;
+        videoPlayer.gameObject.SetActive(true);
+        videoPlayer.playOnAwake = false;
+        videoPlayer.isLooping = true;
+
+        if (backgroundRawImage != null && videoPlayer.targetTexture != null)
+        {
+            backgroundRawImage.texture = videoPlayer.targetTexture;
+        }
+
+        currentLevelIndex = levelIndex;
+
+        if (videoPlayer.isPlaying)
+        {
+            videoPlayer.Stop();
+        }
+
         videoPlayer.clip = levelVideos[levelIndex];
-        videoPlayer.Play();
+        videoPlayer.Prepare();
 
-        Debug.Log("[VideoBackground] VideoPlayer.isPlaying after Play(): " + videoPlayer.isPlaying);
-        Debug.Log("[VideoBackground] VideoPlayer.frame: " + videoPlayer.frame);
-
-        Invoke(nameof(CheckVideoStatus), 0.1f);
+        Invoke(nameof(PlayVideoDelayed), 1f);
     }
 
-    void CheckVideoStatus()
+    void PlayVideoDelayed()
     {
-        if (videoPlayer != null)
-            Debug.Log("[VideoBackground] CheckVideoStatus - isPlaying: " + videoPlayer.isPlaying + ", frame: " + videoPlayer.frame);
+        videoPlayer.Play();
     }
 
     public void StopVideo()
     {
         if (videoPlayer != null && videoPlayer.isPlaying)
+        {
             videoPlayer.Stop();
+            currentLevelIndex = -1;
+        }
+    }
+
+    public void ResumeVideo()
+    {
+        if (videoPlayer != null && !videoPlayer.isPlaying && currentLevelIndex >= 0)
+        {
+            videoPlayer.Play();
+        }
+    }
+
+    public int GetCurrentLevelIndex()
+    {
+        return currentLevelIndex;
     }
 }

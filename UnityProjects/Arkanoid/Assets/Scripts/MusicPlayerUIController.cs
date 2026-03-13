@@ -8,26 +8,21 @@ public class MusicPlayerUIController : MonoBehaviour
 {
     public static MusicPlayerUIController Instance { get; private set; }
 
-    [Header("Audio")]
     [SerializeField] private AudioClip[] tracks;
     [SerializeField] private AudioSource audioSource;
 
-    [Header("UI Elements")]
     [SerializeField] private TextMeshProUGUI trackTitle;
     [SerializeField] private RawImage musicImage;
     [SerializeField] private Texture2D[] trackCovers;
 
-    [Header("Buttons")]
     [SerializeField] private Button lastTrackBtn;
     [SerializeField] private Button nextTrackBtn;
     [SerializeField] private Button pauseTrackBtn;
 
-    [Header("Pause Button Images")]
     [SerializeField] private Image pauseButtonImage;
     [SerializeField] private Sprite pauseSprite;
     [SerializeField] private Sprite playSprite;
 
-    [Header("Settings")]
     [SerializeField] private float musicVolume = 0.1f;
 
     private int currentTrackIndex = 0;

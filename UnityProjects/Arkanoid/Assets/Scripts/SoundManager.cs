@@ -6,13 +6,11 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance { get; private set; }
 
-    [Header("Sound Effects")]
     [SerializeField] private AudioClip ballStartedSound;
     [SerializeField] private AudioClip blockDestroyedSound;
     [SerializeField] private AudioClip heartCollectedSound;
     [SerializeField] private AudioClip startGameSound;
 
-    [Header("Settings")]
     [SerializeField] private float sfxVolume = 0.7f;
 
     private AudioSource audioSource;
