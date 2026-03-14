@@ -1,5 +1,6 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/notifications_page.dart';
 import 'package:flutter_application_1/profile_edit.dart';
 import 'auth_page.dart';
 import 'register_page.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/forgot-password': (context) => RecoveryPage(),
         '/home': (context) => const HomePage(),
         '/profile-edit': (context) => const ProfileEdit(),
+        '/notifications': (context) => const NotificationsPage(),
       },
     );
   }

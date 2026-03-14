@@ -222,7 +222,7 @@ class _ProfileTabState extends State<ProfileTab> {
                       leading: const Icon(Icons.notifications),
                       title: const Text('Уведомления'),
                       onTap: () {
-                        // Переход к настройкам уведомлений
+                        Navigator.pushNamed(context, '/notifications');
                       },
                     ),
                     ListTile(
