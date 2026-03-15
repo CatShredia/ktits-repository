@@ -1816,13 +1816,13 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 0.27, y: 0.27}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.27, y: 0.27}
   m_EdgeRadius: 0
 --- !u!1 &1208148076
 GameObject:
@@ -2939,7 +2939,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 655715710582761135, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 1
+      value: 0.2584
+      objectReference: {fileID: 0}
+    - target: {fileID: 655715710582761135, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 655715710582761135, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 655715710582761135, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2975,7 +2983,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 655715710582761135, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -4
+      value: -4.3708
       objectReference: {fileID: 0}
     - target: {fileID: 655715710582761135, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2988,6 +2996,10 @@ PrefabInstance:
     - target: {fileID: 655715710582761135, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 893579225402850800, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8150623482628355015, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
       propertyPath: m_Name
