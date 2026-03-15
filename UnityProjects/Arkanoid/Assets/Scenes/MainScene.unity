@@ -2387,6 +2387,7 @@ MonoBehaviour:
   blockDestroyedSound: {fileID: 8300000, guid: f5505a74170dc92478d32211b7d565c1, type: 3}
   heartCollectedSound: {fileID: 8300000, guid: e67dab4f06fa95e48aea773ea5fe0a85, type: 3}
   startGameSound: {fileID: 8300000, guid: aea23b30f4b3783458e49679e2178cb4, type: 3}
+  blockHitSound: {fileID: 8300000, guid: 342aafd0a0eed3142b26da43803afdd8, type: 3}
   sfxVolume: 0.5
 --- !u!1 &1832471129
 GameObject:

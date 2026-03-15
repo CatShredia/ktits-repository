@@ -10,6 +10,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip blockDestroyedSound;
     [SerializeField] private AudioClip heartCollectedSound;
     [SerializeField] private AudioClip startGameSound;
+    [SerializeField] private AudioClip blockHitSound;
 
     [SerializeField] private float sfxVolume = 0.7f;
 
@@ -68,6 +69,14 @@ public class SoundManager : MonoBehaviour
         if (startGameSound != null)
         {
             audioSource.PlayOneShot(startGameSound);
+        }
+    }
+
+    public void PlayBlockHit()
+    {
+        if (blockHitSound != null)
+        {
+            audioSource.PlayOneShot(blockHitSound);
         }
     }
 

@@ -7,7 +7,8 @@ public class BlockController : MonoBehaviour
     // normal - обычный блок
     // красный - увеличивает жизни
     // синий - спавнит дополнительный шарик
-    public enum BlockType { Normal, Red, Blue }
+    // серый - неразрушаемый блок
+    public enum BlockType { Normal, Red, Blue, Invulnerable }
 
     [SerializeField] private BlockType blockType = BlockType.Normal;
     [SerializeField] private float bonusDropChance = 0.2f;
@@ -16,6 +17,13 @@ public class BlockController : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (!collision.gameObject.CompareTag("Ball")) return;
+
+        // Invulnerable blocks cannot be destroyed
+        if (blockType == BlockType.Invulnerable)
+        {
+            SoundManager.Instance?.PlayBlockHit();
+            return;
+        }
 
         SoundManager.Instance?.PlayBlockDestroyed();
         Destroy(gameObject);
