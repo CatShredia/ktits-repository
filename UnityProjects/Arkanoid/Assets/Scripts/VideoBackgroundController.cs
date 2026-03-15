@@ -42,7 +42,7 @@ public class VideoBackgroundController : MonoBehaviour
     {
         if (autoPlayOnStart)
         {
-            Invoke(nameof(PlayFirstVideo), 1f);
+            Invoke(nameof(PlayFirstVideo), 0.5f);
         }
     }
 
@@ -108,7 +108,7 @@ public class VideoBackgroundController : MonoBehaviour
         videoPlayer.clip = levelVideos[levelIndex];
         videoPlayer.Prepare();
 
-        Invoke(nameof(PlayVideoDelayed), 1f);
+        Invoke(nameof(PlayVideoDelayed), 0.5f);
     }
 
     void PlayVideoDelayed()

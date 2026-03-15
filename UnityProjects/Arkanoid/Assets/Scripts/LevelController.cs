@@ -44,13 +44,11 @@ public class LevelController : MonoBehaviour
             currentLevelInstance = Instantiate(levelPrefabs[currentLevelIndex], spawnPosition, Quaternion.identity);
             currentBlocks = currentLevelInstance.GetComponentsInChildren<BlockController>(true);
 
-            // Count only destructible blocks (exclude Invulnerable)
             totalBlocksAtStart = GetDestructibleBlocksCount();
 
             Debug.Log($"[Level] Loaded level {currentLevelIndex + 1}: {levelPrefabs[currentLevelIndex].name}");
             Debug.Log($"[Level] Total blocks at start: {totalBlocksAtStart}");
 
-            // Play video for this level
             VideoBackgroundController.Instance?.PlayVideoForLevel(currentLevelIndex);
         }
         else
@@ -84,7 +82,7 @@ public class LevelController : MonoBehaviour
         if (remainingBlocks <= 0)
         {
             Debug.Log("[Level] Level complete!");
-            Invoke(nameof(LoadNextLevel), 1f);
+            Invoke(nameof(LoadNextLevel), 0.5f);
         }
     }
 
