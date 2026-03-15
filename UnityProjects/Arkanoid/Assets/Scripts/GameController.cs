@@ -4,12 +4,14 @@ using System.Collections.Generic;
 // GameManager
 public class GameController : MonoBehaviour
 {
-    [SerializeField] private int heartCount = 2;
+    [SerializeField] private int heartCount = 3;
+    [SerializeField] private bool debugMode = false;
 
     public static GameController Instance { get; private set; }
 
     private GameObject heartContainer;
     private readonly List<BallController> activeBalls = new();
+    private bool gameHasStarted = false;
 
     public GameObject heartPrefab;
     public GameObject ballPrefab;
@@ -20,6 +22,15 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
+        // Ensure minimum hearts at start
+        if (heartCount < 1)
+        {
+            heartCount = 3;
+            Debug.LogWarning("[GameController] heartCount was less than 1, reset to 3");
+        }
+
+        if (debugMode) Debug.Log($"[GameController] Starting with {heartCount} hearts");
+
         heartContainer = new GameObject("HeartContainer");
         heartContainer.transform.position = new Vector3(-8, 3, 0);
 
@@ -32,6 +43,8 @@ public class GameController : MonoBehaviour
 
         SoundManager.Instance?.PlayStartGame();
         SpawnHeartUI();
+
+        gameHasStarted = true;
     }
 
     public void RegisterBall(BallController ball)
@@ -49,6 +62,8 @@ public class GameController : MonoBehaviour
 
     public void DescreaseHeart()
     {
+        if (debugMode) Debug.Log($"[GameController] Decreasing heart. Current: {heartCount}");
+
         foreach (var ball in activeBalls)
         {
             if (ball != null)
@@ -58,6 +73,13 @@ public class GameController : MonoBehaviour
         heartCount--;
         ClearHearts();
         SpawnHeartUI();
+
+        // Check for gameover only after game has started
+        if (heartCount < 1 && gameHasStarted)
+        {
+            if (debugMode) Debug.Log("[GameController] Gameover triggered!");
+            MenuController.Instance?.ShowGameover();
+        }
     }
 
     public void IncreaseHearts()

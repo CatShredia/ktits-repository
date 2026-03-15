@@ -8,13 +8,16 @@ public class MenuController : MonoBehaviour
 
     [Header("UI Panels")]
     [SerializeField] private GameObject mainMenuPanel;
-    // TODO: Панелька паузы
     [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject gameoverPanel;
     [SerializeField] private GameObject gameplayUI;
 
     [Header("Animations")]
     [SerializeField] private Animator mainMenuAnimator;
+    [SerializeField] private Animator gameoverAnimator;
     [SerializeField] private string boolParameterName = "Open";
+    [SerializeField] private string showTriggerParameterName = "Show";
+    [SerializeField] private string hideTriggerParameterName = "Hidden";
     [SerializeField] private float hideAnimationDuration = 0.3f;
 
     [Header("Game Objects")]
@@ -23,6 +26,7 @@ public class MenuController : MonoBehaviour
     private bool isGamePaused;
     private bool gameStarted;
     private bool isMenuHiding;
+    private bool isGameoverShowing;
 
     public bool IsGameStarted => gameStarted;
 
@@ -64,6 +68,7 @@ public class MenuController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (!gameStarted) return;
+            if (isGameoverShowing) return;
             if (isGamePaused) ResumeGame();
             else PauseGame();
         }
@@ -86,7 +91,6 @@ public class MenuController : MonoBehaviour
         StartCoroutine(HidePanelAfterAnimation());
     }
 
-    //TODOЖ нер оп
     private System.Collections.IEnumerator HidePanelAfterAnimation()
     {
         yield return new WaitForSecondsRealtime(hideAnimationDuration);
@@ -99,6 +103,7 @@ public class MenuController : MonoBehaviour
     public void RetryGame()
     {
         Time.timeScale = 1f;
+        HideGameover();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -106,13 +111,15 @@ public class MenuController : MonoBehaviour
     {
         gameStarted = false;
         isMenuHiding = false;
+        isGameoverShowing = false;
         Time.timeScale = 1f;
 
         mainMenuAnimator?.SetBool(boolParameterName, true);
 
-        mainMenuPanel?.SetActive(true);
-        gameplayUI?.SetActive(false);
-        pausePanel?.SetActive(false);
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
+        if (gameplayUI != null) gameplayUI.SetActive(false);
+        if (pausePanel != null) pausePanel.SetActive(false);
+        if (gameoverPanel != null) gameoverPanel.SetActive(false);
 
         HideAllBlocks();
     }
@@ -134,4 +141,73 @@ public class MenuController : MonoBehaviour
         isGamePaused = false;
     }
 
+    public void ShowGameover()
+    {
+        if (isGameoverShowing) return;
+
+        isGameoverShowing = true;
+        gameStarted = false;
+
+        // Set timescale AFTER showing the panel
+        if (gameoverPanel != null)
+        {
+            gameoverPanel.SetActive(true);
+
+            // Get or use Animator from gameoverPanel
+            if (gameoverAnimator == null)
+            {
+                gameoverAnimator = gameoverPanel.GetComponent<Animator>();
+            }
+
+            // Trigger gameover animation BEFORE freezing time
+            if (gameoverAnimator != null)
+            {
+                // Set animator to use unscaled time
+                gameoverAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
+
+                // Use Trigger instead of Bool - trigger fires once and doesn't loop
+                gameoverAnimator.SetTrigger(showTriggerParameterName);
+            }
+        }
+        else
+        {
+            Debug.LogError("[MenuController] GameoverPanel not assigned!");
+        }
+
+        // Now freeze time
+        Time.timeScale = 0f;
+
+        if (gameplayUI != null) gameplayUI.SetActive(false);
+        if (pausePanel != null) pausePanel.SetActive(false);
+
+        HideAllBlocks();
+    }
+
+    public void HideGameover()
+    {
+        if (!isGameoverShowing) return;
+
+        isGameoverShowing = false;
+        Time.timeScale = 1f;
+
+        if (gameoverAnimator != null)
+        {
+            gameoverAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
+            gameoverAnimator.SetTrigger(hideTriggerParameterName);
+
+            // Hide panel after animation
+            StartCoroutine(HideGameoverAfterAnimation());
+        }
+        else
+        {
+            // No animator - hide immediately
+            if (gameoverPanel != null) gameoverPanel.SetActive(false);
+        }
+    }
+
+    private System.Collections.IEnumerator HideGameoverAfterAnimation()
+    {
+        yield return new WaitForSecondsRealtime(hideAnimationDuration);
+        if (gameoverPanel != null) gameoverPanel.SetActive(false);
+    }
 }
