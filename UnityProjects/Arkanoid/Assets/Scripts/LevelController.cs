@@ -43,7 +43,9 @@ public class LevelController : MonoBehaviour
         {
             currentLevelInstance = Instantiate(levelPrefabs[currentLevelIndex], spawnPosition, Quaternion.identity);
             currentBlocks = currentLevelInstance.GetComponentsInChildren<BlockController>(true);
-            totalBlocksAtStart = currentBlocks.Length;
+
+            // Count only destructible blocks (exclude Invulnerable)
+            totalBlocksAtStart = GetDestructibleBlocksCount();
 
             Debug.Log($"[Level] Loaded level {currentLevelIndex + 1}: {levelPrefabs[currentLevelIndex].name}");
             Debug.Log($"[Level] Total blocks at start: {totalBlocksAtStart}");
@@ -74,12 +76,7 @@ public class LevelController : MonoBehaviour
     {
         if (currentBlocks == null) return;
 
-        int remainingBlocks = 0;
-        foreach (var block in currentBlocks)
-        {
-            if (block != null && block.gameObject.activeInHierarchy)
-                remainingBlocks++;
-        }
+        int remainingBlocks = GetDestructibleBlocksCount();
 
         // TODO: счетчик
         Debug.Log($"[Level] Blocks remaining: {remainingBlocks} / {totalBlocksAtStart}");
@@ -89,6 +86,22 @@ public class LevelController : MonoBehaviour
             Debug.Log("[Level] Level complete!");
             Invoke(nameof(LoadNextLevel), 1f);
         }
+    }
+
+    int GetDestructibleBlocksCount()
+    {
+        if (currentBlocks == null) return 0;
+
+        int count = 0;
+        foreach (var block in currentBlocks)
+        {
+            // Count only active blocks that are not Invulnerable
+            if (block != null && block.gameObject.activeInHierarchy && !block.IsInvulnerable)
+            {
+                count++;
+            }
+        }
+        return count;
     }
 
     void ResetBonusEffects()

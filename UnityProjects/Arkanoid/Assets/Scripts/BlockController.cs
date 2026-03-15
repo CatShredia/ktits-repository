@@ -14,6 +14,8 @@ public class BlockController : MonoBehaviour
     [SerializeField] private float bonusDropChance = 0.2f;
     [SerializeField] private GameObject[] bonusPrefabs;
 
+    public bool IsInvulnerable => blockType == BlockType.Invulnerable;
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (!collision.gameObject.CompareTag("Ball")) return;
