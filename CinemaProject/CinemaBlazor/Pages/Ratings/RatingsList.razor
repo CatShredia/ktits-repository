@@ -1,0 +1,101 @@
+@page "/ratings"
+@layout MainLayout
+@inject IRatingService RatingService
+@inject IFilmService FilmService
+@inject IAuthService AuthService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Ratings - CinemaBlazor</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <h3>⭐ Ratings</h3>
+
+        @if (isLoading)
+        {
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else if (ratings.Count == 0)
+        {
+            <div class="alert alert-info">
+                No ratings found. Start rating films in the <a href="films">Films</a> section!
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Film</th>
+                            <th>Your Rating</th>
+                            <th>Author</th>
+                            @if (AuthService.IsInRole("admin"))
+                            {
+                                <th>Actions</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var rating in ratings)
+                        {
+                            <tr>
+                                <td>
+                                    <a href="films/@rating.FilmId">@rating.FilmName</a>
+                                </td>
+                                <td>
+                                    <span class="badge bg-warning text-dark">⭐ @rating.Value/10</span>
+                                </td>
+                                <td>@(rating.AuthorName ?? "Anonymous")</td>
+                                @if (AuthService.IsInRole("admin"))
+                                {
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteRating(rating.Id)">
+                                            Delete
+                                        </button>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-warning">
+            Please <a href="login">login</a> to view ratings.
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private List<RatingResponseDto> ratings = new();
+    private bool isLoading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthService.IsAuthenticated())
+        {
+            isLoading = true;
+            ratings = await RatingService.GetAllRatingsAsync();
+            isLoading = false;
+        }
+    }
+
+    private async Task DeleteRating(int id)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("eval", "confirm('Are you sure you want to delete this rating?')"))
+        {
+            var success = await RatingService.DeleteRatingAsync(id);
+            if (success)
+            {
+                ratings = await RatingService.GetAllRatingsAsync();
+            }
+        }
+    }
+}

@@ -1,0 +1,104 @@
+@page "/genres/{id:int}/edit"
+@layout MainLayout
+@inject IGenreService GenreService
+@inject NavigationManager Navigation
+@inject IAuthService AuthService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Edit Genre - CinemaBlazor</PageTitle>
+
+<AuthorizeView Roles="admin">
+    <Authorized>
+        @if (isLoading)
+        {
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else if (genre == null)
+        {
+            <div class="alert alert-danger">Genre not found.</div>
+        }
+        else
+        {
+            <h3>✏️ Edit Genre</h3>
+
+            <div class="card">
+                <div class="card-body">
+                    <EditForm Model="@genre" OnValidSubmit="HandleUpdate" Context="EditContext">
+                        <DataAnnotationsValidator />
+
+                        <div class="mb-3">
+                            <label class="form-label">Genre Name *</label>
+                            <InputText @bind-Value="genre.Name" class="form-control" />
+                            <ValidationMessage For="@(() => genre.Name)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <InputTextArea @bind-Value="genre.Description" class="form-control" rows="4" />
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger">@errorMessage</div>
+                        }
+
+                        <button type="submit" class="btn btn-primary" disabled="@isLoading">
+                            @if (isLoading)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Save Changes
+                        </button>
+                        <a href="genres" class="btn btn-outline-secondary ms-2">Cancel</a>
+                    </EditForm>
+                </div>
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-warning">You must be an admin to edit genres.</div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Genre? genre;
+    private string? errorMessage;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthService.IsInRole("admin"))
+        {
+            isLoading = false;
+            return;
+        }
+
+        genre = await GenreService.GetGenreByIdAsync(Id);
+        isLoading = false;
+    }
+
+    private async Task HandleUpdate()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        var success = await GenreService.UpdateGenreAsync(Id, genre!);
+
+        if (success)
+        {
+            Navigation.NavigateTo("/genres");
+        }
+        else
+        {
+            errorMessage = "Failed to update genre. Please try again.";
+            isLoading = false;
+        }
+    }
+}

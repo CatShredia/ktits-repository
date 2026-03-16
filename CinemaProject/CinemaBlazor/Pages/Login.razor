@@ -1,0 +1,74 @@
+@page "/login"
+@layout MainLayout
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Login - CinemaBlazor</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">🔐 Login</h4>
+            </div>
+            <div class="card-body">
+                <EditForm Model="@loginDto" OnValidSubmit="HandleLogin">
+                    <DataAnnotationsValidator />
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Login</label>
+                        <InputText @bind-Value="loginDto.Login" class="form-control" placeholder="Enter your login" />
+                        <ValidationMessage For="@(() => loginDto.Login)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <InputText @bind-Value="loginDto.Password" class="form-control" type="password" placeholder="Enter your password" />
+                        <ValidationMessage For="@(() => loginDto.Password)" />
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger">@errorMessage</div>
+                    }
+
+                    <button type="submit" class="btn btn-primary w-100" disabled="@isLoading">
+                        @if (isLoading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Login
+                    </button>
+                </EditForm>
+            </div>
+            <div class="card-footer text-center">
+                <small>Don't have an account? <a href="register">Register here</a></small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private UserLoginDto loginDto = new();
+    private string? errorMessage;
+    private bool isLoading;
+
+    private async Task HandleLogin()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        var result = await AuthService.LoginAsync(loginDto);
+
+        if (result != null)
+        {
+            Navigation.NavigateTo("/films");
+        }
+        else
+        {
+            errorMessage = "Invalid login or password";
+        }
+
+        isLoading = false;
+    }
+}

@@ -1,12 +1,24 @@
 ﻿@inherits LayoutComponentBase
+@inject IAuthService AuthService
+
 <div class="page">
     <div class="sidebar">
-        <NavMenu/>
+        <NavMenu />
     </div>
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            @if (AuthService.IsAuthenticated())
+            {
+                <span class="me-3">Welcome, @GetUserName()!</span>
+                <a href="profile" class="me-2">Profile</a>
+                <a href="logout" class="btn btn-link">Logout</a>
+            }
+            else
+            {
+                <a href="login" class="me-2">Login</a>
+                <a href="register">Register</a>
+            }
         </div>
 
         <article class="content px-4">
@@ -14,3 +26,11 @@
         </article>
     </main>
 </div>
+
+@code {
+    private string GetUserName()
+    {
+        var user = AuthService.GetCurrentUserAsync().Result;
+        return user != null ? $"{user.Name} {user.Surname}" : "User";
+    }
+}

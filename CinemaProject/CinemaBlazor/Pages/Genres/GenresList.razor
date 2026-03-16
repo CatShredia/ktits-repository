@@ -1,0 +1,89 @@
+@page "/genres"
+@layout MainLayout
+@inject IGenreService GenreService
+@inject IAuthService AuthService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Genres - CinemaBlazor</PageTitle>
+
+<h3>📁 Genres</h3>
+
+@if (AuthService.IsInRole("admin"))
+{
+    <a href="genres/create" class="btn btn-primary mb-3">
+        <span class="bi bi-plus-circle"></span> Create New Genre
+    </a>
+}
+
+@if (isLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else if (genres.Count == 0)
+{
+    <div class="alert alert-info">No genres found.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    @if (AuthService.IsInRole("admin"))
+                    {
+                        <th>Actions</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var genre in genres)
+                {
+                    <tr>
+                        <td>@genre.Id</td>
+                        <td>@genre.Name</td>
+                        <td>@(genre.Description ?? "No description")</td>
+                        @if (AuthService.IsInRole("admin"))
+                        {
+                            <td>
+                                <a href="genres/@genre.Id/edit" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <button class="btn btn-sm btn-outline-danger ms-1"
+                                        @onclick="() => DeleteGenre(genre.Id)">Delete</button>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<Genre> genres = new();
+    private bool isLoading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        genres = await GenreService.GetAllGenresAsync();
+        isLoading = false;
+    }
+
+    private async Task DeleteGenre(int id)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("eval", "confirm('Are you sure you want to delete this genre?')"))
+        {
+            var success = await GenreService.DeleteGenreAsync(id);
+            if (success)
+            {
+                genres = await GenreService.GetAllGenresAsync();
+            }
+        }
+    }
+}

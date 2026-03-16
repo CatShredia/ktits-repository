@@ -1,0 +1,109 @@
+@page "/register"
+@layout MainLayout
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Register - CinemaBlazor</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">📝 Register</h4>
+            </div>
+            <div class="card-body">
+                <EditForm Model="@registerDto" OnValidSubmit="HandleRegister">
+                    <DataAnnotationsValidator />
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Surname *</label>
+                            <InputText @bind-Value="registerDto.Surname" class="form-control" placeholder="Surname" />
+                            <ValidationMessage For="@(() => registerDto.Surname)" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Name *</label>
+                            <InputText @bind-Value="registerDto.Name" class="form-control" placeholder="Name" />
+                            <ValidationMessage For="@(() => registerDto.Name)" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <InputTextArea @bind-Value="registerDto.Description" class="form-control" rows="2" placeholder="About yourself" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Gender *</label>
+                        <InputSelect @bind-Value="registerDto.Gender" class="form-select">
+                            <option value="">Select gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => registerDto.Gender)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email *</label>
+                        <InputText @bind-Value="registerDto.Email" class="form-control" type="email" placeholder="email@example.com" />
+                        <ValidationMessage For="@(() => registerDto.Email)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Login *</label>
+                        <InputText @bind-Value="registerDto.Login" class="form-control" placeholder="Choose a login" />
+                        <ValidationMessage For="@(() => registerDto.Login)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password *</label>
+                        <InputText @bind-Value="registerDto.Password" class="form-control" type="password" placeholder="Min 6 characters" />
+                        <ValidationMessage For="@(() => registerDto.Password)" />
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger">@errorMessage</div>
+                    }
+
+                    <button type="submit" class="btn btn-success w-100" disabled="@isLoading">
+                        @if (isLoading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Register
+                    </button>
+                </EditForm>
+            </div>
+            <div class="card-footer text-center">
+                <small>Already have an account? <a href="login">Login here</a></small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private UserRegisterDto registerDto = new();
+    private string? errorMessage;
+    private bool isLoading;
+
+    private async Task HandleRegister()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        var result = await AuthService.RegisterAsync(registerDto);
+
+        if (result != null)
+        {
+            Navigation.NavigateTo("/films");
+        }
+        else
+        {
+            errorMessage = "Registration failed. Login or email may already exist.";
+        }
+
+        isLoading = false;
+    }
+}

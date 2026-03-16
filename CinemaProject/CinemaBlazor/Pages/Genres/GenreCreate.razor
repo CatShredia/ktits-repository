@@ -1,0 +1,75 @@
+@page "/genres/create"
+@layout MainLayout
+@inject IGenreService GenreService
+@inject NavigationManager Navigation
+@inject IAuthService AuthService
+
+<PageTitle>Create Genre - CinemaBlazor</PageTitle>
+
+<AuthorizeView Roles="admin">
+    <Authorized>
+        <h3>📁 Create New Genre</h3>
+
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="@genre" OnValidSubmit="HandleCreate" Context="EditContext">
+                    <DataAnnotationsValidator />
+
+                    <div class="mb-3">
+                        <label class="form-label">Genre Name *</label>
+                        <InputText @bind-Value="genre.Name" class="form-control" placeholder="Enter genre name" />
+                        <ValidationMessage For="@(() => genre.Name)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <InputTextArea @bind-Value="genre.Description" class="form-control" rows="4"
+                                       placeholder="Genre description" />
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger">@errorMessage</div>
+                    }
+
+                    <button type="submit" class="btn btn-primary" disabled="@isLoading">
+                        @if (isLoading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Create Genre
+                    </button>
+                    <a href="genres" class="btn btn-outline-secondary ms-2">Cancel</a>
+                </EditForm>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-warning">You must be an admin to create genres.</div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private Genre genre = new();
+    private string? errorMessage;
+    private bool isLoading;
+
+    private async Task HandleCreate()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        var result = await GenreService.CreateGenreAsync(genre);
+
+        if (result != null)
+        {
+            Navigation.NavigateTo("/genres");
+        }
+        else
+        {
+            errorMessage = "Failed to create genre. Please try again.";
+        }
+
+        isLoading = false;
+    }
+}

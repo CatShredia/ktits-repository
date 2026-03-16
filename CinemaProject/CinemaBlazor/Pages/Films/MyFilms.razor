@@ -1,0 +1,99 @@
+@page "/my-films"
+@layout MainLayout
+@inject IFilmService FilmService
+@inject IAuthService AuthService
+
+<PageTitle>My Films - CinemaBlazor</PageTitle>
+
+<AuthorizeView Roles="admin">
+    <Authorized>
+        <h3>🎬 My Films</h3>
+
+        @if (isLoading)
+        {
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else if (films.Count == 0)
+        {
+            <div class="alert alert-info">
+                You haven't created any films yet. 
+                <a href="films/create">Create your first film!</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Poster</th>
+                            <th>Name</th>
+                            <th>Genre</th>
+                            <th>Release Date</th>
+                            <th>Rating</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var film in films)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(film.ImageUrl))
+                                    {
+                                        <img src="@film.ImageUrl" alt="@film.Name" style="width: 50px; height: 75px; object-fit: cover;" class="rounded" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded" style="width: 50px; height: 75px;">
+                                            <span class="bi bi-film"></span>
+                                        </div>
+                                    }
+                                </td>
+                                <td>@film.Name</td>
+                                <td>@(film.Genre?.Name ?? "N/A")</td>
+                                <td>@film.ReleaseDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    @if (film.Ratings != null && film.Ratings.Any())
+                                    {
+                                        <span class="badge bg-warning text-dark">⭐ @film.Ratings.Average(r => r.Value).ToString("F1")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No ratings</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a href="films/@film.Id" class="btn btn-sm btn-outline-primary me-1">View</a>
+                                    <a href="films/@film.Id/edit" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-warning">You must be an admin to view this page.</div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private List<Film> films = new();
+    private bool isLoading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthService.IsInRole("admin"))
+        {
+            isLoading = true;
+            films = await FilmService.GetMyFilmsAsync();
+            isLoading = false;
+        }
+    }
+}

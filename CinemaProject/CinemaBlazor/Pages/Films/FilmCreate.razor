@@ -1,0 +1,116 @@
+@page "/films/create"
+@layout MainLayout
+@inject IFilmService FilmService
+@inject IGenreService GenreService
+@inject NavigationManager Navigation
+@inject IAuthService AuthService
+
+<PageTitle>Create Film - CinemaBlazor</PageTitle>
+
+<AuthorizeView Roles="admin">
+    <Authorized>
+        <h3>🎬 Create New Film</h3>
+
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="@film" OnValidSubmit="HandleCreate" Context="EditContext">
+                    <DataAnnotationsValidator />
+
+                    <div class="mb-3">
+                        <label class="form-label">Film Name *</label>
+                        <InputText @bind-Value="film.Name" class="form-control" placeholder="Enter film name" />
+                        <ValidationMessage For="@(() => film.Name)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <InputTextArea @bind-Value="film.Description" class="form-control" rows="4"
+                                       placeholder="Film description" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Release Date *</label>
+                        <InputDate @bind-Value="film.ReleaseDate" class="form-control" />
+                        <ValidationMessage For="@(() => film.ReleaseDate)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Genre *</label>
+                        <InputSelect @bind-Value="film.GenreId" class="form-select">
+                            <option value="0">Select genre</option>
+                            @foreach (var genre in genres)
+                            {
+                                <option value="@genre.Id">@genre.Name</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => film.GenreId)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Image URL</label>
+                        <InputText @bind-Value="film.ImageUrl" class="form-control"
+                                   placeholder="https://example.com/image.jpg" />
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger">@errorMessage</div>
+                    }
+
+                    <button type="submit" class="btn btn-primary" disabled="@isLoading">
+                        @if (isLoading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Create Film
+                    </button>
+                    <a href="films" class="btn btn-outline-secondary ms-2">Cancel</a>
+                </EditForm>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-warning">You must be an admin to create films.</div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private Film film = new() { ReleaseDate = DateTime.Now };
+    private List<Genre> genres = new();
+    private string? errorMessage;
+    private bool isLoading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthService.IsInRole("admin"))
+        {
+            return;
+        }
+        genres = await GenreService.GetAllGenresAsync();
+    }
+
+    private async Task HandleCreate()
+    {
+        if (film.GenreId == 0)
+        {
+            errorMessage = "Please select a genre";
+            return;
+        }
+
+        isLoading = true;
+        errorMessage = null;
+
+        var result = await FilmService.CreateFilmAsync(film);
+
+        if (result != null)
+        {
+            Navigation.NavigateTo($"/films/{result.Id}");
+        }
+        else
+        {
+            errorMessage = "Failed to create film. Please try again.";
+        }
+
+        isLoading = false;
+    }
+}

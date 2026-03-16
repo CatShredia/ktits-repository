@@ -1,0 +1,76 @@
+@page "/profile"
+@layout MainLayout
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Profile - CinemaBlazor</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">👤 My Profile</h4>
+                    </div>
+                    <div class="card-body">
+                        @if (user != null)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Full Name</label>
+                                <p class="form-control-plaintext">@user.Surname @user.Name</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Email</label>
+                                <p class="form-control-plaintext">@user.Email</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Gender</label>
+                                <p class="form-control-plaintext">@user.Gender</p>
+                            </div>
+                            @if (!string.IsNullOrEmpty(user.Description))
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Description</label>
+                                    <p class="form-control-plaintext">@user.Description</p>
+                                </div>
+                            }
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Role</label>
+                                <p class="form-control-plaintext">
+                                    <span class="badge @(AuthService.IsInRole("admin") ? "bg-danger" : "bg-info")">
+                                        @(AuthService.IsInRole("admin") ? "Admin" : "Client")
+                                    </span>
+                                </p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">Loading profile...</div>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        <a href="profile/edit" class="btn btn-primary">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-warning">
+            Please <a href="login">login</a> to view your profile.
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private UserResponseDto? user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthService.IsAuthenticated())
+        {
+            user = await AuthService.GetCurrentUserAsync();
+        }
+    }
+}
