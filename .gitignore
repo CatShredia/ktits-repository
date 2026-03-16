@@ -2,6 +2,9 @@
 **/.idea/**
 **/.vs/**
 **/.vscode/**
+!**/.vscode/launch.json**
+!**/.vscode/tasks.json**
+!**/.vscode/settings.json**
 
 # .net build directories
 **/bin/**

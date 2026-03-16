@@ -1,0 +1,11 @@
+{
+  "dotnet.defaultSolution": "CinemaProject.slnx",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "omnisharp.enableRoslynAnalyzers": true,
+  "omnisharp.enableEditorConfigSupport": true,
+  "dotnet.enableXamlSourceHotReload": true
+}
