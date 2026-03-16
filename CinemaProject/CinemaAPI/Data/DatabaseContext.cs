@@ -38,7 +38,7 @@ public class DatabaseContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Value).IsRequired();
             entity.HasOne(e => e.Film)
-                  .WithMany()
+                  .WithMany(f => f.Ratings)
                   .HasForeignKey(e => e.FilmId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
