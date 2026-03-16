@@ -23,21 +23,15 @@
       "name": "🎨 Debug CinemaBlazor",
       "type": "blazorwasm",
       "request": "launch",
-      "preLaunchTask": "Build CinemaBlazor",
-      "hosted": true,
-      "cwd": "${workspaceFolder}/CinemaBlazor",
-      "browser": "chrome",
-      "url": "http://localhost:5156",
-      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      "preLaunchTask": "Run CinemaBlazor",
+      "url": "https://localhost:7156",
+      "browser": "chrome"
     },
     {
       "name": "⚡ Debug All (API + Blazor)",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "Build All",
+      "preLaunchTask": "Run All (API + Blazor)",
       "program": "${workspaceFolder}/CinemaAPI/bin/Debug/net8.0/CinemaAPI.dll",
       "args": [],
       "cwd": "${workspaceFolder}/CinemaAPI",

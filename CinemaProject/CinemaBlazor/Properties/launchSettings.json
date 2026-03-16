@@ -6,9 +6,10 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-      "applicationUrl": "http://localhost:5185",
+      "applicationUrl": "http://localhost:5156",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "API_BASE_ADDRESS": "http://localhost:5268"
       }
     },
     "https": {
@@ -16,9 +17,10 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-      "applicationUrl": "https://localhost:7036;http://localhost:5185",
+      "applicationUrl": "https://localhost:7156;http://localhost:5156",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "API_BASE_ADDRESS": "https://localhost:7009"
       }
     }
   }

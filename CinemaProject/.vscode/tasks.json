@@ -37,10 +37,13 @@
         "--project",
         "CinemaAPI/CinemaAPI.csproj",
         "--launch-profile",
-        "http"
+        "https"
       ],
       "problemMatcher": "$msCompile",
-      "isBackground": true
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}/CinemaAPI"
+      }
     },
     {
       "label": "Run CinemaBlazor",
@@ -51,15 +54,20 @@
         "--project",
         "CinemaBlazor/CinemaBlazor.csproj",
         "--launch-profile",
-        "http"
+        "https"
       ],
       "problemMatcher": "$msCompile",
-      "isBackground": true
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}/CinemaBlazor"
+      }
     },
     {
       "label": "Run All (API + Blazor)",
       "dependsOn": ["Run CinemaAPI", "Run CinemaBlazor"],
-      "problemMatcher": []
+      "problemMatcher": [],
+      "isBackground": true,
+      "dependsOrder": "parallel"
     }
   ]
 }
