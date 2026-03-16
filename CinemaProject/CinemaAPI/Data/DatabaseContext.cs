@@ -12,6 +12,8 @@ public class DatabaseContext : DbContext
     public DbSet<Genre> Genres { get; set; } = null!;
     public DbSet<Film> Films { get; set; } = null!;
     public DbSet<Rating> Ratings { get; set; } = null!;
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Login> Logins { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,6 +33,10 @@ public class DatabaseContext : DbContext
                   .WithMany()
                   .HasForeignKey(e => e.GenreId)
                   .OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(e => e.Author)
+                  .WithMany(u => u.Films)
+                  .HasForeignKey(e => e.AuthorId)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<Rating>(entity =>
@@ -41,6 +47,27 @@ public class DatabaseContext : DbContext
                   .WithMany(f => f.Ratings)
                   .HasForeignKey(e => e.FilmId)
                   .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.Author)
+                  .WithMany(u => u.Ratings)
+                  .HasForeignKey(e => e.AuthorId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Email).IsRequired();
+            entity.HasOne(e => e.Login)
+                  .WithOne(l => l.User)
+                  .HasForeignKey<Login>(l => l.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Login>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.LoginValue).IsRequired();
+            entity.HasIndex(e => e.LoginValue).IsUnique();
         });
     }
 }
