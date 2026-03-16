@@ -3,6 +3,7 @@ using CinemaAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace CinemaAPI.Controllers;
 
@@ -33,6 +34,7 @@ public class FilmsController : ControllerBase
     {
         var query = _context.Films
             .Include(f => f.Genre)
+            .Include(f => f.Author)
             .AsQueryable();
 
         // Filtering
@@ -72,6 +74,7 @@ public class FilmsController : ControllerBase
     {
         var film = await _context.Films
             .Include(f => f.Genre)
+            .Include(f => f.Author)
             .FirstOrDefaultAsync(f => f.Id == id);
 
         if (film == null)
@@ -118,6 +121,12 @@ public class FilmsController : ControllerBase
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<Film>> PostFilm(Film film)
     {
+        var userId = GetCurrentUserId();
+        if (userId != null)
+        {
+            film.AuthorId = userId;
+        }
+
         _context.Films.Add(film);
         await _context.SaveChangesAsync();
 
@@ -137,6 +146,12 @@ public class FilmsController : ControllerBase
         if (id != film.Id)
         {
             return BadRequest();
+        }
+
+        var userId = GetCurrentUserId();
+        if (userId != null)
+        {
+            film.AuthorId = userId;
         }
 
         _context.Entry(film).State = EntityState.Modified;
@@ -176,5 +191,35 @@ public class FilmsController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    /// <summary>
+    /// Get films created by current user
+    /// </summary>
+    /// <returns>List of user's films</returns>
+    [HttpGet("my-films")]
+    [Authorize(Roles = "admin")]
+    public async Task<ActionResult<IEnumerable<Film>>> GetMyFilms()
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        return await _context.Films
+            .Include(f => f.Genre)
+            .Where(f => f.AuthorId == userId)
+            .ToListAsync();
+    }
+
+    private int? GetCurrentUserId()
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
+        {
+            return userId;
+        }
+        return null;
     }
 }
