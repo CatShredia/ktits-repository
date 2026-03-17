@@ -645,10 +645,10 @@ MonoBehaviour:
       displayed: 1
       id: Play Mode Controls
       index: 0
-      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":-940.0,"y":-36.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":3,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":-939.0,"y":-36.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":3,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
       floating: 0
       collapsed: 0
-      snapOffset: {x: -940, y: -36}
+      snapOffset: {x: -939, y: -36}
       snapOffsetDelta: {x: 0, y: 0}
       snapCorner: 3
       layout: 4
@@ -749,8 +749,8 @@ MonoBehaviour:
       m_Data: 42848
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 42740
-    - m_Data: 42742
+    - m_Data: 44286
+    - m_Data: 44288
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -783,8 +783,8 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 42740
-    - m_Data: 42742
+    - m_Data: 44286
+    - m_Data: 44288
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1480,9 +1480,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -0.25026974, y: 0.34125537, z: 0.03771451}
+    m_Target: {x: 1.644421, y: 1.2288668, z: -0.055876918}
     speed: 2
-    m_Value: {x: 0.84178066, y: 0.23694718, z: 0.06309796}
+    m_Value: {x: -0.25026974, y: 0.34125537, z: 0.03771451}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1532,9 +1532,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 6.427969
+    m_Target: 7.0055046
     speed: 2
-    m_Value: 6.3405566
+    m_Value: 6.427969
   m_Ortho:
     m_Target: 1
     speed: 2
