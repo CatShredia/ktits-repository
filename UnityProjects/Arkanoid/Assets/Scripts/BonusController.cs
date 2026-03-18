@@ -9,7 +9,8 @@ public class BonusController : MonoBehaviour
         BallSpeedUp,
         BallSpeedDown,
         PlatformExpand,
-        PlatformShrink
+        PlatformShrink,
+        CloneBall
     }
 
     [SerializeField] private BonusType bonusType;
@@ -17,6 +18,7 @@ public class BonusController : MonoBehaviour
     [SerializeField] private float effectDuration = 10f;
     [SerializeField] private float speedMultiplier = 1.3f;
     [SerializeField] private float platformExpandAmount = 0.5f;
+    [SerializeField] private GameObject cloneBallPrefab;
 
     private Rigidbody2D rb;
 
@@ -48,7 +50,6 @@ public class BonusController : MonoBehaviour
         var platform = FindObjectOfType<PlatformController>();
         var balls = FindObjectsOfType<BallController>();
 
-
         switch (bonusType)
         {
             case BonusType.BallSpeedUp:
@@ -72,6 +73,39 @@ public class BonusController : MonoBehaviour
                 platform?.ShrinkPlatform(platformExpandAmount);
                 BonusUIManager.Instance?.ShowEffect("Уменьшение платформы", effectDuration);
                 break;
+
+            case BonusType.CloneBall:
+                SpawnCloneBall();
+                BonusUIManager.Instance?.ShowEffect("Дополнительный шар", effectDuration);
+                break;
         }
+    }
+
+    void SpawnCloneBall()
+    {
+        if (cloneBallPrefab == null)
+        {
+            Debug.LogError("[BonusController] Clone ball prefab is not assigned!");
+            return;
+        }
+
+        var platform = FindObjectOfType<PlatformController>();
+        if (platform == null)
+        {
+            Debug.LogError("[BonusController] Platform not found!");
+            return;
+        }
+
+        var newBall = Instantiate(cloneBallPrefab, platform.transform.position, Quaternion.identity);
+        var ballController = newBall.GetComponent<BallController>();
+        if (ballController != null)
+        {
+            ballController.isActiveBalls = true;
+            ballController.isClone = true;
+            ballController.LaunchBall();
+        }
+
+        SoundManager.Instance?.PlayBallStarted();
+        Debug.Log("[BonusController] Clone ball spawned");
     }
 }

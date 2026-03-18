@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7005907947495198871}
   - component: {fileID: 1668977262093220683}
   - component: {fileID: 266656272310960062}
-  - component: {fileID: 8174697307563425155}
+  - component: {fileID: 4118318280980869736}
   m_Layer: 0
   m_Name: Block Blue
   m_TagString: Block
@@ -139,7 +139,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.65, y: 0.37}
   m_EdgeRadius: 0
---- !u!114 &8174697307563425155
+--- !u!114 &4118318280980869736
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -153,4 +153,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BlockController
   blockType: 2
   bonusDropChance: 1
-  bonusPrefabs: []
+  bonusPrefabs:
+  - {fileID: 710774292486825793, guid: 96fea6290b18dea43bbd123880595751, type: 3}
+  - {fileID: 5839069243386902860, guid: b41ad8defea09d2419f93470b5d96e82, type: 3}
+  - {fileID: 9031761580493304385, guid: d5902f3c57de5c44693241e050cda137, type: 3}
+  - {fileID: 6937923783763501924, guid: 99561580e1e46914993ae08abca4908e, type: 3}
+  - {fileID: 2829809871862316158, guid: 011228cdd8d97874596d86bb824cb0e6, type: 3}

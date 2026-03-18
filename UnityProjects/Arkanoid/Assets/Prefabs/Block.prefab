@@ -155,6 +155,7 @@ MonoBehaviour:
   bonusDropChance: 1
   bonusPrefabs:
   - {fileID: 710774292486825793, guid: 96fea6290b18dea43bbd123880595751, type: 3}
-  - {fileID: 710774292486825793, guid: 96fea6290b18dea43bbd123880595751, type: 3}
   - {fileID: 5839069243386902860, guid: b41ad8defea09d2419f93470b5d96e82, type: 3}
+  - {fileID: 9031761580493304385, guid: d5902f3c57de5c44693241e050cda137, type: 3}
   - {fileID: 6937923783763501924, guid: 99561580e1e46914993ae08abca4908e, type: 3}
+  - {fileID: 2829809871862316158, guid: 011228cdd8d97874596d86bb824cb0e6, type: 3}
