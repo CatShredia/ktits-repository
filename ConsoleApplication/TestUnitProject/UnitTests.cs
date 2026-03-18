@@ -314,7 +314,7 @@ namespace TestConsoleProject
         }
 
         // ! =============== Task 14: Export Data Class ===============
-        // Count: 
+        // Count: 3
 
         public string textTxt;
 
@@ -356,6 +356,158 @@ namespace TestConsoleProject
             string readResult = dataImporter.ImportDateFromTxt(filePath);
 
             Assert.That(readResult, Is.EqualTo(testString));
+        }
+
+        // ! =============== Task 14: DataService Tests ===============
+        // Count: 14
+        // Tests for DataService class including DataImporter and DataExport
+
+        [Test]
+        public void Task14DataService_TransferData_NullSourcePath_ReturnsNull()
+        {
+            var dataService = new TestConsoleProject.DataService();
+            var result = dataService.TransferData(null);
+            Assert.That(result, Is.Null);
+        }
+
+        [Test]
+        public void Task14DataService_TransferData_EmptySourcePath_ReturnsNull()
+        {
+            var dataService = new TestConsoleProject.DataService();
+            var result = dataService.TransferData(string.Empty);
+            Assert.That(result, Is.Null);
+        }
+
+        [Test]
+        public void Task14DataService_TransferData_ValidFile_ReturnsDestinationPath()
+        {
+            string sourcePath = Path.Combine(_testFolder, "source.txt");
+            string destPath = Path.Combine(_testFolder, "dest.txt");
+            string testData = "Test data for transfer";
+
+            File.WriteAllText(sourcePath, testData);
+
+            var dataService = new TestConsoleProject.DataService();
+            var result = dataService.TransferData(sourcePath, destPath);
+
+            Assert.That(result, Is.EqualTo(destPath));
+            Assert.That(File.Exists(destPath), Is.True);
+            Assert.That(File.ReadAllText(destPath), Is.EqualTo(testData));
+        }
+
+        [Test]
+        public void Task14DataService_TransferData_NonExistentSourceFile_ThrowsException()
+        {
+            var dataService = new TestConsoleProject.DataService();
+            Assert.Throws<System.IO.DirectoryNotFoundException>(() =>
+            {
+                dataService.TransferData("C:\\nonexistent\\file.txt", "C:\\dest.txt");
+            });
+        }
+
+        [Test]
+        public void Task14DataService_MergeAndExportData_NullSourceList_ReturnsNull()
+        {
+            var dataService = new TestConsoleProject.DataService();
+            var result = dataService.MergeAndExportData(null);
+            Assert.That(result, Is.Null);
+        }
+
+        [Test]
+        public void Task14DataService_MergeAndExportData_EmptySourceList_ReturnsNull()
+        {
+            var dataService = new TestConsoleProject.DataService();
+            var result = dataService.MergeAndExportData(new List<string>());
+            Assert.That(result, Is.Null);
+        }
+
+        [Test]
+        public void Task14DataService_MergeAndExportData_MultipleFiles_MergesContent()
+        {
+            string source1 = Path.Combine(_testFolder, "source1.txt");
+            string source2 = Path.Combine(_testFolder, "source2.txt");
+            string destPath = Path.Combine(_testFolder, "merged.txt");
+
+            File.WriteAllText(source1, "First file content");
+            File.WriteAllText(source2, "Second file content");
+
+            var sourcePaths = new List<string> { source1, source2 };
+            var dataService = new TestConsoleProject.DataService();
+            var result = dataService.MergeAndExportData(sourcePaths, destPath);
+
+            Assert.That(result, Is.EqualTo(destPath));
+            Assert.That(File.ReadAllText(destPath), Does.Contain("First file content"));
+            Assert.That(File.ReadAllText(destPath), Does.Contain("Second file content"));
+        }
+
+        [Test]
+        public void Task14DataService_MergeAndExportData_WithEmptyFilePath_SkipsEmptyPath()
+        {
+            string source1 = Path.Combine(_testFolder, "source1.txt");
+            string destPath = Path.Combine(_testFolder, "merged.txt");
+
+            File.WriteAllText(source1, "Valid file content");
+
+            var sourcePaths = new List<string> { string.Empty, source1 };
+            var dataService = new TestConsoleProject.DataService();
+            var result = dataService.MergeAndExportData(sourcePaths, destPath);
+
+            Assert.That(result, Is.EqualTo(destPath));
+            Assert.That(File.ReadAllText(destPath), Is.EqualTo("Valid file content"));
+        }
+
+        [Test]
+        public void Task14DataService_TransformAndExportData_ValidFileWithTransformation_AppliesTransformation()
+        {
+            string sourcePath = Path.Combine(_testFolder, "source.txt");
+            string destPath = Path.Combine(_testFolder, "transformed.txt");
+            string testData = "hello world";
+
+            File.WriteAllText(sourcePath, testData);
+
+            var dataService = new TestConsoleProject.DataService();
+            var result = dataService.TransformAndExportData(sourcePath, s => s.ToUpper(), destPath);
+
+            Assert.That(result, Is.EqualTo(destPath));
+            Assert.That(File.ReadAllText(destPath), Is.EqualTo("HELLO WORLD"));
+        }
+
+        [Test]
+        public void Task14DataService_TransformAndExportData_TransformationReturnsNull_ReturnsNull()
+        {
+            string sourcePath = Path.Combine(_testFolder, "source.txt");
+            File.WriteAllText(sourcePath, "Test data");
+
+            var dataService = new TestConsoleProject.DataService();
+            var result = dataService.TransformAndExportData(sourcePath, s => null);
+            Assert.That(result, Is.Null);
+        }
+
+        [Test]
+        public void Task14DataService_Constructor_WithDependencies_UsesInjectedDependencies()
+        {
+            var mockImporter = new TestConsoleProject.DataImporter();
+            var mockExport = new TestConsoleProject.DataExport();
+
+            var dataService = new TestConsoleProject.DataService(mockImporter, mockExport);
+
+            Assert.That(dataService, Is.Not.Null);
+        }
+
+        [Test]
+        public void Task14DataService_TransferData_DefaultDestination_UsesDesktopPath()
+        {
+            string sourcePath = Path.Combine(_testFolder, "source.txt");
+            string testData = "Test data for default destination";
+
+            File.WriteAllText(sourcePath, testData);
+
+            var dataService = new TestConsoleProject.DataService();
+            var result = dataService.TransferData(sourcePath);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(File.Exists(result), Is.True);
+            Assert.That(File.ReadAllText(result), Is.EqualTo(testData));
         }
 
         // ! =============== temp folder ===============
