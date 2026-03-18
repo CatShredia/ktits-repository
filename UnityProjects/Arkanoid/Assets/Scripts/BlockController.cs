@@ -11,7 +11,7 @@ public class BlockController : MonoBehaviour
     public enum BlockType { Normal, Red, Blue, Invulnerable }
 
     [SerializeField] private BlockType blockType = BlockType.Normal;
-    [SerializeField] private float bonusDropChance = 0.2f;
+    [SerializeField] private float bonusDropChance = 1f;
     [SerializeField] private GameObject[] bonusPrefabs;
 
     public bool IsInvulnerable => blockType == BlockType.Invulnerable;

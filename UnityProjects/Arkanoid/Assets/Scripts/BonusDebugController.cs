@@ -1,6 +1,7 @@
 
 // GameManager
 using UnityEngine;
+using System.Reflection;
 
 public class BonusDebugController : MonoBehaviour
 {
@@ -31,7 +32,53 @@ public class BonusDebugController : MonoBehaviour
                 Debug.Log("Debug: Platform Shrink (Ctrl+F4)");
                 ApplyPlatformChange(false);
             }
+            else if (Input.GetKeyDown(KeyCode.F5))
+            {
+                Debug.Log("Debug: Load Previous Level (Ctrl+F5)");
+                LoadPreviousLevel();
+            }
+            else if (Input.GetKeyDown(KeyCode.F6))
+            {
+                Debug.Log("Debug: Load Next Level (Ctrl+F6)");
+                LoadNextLevel();
+            }
+            else if (Input.GetKeyDown(KeyCode.F7))
+            {
+                Debug.Log("Debug: Reload Current Level (Ctrl+F7)");
+                ReloadCurrentLevel();
+            }
         }
+    }
+
+    void LoadNextLevel()
+    {
+        LevelController.Instance?.LoadNextLevel();
+    }
+
+    void LoadPreviousLevel()
+    {
+        if (LevelController.Instance == null) return;
+
+        int currentIndex = LevelController.Instance.GetCurrentLevelIndex();
+        int levelCount = GetLevelCount();
+        int previousIndex = (currentIndex - 1 + levelCount) % levelCount;
+        LevelController.Instance?.LoadLevel(previousIndex);
+    }
+
+    int GetLevelCount()
+    {
+        if (LevelController.Instance == null) return 0;
+
+        var levelControllerType = typeof(LevelController);
+        var field = levelControllerType.GetField("levelPrefabs", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var prefabs = field?.GetValue(LevelController.Instance) as GameObject[];
+        return prefabs?.Length ?? 0;
+    }
+
+    void ReloadCurrentLevel()
+    {
+        int currentIndex = LevelController.Instance?.GetCurrentLevelIndex() ?? 0;
+        LevelController.Instance?.LoadLevel(currentIndex);
     }
 
     void ApplyBallSpeedChange(float multiplier)

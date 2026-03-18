@@ -152,5 +152,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlockController
   blockType: 2
-  bonusDropChance: 0.2
+  bonusDropChance: 1
   bonusPrefabs: []

@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlockController
   blockType: 3
-  bonusDropChance: 0.2
+  bonusDropChance: 0
   bonusPrefabs:
   - {fileID: 710774292486825793, guid: 96fea6290b18dea43bbd123880595751, type: 3}
   - {fileID: 710774292486825793, guid: 96fea6290b18dea43bbd123880595751, type: 3}
