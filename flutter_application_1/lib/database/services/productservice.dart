@@ -28,14 +28,27 @@ class ProductService {
   /// Получить продукт по ID
   Future<Product?> getProductById(String id) async {
     try {
+      // Парсим ID в int, так как в БД поле id имеет тип bigint
+      final intId = int.tryParse(id);
+      if (intId == null) {
+        print('Ошибка: не удалось преобразовать ID "$id" в int');
+        return null;
+      }
+
       final response = await _client
           .from('products')
           .select()
-          .eq('id', id)
-          .single();
+          .eq('id', intId)
+          .maybeSingle();
+
+      if (response == null) {
+        return null;
+      }
 
       return Product.fromJson(response);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('Ошибка при получении продукта: $e');
+      print('Stack trace: $stackTrace');
       return null;
     }
   }
@@ -45,18 +58,18 @@ class ProductService {
     final response = await _client
         .from('products')
         .select()
-        .eq('user_link', userId)
+        .eq('user_id', userId)
         .order('created_at', ascending: false);
 
     return (response as List).map((item) => Product.fromJson(item)).toList();
   }
 
   /// Получить продукты по категории
-  Future<List<Product>> getProductsByCategory(String categoryId) async {
+  Future<List<Product>> getProductsByCategory(int categoryId) async {
     final response = await _client
         .from('products')
         .select()
-        .eq('category_link', categoryId)
+        .eq('category_id', categoryId)
         .order('created_at', ascending: false);
 
     return (response as List).map((item) => Product.fromJson(item)).toList();
@@ -68,19 +81,19 @@ class ProductService {
     required int priceCent,
     required String currency,
     required int stock,
-    String? userLink,
-    String? categoryLink,
+    String? userId,
+    int? categoryId,
     String? image,
     String? description,
     bool isActive = true,
   }) async {
     final response = await _client.from('products').insert({
       'name': name,
-      'price_cent': priceCent,
+      'price_cents': priceCent,
       'currency': currency,
       'stock': stock,
-      'user_link': userLink,
-      'category_link': categoryLink,
+      'user_id': userId,
+      'category_id': categoryId,
       'image': image,
       'description': description,
       'is_active': isActive,
@@ -114,7 +127,7 @@ class ProductService {
     final response = await _client
         .from('products')
         .update(updateData)
-        .eq('id', id)
+        .eq('id', int.parse(id))
         .select()
         .single();
 
@@ -123,7 +136,7 @@ class ProductService {
 
   /// Удалить продукт
   Future<void> deleteProduct(String id) async {
-    await _client.from('products').delete().eq('id', id);
+    await _client.from('products').delete().eq('id', int.parse(id));
   }
 
   /// Поиск продуктов по названию

@@ -1,7 +1,7 @@
 class Product {
   final String id;
-  final String? userLink;
-  final String? categoryLink;
+  final String? userId;
+  final int? categoryId;
   final String name;
   final String? image;
   final String? description;
@@ -13,8 +13,8 @@ class Product {
 
   Product({
     required this.id,
-    this.userLink,
-    this.categoryLink,
+    this.userId,
+    this.categoryId,
     required this.name,
     this.image,
     this.description,
@@ -30,17 +30,19 @@ class Product {
     final createdAtValue = json['created_at'];
     return Product(
       id: idValue is int ? idValue.toString() : (idValue as String?) ?? '',
-      userLink: json['user_link'] as String?,
-      categoryLink: json['category_link'] as String?,
+      userId: json['user_id'] as String?,
+      categoryId: json['category_id'] as int?,
       name: (json['name'] as String?) ?? '',
       image: json['image'] as String?,
       description: json['description'] as String?,
-      priceCent: (json['price_cent'] as int?) ?? 0,
+      priceCent: (json['price_cents'] as int?) ?? 0,
       currency: (json['currency'] as String?) ?? 'RUB',
       stock: (json['stock'] as int?) ?? 0,
       isActive: (json['is_active'] as bool?) ?? false,
-      createdAt: createdAtValue != null && createdAtValue is String
-          ? DateTime.parse(createdAtValue)
+      createdAt: createdAtValue != null
+          ? (createdAtValue is String
+              ? DateTime.parse(createdAtValue)
+              : DateTime.now())
           : DateTime.now(),
     );
   }
@@ -48,12 +50,12 @@ class Product {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'user_link': userLink,
-      'category_link': categoryLink,
+      'user_id': userId,
+      'category_id': categoryId,
       'name': name,
       'image': image,
       'description': description,
-      'price_cent': priceCent,
+      'price_cents': priceCent,
       'currency': currency,
       'stock': stock,
       'is_active': isActive,

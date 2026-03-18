@@ -32,10 +32,13 @@ class _ProductPageState extends State<ProductPage> {
     });
 
     try {
+      print('Загрузка продукта с ID: ${widget.productId}');
       final product = await _productService.getProductById(widget.productId);
+      print('Получен продукт: ${product != null ? product.name : "null"}');
+      
       if (product == null) {
         setState(() {
-          _error = 'Товар не найден';
+          _error = 'Товар не найден. Возможно, он был удалён или не активен.';
           _isLoading = false;
         });
       } else {
@@ -44,9 +47,11 @@ class _ProductPageState extends State<ProductPage> {
           _isLoading = false;
         });
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('Ошибка при загрузке продукта: $e');
+      print('Stack trace: $stackTrace');
       setState(() {
-        _error = e.toString();
+        _error = 'Ошибка: $e';
         _isLoading = false;
       });
     }
@@ -58,7 +63,8 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   String _formatDate(DateTime date) {
-    return DateFormat('dd.MM.yyyy HH:mm', 'ru_RU').format(date);
+    // Используем простой формат без локали, чтобы избежать ошибок
+    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -343,12 +349,12 @@ class _ProductPageState extends State<ProductPage> {
           const SizedBox(height: 8),
           _buildInfoRow(
             'Продавец',
-            _product!.userLink ?? 'Не указан',
+            _product!.userId ?? 'Не указан',
           ),
           const SizedBox(height: 8),
           _buildInfoRow(
             'Категория',
-            _product!.categoryLink ?? 'Не указана',
+            _product!.categoryId?.toString() ?? 'Не указана',
           ),
         ],
       ),
