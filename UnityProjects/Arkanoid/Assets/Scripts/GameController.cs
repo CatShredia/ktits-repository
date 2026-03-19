@@ -6,6 +6,7 @@ public class GameController : MonoBehaviour
 {
     [SerializeField] private int heartCount = 3;
     [SerializeField] private bool debugMode = false;
+    private const int MaxHearts = 5;
 
     public static GameController Instance { get; private set; }
 
@@ -22,7 +23,6 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        // Ensure minimum hearts at start
         if (heartCount < 1)
         {
             heartCount = 3;
@@ -32,7 +32,7 @@ public class GameController : MonoBehaviour
         if (debugMode) Debug.Log($"[GameController] Starting with {heartCount} hearts");
 
         heartContainer = new GameObject("HeartContainer");
-        heartContainer.transform.position = new Vector3(-8, 3, 0);
+        heartContainer.transform.position = new Vector3(-8.5f, 3f, 0f);
 
         if (playerTransform == null)
         {
@@ -74,7 +74,6 @@ public class GameController : MonoBehaviour
         ClearHearts();
         SpawnHeartUI();
 
-        // Check for gameover only after game has started
         if (heartCount < 1 && gameHasStarted)
         {
             if (debugMode) Debug.Log("[GameController] Gameover triggered!");
@@ -84,6 +83,12 @@ public class GameController : MonoBehaviour
 
     public void IncreaseHearts()
     {
+        if (heartCount >= MaxHearts)
+        {
+            if (debugMode) Debug.Log("[GameController] Max hearts reached");
+            return;
+        }
+
         heartCount++;
         SoundManager.Instance?.PlayHeartCollected();
         ClearHearts();
@@ -129,7 +134,7 @@ public class GameController : MonoBehaviour
         for (int i = 0; i < heartCount; i++)
         {
             var heartXYZ = new Vector3(
-                heartContainer.transform.position.x + i * 1.5f,
+                heartContainer.transform.position.x + i * 0.5f,
                 heartContainer.transform.position.y,
                 heartContainer.transform.position.z);
             Instantiate(heartPrefab, heartXYZ, Quaternion.identity, heartContainer.transform);

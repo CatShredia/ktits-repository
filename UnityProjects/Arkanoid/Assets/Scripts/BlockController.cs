@@ -20,7 +20,6 @@ public class BlockController : MonoBehaviour
     {
         if (!collision.gameObject.CompareTag("Ball")) return;
 
-        // Invulnerable blocks cannot be destroyed
         if (blockType == BlockType.Invulnerable)
         {
             SoundManager.Instance?.PlayBlockHit();
