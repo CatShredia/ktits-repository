@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlatformController : MonoBehaviour
 {
     [SerializeField] private float playerVelocity = 0.5f;
-    [SerializeField] private float boundary = 9.8f;
+    [SerializeField] private float leftBoundary = -9.8f;
+    [SerializeField] private float rightBoundary = 9.8f;
     [SerializeField] private float baseScaleX = 2f;
     [SerializeField] private float expandScaleX = 3f;
     [SerializeField] private float shrinkScaleX = 1f;
@@ -37,8 +38,12 @@ public class PlatformController : MonoBehaviour
             Application.Quit();
         }
 
+        float halfPlatformWidth = transform.localScale.x / 2f;
+        float effectiveLeftBoundary = leftBoundary + halfPlatformWidth;
+        float effectiveRightBoundary = rightBoundary - halfPlatformWidth;
+
         transform.position = new Vector3(
-            Mathf.Clamp(playerPosition.x, -boundary, boundary),
+            Mathf.Clamp(playerPosition.x, effectiveLeftBoundary, effectiveRightBoundary),
             playerPosition.y,
             playerPosition.z);
 
