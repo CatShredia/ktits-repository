@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &6490463713377504831
+--- !u!1001 &8397645651084236032
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -26,12 +26,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6375534546627022719, guid: 49339b379e3f4254dbcc33146f8fb068, type: 3}
       propertyPath: bonusType
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6527813721012392471, guid: 49339b379e3f4254dbcc33146f8fb068, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -8595998037332777578, guid: 28bb660aaf6835247814f51e3043c993, type: 3}
+      objectReference: {fileID: -2401518261572203805, guid: 28bb660aaf6835247814f51e3043c993, type: 3}
     - target: {fileID: 6527813721012392471, guid: 49339b379e3f4254dbcc33146f8fb068, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -54,11 +54,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8192659240118980128, guid: 49339b379e3f4254dbcc33146f8fb068, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -11.27
+      value: -10.993365
       objectReference: {fileID: 0}
     - target: {fileID: 8192659240118980128, guid: 49339b379e3f4254dbcc33146f8fb068, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.8
+      value: -3.0656934
       objectReference: {fileID: 0}
     - target: {fileID: 8192659240118980128, guid: 49339b379e3f4254dbcc33146f8fb068, type: 3}
       propertyPath: m_LocalPosition.z
@@ -94,7 +94,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9031761580493304385, guid: 49339b379e3f4254dbcc33146f8fb068, type: 3}
       propertyPath: m_Name
-      value: Bonus_PlatformShrink Variant
+      value: Bonus_Clone
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

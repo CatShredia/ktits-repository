@@ -9,7 +9,8 @@ public class BonusController : MonoBehaviour
         BallSpeedUp,
         BallSpeedDown,
         PlatformExpand,
-        PlatformShrink
+        PlatformShrink,
+        BallClone
     }
 
     [SerializeField] private BonusType bonusType;
@@ -71,6 +72,12 @@ public class BonusController : MonoBehaviour
             case BonusType.PlatformShrink:
                 platform?.ShrinkPlatform(platformExpandAmount);
                 BonusUIManager.Instance?.ShowEffect("Уменьшение платформы", effectDuration);
+                break;
+
+            case BonusType.BallClone:
+                var platformPos = platform?.transform.position ?? Vector3.zero;
+                GameController.Instance?.SpawnExtraBall(platformPos);
+                BonusUIManager.Instance?.ShowEffect("Клон мяча", 0f);
                 break;
         }
     }
