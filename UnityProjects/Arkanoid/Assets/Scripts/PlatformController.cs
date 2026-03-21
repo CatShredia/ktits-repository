@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlatformController : MonoBehaviour
 {
     [SerializeField] private float playerVelocity = 0.5f;
-    [SerializeField] private float boundary = 9.8f;
+    [SerializeField] private float boundary = 1.8f;
     [SerializeField] private float baseScaleX = 2f;
     [SerializeField] private float expandScaleX = 3f;
     [SerializeField] private float shrinkScaleX = 1f;
@@ -30,7 +30,28 @@ public class PlatformController : MonoBehaviour
     {
         if (MenuController.Instance != null && !MenuController.Instance.IsGameStarted) return;
 
-        playerPosition.x += Input.GetAxis("Horizontal") * playerVelocity;
+        // Мобильное управление: левая/правая часть экрана
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            float screenWidth = Screen.width;
+
+            if (touch.position.x < screenWidth / 2)
+            {
+                // Левая часть экрана — движение влево
+                playerPosition.x -= playerVelocity * 2f;
+            }
+            else
+            {
+                // Правая часть экрана — движение вправо
+                playerPosition.x += playerVelocity * 2f;
+            }
+        }
+        else
+        {
+            // Управление с клавиатуры (для редактора)
+            playerPosition.x += Input.GetAxis("Horizontal") * playerVelocity;
+        }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
