@@ -7,7 +7,7 @@ public class LevelController : MonoBehaviour
 
     [SerializeField] private GameObject[] levelPrefabs;
 
-    [SerializeField] private Vector3 spawnPosition = new Vector3(-4f, 2f, 0f);
+    [SerializeField] private Vector3 spawnPosition = new Vector3(-4f, 1.2f, 0f);
 
     [SerializeField] private int currentLevelIndex = 0;
 
