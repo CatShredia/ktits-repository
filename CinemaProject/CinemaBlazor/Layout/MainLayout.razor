@@ -8,7 +8,7 @@
 
     <main>
         <div class="top-row px-4">
-            @if (AuthService.IsAuthenticated())
+            @if (_isAuthenticated)
             {
                 <span class="me-3">Welcome, @GetUserName()!</span>
                 <a href="profile" class="me-2">Profile</a>
@@ -28,9 +28,17 @@
 </div>
 
 @code {
+    private bool _isAuthenticated = false;
+    private UserResponseDto? _currentUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isAuthenticated = await AuthService.IsAuthenticatedAsync();
+        _currentUser = await AuthService.GetCurrentUserAsync();
+    }
+
     private string GetUserName()
     {
-        var user = AuthService.GetCurrentUserAsync().Result;
-        return user != null ? $"{user.Name} {user.Surname}" : "User";
+        return _currentUser != null ? $"{_currentUser.Name} {_currentUser.Surname}" : "User";
     }
 }

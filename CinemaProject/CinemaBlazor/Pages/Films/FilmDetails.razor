@@ -130,7 +130,7 @@ else
     {
         film = await FilmService.GetFilmByIdAsync(Id);
 
-        if (AuthService.IsAuthenticated() && film != null)
+        if (await AuthService.IsAuthenticatedAsync() && film != null)
         {
             userRating = await RatingService.GetMyRatingForFilmAsync(Id);
             hasRated = userRating != null;

@@ -79,7 +79,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (AuthService.IsAuthenticated())
+        if (await AuthService.IsAuthenticatedAsync())
         {
             isLoading = true;
             ratings = await RatingService.GetAllRatingsAsync();

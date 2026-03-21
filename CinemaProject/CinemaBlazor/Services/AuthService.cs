@@ -13,9 +13,14 @@ public interface IAuthService
     Task<AuthResponseDto?> RegisterAsync(UserRegisterDto dto);
     Task LogoutAsync();
     Task<UserResponseDto?> GetCurrentUserAsync();
-    bool IsAuthenticated();
+    Task<bool> IsAuthenticatedAsync();
+    Task<bool> IsInRoleAsync(string role);
     bool IsInRole(string role);
-    string? GetToken();
+    Task<string?> GetTokenAsync();
+
+    // Deprecated sync methods for backward compatibility
+    bool IsAuthenticated() => IsAuthenticatedAsync().Result;
+    string? GetToken() => GetTokenAsync().Result;
 }
 
 public class AuthService : IAuthService
@@ -81,15 +86,20 @@ public class AuthService : IAuthService
         return null;
     }
 
-    public bool IsAuthenticated()
+    public async Task<bool> IsAuthenticatedAsync()
     {
-        var token = GetToken();
+        var token = await GetTokenAsync();
         return !string.IsNullOrEmpty(token) && !IsTokenExpired(token);
     }
 
-    public bool IsInRole(string role)
+    public bool IsAuthenticated()
     {
-        var token = GetToken();
+        return IsAuthenticatedAsync().Result;
+    }
+
+    public async Task<bool> IsInRoleAsync(string role)
+    {
+        var token = await GetTokenAsync();
         if (string.IsNullOrEmpty(token))
             return false;
 
@@ -106,9 +116,27 @@ public class AuthService : IAuthService
         }
     }
 
+    public bool IsInRole(string role)
+    {
+        // Синхронная версия - только для совместимости, используйте IsInRoleAsync
+        try
+        {
+            return IsInRoleAsync(role).GetAwaiter().GetResult();
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<string?> GetTokenAsync()
+    {
+        return await ((CustomAuthStateProvider)_authenticationStateProvider).GetTokenAsync();
+    }
+
     public string? GetToken()
     {
-        return ((CustomAuthStateProvider)_authenticationStateProvider).GetToken();
+        return GetTokenAsync().Result;
     }
 
     private bool IsTokenExpired(string token)
@@ -181,9 +209,14 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(anonymousUser)));
     }
 
+    public async Task<string?> GetTokenAsync()
+    {
+        return await _localStorage.GetItemAsync<string>("authToken");
+    }
+
     public string? GetToken()
     {
-        return _localStorage.GetItemAsync<string>("authToken").Result;
+        return GetTokenAsync().Result;
     }
 
     private static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)

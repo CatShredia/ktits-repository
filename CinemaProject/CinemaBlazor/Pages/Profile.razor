@@ -68,7 +68,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (AuthService.IsAuthenticated())
+        if (await AuthService.IsAuthenticatedAsync())
         {
             user = await AuthService.GetCurrentUserAsync();
         }

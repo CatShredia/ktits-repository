@@ -42,6 +42,11 @@ public class FilmService : IFilmService
         {
             return await response.Content.ReadFromJsonAsync<List<Film>>() ?? new List<Film>();
         }
+        
+        // Логирование ошибки для отладки
+        var content = await response.Content.ReadAsStringAsync();
+        Console.WriteLine($"FilmService error: {response.StatusCode} - {content}");
+        
         return new List<Film>();
     }
 
