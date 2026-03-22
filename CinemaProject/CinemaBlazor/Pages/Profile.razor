@@ -38,8 +38,8 @@
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Role</label>
                                 <p class="form-control-plaintext">
-                                    <span class="badge @(AuthService.IsInRole("admin") ? "bg-danger" : "bg-info")">
-                                        @(AuthService.IsInRole("admin") ? "Admin" : "Client")
+                                    <span class="badge @(_isAdmin ? "bg-danger" : "bg-info")">
+                                        @(_isAdmin ? "Admin" : "Client")
                                     </span>
                                 </p>
                             </div>
@@ -65,12 +65,14 @@
 
 @code {
     private UserResponseDto? user;
+    private bool _isAdmin = false;
 
     protected override async Task OnInitializedAsync()
     {
         if (await AuthService.IsAuthenticatedAsync())
         {
             user = await AuthService.GetCurrentUserAsync();
+            _isAdmin = await AuthService.IsInRoleAsync("admin");
         }
     }
 }

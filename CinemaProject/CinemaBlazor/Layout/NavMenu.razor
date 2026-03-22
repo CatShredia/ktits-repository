@@ -1,6 +1,4 @@
-﻿@inject IAuthService AuthService
-
-<div class="top-row ps-3 navbar navbar-dark">
+﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">🎬 CinemaBlazor</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -26,47 +24,41 @@
                 <span class="bi bi-collection-play" aria-hidden="true"></span> Genres
             </NavLink>
         </div>
-        @if (_isAuthenticated)
-        {
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="ratings">
-                    <span class="bi bi-star" aria-hidden="true"></span> Ratings
-                </NavLink>
-            </div>
-            @if (_isAdmin)
-            {
+        <AuthorizeView>
+            <Authorized Context="authContext">
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="films/create">
-                        <span class="bi bi-plus-circle" aria-hidden="true"></span> Create Film
+                    <NavLink class="nav-link" href="ratings">
+                        <span class="bi bi-star" aria-hidden="true"></span> Ratings
                     </NavLink>
                 </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="genres/create">
-                        <span class="bi bi-plus-circle" aria-hidden="true"></span> Create Genre
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="my-films">
-                        <span class="bi bi-file-earmark-person" aria-hidden="true"></span> My Films
-                    </NavLink>
-                </div>
-            }
-        }
+                <AuthorizeView Roles="admin">
+                    <Authorized>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="films/create">
+                                <span class="bi bi-plus-circle" aria-hidden="true"></span> Create Film
+                            </NavLink>
+                        </div>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="genres/create">
+                                <span class="bi bi-plus-circle" aria-hidden="true"></span> Create Genre
+                            </NavLink>
+                        </div>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="my-films">
+                                <span class="bi bi-file-earmark-person" aria-hidden="true"></span> My Films
+                            </NavLink>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+            </Authorized>
+        </AuthorizeView>
     </nav>
 </div>
 
 @code {
     private bool collapseNavMenu = true;
-    private bool _isAuthenticated = false;
-    private bool _isAdmin = false;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _isAuthenticated = await AuthService.IsAuthenticatedAsync();
-        _isAdmin = await AuthService.IsInRoleAsync("admin");
-    }
 
     private void ToggleNavMenu()
     {

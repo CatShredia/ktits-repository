@@ -69,7 +69,7 @@ public class AuthController : ControllerBase
         await _context.SaveChangesAsync();
 
         // Generate JWT token
-        var token = GenerateJwtToken(user.Id, "client");
+        var token = GenerateJwtToken(user.Id, "client", user);
 
         return new AuthResponseDto
         {
@@ -109,7 +109,7 @@ public class AuthController : ControllerBase
         var role = login.User.Email.Contains("admin") ? "admin" : "client";
 
         // Generate JWT token
-        var token = GenerateJwtToken(login.UserId, role);
+        var token = GenerateJwtToken(login.UserId, role, login.User);
 
         return new AuthResponseDto
         {
@@ -190,7 +190,7 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
-    private string GenerateJwtToken(int userId, string role)
+    private string GenerateJwtToken(int userId, string role, User? user = null)
     {
         var jwtSettings = _configuration.GetSection("Jwt");
         var key = new SymmetricSecurityKey(
@@ -202,6 +202,14 @@ public class AuthController : ControllerBase
             new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
             new Claim(ClaimTypes.Role, role)
         };
+
+        // Добавляем имя и фамилию в токен
+        if (user != null)
+        {
+            claims.Add(new Claim("name", user.Name));
+            claims.Add(new Claim("surname", user.Surname));
+            claims.Add(new Claim(ClaimTypes.Email, user.Email));
+        }
 
         var token = new JwtSecurityToken(
             issuer: jwtSettings["Issuer"],

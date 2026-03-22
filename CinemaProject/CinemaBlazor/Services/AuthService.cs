@@ -17,6 +17,7 @@ public interface IAuthService
     Task<bool> IsInRoleAsync(string role);
     bool IsInRole(string role);
     Task<string?> GetTokenAsync();
+    Task<bool> UpdateProfileAsync(UserResponseDto dto);
 
     // Deprecated sync methods for backward compatibility
     bool IsAuthenticated() => IsAuthenticatedAsync().Result;
@@ -84,6 +85,19 @@ public class AuthService : IAuthService
             // Token might be invalid
         }
         return null;
+    }
+
+    public async Task<bool> UpdateProfileAsync(UserResponseDto dto)
+    {
+        try
+        {
+            var response = await _http.PutAsJsonAsync("api/Auth/me", dto);
+            return response.IsSuccessStatusCode;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public async Task<bool> IsAuthenticatedAsync()
