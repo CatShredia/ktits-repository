@@ -6,7 +6,15 @@
 
 <PageTitle>Films - CinemaBlazor</PageTitle>
 
-<h3>🎬 Films</h3>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">🎬 Films</h3>
+    @if (_isAdmin)
+    {
+        <a href="films/create" class="btn btn-primary">
+            <span class="bi bi-plus-circle"></span> Add Film
+        </a>
+    }
+</div>
 
 <div class="card mb-3">
     <div class="card-body">
@@ -110,9 +118,11 @@ else
     private int selectedGenreId;
     private string? search;
     private bool isLoading;
+    private bool _isAdmin = false;
 
     protected override async Task OnInitializedAsync()
     {
+        _isAdmin = await AuthService.IsInRoleAsync("admin");
         genres = await GenreService.GetAllGenresAsync();
         await LoadFilms();
     }
