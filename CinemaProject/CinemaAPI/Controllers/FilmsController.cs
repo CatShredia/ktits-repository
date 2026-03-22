@@ -1,5 +1,6 @@
 using CinemaAPI.Data;
 using CinemaAPI.Models;
+using CinemaAPI.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,7 @@ public class FilmsController : ControllerBase
     /// <returns>List of films</returns>
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<Film>>> GetFilms(
+    public async Task<ActionResult<IEnumerable<FilmDto>>> GetFilms(
         [FromQuery] string? sortBy = null,
         [FromQuery] int? genreId = null,
         [FromQuery] string? search = null)
@@ -35,6 +36,7 @@ public class FilmsController : ControllerBase
         var query = _context.Films
             .Include(f => f.Genre)
             .Include(f => f.Author)
+            .Include(f => f.Ratings)
             .AsQueryable();
 
         // Filtering
@@ -60,7 +62,32 @@ public class FilmsController : ControllerBase
             _ => query
         };
 
-        return await query.ToListAsync();
+        var films = await query.ToListAsync();
+        
+        return films.Select(f => new FilmDto
+        {
+            Id = f.Id,
+            Name = f.Name,
+            Description = f.Description,
+            ReleaseDate = f.ReleaseDate,
+            GenreId = f.GenreId,
+            Genre = f.Genre != null ? new GenreDto
+            {
+                Id = f.Genre.Id,
+                Name = f.Genre.Name,
+                Description = f.Genre.Description
+            } : null,
+            ImageUrl = f.ImageUrl,
+            AuthorId = f.AuthorId,
+            Author = f.Author != null ? new UserBriefDto
+            {
+                Id = f.Author.Id,
+                Name = f.Author.Name,
+                Surname = f.Author.Surname
+            } : null,
+            AverageRating = f.Ratings?.Any() == true ? f.Ratings.Average(r => r.Value) : 0,
+            RatingsCount = f.Ratings?.Count ?? 0
+        }).ToList();
     }
 
     /// <summary>
@@ -70,11 +97,12 @@ public class FilmsController : ControllerBase
     /// <returns>The film</returns>
     [HttpGet("{id}")]
     [AllowAnonymous]
-    public async Task<ActionResult<Film>> GetFilm(int id)
+    public async Task<ActionResult<FilmDto>> GetFilm(int id)
     {
         var film = await _context.Films
             .Include(f => f.Genre)
             .Include(f => f.Author)
+            .Include(f => f.Ratings)
             .FirstOrDefaultAsync(f => f.Id == id);
 
         if (film == null)
@@ -82,7 +110,30 @@ public class FilmsController : ControllerBase
             return NotFound();
         }
 
-        return film;
+        return new FilmDto
+        {
+            Id = film.Id,
+            Name = film.Name,
+            Description = film.Description,
+            ReleaseDate = film.ReleaseDate,
+            GenreId = film.GenreId,
+            Genre = film.Genre != null ? new GenreDto
+            {
+                Id = film.Genre.Id,
+                Name = film.Genre.Name,
+                Description = film.Genre.Description
+            } : null,
+            ImageUrl = film.ImageUrl,
+            AuthorId = film.AuthorId,
+            Author = film.Author != null ? new UserBriefDto
+            {
+                Id = film.Author.Id,
+                Name = film.Author.Name,
+                Surname = film.Author.Surname
+            } : null,
+            AverageRating = film.Ratings?.Any() == true ? film.Ratings.Average(r => r.Value) : 0,
+            RatingsCount = film.Ratings?.Count ?? 0
+        };
     }
 
     /// <summary>
@@ -119,7 +170,7 @@ public class FilmsController : ControllerBase
     /// <returns>Created film</returns>
     [HttpPost]
     [Authorize(Roles = "admin")]
-    public async Task<ActionResult<Film>> PostFilm(Film film)
+    public async Task<ActionResult<FilmDto>> PostFilm(Film film)
     {
         var userId = GetCurrentUserId();
         if (userId != null)
@@ -130,7 +181,7 @@ public class FilmsController : ControllerBase
         _context.Films.Add(film);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetFilm), new { id = film.Id }, film);
+        return CreatedAtAction(nameof(GetFilm), new { id = film.Id }, await GetFilmDtoAsync(film.Id));
     }
 
     /// <summary>
@@ -172,6 +223,42 @@ public class FilmsController : ControllerBase
         return NoContent();
     }
 
+    private async Task<FilmDto?> GetFilmDtoAsync(int id)
+    {
+        var film = await _context.Films
+            .Include(f => f.Genre)
+            .Include(f => f.Author)
+            .Include(f => f.Ratings)
+            .FirstOrDefaultAsync(f => f.Id == id);
+
+        if (film == null) return null;
+
+        return new FilmDto
+        {
+            Id = film.Id,
+            Name = film.Name,
+            Description = film.Description,
+            ReleaseDate = film.ReleaseDate,
+            GenreId = film.GenreId,
+            Genre = film.Genre != null ? new GenreDto
+            {
+                Id = film.Genre.Id,
+                Name = film.Genre.Name,
+                Description = film.Genre.Description
+            } : null,
+            ImageUrl = film.ImageUrl,
+            AuthorId = film.AuthorId,
+            Author = film.Author != null ? new UserBriefDto
+            {
+                Id = film.Author.Id,
+                Name = film.Author.Name,
+                Surname = film.Author.Surname
+            } : null,
+            AverageRating = film.Ratings?.Any() == true ? film.Ratings.Average(r => r.Value) : 0,
+            RatingsCount = film.Ratings?.Count ?? 0
+        };
+    }
+
     /// <summary>
     /// Delete a film (Admin only)
     /// </summary>
@@ -199,7 +286,7 @@ public class FilmsController : ControllerBase
     /// <returns>List of user's films</returns>
     [HttpGet("my-films")]
     [Authorize(Roles = "admin")]
-    public async Task<ActionResult<IEnumerable<Film>>> GetMyFilms()
+    public async Task<ActionResult<IEnumerable<FilmDto>>> GetMyFilms()
     {
         var userId = GetCurrentUserId();
         if (userId == null)
@@ -207,10 +294,37 @@ public class FilmsController : ControllerBase
             return Unauthorized();
         }
 
-        return await _context.Films
+        var films = await _context.Films
             .Include(f => f.Genre)
+            .Include(f => f.Author)
+            .Include(f => f.Ratings)
             .Where(f => f.AuthorId == userId)
             .ToListAsync();
+
+        return films.Select(f => new FilmDto
+        {
+            Id = f.Id,
+            Name = f.Name,
+            Description = f.Description,
+            ReleaseDate = f.ReleaseDate,
+            GenreId = f.GenreId,
+            Genre = f.Genre != null ? new GenreDto
+            {
+                Id = f.Genre.Id,
+                Name = f.Genre.Name,
+                Description = f.Genre.Description
+            } : null,
+            ImageUrl = f.ImageUrl,
+            AuthorId = f.AuthorId,
+            Author = f.Author != null ? new UserBriefDto
+            {
+                Id = f.Author.Id,
+                Name = f.Author.Name,
+                Surname = f.Author.Surname
+            } : null,
+            AverageRating = f.Ratings?.Any() == true ? f.Ratings.Average(r => r.Value) : 0,
+            RatingsCount = f.Ratings?.Count ?? 0
+        }).ToList();
     }
 
     private int? GetCurrentUserId()

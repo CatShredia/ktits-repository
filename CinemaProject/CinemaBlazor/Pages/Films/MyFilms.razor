@@ -58,14 +58,7 @@
                                 <td>@(film.Genre?.Name ?? "N/A")</td>
                                 <td>@film.ReleaseDate.ToString("MMM dd, yyyy")</td>
                                 <td>
-                                    @if (film.Ratings != null && film.Ratings.Any())
-                                    {
-                                        <span class="badge bg-warning text-dark">⭐ @film.Ratings.Average(r => r.Value).ToString("F1")</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">No ratings</span>
-                                    }
+                                    <span class="badge bg-warning text-dark">⭐ @film.AverageRating.ToString("F1")</span>
                                 </td>
                                 <td>
                                     <a href="films/@film.Id" class="btn btn-sm btn-outline-primary me-1">View</a>

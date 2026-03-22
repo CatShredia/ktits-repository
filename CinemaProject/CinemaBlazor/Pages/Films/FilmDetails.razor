@@ -53,15 +53,8 @@ else
 
             <div class="mt-3">
                 <h4>Rating:
-                    @if (film.Ratings != null && film.Ratings.Any())
-                    {
-                        <span class="text-warning">⭐ @film.Ratings.Average(r => r.Value).ToString("F1")/10</span>
-                        <span class="text-muted">(@film.Ratings.Count ratings)</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">No ratings yet</span>
-                    }
+                    <span class="text-warning">⭐ @film.AverageRating.ToString("F1")/10</span>
+                    <span class="text-muted">(@film.Ratings?.Count() ratings)</span>
                 </h4>
             </div>
 
