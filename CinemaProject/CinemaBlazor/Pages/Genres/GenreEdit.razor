@@ -71,10 +71,13 @@
     private Genre? genre;
     private string? errorMessage;
     private bool isLoading = true;
+    private bool _isAdmin = false;
 
     protected override async Task OnInitializedAsync()
     {
-        if (!AuthService.IsInRole("admin"))
+        _isAdmin = await AuthService.IsInRoleAsync("admin");
+        
+        if (!_isAdmin)
         {
             isLoading = false;
             return;

@@ -53,6 +53,12 @@
     private Genre genre = new();
     private string? errorMessage;
     private bool isLoading;
+    private bool _isAdmin = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isAdmin = await AuthService.IsInRoleAsync("admin");
+    }
 
     private async Task HandleCreate()
     {

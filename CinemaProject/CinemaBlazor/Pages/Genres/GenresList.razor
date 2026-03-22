@@ -8,7 +8,7 @@
 
 <h3>📁 Genres</h3>
 
-@if (AuthService.IsInRole("admin"))
+@if (_isAdmin)
 {
     <a href="genres/create" class="btn btn-primary mb-3">
         <span class="bi bi-plus-circle"></span> Create New Genre
@@ -36,7 +36,7 @@ else
                     <th>ID</th>
                     <th>Name</th>
                     <th>Description</th>
-                    @if (AuthService.IsInRole("admin"))
+                    @if (_isAdmin)
                     {
                         <th>Actions</th>
                     }
@@ -49,7 +49,7 @@ else
                         <td>@genre.Id</td>
                         <td>@genre.Name</td>
                         <td>@(genre.Description ?? "No description")</td>
-                        @if (AuthService.IsInRole("admin"))
+                        @if (_isAdmin)
                         {
                             <td>
                                 <a href="genres/@genre.Id/edit" class="btn btn-sm btn-outline-primary">Edit</a>
@@ -67,9 +67,11 @@ else
 @code {
     private List<Genre> genres = new();
     private bool isLoading;
+    private bool _isAdmin = false;
 
     protected override async Task OnInitializedAsync()
     {
+        _isAdmin = await AuthService.IsInRoleAsync("admin");
         isLoading = true;
         genres = await GenreService.GetAllGenresAsync();
         isLoading = false;

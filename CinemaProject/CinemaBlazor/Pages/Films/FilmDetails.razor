@@ -63,7 +63,7 @@ else
             <h5>Description</h5>
             <p>@(film.Description ?? "No description available.")</p>
 
-            @if (AuthService.IsAuthenticated())
+            @if (_isAuthenticated)
             {
                 <hr />
                 <h5>Your Rating</h5>
@@ -97,7 +97,7 @@ else
 
             <hr />
 
-            @if (AuthService.IsInRole("admin"))
+            @if (_isAdmin)
             {
                 <a href="films/@film.Id/edit" class="btn btn-primary">Edit Film</a>
                 <button class="btn btn-danger ms-2" @onclick="DeleteFilm">Delete Film</button>
@@ -118,12 +118,17 @@ else
     private bool isSubmittingRating;
     private bool hasRated;
     private string? ratingError;
+    private bool _isAdmin = false;
+    private bool _isAuthenticated = false;
 
     protected override async Task OnInitializedAsync()
     {
+        _isAuthenticated = await AuthService.IsAuthenticatedAsync();
+        _isAdmin = await AuthService.IsInRoleAsync("admin");
+        
         film = await FilmService.GetFilmByIdAsync(Id);
 
-        if (await AuthService.IsAuthenticatedAsync() && film != null)
+        if (_isAuthenticated && film != null)
         {
             userRating = await RatingService.GetMyRatingForFilmAsync(Id);
             hasRated = userRating != null;

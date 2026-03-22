@@ -79,10 +79,13 @@
 @code {
     private List<Film> films = new();
     private bool isLoading;
+    private bool _isAdmin = false;
 
     protected override async Task OnInitializedAsync()
     {
-        if (AuthService.IsInRole("admin"))
+        _isAdmin = await AuthService.IsInRoleAsync("admin");
+        
+        if (_isAdmin)
         {
             isLoading = true;
             films = await FilmService.GetMyFilmsAsync();
