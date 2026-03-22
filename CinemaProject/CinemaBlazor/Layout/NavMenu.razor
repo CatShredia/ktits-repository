@@ -1,7 +1,7 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">🎬 CinemaBlazor</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+        <button title="Меню навигации" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
@@ -11,41 +11,41 @@
     <nav class="nav flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill" aria-hidden="true"></span> Home
+                <span class="bi bi-house-door-fill" aria-hidden="true"></span> Главная
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="films">
-                <span class="bi bi-film" aria-hidden="true"></span> Films
+                <span class="bi bi-film" aria-hidden="true"></span> Фильмы
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="genres">
-                <span class="bi bi-collection-play" aria-hidden="true"></span> Genres
+                <span class="bi bi-collection-play" aria-hidden="true"></span> Жанры
             </NavLink>
         </div>
         <AuthorizeView>
             <Authorized Context="authContext">
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="ratings">
-                        <span class="bi bi-star" aria-hidden="true"></span> Ratings
+                        <span class="bi bi-star" aria-hidden="true"></span> Оценки
                     </NavLink>
                 </div>
                 <AuthorizeView Roles="admin">
                     <Authorized>
                         <div class="nav-item px-3">
                             <NavLink class="nav-link" href="films/create">
-                                <span class="bi bi-plus-circle" aria-hidden="true"></span> Create Film
+                                <span class="bi bi-plus-circle" aria-hidden="true"></span> Создать фильм
                             </NavLink>
                         </div>
                         <div class="nav-item px-3">
                             <NavLink class="nav-link" href="genres/create">
-                                <span class="bi bi-plus-circle" aria-hidden="true"></span> Create Genre
+                                <span class="bi bi-plus-circle" aria-hidden="true"></span> Создать жанр
                             </NavLink>
                         </div>
                         <div class="nav-item px-3">
                             <NavLink class="nav-link" href="my-films">
-                                <span class="bi bi-file-earmark-person" aria-hidden="true"></span> My Films
+                                <span class="bi bi-file-earmark-person" aria-hidden="true"></span> Мои фильмы
                             </NavLink>
                         </div>
                     </Authorized>

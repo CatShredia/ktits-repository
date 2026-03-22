@@ -3,15 +3,15 @@
 @inject IAuthService AuthService
 @inject NavigationManager Navigation
 
-<PageTitle>Edit Profile - CinemaBlazor</PageTitle>
+<PageTitle>Изменить профиль - CinemaBlazor</PageTitle>
 
 @if (!userLoaded)
 {
-    <div class="alert alert-info">Loading profile...</div>
+    <div class="alert alert-info">Загрузка профиля...</div>
 }
 else if (editModel == null)
 {
-    <div class="alert alert-warning">Please <a href="login">login</a> to edit your profile.</div>
+    <div class="alert alert-warning">Пожалуйста, <a href="login">войдите</a>, чтобы редактировать профиль.</div>
 }
 else
 {
@@ -19,20 +19,20 @@ else
         <div class="col-md-8 col-lg-6">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">✏️ Edit Profile</h4>
+                    <h4 class="mb-0">✏️ Изменить профиль</h4>
                 </div>
                 <div class="card-body">
                     <EditForm Model="@editModel" OnValidSubmit="HandleSubmit">
                         <DataAnnotationsValidator />
                         
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Surname</label>
+                            <label class="form-label fw-bold">Фамилия</label>
                             <InputText class="form-control" @bind-Value="editModel.Surname" />
                             <ValidationMessage For="@(() => editModel.Surname)" />
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Name</label>
+                            <label class="form-label fw-bold">Имя</label>
                             <InputText class="form-control" @bind-Value="editModel.Name" />
                             <ValidationMessage For="@(() => editModel.Name)" />
                         </div>
@@ -44,17 +44,17 @@ else
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Gender</label>
+                            <label class="form-label fw-bold">Пол</label>
                             <InputSelect class="form-select" @bind-Value="editModel.Gender">
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
+                                <option value="Male">Мужской</option>
+                                <option value="Female">Женский</option>
+                                <option value="Other">Другой</option>
                             </InputSelect>
                             <ValidationMessage For="@(() => editModel.Gender)" />
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Description</label>
+                            <label class="form-label fw-bold">О себе</label>
                             <InputTextArea class="form-control" @bind-Value="editModel.Description" rows="3" />
                             <ValidationMessage For="@(() => editModel.Description)" />
                         </div>
@@ -66,7 +66,7 @@ else
                         
                         @if (successMessage)
                         {
-                            <div class="alert alert-success">Profile updated successfully!</div>
+                            <div class="alert alert-success">Профиль успешно обновлён!</div>
                         }
                         
                         <div class="d-flex gap-2">
@@ -75,9 +75,9 @@ else
                                 {
                                     <span class="spinner-border spinner-border-sm me-2"></span>
                                 }
-                                Save Changes
+                                Сохранить изменения
                             </button>
-                            <a href="profile" class="btn btn-secondary">Cancel</a>
+                            <a href="profile" class="btn btn-secondary">Отмена</a>
                         </div>
                     </EditForm>
                 </div>

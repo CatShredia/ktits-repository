@@ -3,43 +3,43 @@
 @inject IAuthService AuthService
 @inject NavigationManager Navigation
 
-<PageTitle>Register - CinemaBlazor</PageTitle>
+<PageTitle>Регистрация - CinemaBlazor</PageTitle>
 
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
         <div class="card shadow">
             <div class="card-header bg-success text-white">
-                <h4 class="mb-0">📝 Register</h4>
+                <h4 class="mb-0">📝 Регистрация</h4>
             </div>
             <div class="card-body">
                 <EditForm Model="@registerDto" OnValidSubmit="HandleRegister">
                     <DataAnnotationsValidator />
-                    
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Surname *</label>
-                            <InputText @bind-Value="registerDto.Surname" class="form-control" placeholder="Surname" />
+                            <label class="form-label">Фамилия *</label>
+                            <InputText @bind-Value="registerDto.Surname" class="form-control" placeholder="Фамилия" />
                             <ValidationMessage For="@(() => registerDto.Surname)" />
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Name *</label>
-                            <InputText @bind-Value="registerDto.Name" class="form-control" placeholder="Name" />
+                            <label class="form-label">Имя *</label>
+                            <InputText @bind-Value="registerDto.Name" class="form-control" placeholder="Имя" />
                             <ValidationMessage For="@(() => registerDto.Name)" />
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <InputTextArea @bind-Value="registerDto.Description" class="form-control" rows="2" placeholder="About yourself" />
+                        <label class="form-label">О себе</label>
+                        <InputTextArea @bind-Value="registerDto.Description" class="form-control" rows="2" placeholder="Расскажите о себе" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Gender *</label>
+                        <label class="form-label">Пол *</label>
                         <InputSelect @bind-Value="registerDto.Gender" class="form-select">
-                            <option value="">Select gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
+                            <option value="">Выберите пол</option>
+                            <option value="Male">Мужской</option>
+                            <option value="Female">Женский</option>
+                            <option value="Other">Другой</option>
                         </InputSelect>
                         <ValidationMessage For="@(() => registerDto.Gender)" />
                     </div>
@@ -51,14 +51,14 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Login *</label>
-                        <InputText @bind-Value="registerDto.Login" class="form-control" placeholder="Choose a login" />
+                        <label class="form-label">Логин *</label>
+                        <InputText @bind-Value="registerDto.Login" class="form-control" placeholder="Придумайте логин" />
                         <ValidationMessage For="@(() => registerDto.Login)" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Password *</label>
-                        <InputText @bind-Value="registerDto.Password" class="form-control" type="password" placeholder="Min 6 characters" />
+                        <label class="form-label">Пароль *</label>
+                        <InputText @bind-Value="registerDto.Password" class="form-control" type="password" placeholder="Минимум 6 символов" />
                         <ValidationMessage For="@(() => registerDto.Password)" />
                     </div>
 
@@ -72,12 +72,12 @@
                         {
                             <span class="spinner-border spinner-border-sm me-2"></span>
                         }
-                        Register
+                        Зарегистрироваться
                     </button>
                 </EditForm>
             </div>
             <div class="card-footer text-center">
-                <small>Already have an account? <a href="login">Login here</a></small>
+                <small>Уже есть аккаунт? <a href="login">Войти</a></small>
             </div>
         </div>
     </div>
@@ -101,7 +101,7 @@
         }
         else
         {
-            errorMessage = "Registration failed. Login or email may already exist.";
+            errorMessage = "Ошибка регистрации. Возможно, логин или email уже заняты.";
         }
 
         isLoading = false;

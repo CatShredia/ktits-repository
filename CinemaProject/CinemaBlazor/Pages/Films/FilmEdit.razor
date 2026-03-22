@@ -6,7 +6,7 @@
 @inject IAuthService AuthService
 @inject IJSRuntime JSRuntime
 
-<PageTitle>Edit Film - CinemaBlazor</PageTitle>
+<PageTitle>Изменить фильм - CinemaBlazor</PageTitle>
 
 <AuthorizeView Roles="admin">
     <Authorized>
@@ -14,17 +14,17 @@
         {
             <div class="text-center py-5">
                 <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden">Загрузка...</span>
                 </div>
             </div>
         }
         else if (film == null)
         {
-            <div class="alert alert-danger">Film not found.</div>
+            <div class="alert alert-danger">Фильм не найден.</div>
         }
         else
         {
-            <h3>✏️ Edit Film</h3>
+            <h3>✏️ Изменить фильм</h3>
 
             <div class="card">
                 <div class="card-body">
@@ -32,24 +32,24 @@
                         <DataAnnotationsValidator />
 
                         <div class="mb-3">
-                            <label class="form-label">Film Name *</label>
+                            <label class="form-label">Название фильма *</label>
                             <InputText @bind-Value="film.Name" class="form-control" />
                             <ValidationMessage For="@(() => film.Name)" />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Description</label>
+                            <label class="form-label">Описание</label>
                             <InputTextArea @bind-Value="film.Description" class="form-control" rows="4" />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Release Date *</label>
+                            <label class="form-label">Дата выхода *</label>
                             <InputDate @bind-Value="film.ReleaseDate" class="form-control" />
                             <ValidationMessage For="@(() => film.ReleaseDate)" />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Genre *</label>
+                            <label class="form-label">Жанр *</label>
                             <InputSelect @bind-Value="film.GenreId" class="form-select">
                                 @foreach (var genre in genres)
                                 {
@@ -60,7 +60,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Image URL</label>
+                            <label class="form-label">URL изображения</label>
                             <InputText @bind-Value="film.ImageUrl" class="form-control" />
                         </div>
 
@@ -74,16 +74,16 @@
                             {
                                 <span class="spinner-border spinner-border-sm me-2"></span>
                             }
-                            Save Changes
+                            Сохранить изменения
                         </button>
-                        <a href="films/@Id" class="btn btn-outline-secondary ms-2">Cancel</a>
+                        <a href="films/@Id" class="btn btn-outline-secondary ms-2">Отмена</a>
                     </EditForm>
                 </div>
             </div>
         }
     </Authorized>
     <NotAuthorized>
-        <div class="alert alert-warning">You must be an admin to edit films.</div>
+        <div class="alert alert-warning">Вы должны быть администратором для редактирования фильмов.</div>
     </NotAuthorized>
 </AuthorizeView>
 

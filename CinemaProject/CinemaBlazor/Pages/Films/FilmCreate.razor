@@ -5,11 +5,11 @@
 @inject NavigationManager Navigation
 @inject IAuthService AuthService
 
-<PageTitle>Create Film - CinemaBlazor</PageTitle>
+<PageTitle>Создать фильм - CinemaBlazor</PageTitle>
 
 <AuthorizeView Roles="admin">
     <Authorized>
-        <h3>🎬 Create New Film</h3>
+        <h3>🎬 Создать новый фильм</h3>
 
         <div class="card">
             <div class="card-body">
@@ -17,27 +17,27 @@
                     <DataAnnotationsValidator />
 
                     <div class="mb-3">
-                        <label class="form-label">Film Name *</label>
-                        <InputText @bind-Value="film.Name" class="form-control" placeholder="Enter film name" />
+                        <label class="form-label">Название фильма *</label>
+                        <InputText @bind-Value="film.Name" class="form-control" placeholder="Введите название фильма" />
                         <ValidationMessage For="@(() => film.Name)" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Description</label>
+                        <label class="form-label">Описание</label>
                         <InputTextArea @bind-Value="film.Description" class="form-control" rows="4"
-                                       placeholder="Film description" />
+                                       placeholder="Описание фильма" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Release Date *</label>
+                        <label class="form-label">Дата выхода *</label>
                         <InputDate @bind-Value="film.ReleaseDate" class="form-control" />
                         <ValidationMessage For="@(() => film.ReleaseDate)" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Genre *</label>
+                        <label class="form-label">Жанр *</label>
                         <InputSelect @bind-Value="film.GenreId" class="form-select">
-                            <option value="0">Select genre</option>
+                            <option value="0">Выберите жанр</option>
                             @foreach (var genre in genres)
                             {
                                 <option value="@genre.Id">@genre.Name</option>
@@ -47,7 +47,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Image URL</label>
+                        <label class="form-label">URL изображения</label>
                         <InputText @bind-Value="film.ImageUrl" class="form-control"
                                    placeholder="https://example.com/image.jpg" />
                     </div>
@@ -62,15 +62,15 @@
                         {
                             <span class="spinner-border spinner-border-sm me-2"></span>
                         }
-                        Create Film
+                        Создать фильм
                     </button>
-                    <a href="films" class="btn btn-outline-secondary ms-2">Cancel</a>
+                    <a href="films" class="btn btn-outline-secondary ms-2">Отмена</a>
                 </EditForm>
             </div>
         </div>
     </Authorized>
     <NotAuthorized>
-        <div class="alert alert-warning">You must be an admin to create films.</div>
+        <div class="alert alert-warning">Вы должны быть администратором для создания фильмов.</div>
     </NotAuthorized>
 </AuthorizeView>
 

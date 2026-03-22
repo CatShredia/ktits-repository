@@ -4,11 +4,11 @@
 @inject NavigationManager Navigation
 @inject IAuthService AuthService
 
-<PageTitle>Create Genre - CinemaBlazor</PageTitle>
+<PageTitle>Создать жанр - CinemaBlazor</PageTitle>
 
 <AuthorizeView Roles="admin">
     <Authorized>
-        <h3>📁 Create New Genre</h3>
+        <h3>📁 Создать новый жанр</h3>
 
         <div class="card">
             <div class="card-body">
@@ -16,15 +16,15 @@
                     <DataAnnotationsValidator />
 
                     <div class="mb-3">
-                        <label class="form-label">Genre Name *</label>
-                        <InputText @bind-Value="genre.Name" class="form-control" placeholder="Enter genre name" />
+                        <label class="form-label">Название жанра *</label>
+                        <InputText @bind-Value="genre.Name" class="form-control" placeholder="Введите название жанра" />
                         <ValidationMessage For="@(() => genre.Name)" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Description</label>
+                        <label class="form-label">Описание</label>
                         <InputTextArea @bind-Value="genre.Description" class="form-control" rows="4"
-                                       placeholder="Genre description" />
+                                       placeholder="Описание жанра" />
                     </div>
 
                     @if (!string.IsNullOrEmpty(errorMessage))
@@ -37,15 +37,15 @@
                         {
                             <span class="spinner-border spinner-border-sm me-2"></span>
                         }
-                        Create Genre
+                        Создать жанр
                     </button>
-                    <a href="genres" class="btn btn-outline-secondary ms-2">Cancel</a>
+                    <a href="genres" class="btn btn-outline-secondary ms-2">Отмена</a>
                 </EditForm>
             </div>
         </div>
     </Authorized>
     <NotAuthorized>
-        <div class="alert alert-warning">You must be an admin to create genres.</div>
+        <div class="alert alert-warning">Вы должны быть администратором для создания жанров.</div>
     </NotAuthorized>
 </AuthorizeView>
 

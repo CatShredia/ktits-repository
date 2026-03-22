@@ -5,7 +5,7 @@
 @inject IAuthService AuthService
 @inject IJSRuntime JSRuntime
 
-<PageTitle>Edit Genre - CinemaBlazor</PageTitle>
+<PageTitle>Изменить жанр - CinemaBlazor</PageTitle>
 
 <AuthorizeView Roles="admin">
     <Authorized>
@@ -13,17 +13,17 @@
         {
             <div class="text-center py-5">
                 <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden">Загрузка...</span>
                 </div>
             </div>
         }
         else if (genre == null)
         {
-            <div class="alert alert-danger">Genre not found.</div>
+            <div class="alert alert-danger">Жанр не найден.</div>
         }
         else
         {
-            <h3>✏️ Edit Genre</h3>
+            <h3>✏️ Изменить жанр</h3>
 
             <div class="card">
                 <div class="card-body">
@@ -31,13 +31,13 @@
                         <DataAnnotationsValidator />
 
                         <div class="mb-3">
-                            <label class="form-label">Genre Name *</label>
+                            <label class="form-label">Название жанра *</label>
                             <InputText @bind-Value="genre.Name" class="form-control" />
                             <ValidationMessage For="@(() => genre.Name)" />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Description</label>
+                            <label class="form-label">Описание</label>
                             <InputTextArea @bind-Value="genre.Description" class="form-control" rows="4" />
                         </div>
 
@@ -51,16 +51,16 @@
                             {
                                 <span class="spinner-border spinner-border-sm me-2"></span>
                             }
-                            Save Changes
+                            Сохранить изменения
                         </button>
-                        <a href="genres" class="btn btn-outline-secondary ms-2">Cancel</a>
+                        <a href="genres" class="btn btn-outline-secondary ms-2">Отмена</a>
                     </EditForm>
                 </div>
             </div>
         }
     </Authorized>
     <NotAuthorized>
-        <div class="alert alert-warning">You must be an admin to edit genres.</div>
+        <div class="alert alert-warning">Вы должны быть администратором для редактирования жанров.</div>
     </NotAuthorized>
 </AuthorizeView>
 

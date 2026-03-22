@@ -4,14 +4,14 @@
 @inject IAuthService AuthService
 @inject IJSRuntime JSRuntime
 
-<PageTitle>Genres - CinemaBlazor</PageTitle>
+<PageTitle>Жанры - CinemaBlazor</PageTitle>
 
-<h3>📁 Genres</h3>
+<h3>📁 Жанры</h3>
 
 @if (_isAdmin)
 {
     <a href="genres/create" class="btn btn-primary mb-3">
-        <span class="bi bi-plus-circle"></span> Create New Genre
+        <span class="bi bi-plus-circle"></span> Создать жанр
     </a>
 }
 
@@ -19,13 +19,13 @@
 {
     <div class="text-center py-5">
         <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">Загрузка...</span>
         </div>
     </div>
 }
 else if (genres.Count == 0)
 {
-    <div class="alert alert-info">No genres found.</div>
+    <div class="alert alert-info">Жанры не найдены.</div>
 }
 else
 {
@@ -34,11 +34,11 @@ else
             <thead class="table-dark">
                 <tr>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Description</th>
+                    <th>Название</th>
+                    <th>Описание</th>
                     @if (_isAdmin)
                     {
-                        <th>Actions</th>
+                        <th>Действия</th>
                     }
                 </tr>
             </thead>
@@ -48,13 +48,13 @@ else
                     <tr>
                         <td>@genre.Id</td>
                         <td>@genre.Name</td>
-                        <td>@(genre.Description ?? "No description")</td>
+                        <td>@(genre.Description ?? "Нет описания")</td>
                         @if (_isAdmin)
                         {
                             <td>
-                                <a href="genres/@genre.Id/edit" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a href="genres/@genre.Id/edit" class="btn btn-sm btn-outline-primary">Изменить</a>
                                 <button class="btn btn-sm btn-outline-danger ms-1"
-                                        @onclick="() => DeleteGenre(genre.Id)">Delete</button>
+                                        @onclick="() => DeleteGenre(genre.Id)">Удалить</button>
                             </td>
                         }
                     </tr>

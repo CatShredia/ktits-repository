@@ -3,25 +3,25 @@
 @inject IFilmService FilmService
 @inject IAuthService AuthService
 
-<PageTitle>My Films - CinemaBlazor</PageTitle>
+<PageTitle>Мои фильмы - CinemaBlazor</PageTitle>
 
 <AuthorizeView Roles="admin">
     <Authorized>
-        <h3>🎬 My Films</h3>
+        <h3>🎬 Мои фильмы</h3>
 
         @if (isLoading)
         {
             <div class="text-center py-5">
                 <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden">Загрузка...</span>
                 </div>
             </div>
         }
         else if (films.Count == 0)
         {
             <div class="alert alert-info">
-                You haven't created any films yet. 
-                <a href="films/create">Create your first film!</a>
+                Вы ещё не создали ни одного фильма.
+                <a href="films/create">Создать свой первый фильм!</a>
             </div>
         }
         else
@@ -30,12 +30,12 @@
                 <table class="table table-hover">
                     <thead class="table-dark">
                         <tr>
-                            <th>Poster</th>
-                            <th>Name</th>
-                            <th>Genre</th>
-                            <th>Release Date</th>
-                            <th>Rating</th>
-                            <th>Actions</th>
+                            <th>Постер</th>
+                            <th>Название</th>
+                            <th>Жанр</th>
+                            <th>Дата выхода</th>
+                            <th>Рейтинг</th>
+                            <th>Действия</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,14 +55,14 @@
                                     }
                                 </td>
                                 <td>@film.Name</td>
-                                <td>@(film.Genre?.Name ?? "N/A")</td>
-                                <td>@film.ReleaseDate.ToString("MMM dd, yyyy")</td>
+                                <td>@(film.Genre?.Name ?? "Н/Д")</td>
+                                <td>@film.ReleaseDate.ToString("dd MMM yyyy")</td>
                                 <td>
                                     <span class="badge bg-warning text-dark">⭐ @film.AverageRating.ToString("F1")</span>
                                 </td>
                                 <td>
-                                    <a href="films/@film.Id" class="btn btn-sm btn-outline-primary me-1">View</a>
-                                    <a href="films/@film.Id/edit" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                    <a href="films/@film.Id" class="btn btn-sm btn-outline-primary me-1">Просмотр</a>
+                                    <a href="films/@film.Id/edit" class="btn btn-sm btn-outline-secondary">Изменить</a>
                                 </td>
                             </tr>
                         }
@@ -72,7 +72,7 @@
         }
     </Authorized>
     <NotAuthorized>
-        <div class="alert alert-warning">You must be an admin to view this page.</div>
+        <div class="alert alert-warning">Вы должны быть администратором для просмотра этой страницы.</div>
     </NotAuthorized>
 </AuthorizeView>
 

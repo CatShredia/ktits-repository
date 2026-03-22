@@ -3,27 +3,27 @@
 @inject IAuthService AuthService
 @inject NavigationManager Navigation
 
-<PageTitle>Login - CinemaBlazor</PageTitle>
+<PageTitle>Вход - CinemaBlazor</PageTitle>
 
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-4">
         <div class="card shadow">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">🔐 Login</h4>
+                <h4 class="mb-0">🔐 Вход</h4>
             </div>
             <div class="card-body">
                 <EditForm Model="@loginDto" OnValidSubmit="HandleLogin">
                     <DataAnnotationsValidator />
-                    
+
                     <div class="mb-3">
-                        <label class="form-label">Login</label>
-                        <InputText @bind-Value="loginDto.Login" class="form-control" placeholder="Enter your login" />
+                        <label class="form-label">Логин</label>
+                        <InputText @bind-Value="loginDto.Login" class="form-control" placeholder="Введите логин" />
                         <ValidationMessage For="@(() => loginDto.Login)" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <InputText @bind-Value="loginDto.Password" class="form-control" type="password" placeholder="Enter your password" />
+                        <label class="form-label">Пароль</label>
+                        <InputText @bind-Value="loginDto.Password" class="form-control" type="password" placeholder="Введите пароль" />
                         <ValidationMessage For="@(() => loginDto.Password)" />
                     </div>
 
@@ -37,12 +37,12 @@
                         {
                             <span class="spinner-border spinner-border-sm me-2"></span>
                         }
-                        Login
+                        Войти
                     </button>
                 </EditForm>
             </div>
             <div class="card-footer text-center">
-                <small>Don't have an account? <a href="register">Register here</a></small>
+                <small>Нет аккаунта? <a href="register">Зарегистрироваться</a></small>
             </div>
         </div>
     </div>
@@ -66,7 +66,7 @@
         }
         else
         {
-            errorMessage = "Invalid login or password";
+            errorMessage = "Неверный логин или пароль";
         }
 
         isLoading = false;

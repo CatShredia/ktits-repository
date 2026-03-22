@@ -2,27 +2,25 @@
 @layout MainLayout
 @inject IFilmService FilmService
 
-<PageTitle>Home - CinemaBlazor</PageTitle>
+<PageTitle>Главная - CinemaBlazor</PageTitle>
 
 <div class="text-center py-5">
-    <h1 class="display-4">🎬 Welcome to CinemaBlazor</h1>
-    <p class="lead">Your favorite place to discover and manage films</p>
+    <h1 class="display-4">🎬 Добро пожаловать в CinemaBlazor</h1>
+    <p class="lead">Ваше любимое место для просмотра и управления фильмами</p>
     <hr class="my-4" />
-    <p>Explore our collection of films, rate your favorites, and discover new classics!</p>
-    <a href="films" class="btn btn-primary btn-lg me-2">Browse Films</a>
 </div>
 
 @if (isLoading)
 {
     <div class="text-center py-5">
         <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">Загрузка...</span>
         </div>
     </div>
 }
 else if (featuredFilms.Count > 0)
 {
-    <h3 class="mb-4">Featured Films</h3>
+    <h3 class="mb-4">Популярные фильмы</h3>
     <div class="row row-cols-1 row-cols-md-3 g-4">
         @foreach (var film in featuredFilms.Take(3))
         {
@@ -47,14 +45,14 @@ else if (featuredFilms.Count > 0)
                                 <span class="badge bg-secondary me-1">@film.Genre.Name</span>
                             }
                         </p>
-                        <a href="films/@film.Id" class="btn btn-outline-primary">View Details</a>
+                        <a href="films/@film.Id" class="btn btn-outline-primary">Подробнее</a>
                     </div>
                 </div>
             </div>
         }
     </div>
     <div class="text-center mt-4">
-        <a href="films" class="btn btn-link">View all films →</a>
+        <a href="films" class="btn btn-link">Все фильмы →</a>
     </div>
 }
 

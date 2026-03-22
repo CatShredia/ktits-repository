@@ -5,24 +5,24 @@
 @inject IAuthService AuthService
 @inject IJSRuntime JSRuntime
 
-<PageTitle>Ratings - CinemaBlazor</PageTitle>
+<PageTitle>Оценки - CinemaBlazor</PageTitle>
 
 <AuthorizeView>
     <Authorized>
-        <h3>⭐ Ratings</h3>
+        <h3>⭐ Оценки</h3>
 
         @if (isLoading)
         {
             <div class="text-center py-5">
                 <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden">Загрузка...</span>
                 </div>
             </div>
         }
         else if (ratings.Count == 0)
         {
             <div class="alert alert-info">
-                No ratings found. Start rating films in the <a href="films">Films</a> section!
+                Оценок не найдено. Начните оценивать фильмы в разделе <a href="films">Фильмы</a>!
             </div>
         }
         else
@@ -31,12 +31,12 @@
                 <table class="table table-hover">
                     <thead class="table-dark">
                         <tr>
-                            <th>Film</th>
-                            <th>Your Rating</th>
-                            <th>Author</th>
+                            <th>Фильм</th>
+                            <th>Ваша оценка</th>
+                            <th>Автор</th>
                             @if (_isAdmin)
                             {
-                                <th>Actions</th>
+                                <th>Действия</th>
                             }
                         </tr>
                     </thead>
@@ -50,12 +50,12 @@
                                 <td>
                                     <span class="badge bg-warning text-dark">⭐ @rating.Value/10</span>
                                 </td>
-                                <td>@(rating.AuthorName ?? "Anonymous")</td>
+                                <td>@(rating.AuthorName ?? "Аноним")</td>
                                 @if (_isAdmin)
                                 {
                                     <td>
                                         <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteRating(rating.Id)">
-                                            Delete
+                                            Удалить
                                         </button>
                                     </td>
                                 }
@@ -68,7 +68,7 @@
     </Authorized>
     <NotAuthorized>
         <div class="alert alert-warning">
-            Please <a href="login">login</a> to view ratings.
+            Пожалуйста, <a href="login">войдите</a>, чтобы просматривать оценки.
         </div>
     </NotAuthorized>
 </AuthorizeView>

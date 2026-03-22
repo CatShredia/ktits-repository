@@ -13,14 +13,14 @@
                 <Authorized>
                     @if (!string.IsNullOrEmpty(_userName))
                     {
-                        <span class="me-3">Welcome, @_userName! </span>
+                        <span class="me-3">Привет, @_userName!</span>
                     }
-                    <a href="profile" class="me-2">Profile</a>
-                    <a href="logout" class="btn btn-link">Logout</a>
+                    <a href="profile" class="me-2">Профиль</a>
+                    <a href="logout" class="btn btn-link">Выход</a>
                 </Authorized>
                 <NotAuthorized>
-                    <a href="login" class="me-2">Login</a>
-                    <a href="register">Register</a>
+                    <a href="login" class="me-2">Вход</a>
+                    <a href="register">Регистрация</a>
                 </NotAuthorized>
             </AuthorizeView>
         </div>
@@ -34,14 +34,14 @@
                 <div class="row">
                     <div class="col-md-4 text-center text-md-start">
                         <h5>🎬 CinemaBlazor</h5>
-                        <p class="text-muted small">Your favorite place to discover and manage films</p>
+                        <p class="text-muted small">Ваше любимое место для просмотра и управления фильмами</p>
                     </div>
                     <div class="col-md-4 text-center">
-                        <h6>Quick Links</h6>
+                        <h6>Быстрые ссылки</h6>
                         <ul class="list-unstyled">
-                            <li><a href="films" class="text-decoration-none">Films</a></li>
-                            <li><a href="genres" class="text-decoration-none">Genres</a></li>
-                            <li><a href="ratings" class="text-decoration-none">Ratings</a></li>
+                            <li><a href="films" class="text-decoration-none">Фильмы</a></li>
+                            <li><a href="genres" class="text-decoration-none">Жанры</a></li>
+                            <li><a href="ratings" class="text-decoration-none">Оценки</a></li>
                         </ul>
                     </div>
                 </div>
