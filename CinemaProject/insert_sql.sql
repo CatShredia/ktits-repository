@@ -5,9 +5,23 @@ TRUNCATE TABLE public."Ratings",
 public."Logins",
 public."Films",
 public."Users",
-public."Genres" RESTART IDENTITY CASCADE;
+public."Genres",
+public."Roles" RESTART IDENTITY CASCADE;
 
 -- 2. Вставка тестовых данных
+-- Таблица: Roles (Роли)
+INSERT INTO
+    public."Roles" ("Name", "Description")
+VALUES
+    (
+        'admin',
+        'Администратор - полный доступ ко всем функциям'
+    ),
+    (
+        'client',
+        'Пользователь - ограниченный доступ, только просмотр и оценки'
+    );
+
 -- Таблица: Genres (Жанры)
 INSERT INTO
     public."Genres" ("Name", "Description")
@@ -35,49 +49,64 @@ VALUES
 
 -- Таблица: Users (Пользователи)
 -- Обратите внимание: Gender должен быть NOT NULL
+-- RoleId: 1 = admin, 2 = client
 INSERT INTO
     public."Users" (
         "Surname",
         "Name",
         "Description",
         "Gender",
-        "Email"
+        "Email",
+        "RoleId"
     )
 VALUES
+    (
+        'Admin',
+        'Admin',
+        'Администратор системы',
+        'Male',
+        'admin@example.com',
+        1
+    ),
     (
         'Иванов',
         'Алексей',
         'Любитель научной фантастики',
         'Male',
-        'alexey.ivanov@example.com'
+        'alexey.ivanov@example.com',
+        2
     ),
     (
         'Петрова',
         'Мария',
         'Кинокритик со стажем',
         'Female',
-        'maria.petrova@example.com'
+        'maria.petrova@example.com',
+        2
     ),
     (
         'Сидоров',
         'Дмитрий',
         'Фанат экшена',
         'Male',
-        'dmitry.sidorov@example.com'
+        'dmitry.sidorov@example.com',
+        2
     ),
     (
         'Смирнова',
         'Елена',
         'Ценитель классики',
         'Female',
-        'elena.smirnova@example.com'
+        'elena.smirnova@example.com',
+        2
     ),
     (
         'Кузнецов',
         'Игорь',
         'Смотрю всё подряд',
         'Male',
-        'igor.kuznetsov@example.com'
+        'igor.kuznetsov@example.com',
+        2
     );
 
 -- Таблица: Films (Фильмы)

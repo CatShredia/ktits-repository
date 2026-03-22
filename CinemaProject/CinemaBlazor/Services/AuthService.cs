@@ -121,8 +121,13 @@ public class AuthService : IAuthService
         try
         {
             var jwtToken = handler.ReadJwtToken(token);
-            var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "role");
-            return roleClaim?.Value == role;
+            
+            // Проверяем оба возможных имени claim для роли
+            var roleClaim = jwtToken.Claims.FirstOrDefault(c => 
+                c.Type == "role" || 
+                c.Type == ClaimTypes.Role)?.Value;
+                
+            return roleClaim == role;
         }
         catch
         {

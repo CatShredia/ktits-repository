@@ -46,6 +46,19 @@ public class AuthController : ControllerBase
             return BadRequest("Email already exists");
         }
 
+        // Get role (default to "client" if not specified or not found)
+        Role? role = null;
+        if (dto.RoleId.HasValue)
+        {
+            role = await _context.Roles.FindAsync(dto.RoleId.Value);
+        }
+        
+        // If no role specified or found, get default "client" role
+        if (role == null)
+        {
+            role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "client");
+        }
+
         // Create user
         var user = new User
         {
@@ -53,7 +66,8 @@ public class AuthController : ControllerBase
             Name = dto.Name,
             Description = dto.Description,
             Gender = dto.Gender,
-            Email = dto.Email
+            Email = dto.Email,
+            RoleId = role?.Id
         };
 
         // Create login with hashed password
@@ -69,7 +83,8 @@ public class AuthController : ControllerBase
         await _context.SaveChangesAsync();
 
         // Generate JWT token
-        var token = GenerateJwtToken(user.Id, "client", user);
+        var roleName = role?.Name ?? "client";
+        var token = GenerateJwtToken(user.Id, roleName, user, role);
 
         return new AuthResponseDto
         {
@@ -81,9 +96,11 @@ public class AuthController : ControllerBase
                 Name = user.Name,
                 Description = user.Description,
                 Gender = user.Gender,
-                Email = user.Email
+                Email = user.Email,
+                RoleId = user.RoleId,
+                RoleName = roleName
             },
-            Role = "client"
+            Role = roleName
         };
     }
 
@@ -98,6 +115,7 @@ public class AuthController : ControllerBase
     {
         var login = await _context.Logins
             .Include(l => l.User)
+            .ThenInclude(u => u.Role)
             .FirstOrDefaultAsync(l => l.LoginValue == dto.Login);
 
         if (login == null || !VerifyPassword(dto.Password, login.PasswordHash))
@@ -105,11 +123,11 @@ public class AuthController : ControllerBase
             return Unauthorized("Invalid login or password");
         }
 
-        // Determine role (you can add Role field to User or Login table)
-        var role = login.User.Email.Contains("admin") ? "admin" : "client";
+        // Get role from database
+        var roleName = login.User.Role?.Name ?? "client";
 
         // Generate JWT token
-        var token = GenerateJwtToken(login.UserId, role, login.User);
+        var token = GenerateJwtToken(login.UserId, roleName, login.User, login.User.Role);
 
         return new AuthResponseDto
         {
@@ -121,9 +139,11 @@ public class AuthController : ControllerBase
                 Name = login.User.Name,
                 Description = login.User.Description,
                 Gender = login.User.Gender,
-                Email = login.User.Email
+                Email = login.User.Email,
+                RoleId = login.User.RoleId,
+                RoleName = roleName
             },
-            Role = role
+            Role = roleName
         };
     }
 
@@ -141,7 +161,10 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
-        var user = await _context.Users.FindAsync(userId);
+        var user = await _context.Users
+            .Include(u => u.Role)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+            
         if (user == null)
         {
             return NotFound();
@@ -154,7 +177,9 @@ public class AuthController : ControllerBase
             Name = user.Name,
             Description = user.Description,
             Gender = user.Gender,
-            Email = user.Email
+            Email = user.Email,
+            RoleId = user.RoleId,
+            RoleName = user.Role?.Name
         };
     }
 
@@ -190,7 +215,7 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
-    private string GenerateJwtToken(int userId, string role, User? user = null)
+    private string GenerateJwtToken(int userId, string role, User? user = null, Role? userRole = null)
     {
         var jwtSettings = _configuration.GetSection("Jwt");
         var key = new SymmetricSecurityKey(

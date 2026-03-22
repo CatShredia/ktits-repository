@@ -8,6 +8,8 @@ public class User
     public string? Description { get; set; }
     public string Gender { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
+    public int? RoleId { get; set; }
+    public Role? Role { get; set; }
 
     // Navigation property
     public Login? Login { get; set; }

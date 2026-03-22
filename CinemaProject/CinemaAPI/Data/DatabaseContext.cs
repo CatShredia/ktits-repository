@@ -14,6 +14,7 @@ public class DatabaseContext : DbContext
     public DbSet<Rating> Ratings { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Login> Logins { get; set; } = null!;
+    public DbSet<Role> Roles { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -57,6 +58,10 @@ public class DatabaseContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Email).IsRequired();
+            entity.HasOne(e => e.Role)
+                  .WithMany(r => r.Users)
+                  .HasForeignKey(e => e.RoleId)
+                  .OnDelete(DeleteBehavior.SetNull);
             entity.HasOne(e => e.Login)
                   .WithOne(l => l.User)
                   .HasForeignKey<Login>(l => l.UserId)

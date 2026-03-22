@@ -84,7 +84,7 @@
     protected override async Task OnInitializedAsync()
     {
         _isAdmin = await AuthService.IsInRoleAsync("admin");
-        
+
         if (_isAdmin)
         {
             isLoading = true;
