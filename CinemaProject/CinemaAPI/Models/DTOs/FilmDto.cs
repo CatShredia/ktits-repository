@@ -15,6 +15,29 @@ public class FilmDto
     public int RatingsCount { get; set; }
 }
 
+public class FilmCreateDto
+{
+    public string Name { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public DateTime ReleaseDate { get; set; }
+    public int GenreId { get; set; }
+
+    public string? ExternalImageUrl { get; set; }
+}
+
+public class FilmUpdateDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public DateTime ReleaseDate { get; set; }
+    public int GenreId { get; set; }
+
+    public string? ExternalImageUrl { get; set; }
+
+    public bool RemoveImage { get; set; }
+}
+
 public class GenreDto
 {
     public int Id { get; set; }

@@ -1,9 +1,11 @@
 using CinemaAPI.Data;
+using CinemaAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,13 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.MaxDepth = 64;
     });
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 5 * 1024 * 1024; // 5 MB
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartHeadersLengthLimit = int.MaxValue;
+});
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
@@ -92,6 +101,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// Регистрация сервиса для работы с изображениями
+builder.Services.AddScoped<IImageService, ImageService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -107,6 +119,9 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowBlazor");
 
 app.UseHttpsRedirection();
+
+// Раздача статических файлов (изображения фильмов)
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,6 +1,7 @@
 using CinemaAPI.Data;
 using CinemaAPI.Models;
 using CinemaAPI.Models.DTOs;
+using CinemaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace CinemaAPI.Controllers;
 public class FilmsController : ControllerBase
 {
     private readonly DatabaseContext _context;
+    private readonly IImageService _imageService;
 
-    public FilmsController(DatabaseContext context)
+    public FilmsController(DatabaseContext context, IImageService imageService)
     {
         _context = context;
+        _imageService = imageService;
     }
 
     // ! Films get
@@ -152,8 +155,21 @@ public class FilmsController : ControllerBase
     // ! Create New Film, only admins
     [HttpPost]
     [Authorize(Roles = "admin")]
-    public async Task<ActionResult<FilmDto>> PostFilm(Film film)
+    public async Task<ActionResult<FilmDto>> PostFilm(
+        [FromForm] FilmCreateDto dto,
+        IFormFile? imageFile)
     {
+        var imageUrl = await ProcessImageAsync(imageFile, dto.ExternalImageUrl);
+
+        var film = new Film
+        {
+            Name = dto.Name,
+            Description = dto.Description,
+            ReleaseDate = dto.ReleaseDate,
+            GenreId = dto.GenreId,
+            ImageUrl = imageUrl
+        };
+
         var userId = GetCurrentUserId();
         if (userId != null)
         {
@@ -166,14 +182,100 @@ public class FilmsController : ControllerBase
         return CreatedAtAction(nameof(GetFilm), new { id = film.Id }, await GetFilmDtoAsync(film.Id));
     }
 
+    // ! upload image
+    private async Task<string?> ProcessImageAsync(IFormFile? imageFile, string? externalImageUrl)
+    {
+        if (imageFile != null && imageFile.Length > 0)
+        {
+            try
+            {
+                return await _imageService.SaveImageAsync(imageFile);
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError(nameof(imageFile), ex.Message);
+                return null;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(externalImageUrl))
+        {
+            if (Uri.TryCreate(externalImageUrl, UriKind.Absolute, out var uriResult)
+                && (uriResult.Scheme == "http" || uriResult.Scheme == "https"))
+            {
+                return externalImageUrl;
+            }
+            ModelState.AddModelError(nameof(externalImageUrl), "Invalid URL format");
+        }
+
+        return null;
+    }
+
     // ! Update Film, only admins
     [HttpPut("{id}")]
     [Authorize(Roles = "admin")]
-    public async Task<IActionResult> PutFilm(int id, Film film)
+    public async Task<IActionResult> PutFilm(
+        int id,
+        [FromForm] FilmUpdateDto dto,
+        IFormFile? imageFile)
     {
-        if (id != film.Id)
+        if (id != dto.Id)
         {
             return BadRequest();
+        }
+
+        var film = await _context.Films.FindAsync(id);
+        if (film == null)
+        {
+            return NotFound();
+        }
+
+        film.Name = dto.Name;
+        film.Description = dto.Description;
+        film.ReleaseDate = dto.ReleaseDate;
+        film.GenreId = dto.GenreId;
+
+        if (imageFile != null && imageFile.Length > 0)
+        {
+            if (!string.IsNullOrEmpty(film.ImageUrl))
+            {
+                _imageService.DeleteImage(film.ImageUrl);
+            }
+
+            try
+            {
+                film.ImageUrl = await _imageService.SaveImageAsync(imageFile);
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError(nameof(imageFile), ex.Message);
+                return BadRequest(ModelState);
+            }
+        }
+        else if (dto.RemoveImage)
+        {
+            if (!string.IsNullOrEmpty(film.ImageUrl))
+            {
+                _imageService.DeleteImage(film.ImageUrl);
+            }
+            film.ImageUrl = null;
+        }
+        else if (!string.IsNullOrEmpty(dto.ExternalImageUrl))
+        {
+            if (Uri.TryCreate(dto.ExternalImageUrl, UriKind.Absolute, out var uriResult)
+                && (uriResult.Scheme == "http" || uriResult.Scheme == "https"))
+            {
+                if (!string.IsNullOrEmpty(film.ImageUrl) && film.ImageUrl.StartsWith("/images/"))
+                {
+                    _imageService.DeleteImage(film.ImageUrl);
+                }
+                film.ImageUrl = dto.ExternalImageUrl;
+            }
+            else
+            {
+                ModelState.AddModelError(nameof(dto.ExternalImageUrl), "Invalid URL format");
+                return BadRequest(ModelState);
+            }
         }
 
         var userId = GetCurrentUserId();
@@ -181,8 +283,6 @@ public class FilmsController : ControllerBase
         {
             film.AuthorId = userId;
         }
-
-        _context.Entry(film).State = EntityState.Modified;
 
         try
         {
@@ -246,6 +346,11 @@ public class FilmsController : ControllerBase
         if (film == null)
         {
             return NotFound();
+        }
+
+        if (!string.IsNullOrEmpty(film.ImageUrl))
+        {
+            _imageService.DeleteImage(film.ImageUrl);
         }
 
         _context.Films.Remove(film);
