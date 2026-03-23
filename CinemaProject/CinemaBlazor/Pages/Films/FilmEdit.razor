@@ -75,25 +75,25 @@
                             <!-- Переключатель режима -->
                             <div class="btn-group w-100 mb-2" role="group">
                                 <input type="radio" class="btn-check" name="imageMode" id="modeKeep"
-                                       value="keep" checked="@(imageMode == "keep")" @onclick="(() => imageMode = "keep")" />
+                                       value="keep" checked="@(imageMode == "keep")" @onclick="@(() => imageMode = "keep")" />
                                 <label class="btn btn-outline-secondary" for="modeKeep">
                                     ✓ Оставить текущее
                                 </label>
 
                                 <input type="radio" class="btn-check" name="imageMode" id="modeFile"
-                                       value="file" checked="@(imageMode == "file")" @onclick="(() => imageMode = "file")" />
+                                       value="file" checked="@(imageMode == "file")" @onclick="@(() => imageMode = "file")" />
                                 <label class="btn btn-outline-primary" for="modeFile">
                                     📤 Загрузить новый
                                 </label>
 
                                 <input type="radio" class="btn-check" name="imageMode" id="modeUrl"
-                                       value="url" checked="@(imageMode == "url")" @onclick="(() => imageMode = "url")" />
+                                       value="url" checked="@(imageMode == "url")" @onclick="@(() => imageMode = "url")" />
                                 <label class="btn btn-outline-primary" for="modeUrl">
                                     🔗 Внешняя ссылка
                                 </label>
 
                                 <input type="radio" class="btn-check" name="imageMode" id="modeRemove"
-                                       value="remove" checked="@(imageMode == "remove")" @onclick="(() => imageMode = "remove")" />
+                                       value="remove" checked="@(imageMode == "remove")" @onclick="@(() => imageMode = "remove")" />
                                 <label class="btn btn-outline-danger" for="modeRemove">
                                     🗑️ Удалить
                                 </label>

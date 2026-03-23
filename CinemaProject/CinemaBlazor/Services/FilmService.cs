@@ -75,10 +75,10 @@ public class FilmService : IFilmService
         using var content = new MultipartFormDataContent();
 
         // Добавляем поля фильма
-        content.Add(new StringContent(film.Name), "dto.Name");
+        content.Add(new StringContent(film.Name ?? ""), "dto.Name");
         content.Add(new StringContent(film.Description ?? ""), "dto.Description");
         content.Add(new StringContent(film.ReleaseDate.ToString("yyyy-MM-dd")), "dto.ReleaseDate");
-        content.Add(new StringContent(film.GenreId.ToString()), "dto.GenreId");
+        content.Add(new StringContent(film.GenreId?.ToString() ?? "0"), "dto.GenreId");
 
         // Добавляем внешний URL если есть
         if (!string.IsNullOrEmpty(externalImageUrl))
@@ -111,10 +111,10 @@ public class FilmService : IFilmService
 
         // Добавляем обязательные поля
         content.Add(new StringContent(id.ToString()), "id");
-        content.Add(new StringContent(film.Name), "dto.Name");
+        content.Add(new StringContent(film.Name ?? ""), "dto.Name");
         content.Add(new StringContent(film.Description ?? ""), "dto.Description");
         content.Add(new StringContent(film.ReleaseDate.ToString("yyyy-MM-dd")), "dto.ReleaseDate");
-        content.Add(new StringContent(film.GenreId.ToString()), "dto.GenreId");
+        content.Add(new StringContent(film.GenreId?.ToString() ?? "0"), "dto.GenreId");
 
         // Добавляем внешний URL если есть
         if (!string.IsNullOrEmpty(externalImageUrl))
