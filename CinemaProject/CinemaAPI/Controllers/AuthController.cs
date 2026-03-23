@@ -12,6 +12,7 @@ using System.Text;
 
 namespace CinemaAPI.Controllers;
 
+// Register, Login, GenerateJWT, UserProfile get/update, Hash/Unhash password, JWTToken get
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
@@ -25,41 +26,32 @@ public class AuthController : ControllerBase
         _configuration = configuration;
     }
 
-    /// <summary>
-    /// Register a new user
-    /// </summary>
-    /// <param name="dto">User registration data</param>
-    /// <returns>Registration result</returns>
+    // ! Register a new user
     [HttpPost("register")]
     [AllowAnonymous]
     public async Task<ActionResult<AuthResponseDto>> Register(UserRegisterDto dto)
     {
-        // Check if login already exists
         if (await _context.Logins.AnyAsync(l => l.LoginValue == dto.Login))
         {
             return BadRequest("Login already exists");
         }
 
-        // Check if email already exists
         if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
         {
             return BadRequest("Email already exists");
         }
 
-        // Get role (default to "client" if not specified or not found)
         Role? role = null;
         if (dto.RoleId.HasValue)
         {
             role = await _context.Roles.FindAsync(dto.RoleId.Value);
         }
-        
-        // If no role specified or found, get default "client" role
+
         if (role == null)
         {
             role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "client");
         }
 
-        // Create user
         var user = new User
         {
             Surname = dto.Surname,
@@ -70,7 +62,6 @@ public class AuthController : ControllerBase
             RoleId = role?.Id
         };
 
-        // Create login with hashed password
         var login = new Login
         {
             LoginValue = dto.Login,
@@ -82,7 +73,6 @@ public class AuthController : ControllerBase
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        // Generate JWT token
         var roleName = role?.Name ?? "client";
         var token = GenerateJwtToken(user.Id, roleName, user, role);
 
@@ -104,11 +94,7 @@ public class AuthController : ControllerBase
         };
     }
 
-    /// <summary>
-    /// Login user
-    /// </summary>
-    /// <param name="dto">Login credentials</param>
-    /// <returns>JWT token and user info</returns>
+    // ! Login user
     [HttpPost("login")]
     [AllowAnonymous]
     public async Task<ActionResult<AuthResponseDto>> Login(UserLoginDto dto)
@@ -123,10 +109,8 @@ public class AuthController : ControllerBase
             return Unauthorized("Invalid login or password");
         }
 
-        // Get role from database
         var roleName = login.User.Role?.Name ?? "client";
 
-        // Generate JWT token
         var token = GenerateJwtToken(login.UserId, roleName, login.User, login.User.Role);
 
         return new AuthResponseDto
@@ -147,10 +131,7 @@ public class AuthController : ControllerBase
         };
     }
 
-    /// <summary>
-    /// Get current user info
-    /// </summary>
-    /// <returns>Current user data</returns>
+    // ! Get profile
     [HttpGet("me")]
     [Authorize]
     public async Task<ActionResult<UserResponseDto>> GetCurrentUser()
@@ -164,7 +145,7 @@ public class AuthController : ControllerBase
         var user = await _context.Users
             .Include(u => u.Role)
             .FirstOrDefaultAsync(u => u.Id == userId);
-            
+
         if (user == null)
         {
             return NotFound();
@@ -183,11 +164,7 @@ public class AuthController : ControllerBase
         };
     }
 
-    /// <summary>
-    /// Update current user profile
-    /// </summary>
-    /// <param name="dto">Updated user data</param>
-    /// <returns>Updated user</returns>
+    // !Update profile
     [HttpPut("me")]
     [Authorize]
     public async Task<IActionResult> UpdateCurrentUser(UserResponseDto dto)
@@ -215,11 +192,12 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
+    // ! GenerateJWT (JWT includes userId, roleName, name, surname, email)
     private string GenerateJwtToken(int userId, string role, User? user = null, Role? userRole = null)
     {
         var jwtSettings = _configuration.GetSection("Jwt");
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? "DefaultSecretKeyForDevelopment123!"));
+            Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? "sGfUT7LWQwU7TGB4aEHLDEKhFWst9wNh"));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new List<Claim>
@@ -228,7 +206,6 @@ public class AuthController : ControllerBase
             new Claim(ClaimTypes.Role, role)
         };
 
-        // Добавляем имя и фамилию в токен
         if (user != null)
         {
             claims.Add(new Claim("name", user.Name));
@@ -247,6 +224,7 @@ public class AuthController : ControllerBase
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
+    // ! Get userId from JWT token
     private int? GetCurrentUserId()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -257,6 +235,7 @@ public class AuthController : ControllerBase
         return null;
     }
 
+    // ! Passwords
     private string HashPassword(string password)
     {
         using var sha256 = SHA256.Create();

@@ -8,6 +8,7 @@ using System.Security.Claims;
 
 namespace CinemaAPI.Controllers;
 
+// Film get/get one, Average film rating get, Create New Film, 
 [ApiController]
 [Route("api/[controller]")]
 public class FilmsController : ControllerBase
@@ -19,13 +20,8 @@ public class FilmsController : ControllerBase
         _context = context;
     }
 
-    /// <summary>
-    /// Get all films with optional sorting and filtering
-    /// </summary>
-    /// <param name="sortBy">Sort by: name, releaseDate, rating</param>
-    /// <param name="genreId">Filter by genre ID</param>
-    /// <param name="search">Search by name</param>
-    /// <returns>List of films</returns>
+    // ! Films get
+    // Film search, sort, filter by query
     [HttpGet]
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<FilmDto>>> GetFilms(
@@ -39,7 +35,6 @@ public class FilmsController : ControllerBase
             .Include(f => f.Ratings)
             .AsQueryable();
 
-        // Filtering
         if (genreId.HasValue)
         {
             query = query.Where(f => f.GenreId == genreId.Value);
@@ -50,7 +45,6 @@ public class FilmsController : ControllerBase
             query = query.Where(f => f.Name.Contains(search));
         }
 
-        // Sorting
         query = sortBy?.ToLower() switch
         {
             "name" => query.OrderBy(f => f.Name),
@@ -63,7 +57,7 @@ public class FilmsController : ControllerBase
         };
 
         var films = await query.ToListAsync();
-        
+
         return films.Select(f => new FilmDto
         {
             Id = f.Id,
@@ -90,11 +84,7 @@ public class FilmsController : ControllerBase
         }).ToList();
     }
 
-    /// <summary>
-    /// Get a specific film by ID
-    /// </summary>
-    /// <param name="id">Film ID</param>
-    /// <returns>The film</returns>
+    // ! Film one get
     [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<ActionResult<FilmDto>> GetFilm(int id)
@@ -136,11 +126,7 @@ public class FilmsController : ControllerBase
         };
     }
 
-    /// <summary>
-    /// Get average rating for a specific film
-    /// </summary>
-    /// <param name="id">Film ID</param>
-    /// <returns>Average rating value</returns>
+    // ! Average film rating get
     [HttpGet("{id}/average-rating")]
     [AllowAnonymous]
     public async Task<ActionResult<double>> GetAverageRating(int id)
@@ -163,11 +149,7 @@ public class FilmsController : ControllerBase
         return ratings.Average(r => r.Value);
     }
 
-    /// <summary>
-    /// Create a new film (Admin only)
-    /// </summary>
-    /// <param name="film">Film data</param>
-    /// <returns>Created film</returns>
+    // ! Create New Film, only admins
     [HttpPost]
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<FilmDto>> PostFilm(Film film)
@@ -184,12 +166,7 @@ public class FilmsController : ControllerBase
         return CreatedAtAction(nameof(GetFilm), new { id = film.Id }, await GetFilmDtoAsync(film.Id));
     }
 
-    /// <summary>
-    /// Update an existing film (Admin only)
-    /// </summary>
-    /// <param name="id">Film ID</param>
-    /// <param name="film">Updated film data</param>
-    /// <returns>Updated film</returns>
+    // ! Update Film, only admins
     [HttpPut("{id}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> PutFilm(int id, Film film)
@@ -259,11 +236,6 @@ public class FilmsController : ControllerBase
         };
     }
 
-    /// <summary>
-    /// Delete a film (Admin only)
-    /// </summary>
-    /// <param name="id">Film ID</param>
-    /// <returns>No content</returns>
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> DeleteFilm(int id)
@@ -280,10 +252,6 @@ public class FilmsController : ControllerBase
         return NoContent();
     }
 
-    /// <summary>
-    /// Get films created by current user
-    /// </summary>
-    /// <returns>List of user's films</returns>
     [HttpGet("my-films")]
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<IEnumerable<FilmDto>>> GetMyFilms()
