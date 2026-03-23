@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CinemaAPI.Controllers;
 
+// 
 [ApiController]
 [Route("api/[controller]")]
 public class RolesController : ControllerBase
@@ -18,9 +19,7 @@ public class RolesController : ControllerBase
         _context = context;
     }
 
-    /// <summary>
-    /// Get all roles
-    /// </summary>
+    // ! get roles 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
     {
@@ -34,9 +33,7 @@ public class RolesController : ControllerBase
             .ToListAsync();
     }
 
-    /// <summary>
-    /// Get role by ID
-    /// </summary>
+    // ! get roles by id
     [HttpGet("{id}")]
     public async Task<ActionResult<RoleDto>> GetRole(int id)
     {
@@ -54,9 +51,7 @@ public class RolesController : ControllerBase
         };
     }
 
-    /// <summary>
-    /// Create a new role (Admin only)
-    /// </summary>
+    // ! create new role
     [HttpPost]
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<RoleDto>> CreateRole(RoleDto dto)
@@ -73,14 +68,11 @@ public class RolesController : ControllerBase
         return CreatedAtAction(nameof(GetRole), new { id = role.Id }, dto);
     }
 
-    /// <summary>
-    /// Initialize default roles (run once on first setup)
-    /// </summary>
+    // ! create roles when server db starts
     [HttpPost("initialize")]
     [AllowAnonymous]
     public async Task<IActionResult> InitializeDefaultRoles()
     {
-        // Check if roles already exist
         if (await _context.Roles.AnyAsync())
         {
             return BadRequest("Roles already exist");

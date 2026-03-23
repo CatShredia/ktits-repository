@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace CinemaAPI.Controllers;
 
-// Film get/get one, Average film rating get, Create New Film, 
+// Film get/get one, Average film rating get, Create New Film, DeleteFilm
 [ApiController]
 [Route("api/[controller]")]
 public class FilmsController : ControllerBase
@@ -200,6 +200,7 @@ public class FilmsController : ControllerBase
         return NoContent();
     }
 
+    // ! Film one get without endpoint
     private async Task<FilmDto?> GetFilmDtoAsync(int id)
     {
         var film = await _context.Films
@@ -236,6 +237,7 @@ public class FilmsController : ControllerBase
         };
     }
 
+    // ! Delete Film 
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> DeleteFilm(int id)
@@ -252,6 +254,7 @@ public class FilmsController : ControllerBase
         return NoContent();
     }
 
+    // MyFilms get
     [HttpGet("my-films")]
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<IEnumerable<FilmDto>>> GetMyFilms()

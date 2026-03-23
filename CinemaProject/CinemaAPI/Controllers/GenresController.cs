@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CinemaAPI.Controllers;
 
+// genre CRUD and get one
 [ApiController]
 [Route("api/[controller]")]
 public class GenresController : ControllerBase
@@ -17,10 +18,7 @@ public class GenresController : ControllerBase
         _context = context;
     }
 
-    /// <summary>
-    /// Get all genres
-    /// </summary>
-    /// <returns>List of genres</returns>
+    // ! Genres get
     [HttpGet]
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<Genre>>> GetGenres()
@@ -28,11 +26,7 @@ public class GenresController : ControllerBase
         return await _context.Genres.ToListAsync();
     }
 
-    /// <summary>
-    /// Get a specific genre by ID
-    /// </summary>
-    /// <param name="id">Genre ID</param>
-    /// <returns>The genre</returns>
+    // ! Genres one
     [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<ActionResult<Genre>> GetGenre(int id)
@@ -47,11 +41,7 @@ public class GenresController : ControllerBase
         return genre;
     }
 
-    /// <summary>
-    /// Create a new genre (Admin only)
-    /// </summary>
-    /// <param name="genre">Genre data</param>
-    /// <returns>Created genre</returns>
+    // ! Genre creare new
     [HttpPost]
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<Genre>> PostGenre(Genre genre)
@@ -62,12 +52,7 @@ public class GenresController : ControllerBase
         return CreatedAtAction(nameof(GetGenre), new { id = genre.Id }, genre);
     }
 
-    /// <summary>
-    /// Update an existing genre (Admin only)
-    /// </summary>
-    /// <param name="id">Genre ID</param>
-    /// <param name="genre">Updated genre data</param>
-    /// <returns>Updated genre</returns>
+    // ! Genre update
     [HttpPut("{id}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> PutGenre(int id, Genre genre)
@@ -95,11 +80,7 @@ public class GenresController : ControllerBase
         return NoContent();
     }
 
-    /// <summary>
-    /// Delete a genre (Admin only)
-    /// </summary>
-    /// <param name="id">Genre ID</param>
-    /// <returns>No content</returns>
+    // ! Genre delete
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> DeleteGenre(int id)

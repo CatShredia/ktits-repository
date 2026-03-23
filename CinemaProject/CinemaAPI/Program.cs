@@ -7,8 +7,6 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazor", policy =>
@@ -32,13 +30,11 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.MaxDepth = 64;
     });
 
-// Настройка Npgsql для работы с локальным временем
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configure JWT Authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -55,7 +51,7 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "DefaultSecretKeyForDevelopment123!"))
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "sGfUT7LWQwU7TGB4aEHLDEKhFWst9wNh"))
     };
 });
 
@@ -71,7 +67,6 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API for managing films, genres, and ratings with role-based access control"
     });
 
-    // Add JWT Authentication to Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token.",
@@ -99,14 +94,13 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cinema API v1");
-        c.RoutePrefix = string.Empty; // Set Swagger UI at app's root
+        c.RoutePrefix = string.Empty;
     });
 }
 

@@ -8,6 +8,7 @@ using System.Security.Claims;
 
 namespace CinemaAPI.Controllers;
 
+// rating CRUD and one
 [ApiController]
 [Route("api/[controller]")]
 public class RatingsController : ControllerBase
@@ -19,10 +20,7 @@ public class RatingsController : ControllerBase
         _context = context;
     }
 
-    /// <summary>
-    /// Get all ratings
-    /// </summary>
-    /// <returns>List of ratings</returns>
+    // ! get all rating 
     [HttpGet]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<IEnumerable<RatingResponseDto>>> GetRatings()
@@ -43,11 +41,7 @@ public class RatingsController : ControllerBase
         }).ToList();
     }
 
-    /// <summary>
-    /// Get a specific rating by ID (Client and Admin)
-    /// </summary>
-    /// <param name="id">Rating ID</param>
-    /// <returns>The rating</returns>
+    // ! get rating by userID
     [HttpGet("{id}")]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<RatingResponseDto>> GetRating(int id)
@@ -73,11 +67,7 @@ public class RatingsController : ControllerBase
         };
     }
 
-    /// <summary>
-    /// Create a new rating (Admin and Client)
-    /// </summary>
-    /// <param name="dto">Rating data</param>
-    /// <returns>Created rating</returns>
+    // ! create new rating
     [HttpPost]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<Rating>> PostRating(RatingCreateDto dto)
@@ -88,7 +78,6 @@ public class RatingsController : ControllerBase
             return Unauthorized();
         }
 
-        // Check if user already rated this film
         var existingRating = await _context.Ratings
             .FirstOrDefaultAsync(r => r.FilmId == dto.FilmId && r.AuthorId == userId);
 
@@ -110,12 +99,7 @@ public class RatingsController : ControllerBase
         return CreatedAtAction(nameof(GetRating), new { id = rating.Id }, rating);
     }
 
-    /// <summary>
-    /// Update an existing rating (Admin only)
-    /// </summary>
-    /// <param name="id">Rating ID</param>
-    /// <param name="dto">Updated rating data</param>
-    /// <returns>Updated rating</returns>
+    // ! update rating
     [HttpPut("{id}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> PutRating(int id, RatingUpdateDto dto)
@@ -132,11 +116,7 @@ public class RatingsController : ControllerBase
         return NoContent();
     }
 
-    /// <summary>
-    /// Delete a rating (Admin only)
-    /// </summary>
-    /// <param name="id">Rating ID</param>
-    /// <returns>No content</returns>
+    // ! delete rating
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> DeleteRating(int id)
@@ -153,11 +133,7 @@ public class RatingsController : ControllerBase
         return NoContent();
     }
 
-    /// <summary>
-    /// Get current user's rating for a specific film
-    /// </summary>
-    /// <param name="filmId">Film ID</param>
-    /// <returns>User's rating or null</returns>
+    // ! get ratings by userId 
     [HttpGet("film/{filmId}/my-rating")]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<Rating>> GetMyRatingForFilm(int filmId)
