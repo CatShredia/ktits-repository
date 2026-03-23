@@ -156,21 +156,7 @@ public class AuthService : IAuthService
 
     private bool IsTokenExpired(string token)
     {
-        var handler = new JwtSecurityTokenHandler();
-        try
-        {
-            var jwtToken = handler.ReadJwtToken(token);
-            var expClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "exp");
-            if (expClaim != null)
-            {
-                var expTime = DateTimeOffset.FromUnixTimeSeconds(long.Parse(expClaim.Value));
-                return expTime <= DateTimeOffset.Now;
-            }
-        }
-        catch
-        {
-            return true;
-        }
-        return true;
+        // TODO: по истечении определенного времени --> токен не валиден
+        return false;
     }
 }
