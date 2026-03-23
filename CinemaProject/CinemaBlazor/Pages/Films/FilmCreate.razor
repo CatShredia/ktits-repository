@@ -47,9 +47,48 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">URL изображения</label>
-                        <InputText @bind-Value="film.ImageUrl" class="form-control"
-                                   placeholder="https://example.com/image.jpg" />
+                        <label class="form-label">Изображение фильма</label>
+
+                        <!-- Переключатель режима -->
+                        <div class="btn-group w-100 mb-2" role="group">
+                            <input type="radio" class="btn-check" name="imageMode" id="modeFile"
+                                   value="file" checked="@(imageMode == "file")" @onclick="(() => imageMode = "file")" />
+                            <label class="btn btn-outline-primary" for="modeFile">
+                                📤 Загрузить файл
+                            </label>
+
+                            <input type="radio" class="btn-check" name="imageMode" id="modeUrl"
+                                   value="url" checked="@(imageMode == "url")" @onclick="(() => imageMode = "url")" />
+                            <label class="btn btn-outline-primary" for="modeUrl">
+                                🔗 Внешняя ссылка
+                            </label>
+                        </div>
+
+                        @if (imageMode == "file")
+                        {
+                            <!-- Загрузка файла -->
+                            <InputFile OnChange="HandleFileSelected" class="form-control"
+                                       accept="image/png, image/jpeg, image/jpg, image/webp" />
+                            <div class="form-text">
+                                Допустимые форматы: JPG, PNG, WebP. Макс. размер: 5 MB
+                            </div>
+                        }
+                        else
+                        {
+                            <!-- Внешний URL -->
+                            <InputText @bind-Value="externalImageUrl" class="form-control"
+                                       placeholder="https://example.com/image.jpg" />
+                        }
+
+                        <!-- Предпросмотр -->
+                        @if (!string.IsNullOrEmpty(imagePreview))
+                        {
+                            <div class="mt-3">
+                                <label class="form-label">Предпросмотр:</label><br />
+                                <img src="@imagePreview" class="img-thumbnail" style="max-height: 200px; max-width: 100%;"
+                                     alt="Preview" />
+                            </div>
+                        }
                     </div>
 
                     @if (!string.IsNullOrEmpty(errorMessage))
@@ -75,16 +114,22 @@
 </AuthorizeView>
 
 @code {
-    private Film film = new() { ReleaseDate = DateTime.Now };
+    private Film film = new() { ReleaseDate = DateTime.Now, GenreId = 0 };
     private List<Genre> genres = new();
     private string? errorMessage;
     private bool isLoading;
     private bool _isAdmin = false;
 
+    // Переменные для работы с изображениями
+    private string imageMode = "file"; // "file" или "url"
+    private IBrowserFile? selectedFile;
+    private string? externalImageUrl;
+    private string? imagePreview;
+
     protected override async Task OnInitializedAsync()
     {
         _isAdmin = await AuthService.IsInRoleAsync("admin");
-        
+
         if (!_isAdmin)
         {
             return;
@@ -92,26 +137,69 @@
         genres = await GenreService.GetAllGenresAsync();
     }
 
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+
+        // Проверка типа файла
+        if (!file.ContentType.StartsWith("image/"))
+        {
+            errorMessage = "Пожалуйста, выберите файл изображения (JPG, PNG, WebP)";
+            return;
+        }
+
+        // Проверка размера (5 MB)
+        if (file.Size > 5 * 1024 * 1024)
+        {
+            errorMessage = "Размер файла не должен превышать 5 MB";
+            return;
+        }
+
+        selectedFile = file;
+        errorMessage = null;
+
+        // Создаём предпросмотр
+        using var stream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        var bytes = memoryStream.ToArray();
+        imagePreview = $"data:{file.ContentType};base64,{Convert.ToBase64String(bytes)}";
+    }
+
     private async Task HandleCreate()
     {
         if (film.GenreId == 0)
         {
-            errorMessage = "Please select a genre";
+            errorMessage = "Пожалуйста, выберите жанр";
+            return;
+        }
+
+        // Проверка: если режим URL, проверяем что URL введён
+        if (imageMode == "url" && string.IsNullOrEmpty(externalImageUrl))
+        {
+            errorMessage = "Введите URL изображения или выберите загрузку файла";
             return;
         }
 
         isLoading = true;
         errorMessage = null;
 
-        var result = await FilmService.CreateFilmAsync(film);
+        try
+        {
+            var result = await FilmService.CreateFilmAsync(film, selectedFile, externalImageUrl);
 
-        if (result != null)
-        {
-            Navigation.NavigateTo($"/films/{result.Id}");
+            if (result != null)
+            {
+                Navigation.NavigateTo($"/films/{result.Id}");
+            }
+            else
+            {
+                errorMessage = "Не удалось создать фильм. Попробуйте снова.";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            errorMessage = "Failed to create film. Please try again.";
+            errorMessage = $"Ошибка: {ex.Message}";
         }
 
         isLoading = false;

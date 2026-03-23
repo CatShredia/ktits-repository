@@ -3,6 +3,7 @@
 @inject IFilmService FilmService
 @inject IGenreService GenreService
 @inject IAuthService AuthService
+@inject IApiUrlService ApiUrlService
 
 <PageTitle>Фильмы - CinemaBlazor</PageTitle>
 
@@ -71,17 +72,8 @@ else
         {
             <div class="col">
                 <div class="card h-100 shadow-sm">
-                    @if (!string.IsNullOrEmpty(film.ImageUrl))
-                    {
-                        <img src="@film.ImageUrl" class="card-img-top" alt="@film.Name" style="height: 200px; object-fit: cover;" />
-                    }
-                    else
-                    {
-                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
-                             style="height: 200px;">
-                            <span class="bi bi-film" style="font-size: 3rem;"></span>
-                        </div>
-                    }
+                    <FilmPoster ImageUrl="@film.ImageUrl"                           ApiBaseUrl="@ApiUrlService.GetBaseUrl()"
+                                Style="height: 200px; object-fit: cover;" />
                     <div class="card-body">
                         <h5 class="card-title">@film.Name</h5>
                         <p class="card-text text-muted small">

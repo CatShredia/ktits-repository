@@ -5,6 +5,7 @@
 @inject IAuthService AuthService
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
+@inject IApiUrlService ApiUrlService
 
 <PageTitle>Информация о фильме - CinemaBlazor</PageTitle>
 
@@ -24,17 +25,8 @@ else
 {
     <div class="row">
         <div class="col-md-4">
-            @if (!string.IsNullOrEmpty(film.ImageUrl))
-            {
-                <img src="@film.ImageUrl" class="img-fluid rounded shadow" alt="@film.Name" />
-            }
-            else
-            {
-                <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded shadow"
-                     style="height: 300px;">
-                    <span class="bi bi-film" style="font-size: 5rem;"></span>
-                </div>
-            }
+            <FilmPoster ImageUrl="@film.ImageUrl"                        ApiBaseUrl="@ApiUrlService.GetBaseUrl()" Class="rounded shadow"
+                        Style="width: 100%; max-height: 400px; object-fit: cover;" PlaceholderStyle="height: 300px;" />
         </div>
         <div class="col-md-8">
             <h2>@film.Name</h2>
@@ -125,7 +117,7 @@ else
     {
         _isAuthenticated = await AuthService.IsAuthenticatedAsync();
         _isAdmin = await AuthService.IsInRoleAsync("admin");
-        
+
         film = await FilmService.GetFilmByIdAsync(Id);
 
         if (_isAuthenticated && film != null)

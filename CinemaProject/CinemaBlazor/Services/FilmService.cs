@@ -1,5 +1,7 @@
 using System.Net.Http.Json;
 using CinemaBlazor.Models;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.JSInterop;
 
 namespace CinemaBlazor.Services;
 
@@ -8,8 +10,8 @@ public interface IFilmService
     Task<List<Film>> GetAllFilmsAsync(string? sortBy = null, int? genreId = null, string? search = null);
     Task<Film?> GetFilmByIdAsync(int id);
     Task<double> GetAverageRatingAsync(int id);
-    Task<Film?> CreateFilmAsync(Film film);
-    Task<bool> UpdateFilmAsync(int id, Film film);
+    Task<Film?> CreateFilmAsync(Film film, IBrowserFile? imageFile = null, string? externalImageUrl = null);
+    Task<bool> UpdateFilmAsync(int id, Film film, IBrowserFile? imageFile = null, string? externalImageUrl = null, bool removeImage = false);
     Task<bool> DeleteFilmAsync(int id);
     Task<List<Film>> GetMyFilmsAsync();
 }
@@ -68,9 +70,34 @@ public class FilmService : IFilmService
         return 0.0;
     }
 
-    public async Task<Film?> CreateFilmAsync(Film film)
+    public async Task<Film?> CreateFilmAsync(Film film, IBrowserFile? imageFile = null, string? externalImageUrl = null)
     {
-        var response = await _http.PostAsJsonAsync("api/Films", film);
+        using var content = new MultipartFormDataContent();
+
+        // Добавляем поля фильма
+        content.Add(new StringContent(film.Name), "dto.Name");
+        content.Add(new StringContent(film.Description ?? ""), "dto.Description");
+        content.Add(new StringContent(film.ReleaseDate.ToString("yyyy-MM-dd")), "dto.ReleaseDate");
+        content.Add(new StringContent(film.GenreId.ToString()), "dto.GenreId");
+
+        // Добавляем внешний URL если есть
+        if (!string.IsNullOrEmpty(externalImageUrl))
+        {
+            content.Add(new StringContent(externalImageUrl), "dto.ExternalImageUrl");
+        }
+
+        // Добавляем файл если есть
+        if (imageFile != null)
+        {
+            using var stream = imageFile.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            var fileContent = new ByteArrayContent(memoryStream.ToArray());
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(imageFile.ContentType);
+            content.Add(fileContent, "imageFile", imageFile.Name);
+        }
+
+        var response = await _http.PostAsync("api/Films", content);
         if (response.IsSuccessStatusCode)
         {
             return await response.Content.ReadFromJsonAsync<Film>();
@@ -78,9 +105,38 @@ public class FilmService : IFilmService
         return null;
     }
 
-    public async Task<bool> UpdateFilmAsync(int id, Film film)
+    public async Task<bool> UpdateFilmAsync(int id, Film film, IBrowserFile? imageFile = null, string? externalImageUrl = null, bool removeImage = false)
     {
-        var response = await _http.PutAsJsonAsync($"api/Films/{id}", film);
+        using var content = new MultipartFormDataContent();
+
+        // Добавляем обязательные поля
+        content.Add(new StringContent(id.ToString()), "id");
+        content.Add(new StringContent(film.Name), "dto.Name");
+        content.Add(new StringContent(film.Description ?? ""), "dto.Description");
+        content.Add(new StringContent(film.ReleaseDate.ToString("yyyy-MM-dd")), "dto.ReleaseDate");
+        content.Add(new StringContent(film.GenreId.ToString()), "dto.GenreId");
+
+        // Добавляем внешний URL если есть
+        if (!string.IsNullOrEmpty(externalImageUrl))
+        {
+            content.Add(new StringContent(externalImageUrl), "dto.ExternalImageUrl");
+        }
+
+        // Добавляем флаг удаления изображения
+        content.Add(new StringContent(removeImage.ToString().ToLower()), "dto.RemoveImage");
+
+        // Добавляем файл если есть
+        if (imageFile != null)
+        {
+            using var stream = imageFile.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            var fileContent = new ByteArrayContent(memoryStream.ToArray());
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(imageFile.ContentType);
+            content.Add(fileContent, "imageFile", imageFile.Name);
+        }
+
+        var response = await _http.PutAsync($"api/Films/{id}", content);
         return response.IsSuccessStatusCode;
     }
 
