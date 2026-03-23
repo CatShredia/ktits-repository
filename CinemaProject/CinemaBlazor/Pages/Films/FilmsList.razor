@@ -72,8 +72,16 @@ else
         {
             <div class="col">
                 <div class="card h-100 shadow-sm">
-                    <FilmPoster ImageUrl="@film.ImageUrl"                           ApiBaseUrl="@ApiUrlService.GetBaseUrl()"
-                                Style="height: 200px; object-fit: cover;" />
+                    @if (!string.IsNullOrEmpty(film.ImageUrl))
+                    {
+                        <img src="@ApiUrlService.GetImageUrl(film.ImageUrl)" class="card-img-top" style="height: 200px; object-fit: cover;" alt="@film.Name" />
+                    }
+                    else
+                    {
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center card-img-top" style="height: 200px;">
+                            <span class="bi bi-film" style="font-size: 3rem;"></span>
+                        </div>
+                    }
                     <div class="card-body">
                         <h5 class="card-title">@film.Name</h5>
                         <p class="card-text text-muted small">

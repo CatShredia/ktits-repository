@@ -25,8 +25,16 @@ else
 {
     <div class="row">
         <div class="col-md-4">
-            <FilmPoster ImageUrl="@film.ImageUrl"                        ApiBaseUrl="@ApiUrlService.GetBaseUrl()" Class="rounded shadow"
-                        Style="width: 100%; max-height: 400px; object-fit: cover;" PlaceholderStyle="height: 300px;" />
+            @if (!string.IsNullOrEmpty(film.ImageUrl))
+            {
+                <img src="@ApiUrlService.GetImageUrl(film.ImageUrl)" class="rounded shadow" style="width: 100%; max-height: 400px; object-fit: cover;" alt="@film.Name" />
+            }
+            else
+            {
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded shadow" style="height: 300px;">
+                    <span class="bi bi-film" style="font-size: 3rem;"></span>
+                </div>
+            }
         </div>
         <div class="col-md-8">
             <h2>@film.Name</h2>
