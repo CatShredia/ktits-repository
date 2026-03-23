@@ -159,7 +159,14 @@ public class FilmsController : ControllerBase
         [FromForm] FilmCreateDto dto,
         IFormFile? imageFile)
     {
+        Console.WriteLine($"[API] PostFilm called");
+        Console.WriteLine($"[API] dto.Name={dto.Name}, dto.GenreId={dto.GenreId}");
+        Console.WriteLine($"[API] dto.ExternalImageUrl={dto.ExternalImageUrl ?? "null"}");
+        Console.WriteLine($"[API] imageFile={(imageFile != null ? $"{imageFile.FileName} ({imageFile.ContentType}, {imageFile.Length} bytes)" : "null")}");
+
         var imageUrl = await ProcessImageAsync(imageFile, dto.ExternalImageUrl);
+
+        Console.WriteLine($"[API] ProcessedImageUrl={imageUrl ?? "null"}");
 
         var film = new Film
         {
@@ -179,20 +186,27 @@ public class FilmsController : ControllerBase
         _context.Films.Add(film);
         await _context.SaveChangesAsync();
 
+        Console.WriteLine($"[API] Film created with Id={film.Id}");
+
         return CreatedAtAction(nameof(GetFilm), new { id = film.Id }, await GetFilmDtoAsync(film.Id));
     }
 
     // ! upload image
     private async Task<string?> ProcessImageAsync(IFormFile? imageFile, string? externalImageUrl)
     {
+        Console.WriteLine($"[API] ProcessImageAsync: imageFile={(imageFile != null ? $"{imageFile.FileName}, {imageFile.Length} bytes" : "null")}, externalImageUrl={externalImageUrl ?? "null"}");
+
         if (imageFile != null && imageFile.Length > 0)
         {
             try
             {
-                return await _imageService.SaveImageAsync(imageFile);
+                var savedPath = await _imageService.SaveImageAsync(imageFile);
+                Console.WriteLine($"[API] Image saved to: {savedPath}");
+                return savedPath;
             }
             catch (ArgumentException ex)
             {
+                Console.WriteLine($"[API] Image save error: {ex.Message}");
                 ModelState.AddModelError(nameof(imageFile), ex.Message);
                 return null;
             }
@@ -203,8 +217,10 @@ public class FilmsController : ControllerBase
             if (Uri.TryCreate(externalImageUrl, UriKind.Absolute, out var uriResult)
                 && (uriResult.Scheme == "http" || uriResult.Scheme == "https"))
             {
+                Console.WriteLine($"[API] Using external URL: {externalImageUrl}");
                 return externalImageUrl;
             }
+            Console.WriteLine($"[API] Invalid external URL: {externalImageUrl}");
             ModelState.AddModelError(nameof(externalImageUrl), "Invalid URL format");
         }
 
@@ -219,14 +235,21 @@ public class FilmsController : ControllerBase
         [FromForm] FilmUpdateDto dto,
         IFormFile? imageFile)
     {
+        Console.WriteLine($"[API] PutFilm called: id={id}");
+        Console.WriteLine($"[API] dto.Name={dto.Name}, dto.GenreId={dto.GenreId}");
+        Console.WriteLine($"[API] dto.ExternalImageUrl={dto.ExternalImageUrl ?? "null"}, dto.RemoveImage={dto.RemoveImage}");
+        Console.WriteLine($"[API] imageFile={(imageFile != null ? $"{imageFile.FileName} ({imageFile.ContentType}, {imageFile.Length} bytes)" : "null")}");
+
         if (id != dto.Id)
         {
+            Console.WriteLine($"[API] ID mismatch: {id} != {dto.Id}");
             return BadRequest();
         }
 
         var film = await _context.Films.FindAsync(id);
         if (film == null)
         {
+            Console.WriteLine($"[API] Film not found: {id}");
             return NotFound();
         }
 
@@ -237,6 +260,7 @@ public class FilmsController : ControllerBase
 
         if (imageFile != null && imageFile.Length > 0)
         {
+            Console.WriteLine($"[API] Processing uploaded image file");
             if (!string.IsNullOrEmpty(film.ImageUrl))
             {
                 _imageService.DeleteImage(film.ImageUrl);
@@ -245,15 +269,18 @@ public class FilmsController : ControllerBase
             try
             {
                 film.ImageUrl = await _imageService.SaveImageAsync(imageFile);
+                Console.WriteLine($"[API] Image saved to: {film.ImageUrl}");
             }
             catch (ArgumentException ex)
             {
+                Console.WriteLine($"[API] Image save error: {ex.Message}");
                 ModelState.AddModelError(nameof(imageFile), ex.Message);
                 return BadRequest(ModelState);
             }
         }
         else if (dto.RemoveImage)
         {
+            Console.WriteLine($"[API] Removing image");
             if (!string.IsNullOrEmpty(film.ImageUrl))
             {
                 _imageService.DeleteImage(film.ImageUrl);
@@ -262,6 +289,7 @@ public class FilmsController : ControllerBase
         }
         else if (!string.IsNullOrEmpty(dto.ExternalImageUrl))
         {
+            Console.WriteLine($"[API] Setting external image URL: {dto.ExternalImageUrl}");
             if (Uri.TryCreate(dto.ExternalImageUrl, UriKind.Absolute, out var uriResult)
                 && (uriResult.Scheme == "http" || uriResult.Scheme == "https"))
             {
@@ -277,6 +305,10 @@ public class FilmsController : ControllerBase
                 return BadRequest(ModelState);
             }
         }
+        else
+        {
+            Console.WriteLine($"[API] No image change - keeping existing image: {film.ImageUrl ?? "null"}");
+        }
 
         var userId = GetCurrentUserId();
         if (userId != null)
@@ -287,6 +319,7 @@ public class FilmsController : ControllerBase
         try
         {
             await _context.SaveChangesAsync();
+            Console.WriteLine($"[API] Film updated successfully");
         }
         catch (DbUpdateConcurrencyException)
         {

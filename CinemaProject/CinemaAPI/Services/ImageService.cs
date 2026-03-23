@@ -59,7 +59,10 @@ public class ImageService : IImageService
         var extension = Path.GetExtension(file.FileName).ToLower();
         var fileName = $"{Guid.NewGuid()}{extension}";
 
-        var uploadsFolder = Path.Combine(_environment.WebRootPath, _filmsFolder);
+        // Если WebRootPath null, используем текущую директорию
+        var webRootPath = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+        
+        var uploadsFolder = Path.Combine(webRootPath, _filmsFolder);
         Directory.CreateDirectory(uploadsFolder);
 
         var filePath = Path.Combine(uploadsFolder, fileName);
@@ -81,7 +84,8 @@ public class ImageService : IImageService
         try
         {
             var relativePath = imageUrl.TrimStart('/');
-            var filePath = Path.Combine(_environment.WebRootPath, relativePath);
+            var webRootPath = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var filePath = Path.Combine(webRootPath, relativePath);
 
             if (File.Exists(filePath))
             {

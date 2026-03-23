@@ -5,6 +5,7 @@
 @inject NavigationManager Navigation
 @inject IAuthService AuthService
 @inject IJSRuntime JSRuntime
+@inject IApiUrlService ApiUrlService
 
 <PageTitle>Изменить фильм - CinemaBlazor</PageTitle>
 
@@ -67,7 +68,7 @@
                             {
                                 <div class="mb-3">
                                     <label class="form-label">Текущее изображение:</label><br />
-                                    <img src="@currentImageUrl" class="img-thumbnail"
+                                    <img src="@ApiUrlService.GetImageUrl(currentImageUrl)" class="img-thumbnail"
                                          style="max-height: 200px; max-width: 100%;" alt="Current" />
                                 </div>
                             }

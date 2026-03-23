@@ -1,6 +1,7 @@
 ﻿@page "/"
 @layout MainLayout
 @inject IFilmService FilmService
+@inject IApiUrlService ApiUrlService
 
 <PageTitle>Главная - CinemaBlazor</PageTitle>
 
@@ -28,7 +29,7 @@ else if (featuredFilms.Count > 0)
                 <div class="card h-100 shadow-sm">
                     @if (!string.IsNullOrEmpty(film.ImageUrl))
                     {
-                        <img src="@film.ImageUrl" class="card-img-top" alt="@film.Name" style="height: 200px; object-fit: cover;" />
+                        <img src="@ApiUrlService.GetImageUrl(film.ImageUrl)" class="card-img-top" alt="@film.Name" style="height: 200px; object-fit: cover;" />
                     }
                     else
                     {

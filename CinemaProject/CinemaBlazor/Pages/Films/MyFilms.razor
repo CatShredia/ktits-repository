@@ -2,6 +2,7 @@
 @layout MainLayout
 @inject IFilmService FilmService
 @inject IAuthService AuthService
+@inject IApiUrlService ApiUrlService
 
 <PageTitle>Мои фильмы - CinemaBlazor</PageTitle>
 
@@ -45,7 +46,7 @@
                                 <td>
                                     @if (!string.IsNullOrEmpty(film.ImageUrl))
                                     {
-                                        <img src="@film.ImageUrl" alt="@film.Name" style="width: 50px; height: 75px; object-fit: cover;" class="rounded" />
+                                        <img src="@ApiUrlService.GetImageUrl(film.ImageUrl)" alt="@film.Name" style="width: 50px; height: 75px; object-fit: cover;" class="rounded" />
                                     }
                                     else
                                     {

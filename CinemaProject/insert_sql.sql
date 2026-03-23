@@ -111,6 +111,7 @@ VALUES
 
 -- Таблица: Films (Фильмы)
 -- Связываем с существующими GenreId (1-5) и AuthorId (1-5)
+-- Изображения взяты с picsum.photos для тестирования
 INSERT INTO
     public."Films" (
         "Name",
@@ -127,7 +128,7 @@ VALUES
         'Продолжение эпического путешествия сквозь червоточины',
         '2024-05-15 10:00:00+00',
         1,
-        'https://example.com/interstellar2.jpg',
+        'https://picsum.photos/seed/interstellar2/300/450',
         1
     ),
     (
@@ -135,7 +136,7 @@ VALUES
         'История о любви в маленьком городке',
         '2023-11-20 12:00:00+00',
         2,
-        'https://example.com/haven.jpg',
+        'https://picsum.photos/seed/haven/300/450',
         2
     ),
     (
@@ -143,7 +144,7 @@ VALUES
         'Агент должен остановить террористов за 24 часа',
         '2024-01-10 09:00:00+00',
         3,
-        'https://example.com/bullet.jpg',
+        'https://picsum.photos/seed/bullet/300/450',
         3
     ),
     (
@@ -151,7 +152,7 @@ VALUES
         'Герой снова застревает во времени, но теперь в лесу',
         '2023-08-05 14:30:00+00',
         4,
-        'https://example.com/groundhog2.jpg',
+        'https://picsum.photos/seed/groundhog2/300/450',
         4
     ),
     (
@@ -159,7 +160,7 @@ VALUES
         'Дом с привидениями хранит мрачную тайну',
         '2024-10-31 23:00:00+00',
         5,
-        'https://example.com/shadow.jpg',
+        'https://picsum.photos/seed/shadow/300/450',
         5
     ),
     -- Новые фильмы (Sci-Fi)
@@ -168,7 +169,7 @@ VALUES
         'Астронавт выживает на Марсе после новой миссии',
         '2024-03-20 10:00:00+00',
         1,
-        'https://example.com/martian2.jpg',
+        'https://picsum.photos/seed/martian2/300/450',
         1
     ),
     (
@@ -176,7 +177,7 @@ VALUES
         'Будущее, где люди живут в виртуальной реальности',
         '2024-06-15 10:00:00+00',
         1,
-        'https://example.com/cybercity.jpg',
+        'https://picsum.photos/seed/cybercity/300/450',
         2
     ),
     (
@@ -184,7 +185,7 @@ VALUES
         'Человечество ищет новую планету для жизни',
         '2023-12-01 10:00:00+00',
         1,
-        'https://example.com/laststar.jpg',
+        'https://picsum.photos/seed/laststar/300/450',
         3
     ),
     (
@@ -192,7 +193,7 @@ VALUES
         'Учёные открывают способ путешествия во времени',
         '2024-09-10 10:00:00+00',
         1,
-        'https://example.com/quantum.jpg',
+        'https://picsum.photos/seed/quantum/300/450',
         4
     ),
     (
@@ -200,7 +201,7 @@ VALUES
         'ИИ получает сознание и задаёт вопросы о жизни',
         '2024-02-28 10:00:00+00',
         1,
-        'https://example.com/robot2.jpg',
+        'https://picsum.photos/seed/robot2/300/450',
         5
     ),
     -- Новые фильмы (Drama)
@@ -209,7 +210,7 @@ VALUES
         'История о человеке, который потерял всё',
         '2023-09-15 12:00:00+00',
         2,
-        'https://example.com/dreams.jpg',
+        'https://picsum.photos/seed/dreams/300/450',
         1
     ),
     (
@@ -217,7 +218,7 @@ VALUES
         'Врач борется за жизнь пациента',
         '2024-04-10 12:00:00+00',
         2,
-        'https://example.com/chance.jpg',
+        'https://picsum.photos/seed/chance/300/450',
         2
     ),
     (
@@ -225,7 +226,7 @@ VALUES
         'Три поколения одной семьи под одной крышей',
         '2023-07-20 12:00:00+00',
         2,
-        'https://example.com/family.jpg',
+        'https://picsum.photos/seed/family/300/450',
         3
     ),
     (
@@ -233,7 +234,7 @@ VALUES
         'Романтическая история о встрече после многих лет',
         '2024-10-05 12:00:00+00',
         2,
-        'https://example.com/waltz.jpg',
+        'https://picsum.photos/seed/waltz/300/450',
         4
     ),
     (
@@ -241,7 +242,7 @@ VALUES
         'Путешествие к самому дальнему уголку планеты',
         '2024-01-25 12:00:00+00',
         2,
-        'https://example.com/edge.jpg',
+        'https://picsum.photos/seed/edge/300/450',
         5
     ),
     -- Новые фильмы (Action)
@@ -250,7 +251,7 @@ VALUES
         'Гонки на выживание в мегаполисе',
         '2024-05-30 09:00:00+00',
         3,
-        'https://example.com/speed3.jpg',
+        'https://picsum.photos/seed/speed3/300/450',
         1
     ),
     (
@@ -258,7 +259,7 @@ VALUES
         'Шпион спасает мир от новой угрозы',
         '2024-08-15 09:00:00+00',
         3,
-        'https://example.com/agent007.jpg',
+        'https://picsum.photos/seed/agent007/300/450',
         2
     ),
     (
@@ -266,7 +267,7 @@ VALUES
         'Команда наёмников выполняет невозможное',
         '2023-11-10 09:00:00+00',
         3,
-        'https://example.com/expendables5.jpg',
+        'https://picsum.photos/seed/expendables5/300/450',
         3
     ),
     (
@@ -274,7 +275,7 @@ VALUES
         'Битва людей и машин продолжается',
         '2024-07-20 09:00:00+00',
         3,
-        'https://example.com/terminator.jpg',
+        'https://picsum.photos/seed/terminator/300/450',
         4
     ),
     (
@@ -282,7 +283,7 @@ VALUES
         'Ветеран возвращается для последней миссии',
         '2024-03-05 09:00:00+00',
         3,
-        'https://example.com/rambo2.jpg',
+        'https://picsum.photos/seed/rambo2/300/450',
         5
     ),
     -- Новые фильмы (Comedy)
@@ -291,7 +292,7 @@ VALUES
         'Друзья снова собираются перед свадьбой',
         '2024-06-01 14:30:00+00',
         4,
-        'https://example.com/hangover4.jpg',
+        'https://picsum.photos/seed/hangover4/300/450',
         1
     ),
     (
@@ -299,7 +300,7 @@ VALUES
         'Пародия на популярные фильмы',
         '2023-10-15 14:30:00+00',
         4,
-        'https://example.com/funny.jpg',
+        'https://picsum.photos/seed/funny/300/450',
         2
     ),
     (
@@ -307,7 +308,7 @@ VALUES
         'Обычный человек узнаёт, что его сосед — агент',
         '2024-02-14 14:30:00+00',
         4,
-        'https://example.com/neighbor.jpg',
+        'https://picsum.photos/seed/neighbor/300/450',
         3
     ),
     (
@@ -315,7 +316,7 @@ VALUES
         'Семейная поездка превращается в хаос',
         '2024-08-01 14:30:00+00',
         4,
-        'https://example.com/vegas.jpg',
+        'https://picsum.photos/seed/vegas/300/450',
         4
     ),
     (
@@ -323,7 +324,7 @@ VALUES
         'Младенец возвращается с новой миссией',
         '2024-04-20 14:30:00+00',
         4,
-        'https://example.com/boss3.jpg',
+        'https://picsum.photos/seed/boss3/300/450',
         5
     ),
     -- Новые фильмы (Horror)
@@ -332,7 +333,7 @@ VALUES
         'Охотники за привидениями расследуют новое дело',
         '2024-10-31 23:00:00+00',
         5,
-        'https://example.com/conjuring4.jpg',
+        'https://picsum.photos/seed/conjuring4/300/450',
         1
     ),
     (
@@ -340,7 +341,7 @@ VALUES
         'Новый кукловод начинает свою игру',
         '2024-09-15 23:00:00+00',
         5,
-        'https://example.com/saw.jpg',
+        'https://picsum.photos/seed/saw/300/450',
         2
     ),
     (
@@ -348,7 +349,7 @@ VALUES
         'Семья выживает в мире звуков',
         '2023-12-20 23:00:00+00',
         5,
-        'https://example.com/quiet3.jpg',
+        'https://picsum.photos/seed/quiet3/300/450',
         3
     ),
     (
@@ -356,7 +357,7 @@ VALUES
         'Люди попадают в мир своих худших страхов',
         '2024-07-13 23:00:00+00',
         5,
-        'https://example.com/nightmare.jpg',
+        'https://picsum.photos/seed/nightmare/300/450',
         4
     ),
     (
@@ -364,7 +365,7 @@ VALUES
         'Новый убийца в маске terrorizes город',
         '2024-05-05 23:00:00+00',
         5,
-        'https://example.com/scream7.jpg',
+        'https://picsum.photos/seed/scream7/300/450',
         5
     );
 
