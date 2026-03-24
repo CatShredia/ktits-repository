@@ -74,19 +74,16 @@ public class FilmService : IFilmService
     {
         using var content = new MultipartFormDataContent();
 
-        // Добавляем поля фильма
         content.Add(new StringContent(film.Name ?? ""), "dto.Name");
         content.Add(new StringContent(film.Description ?? ""), "dto.Description");
         content.Add(new StringContent(film.ReleaseDate.ToString("yyyy-MM-dd")), "dto.ReleaseDate");
         content.Add(new StringContent(film.GenreId?.ToString() ?? "0"), "dto.GenreId");
 
-        // Добавляем внешний URL если есть
         if (!string.IsNullOrEmpty(externalImageUrl))
         {
             content.Add(new StringContent(externalImageUrl), "dto.ExternalImageUrl");
         }
 
-        // Добавляем файл если есть
         if (imageFile != null)
         {
             using var stream = imageFile.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
@@ -109,23 +106,19 @@ public class FilmService : IFilmService
     {
         using var content = new MultipartFormDataContent();
 
-        // Добавляем обязательные поля
         content.Add(new StringContent(id.ToString()), "id");
         content.Add(new StringContent(film.Name ?? ""), "dto.Name");
         content.Add(new StringContent(film.Description ?? ""), "dto.Description");
         content.Add(new StringContent(film.ReleaseDate.ToString("yyyy-MM-dd")), "dto.ReleaseDate");
         content.Add(new StringContent(film.GenreId?.ToString() ?? "0"), "dto.GenreId");
 
-        // Добавляем внешний URL если есть
         if (!string.IsNullOrEmpty(externalImageUrl))
         {
             content.Add(new StringContent(externalImageUrl), "dto.ExternalImageUrl");
         }
 
-        // Добавляем флаг удаления изображения
         content.Add(new StringContent(removeImage.ToString().ToLower()), "dto.RemoveImage");
 
-        // Добавляем файл если есть
         if (imageFile != null)
         {
             using var stream = imageFile.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);

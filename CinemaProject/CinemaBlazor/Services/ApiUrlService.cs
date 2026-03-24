@@ -25,13 +25,11 @@ public class ApiUrlService : IApiUrlService
         if (string.IsNullOrEmpty(imageUrl))
             return string.Empty;
 
-        // Если URL начинается с "/", это локальное изображение на API сервере
         if (imageUrl.StartsWith("/"))
         {
             return $"{_baseUrl.TrimEnd('/')}{imageUrl}";
         }
 
-        // Иначе это внешний URL - возвращаем как есть
         return imageUrl;
     }
 }

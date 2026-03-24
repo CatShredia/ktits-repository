@@ -25,7 +25,7 @@
         }
         else
         {
-            <h3>✏️ Изменить фильм</h3>
+            <h3>Изменить фильм</h3>
 
             <div class="card">
                 <div class="card-body">
@@ -63,7 +63,6 @@
                         <div class="mb-3">
                             <label class="form-label">Изображение фильма</label>
 
-                            <!-- Текущее изображение -->
                             @if (!string.IsNullOrEmpty(currentImageUrl) && !removeImage)
                             {
                                 <div class="mb-3">
@@ -73,30 +72,29 @@
                                 </div>
                             }
 
-                            <!-- Переключатель режима -->
                             <div class="btn-group w-100 mb-2" role="group">
                                 <input type="radio" class="btn-check" name="imageMode" id="modeKeep"
                                        value="keep" checked="@(imageMode == "keep")" @onclick="@(() => imageMode = "keep")" />
                                 <label class="btn btn-outline-secondary" for="modeKeep">
-                                    ✓ Оставить текущее
+                                    Оставить текущее
                                 </label>
 
                                 <input type="radio" class="btn-check" name="imageMode" id="modeFile"
                                        value="file" checked="@(imageMode == "file")" @onclick="@(() => imageMode = "file")" />
                                 <label class="btn btn-outline-primary" for="modeFile">
-                                    📤 Загрузить новый
+                                    Загрузить новый
                                 </label>
 
                                 <input type="radio" class="btn-check" name="imageMode" id="modeUrl"
                                        value="url" checked="@(imageMode == "url")" @onclick="@(() => imageMode = "url")" />
                                 <label class="btn btn-outline-primary" for="modeUrl">
-                                    🔗 Внешняя ссылка
+                                    Внешняя ссылка
                                 </label>
 
                                 <input type="radio" class="btn-check" name="imageMode" id="modeRemove"
                                        value="remove" checked="@(imageMode == "remove")" @onclick="@(() => imageMode = "remove")" />
                                 <label class="btn btn-outline-danger" for="modeRemove">
-                                    🗑️ Удалить
+                                    Удалить
                                 </label>
                             </div>
 
@@ -174,7 +172,6 @@
     private bool isLoading = true;
     private bool _isAdmin = false;
 
-    // Переменные для работы с изображениями
     private string imageMode = "keep"; // "keep", "file", "url", "remove"
     private IBrowserFile? selectedFile;
     private string? externalImageUrl;
@@ -207,14 +204,12 @@
     {
         var file = e.File;
 
-        // Проверка типа файла
         if (!file.ContentType.StartsWith("image/"))
         {
             errorMessage = "Пожалуйста, выберите файл изображения (JPG, PNG, WebP)";
             return;
         }
 
-        // Проверка размера (5 MB)
         if (file.Size > 5 * 1024 * 1024)
         {
             errorMessage = "Размер файла не должен превышать 5 MB";
@@ -224,7 +219,6 @@
         selectedFile = file;
         errorMessage = null;
 
-        // Создаём предпросмотр
         using var stream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
         using var memoryStream = new MemoryStream();
         await stream.CopyToAsync(memoryStream);
@@ -240,7 +234,6 @@
             return;
         }
 
-        // Проверка: если режим URL, проверяем что URL введён
         if (imageMode == "url" && string.IsNullOrEmpty(externalImageUrl))
         {
             errorMessage = "Введите URL изображения или выберите другой режим";
@@ -250,10 +243,8 @@
         isLoading = true;
         errorMessage = null;
 
-        // Определяем флаг удаления
         removeImage = imageMode == "remove";
 
-        // Определяем внешний URL
         var urlToSend = imageMode == "url" ? externalImageUrl : null;
 
         try

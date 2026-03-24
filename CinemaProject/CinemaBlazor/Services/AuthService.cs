@@ -133,7 +133,6 @@ public class AuthService : IAuthService
 
     public bool IsInRole(string role)
     {
-        // Синхронная версия - только для совместимости, используйте IsInRoleAsync
         try
         {
             return IsInRoleAsync(role).GetAwaiter().GetResult();

@@ -9,7 +9,7 @@
 
 <AuthorizeView Roles="admin">
     <Authorized>
-        <h3>🎬 Создать новый фильм</h3>
+        <h3>Создать новый фильм</h3>
 
         <div class="card">
             <div class="card-body">
@@ -54,13 +54,13 @@
                             <input type="radio" class="btn-check" name="imageMode" id="modeFile"
                                    value="file" checked="@(imageMode == "file")" @onclick="@(() => imageMode = "file")" />
                             <label class="btn btn-outline-primary" for="modeFile">
-                                📤 Загрузить файл
+                                Загрузить файл
                             </label>
 
                             <input type="radio" class="btn-check" name="imageMode" id="modeUrl"
                                    value="url" checked="@(imageMode == "url")" @onclick="@(() => imageMode = "url")" />
                             <label class="btn btn-outline-primary" for="modeUrl">
-                                🔗 Внешняя ссылка
+                                Внешняя ссылка
                             </label>
                         </div>
 
@@ -120,7 +120,6 @@
     private bool isLoading;
     private bool _isAdmin = false;
 
-    // Переменные для работы с изображениями
     private string imageMode = "file"; // "file" или "url"
     private IBrowserFile? selectedFile;
     private string? externalImageUrl;
@@ -141,14 +140,12 @@
     {
         var file = e.File;
 
-        // Проверка типа файла
         if (!file.ContentType.StartsWith("image/"))
         {
             errorMessage = "Пожалуйста, выберите файл изображения (JPG, PNG, WebP)";
             return;
         }
 
-        // Проверка размера (5 MB)
         if (file.Size > 5 * 1024 * 1024)
         {
             errorMessage = "Размер файла не должен превышать 5 MB";
@@ -158,7 +155,6 @@
         selectedFile = file;
         errorMessage = null;
 
-        // Создаём предпросмотр
         using var stream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
         using var memoryStream = new MemoryStream();
         await stream.CopyToAsync(memoryStream);
@@ -174,7 +170,6 @@
             return;
         }
 
-        // Проверка: если режим URL, проверяем что URL введён
         if (imageMode == "url" && string.IsNullOrEmpty(externalImageUrl))
         {
             errorMessage = "Введите URL изображения или выберите загрузку файла";
