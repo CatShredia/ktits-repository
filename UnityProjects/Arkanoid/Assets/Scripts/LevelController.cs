@@ -22,7 +22,7 @@ public class LevelController : MonoBehaviour
 
     void Start()
     {
-        LoadLevel(0);
+
     }
 
     public void LoadLevel(int index)

@@ -49,7 +49,6 @@ public class PlatformController : MonoBehaviour
         }
         else
         {
-            // Управление с клавиатуры (для редактора)
             playerPosition.x += Input.GetAxis("Horizontal") * playerVelocity;
         }
 

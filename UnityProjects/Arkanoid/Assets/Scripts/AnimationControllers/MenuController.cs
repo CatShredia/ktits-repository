@@ -89,6 +89,8 @@ public class MenuController : MonoBehaviour
         ShowAllBlocks();
 
         StartCoroutine(HidePanelAfterAnimation());
+
+        LevelController.Instance?.LoadLevel(0);
     }
 
     private System.Collections.IEnumerator HidePanelAfterAnimation()
@@ -148,24 +150,19 @@ public class MenuController : MonoBehaviour
         isGameoverShowing = true;
         gameStarted = false;
 
-        // Set timescale AFTER showing the panel
         if (gameoverPanel != null)
         {
             gameoverPanel.SetActive(true);
 
-            // Get or use Animator from gameoverPanel
             if (gameoverAnimator == null)
             {
                 gameoverAnimator = gameoverPanel.GetComponent<Animator>();
             }
 
-            // Trigger gameover animation BEFORE freezing time
             if (gameoverAnimator != null)
             {
-                // Set animator to use unscaled time
                 gameoverAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
 
-                // Use Trigger instead of Bool - trigger fires once and doesn't loop
                 gameoverAnimator.SetTrigger(showTriggerParameterName);
             }
         }
@@ -174,7 +171,6 @@ public class MenuController : MonoBehaviour
             Debug.LogError("[MenuController] GameoverPanel not assigned!");
         }
 
-        // Now freeze time
         Time.timeScale = 0f;
 
         if (gameplayUI != null) gameplayUI.SetActive(false);
@@ -195,12 +191,10 @@ public class MenuController : MonoBehaviour
             gameoverAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
             gameoverAnimator.SetTrigger(hideTriggerParameterName);
 
-            // Hide panel after animation
             StartCoroutine(HideGameoverAfterAnimation());
         }
         else
         {
-            // No animator - hide immediately
             if (gameoverPanel != null) gameoverPanel.SetActive(false);
         }
     }

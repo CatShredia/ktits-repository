@@ -152,10 +152,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlockController
   blockType: 3
-  bonusDropChance: 1
+  bonusDropChance: 0
   bonusPrefabs:
   - {fileID: 710774292486825793, guid: 96fea6290b18dea43bbd123880595751, type: 3}
   - {fileID: 710774292486825793, guid: 96fea6290b18dea43bbd123880595751, type: 3}
   - {fileID: 5839069243386902860, guid: b41ad8defea09d2419f93470b5d96e82, type: 3}
   - {fileID: 6937923783763501924, guid: 99561580e1e46914993ae08abca4908e, type: 3}
   - {fileID: 710774292486825793, guid: 9ee7c5e896311cf44a00af1262288334, type: 3}
+  currentHP: 2
+  maxHP: 2
