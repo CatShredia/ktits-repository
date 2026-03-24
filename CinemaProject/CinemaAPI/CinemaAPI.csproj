@@ -20,4 +20,8 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.24" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="CinemaAPI.Tests" />
+    </ItemGroup>
+
 </Project>
