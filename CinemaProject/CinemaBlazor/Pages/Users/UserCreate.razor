@@ -1,0 +1,124 @@
+@page "/users/create"
+@inject IUserService UserService
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@using CinemaBlazor.Models
+
+<PageTitle>Создать пользователя</PageTitle>
+
+<AuthorizeView Roles="admin">
+    <Authorized>
+        <h3>Создать нового пользователя</h3>
+
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="@userDto" OnValidSubmit="HandleCreate" Context="createFormContext">
+                    <DataAnnotationsValidator />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Фамилия *</label>
+                            <InputText @bind-Value="userDto.Surname" class="form-control" />
+                            <ValidationMessage For="@(() => userDto.Surname)" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Имя *</label>
+                            <InputText @bind-Value="userDto.Name" class="form-control" />
+                            <ValidationMessage For="@(() => userDto.Name)" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Описание</label>
+                        <InputTextArea @bind-Value="userDto.Description" class="form-control" rows="3" />
+                        <ValidationMessage For="@(() => userDto.Description)" />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Пол *</label>
+                            <InputSelect @bind-Value="userDto.Gender" class="form-select">
+                                <option value="">Выберите пол</option>
+                                <option value="Male">Мужской</option>
+                                <option value="Female">Женский</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => userDto.Gender)" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email *</label>
+                            <InputText @bind-Value="userDto.Email" class="form-control" type="email" />
+                            <ValidationMessage For="@(() => userDto.Email)" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Логин *</label>
+                            <InputText @bind-Value="userDto.Login" class="form-control" />
+                            <ValidationMessage For="@(() => userDto.Login)" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Пароль *</label>
+                            <InputText @bind-Value="userDto.Password" class="form-control" type="password" />
+                            <ValidationMessage For="@(() => userDto.Password)" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Роль</label>
+                        <InputSelect @bind-Value="userDto.RoleId" class="form-select">
+                            <option value="0">Выберите роль</option>
+                            <option value="1">Admin</option>
+                            <option value="2">Client</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => userDto.RoleId)" />
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger">@errorMessage</div>
+                    }
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary" disabled="@isLoading">
+                            <span class="bi bi-plus-circle"></span> Создать пользователя
+                        </button>
+                        <a href="users" class="btn btn-secondary ms-2">Отмена</a>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-warning">
+            <h4>Доступ запрещён</h4>
+            <p>Вы должны быть администратором для создания пользователей.</p>
+            <a href="login" class="btn btn-primary">Войти</a>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private UserCreateDto userDto = new();
+    private bool isLoading = false;
+    private string errorMessage = string.Empty;
+
+    private async Task HandleCreate()
+    {
+        isLoading = true;
+        errorMessage = string.Empty;
+
+        var result = await UserService.CreateUserAsync(userDto);
+
+        if (result != null)
+        {
+            Navigation.NavigateTo($"/users/{result.Id}");
+        }
+        else
+        {
+            errorMessage = "Ошибка при создании пользователя. Проверьте правильность введённых данных.";
+        }
+
+        isLoading = false;
+    }
+}

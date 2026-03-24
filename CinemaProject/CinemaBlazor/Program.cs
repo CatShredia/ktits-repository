@@ -24,6 +24,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFilmService, FilmService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<IRatingService, RatingService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IApiUrlService, ApiUrlService>();
 
 builder.Services.AddAuthorizationCore();

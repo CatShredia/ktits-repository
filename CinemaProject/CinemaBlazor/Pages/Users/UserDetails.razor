@@ -1,0 +1,147 @@
+@page "/users/{id:int}"
+@inject IUserService UserService
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@using CinemaBlazor.Models
+
+<PageTitle>Пользователь</PageTitle>
+
+<AuthorizeView Roles="admin">
+    <Authorized>
+        @if (isLoading)
+        {
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Загрузка...</span>
+                </div>
+            </div>
+        }
+        else if (user == null)
+        {
+            <div class="alert alert-warning">
+                <h4>Пользователь не найден</h4>
+                <a href="users" class="btn btn-primary">Вернуться к списку</a>
+            </div>
+        }
+        else
+        {
+            <h3>Информация о пользователе</h3>
+
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">@user.Surname @user.Name</h5>
+                    <span class="badge @(user.RoleName == "admin" ? "bg-danger" : "bg-primary")">
+                        @user.RoleName
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Основная информация</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th style="width: 150px;">ID</th>
+                                    <td>@user.Id</td>
+                                </tr>
+                                <tr>
+                                    <th>Фамилия</th>
+                                    <td>@user.Surname</td>
+                                </tr>
+                                <tr>
+                                    <th>Имя</th>
+                                    <td>@user.Name</td>
+                                </tr>
+                                <tr>
+                                    <th>Пол</th>
+                                    <td>@user.Gender</td>
+                                </tr>
+                                <tr>
+                                    <th>Email</th>
+                                    <td>@user.Email</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Дополнительно</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th style="width: 150px;">Описание</th>
+                                    <td>@(user.Description ?? "—")</td>
+                                </tr>
+                                <tr>
+                                    <th>Роль</th>
+                                    <td>@user.RoleName</td>
+                                </tr>
+                                @if (user.Login != null)
+                                {
+                                    <tr>
+                                        <th>Логин</th>
+                                        <td>@user.Login.LoginValue</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <th>Логин</th>
+                                        <td class="text-muted">Не установлен</td>
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <a href="users/@user.Id/edit" class="btn btn-primary">
+                    <span class="bi bi-pencil"></span> Редактировать
+                </a>
+                <a href="users" class="btn btn-secondary ms-2">
+                    <span class="bi bi-arrow-left"></span> Назад к списку
+                </a>
+                <button class="btn btn-danger ms-2" @onclick="DeleteUser">
+                    <span class="bi bi-trash"></span> Удалить
+                </button>
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-warning">
+            <h4>Доступ запрещён</h4>
+            <p>Вы должны быть администратором для просмотра этой страницы.</p>
+            <a href="login" class="btn btn-primary">Войти</a>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private UserDetailDto? user;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUser();
+    }
+
+    private async Task LoadUser()
+    {
+        isLoading = true;
+        user = await UserService.GetUserByIdAsync(Id);
+        isLoading = false;
+    }
+
+    private async Task DeleteUser()
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("eval", "confirm('Вы уверены, что хотите удалить этого пользователя?')");
+        if (confirmed)
+        {
+            var success = await UserService.DeleteUserAsync(Id);
+            if (success)
+            {
+                Navigation.NavigateTo("/users");
+            }
+        }
+    }
+}

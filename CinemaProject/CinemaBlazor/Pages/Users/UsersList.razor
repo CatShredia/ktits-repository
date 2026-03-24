@@ -1,0 +1,174 @@
+@page "/users"
+@inject IUserService UserService
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@using CinemaBlazor.Models
+
+<PageTitle>Пользователи</PageTitle>
+
+<AuthorizeView Roles="admin">
+    <Authorized>
+        <h3>Пользователи</h3>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Поиск по имени/фамилии</label>
+                        <input type="text" class="form-control" placeholder="Введите имя или фамилию..."
+                               @bind="search" @bind:event="oninput" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Поиск по email</label>
+                        <input type="text" class="form-control" placeholder="Введите email..."
+                               @bind="searchEmail" @bind:event="oninput" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Роль</label>
+                        <select class="form-select" @bind="selectedRoleId">
+                            <option value="0">Все роли</option>
+                            <option value="1">Admin</option>
+                            <option value="2">Client</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Сортировка</label>
+                        <select class="form-select" @bind="sortBy">
+                            <option value="">По фамилии</option>
+                            <option value="name">По имени (А-Я)</option>
+                            <option value="name_desc">По имени (Я-А)</option>
+                            <option value="surname">По фамилии (А-Я)</option>
+                            <option value="surname_desc">По фамилии (Я-А)</option>
+                            <option value="email">По email (А-Я)</option>
+                            <option value="email_desc">По email (Я-А)</option>
+                            <option value="role">По роли (А-Я)</option>
+                            <option value="role_desc">По роли (Я-А)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" @onclick="LoadUsers">
+                            <span class="bi bi-search"></span> Применить фильтры
+                        </button>
+                        <button class="btn btn-success ms-2" @onclick="CreateUser">
+                            <span class="bi bi-plus-circle"></span> Создать пользователя
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (isLoading)
+        {
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Загрузка...</span>
+                </div>
+            </div>
+        }
+        else if (users.Count == 0)
+        {
+            <div class="alert alert-info">Пользователи не найдены</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Фамилия</th>
+                            <th>Имя</th>
+                            <th>Email</th>
+                            <th>Логин</th>
+                            <th>Роль</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in users)
+                        {
+                            <tr>
+                                <td>@user.Id</td>
+                                <td>@user.Surname</td>
+                                <td>@user.Name</td>
+                                <td>@user.Email</td>
+                                <td>@(user.LoginValue ?? "—")</td>
+                                <td>
+                                    <span class="badge @(user.RoleName == "admin" ? "bg-danger" : "bg-primary")">
+                                        @user.RoleName
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="users/@user.Id" class="btn btn-sm btn-info me-1">
+                                        <span class="bi bi-eye"></span>
+                                    </a>
+                                    <a href="users/@user.Id/edit" class="btn btn-sm btn-primary me-1">
+                                        <span class="bi bi-pencil"></span>
+                                    </a>
+                                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteUser(user.Id)">
+                                        <span class="bi bi-trash"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-warning">
+            <h4>Доступ запрещён</h4>
+            <p>Вы должны быть администратором для просмотра этой страницы.</p>
+            <a href="login" class="btn btn-primary">Войти</a>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private List<UserListDto> users = new();
+    private string? search;
+    private string? searchEmail;
+    private int selectedRoleId;
+    private string? sortBy;
+    private bool isLoading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        isLoading = true;
+        int? roleId = selectedRoleId > 0 ? selectedRoleId : null;
+        users = await UserService.GetAllUsersAsync(search, searchEmail, roleId, sortBy);
+        isLoading = false;
+    }
+
+    private void CreateUser()
+    {
+        Navigation.NavigateTo("/users/create");
+    }
+
+    private async Task DeleteUser(int id)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("eval", "confirm('Вы уверены, что хотите удалить этого пользователя?')");
+        if (confirmed)
+        {
+            var success = await UserService.DeleteUserAsync(id);
+            if (success)
+            {
+                await LoadUsers();
+            }
+            else
+            {
+                // TODO: показать ошибку
+            }
+        }
+    }
+
+    [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
+}

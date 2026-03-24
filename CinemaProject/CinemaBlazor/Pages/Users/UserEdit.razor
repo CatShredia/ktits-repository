@@ -1,0 +1,244 @@
+@page "/users/{id:int}/edit"
+@inject IUserService UserService
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@using CinemaBlazor.Models
+
+<PageTitle>Редактировать пользователя</PageTitle>
+
+<AuthorizeView Roles="admin">
+    <Authorized>
+        @if (isLoading)
+        {
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Загрузка...</span>
+                </div>
+            </div>
+        }
+        else if (user == null)
+        {
+            <div class="alert alert-warning">
+                <h4>Пользователь не найден</h4>
+                <a href="users" class="btn btn-primary">Вернуться к списку</a>
+            </div>
+        }
+        else
+        {
+            <h3>Редактирование пользователя</h3>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <EditForm Model="@userDto" OnValidSubmit="HandleUpdate" Context="editContext">
+                        <DataAnnotationsValidator />
+
+                        <input type="hidden" @bind="userDto.Id" />
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Фамилия *</label>
+                                <InputText @bind-Value="userDto.Surname" class="form-control" />
+                                <ValidationMessage For="@(() => userDto.Surname)" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Имя *</label>
+                                <InputText @bind-Value="userDto.Name" class="form-control" />
+                                <ValidationMessage For="@(() => userDto.Name)" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Описание</label>
+                            <InputTextArea @bind-Value="userDto.Description" class="form-control" rows="3" />
+                            <ValidationMessage For="@(() => userDto.Description)" />
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Пол *</label>
+                                <InputSelect @bind-Value="userDto.Gender" class="form-select">
+                                    <option value="">Выберите пол</option>
+                                    <option value="Male">Мужской</option>
+                                    <option value="Female">Женский</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => userDto.Gender)" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email *</label>
+                                <InputText @bind-Value="userDto.Email" class="form-control" type="email" />
+                                <ValidationMessage For="@(() => userDto.Email)" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Роль</label>
+                            <InputSelect @bind-Value="userDto.RoleId" class="form-select">
+                                <option value="0">Выберите роль</option>
+                                <option value="1">Admin</option>
+                                <option value="2">Client</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => userDto.RoleId)" />
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger">@errorMessage</div>
+                        }
+
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary" disabled="@isLoading">
+                                <span class="bi bi-check-circle"></span> Сохранить изменения
+                            </button>
+                            <a href="users/@user.Id" class="btn btn-secondary ms-2">Отмена</a>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+
+            // Редактирование логина
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Логин и пароль</h5>
+                </div>
+                <div class="card-body">
+                    @if (loginInfo != null)
+                    {
+                        <EditForm Model="@loginDto" OnValidSubmit="HandleLoginUpdate" Context="loginFormContext">
+                            <DataAnnotationsValidator />
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Логин</label>
+                                    <InputText @bind-Value="loginDto.LoginValue" class="form-control" />
+                                    <ValidationMessage For="@(() => loginDto.LoginValue)" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Новый пароль (оставьте пустым, чтобы не менять)</label>
+                                    <InputText @bind-Value="loginDto.Password" class="form-control" type="password" />
+                                    <ValidationMessage For="@(() => loginDto.Password)" />
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(loginErrorMessage))
+                            {
+                                <div class="alert alert-danger">@loginErrorMessage</div>
+                            }
+                            @if (loginSuccess)
+                            {
+                                <div class="alert alert-success">Логин успешно обновлён!</div>
+                            }
+
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-warning" disabled="@isLoginLoading">
+                                    <span class="bi bi-pencil"></span> Обновить логин/пароль
+                                </button>
+                            </div>
+                        </EditForm>
+                    }
+                    else
+                    {
+                        <p class="text-muted">У пользователя нет логина. Создайте логин через API.</p>
+                    }
+                </div>
+            </div>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-warning">
+            <h4>Доступ запрещён</h4>
+            <p>Вы должны быть администратором для редактирования пользователей.</p>
+            <a href="login" class="btn btn-primary">Войти</a>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private UserDetailDto? user;
+    private UserUpdateDto userDto = new();
+    private LoginInfoDto? loginInfo;
+    private LoginUpdateSimpleDto loginDto = new();
+    private bool isLoading = true;
+    private bool isLoginLoading = false;
+    private string errorMessage = string.Empty;
+    private string loginErrorMessage = string.Empty;
+    private bool loginSuccess = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUser();
+    }
+
+    private async Task LoadUser()
+    {
+        isLoading = true;
+        user = await UserService.GetUserByIdAsync(Id);
+
+        if (user != null)
+        {
+            userDto = new UserUpdateDto
+            {
+                Id = user.Id,
+                Surname = user.Surname,
+                Name = user.Name,
+                Description = user.Description,
+                Gender = user.Gender,
+                Email = user.Email,
+                RoleId = user.RoleId
+            };
+
+            loginInfo = user.Login;
+
+            if (loginInfo != null)
+            {
+                loginDto = new LoginUpdateSimpleDto
+                {
+                    LoginValue = loginInfo.LoginValue
+                };
+            }
+        }
+
+        isLoading = false;
+    }
+
+    private async Task HandleUpdate()
+    {
+        isLoading = true;
+        errorMessage = string.Empty;
+
+        var success = await UserService.UpdateUserAsync(Id, userDto);
+
+        if (success)
+        {
+            Navigation.NavigateTo($"/users/{Id}");
+        }
+        else
+        {
+            errorMessage = "Ошибка при обновлении пользователя. Проверьте правильность введённых данных.";
+        }
+
+        isLoading = false;
+    }
+
+    private async Task HandleLoginUpdate()
+    {
+        isLoginLoading = true;
+        loginErrorMessage = string.Empty;
+        loginSuccess = false;
+
+        var success = await UserService.UpdateUserLoginAsync(Id, loginDto);
+
+        if (success)
+        {
+            loginSuccess = true;
+            await LoadUser();
+        }
+        else
+        {
+            loginErrorMessage = "Ошибка при обновлении логина. Возможно, такой логин уже занят.";
+        }
+
+        isLoginLoading = false;
+    }
+}
