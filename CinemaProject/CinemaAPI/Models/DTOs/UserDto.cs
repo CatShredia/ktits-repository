@@ -125,3 +125,10 @@ public class LoginUpdateSimpleDto
     public string? LoginValue { get; set; }
     public string? Password { get; set; }
 }
+
+// DTO для создания логина
+public class LoginCreateSimpleDto
+{
+    public string LoginValue { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+}

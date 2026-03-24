@@ -15,6 +15,8 @@ public interface IUserService
     Task<UserDetailDto?> CreateUserAsync(UserCreateDto dto);
     Task<bool> UpdateUserAsync(int id, UserUpdateDto dto);
     Task<bool> UpdateUserLoginAsync(int id, LoginUpdateSimpleDto dto);
+    Task<bool> CreateLoginAsync(int userId, LoginCreateSimpleDto dto);
+    Task<bool> DeleteUserLoginAsync(int userId);
     Task<bool> DeleteUserAsync(int id);
 }
 
@@ -87,6 +89,18 @@ public class UserService : IUserService
     public async Task<bool> UpdateUserLoginAsync(int id, LoginUpdateSimpleDto dto)
     {
         var response = await _http.PutAsJsonAsync($"api/Users/{id}/login", dto);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> CreateLoginAsync(int userId, LoginCreateSimpleDto dto)
+    {
+        var response = await _http.PostAsJsonAsync($"api/Users/{userId}/login", dto);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> DeleteUserLoginAsync(int userId)
+    {
+        var response = await _http.DeleteAsync($"api/Users/{userId}/login");
         return response.IsSuccessStatusCode;
     }
 

@@ -98,8 +98,14 @@
 
             // Редактирование логина
             <div class="card">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Логин и пароль</h5>
+                    @if (loginInfo != null)
+                    {
+                        <button class="btn btn-sm btn-danger" @onclick="DeleteLogin">
+                            <span class="bi bi-trash"></span> Удалить логин
+                        </button>
+                    }
                 </div>
                 <div class="card-body">
                     @if (loginInfo != null)
@@ -136,9 +142,43 @@
                             </div>
                         </EditForm>
                     }
+                    else if (showCreateLogin)
+                    {
+                        <EditForm Model="@createLoginDto" OnValidSubmit="HandleCreateLogin" Context="createLoginFormContext">
+                            <DataAnnotationsValidator />
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Логин</label>
+                                    <InputText @bind-Value="createLoginDto.LoginValue" class="form-control" />
+                                    <ValidationMessage For="@(() => createLoginDto.LoginValue)" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Пароль</label>
+                                    <InputText @bind-Value="createLoginDto.Password" class="form-control" type="password" />
+                                    <ValidationMessage For="@(() => createLoginDto.Password)" />
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(loginErrorMessage))
+                            {
+                                <div class="alert alert-danger">@loginErrorMessage</div>
+                            }
+
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-success" disabled="@isLoginLoading">
+                                    <span class="bi bi-plus-circle"></span> Создать логин
+                                </button>
+                                <button type="button" class="btn btn-secondary ms-2" @onclick="CancelCreateLogin">Отмена</button>
+                            </div>
+                        </EditForm>
+                    }
                     else
                     {
-                        <p class="text-muted">У пользователя нет логина. Создайте логин через API.</p>
+                        <p class="text-muted">У пользователя нет логина.</p>
+                        <button class="btn btn-sm btn-success" @onclick="ShowCreateLogin">
+                            <span class="bi bi-plus-circle"></span> Создать логин
+                        </button>
                     }
                 </div>
             </div>
@@ -159,11 +199,13 @@
     private UserUpdateDto userDto = new();
     private LoginInfoDto? loginInfo;
     private LoginUpdateSimpleDto loginDto = new();
+    private LoginCreateSimpleDto createLoginDto = new();
     private bool isLoading = true;
     private bool isLoginLoading = false;
     private string errorMessage = string.Empty;
     private string loginErrorMessage = string.Empty;
     private bool loginSuccess = false;
+    private bool showCreateLogin = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -240,5 +282,52 @@
         }
 
         isLoginLoading = false;
+    }
+
+    private async Task HandleCreateLogin()
+    {
+        isLoginLoading = true;
+        loginErrorMessage = string.Empty;
+
+        var success = await UserService.CreateLoginAsync(Id, createLoginDto);
+
+        if (success)
+        {
+            showCreateLogin = false;
+            await LoadUser();
+        }
+        else
+        {
+            loginErrorMessage = "Ошибка при создании логина. Возможно, такой логин уже занят.";
+        }
+
+        isLoginLoading = false;
+    }
+
+    private void ShowCreateLogin()
+    {
+        showCreateLogin = true;
+        createLoginDto = new LoginCreateSimpleDto();
+        loginErrorMessage = string.Empty;
+    }
+
+    private void CancelCreateLogin()
+    {
+        showCreateLogin = false;
+        createLoginDto = new LoginCreateSimpleDto();
+        loginErrorMessage = string.Empty;
+    }
+
+    private async Task DeleteLogin()
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("eval", "confirm('Вы уверены, что хотите удалить логин пользователя?')");
+        if (confirmed)
+        {
+            var success = await UserService.DeleteUserLoginAsync(Id);
+            if (success)
+            {
+                await LoadUser();
+            }
+        }
     }
 }

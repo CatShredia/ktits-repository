@@ -280,6 +280,39 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
+    // ! Create login for user
+    [HttpPost("{id}/login")]
+    public async Task<IActionResult> PostUserLogin(int id, LoginCreateSimpleDto dto)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user == null)
+        {
+            return NotFound("User not found");
+        }
+
+        if (await _context.Logins.AnyAsync(l => l.UserId == id))
+        {
+            return BadRequest("User already has a login");
+        }
+
+        if (await _context.Logins.AnyAsync(l => l.LoginValue == dto.LoginValue))
+        {
+            return BadRequest("Login already exists");
+        }
+
+        var login = new Login
+        {
+            LoginValue = dto.LoginValue,
+            PasswordHash = HashPassword(dto.Password),
+            UserId = id
+        };
+
+        _context.Logins.Add(login);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
     // ! Delete user (cascade deletes login)
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
@@ -291,6 +324,30 @@ public class UsersController : ControllerBase
         }
 
         _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    // ! Delete user login
+    [HttpDelete("{id}/login")]
+    public async Task<IActionResult> DeleteUserLogin(int id)
+    {
+        var user = await _context.Users
+            .Include(u => u.Login)
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        if (user == null)
+        {
+            return NotFound("User not found");
+        }
+
+        if (user.Login == null)
+        {
+            return NotFound("User has no login");
+        }
+
+        _context.Logins.Remove(user.Login);
         await _context.SaveChangesAsync();
 
         return NoContent();
