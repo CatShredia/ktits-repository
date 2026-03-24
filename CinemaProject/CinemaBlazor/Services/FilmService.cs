@@ -106,7 +106,7 @@ public class FilmService : IFilmService
     {
         using var content = new MultipartFormDataContent();
 
-        content.Add(new StringContent(id.ToString()), "id");
+        content.Add(new StringContent(id.ToString()), "dto.Id");
         content.Add(new StringContent(film.Name ?? ""), "dto.Name");
         content.Add(new StringContent(film.Description ?? ""), "dto.Description");
         content.Add(new StringContent(film.ReleaseDate.ToString("yyyy-MM-dd")), "dto.ReleaseDate");

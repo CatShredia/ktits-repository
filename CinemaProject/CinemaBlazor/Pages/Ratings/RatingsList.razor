@@ -9,7 +9,7 @@
 
 <AuthorizeView>
     <Authorized>
-        <h3>Оценки</h3>
+        <h3>Мои оценки</h3>
 
         @if (isLoading)
         {
@@ -33,11 +33,7 @@
                         <tr>
                             <th>Фильм</th>
                             <th>Ваша оценка</th>
-                            <th>Автор</th>
-                            @if (_isAdmin)
-                            {
-                                <th>Действия</th>
-                            }
+                            <th>Действия</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,15 +46,14 @@
                                 <td>
                                     <span class="badge bg-warning text-dark">⭐ @rating.Value/10</span>
                                 </td>
-                                <td>@(rating.AuthorName ?? "Аноним")</td>
-                                @if (_isAdmin)
-                                {
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteRating(rating.Id)">
-                                            Удалить
-                                        </button>
-                                    </td>
-                                }
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-2" @onclick="() => OpenEditModal(rating)">
+                                        <i class="bi bi-pencil"></i> Изменить
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteRating(rating.Id)">
+                                        <i class="bi bi-trash"></i> Удалить
+                                    </button>
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -73,30 +68,84 @@
     </NotAuthorized>
 </AuthorizeView>
 
+@if (showEditModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Изменить оценку</h5>
+                    <button type="button" class="btn-close" @onclick="CloseEditModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Оценка фильма "@editingRating?.FilmName"</label>
+                        <input type="number" class="form-control" min="1" max="10" 
+                               @bind="editingRatingValue" />
+                        <small class="form-text text-muted">Введите значение от 1 до 10</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseEditModal">Отмена</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveRating">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
 @code {
     private List<RatingResponseDto> ratings = new();
     private bool isLoading;
-    private bool _isAdmin = false;
+    private bool showEditModal;
+    private RatingResponseDto? editingRating;
+    private int editingRatingValue;
 
     protected override async Task OnInitializedAsync()
     {
         if (await AuthService.IsAuthenticatedAsync())
         {
-            _isAdmin = await AuthService.IsInRoleAsync("admin");
             isLoading = true;
-            ratings = await RatingService.GetAllRatingsAsync();
+            ratings = await RatingService.GetMyRatingsAsync();
             isLoading = false;
+        }
+    }
+
+    private void OpenEditModal(RatingResponseDto rating)
+    {
+        editingRating = rating;
+        editingRatingValue = rating.Value;
+        showEditModal = true;
+    }
+
+    private void CloseEditModal()
+    {
+        showEditModal = false;
+        editingRating = null;
+    }
+
+    private async Task SaveRating()
+    {
+        if (editingRating != null && editingRatingValue >= 1 && editingRatingValue <= 10)
+        {
+            var success = await RatingService.UpdateRatingAsync(editingRating.Id, new RatingUpdateDto { Value = editingRatingValue });
+            if (success)
+            {
+                ratings = await RatingService.GetMyRatingsAsync();
+                CloseEditModal();
+            }
         }
     }
 
     private async Task DeleteRating(int id)
     {
-        if (await JSRuntime.InvokeAsync<bool>("eval", "confirm('Are you sure you want to delete this rating?')"))
+        if (await JSRuntime.InvokeAsync<bool>("eval", "confirm('Вы уверены, что хотите удалить эту оценку?')"))
         {
             var success = await RatingService.DeleteRatingAsync(id);
             if (success)
             {
-                ratings = await RatingService.GetAllRatingsAsync();
+                ratings = await RatingService.GetMyRatingsAsync();
             }
         }
     }

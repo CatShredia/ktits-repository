@@ -11,6 +11,7 @@ public interface IRatingService
     Task<bool> UpdateRatingAsync(int id, RatingUpdateDto dto);
     Task<bool> DeleteRatingAsync(int id);
     Task<Rating?> GetMyRatingForFilmAsync(int filmId);
+    Task<List<RatingResponseDto>> GetMyRatingsAsync();
 }
 
 public class RatingService : IRatingService
@@ -72,5 +73,15 @@ public class RatingService : IRatingService
             return await response.Content.ReadFromJsonAsync<Rating>();
         }
         return null;
+    }
+
+    public async Task<List<RatingResponseDto>> GetMyRatingsAsync()
+    {
+        var response = await _http.GetAsync("api/Ratings/my-ratings");
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadFromJsonAsync<List<RatingResponseDto>>() ?? new List<RatingResponseDto>();
+        }
+        return new List<RatingResponseDto>();
     }
 }

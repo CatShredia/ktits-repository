@@ -99,9 +99,9 @@ public class RatingsController : ControllerBase
         return CreatedAtAction(nameof(GetRating), new { id = rating.Id }, rating);
     }
 
-    // ! update rating
+    // ! update rating (admin or owner)
     [HttpPut("{id}")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin,client")]
     public async Task<IActionResult> PutRating(int id, RatingUpdateDto dto)
     {
         var rating = await _context.Ratings.FindAsync(id);
@@ -110,15 +110,24 @@ public class RatingsController : ControllerBase
             return NotFound();
         }
 
+        // Check if user is owner or admin
+        var userId = GetCurrentUserId();
+        var isAdmin = User.IsInRole("admin");
+        
+        if (rating.AuthorId != userId && !isAdmin)
+        {
+            return Forbid();
+        }
+
         rating.Value = dto.Value;
         await _context.SaveChangesAsync();
 
         return NoContent();
     }
 
-    // ! delete rating
+    // ! delete rating (admin or owner)
     [HttpDelete("{id}")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin,client")]
     public async Task<IActionResult> DeleteRating(int id)
     {
         var rating = await _context.Ratings.FindAsync(id);
@@ -127,13 +136,22 @@ public class RatingsController : ControllerBase
             return NotFound();
         }
 
+        // Check if user is owner or admin
+        var userId = GetCurrentUserId();
+        var isAdmin = User.IsInRole("admin");
+        
+        if (rating.AuthorId != userId && !isAdmin)
+        {
+            return Forbid();
+        }
+
         _context.Ratings.Remove(rating);
         await _context.SaveChangesAsync();
 
         return NoContent();
     }
 
-    // ! get ratings by userId 
+    // ! get ratings by userId
     [HttpGet("film/{filmId}/my-rating")]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<Rating>> GetMyRatingForFilm(int filmId)
@@ -153,6 +171,33 @@ public class RatingsController : ControllerBase
         }
 
         return rating;
+    }
+
+    // ! get my ratings (current user's ratings)
+    [HttpGet("my-ratings")]
+    [Authorize(Roles = "admin,client")]
+    public async Task<ActionResult<IEnumerable<RatingResponseDto>>> GetMyRatings()
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var ratings = await _context.Ratings
+            .Where(r => r.AuthorId == userId)
+            .Include(r => r.Film)
+            .ToListAsync();
+
+        return ratings.Select(r => new RatingResponseDto
+        {
+            Id = r.Id,
+            Value = r.Value,
+            FilmId = r.FilmId,
+            FilmName = r.Film?.Name,
+            AuthorId = r.AuthorId,
+            AuthorName = null // Not needed for own ratings
+        }).ToList();
     }
 
     private int? GetCurrentUserId()
