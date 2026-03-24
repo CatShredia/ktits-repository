@@ -8,9 +8,6 @@ using System.Net.Http.Headers;
 
 namespace CinemaAPI.Tests;
 
-/// <summary>
-/// Custom WebApplicationFactory for integration tests using in-memory database
-/// </summary>
 public class IntegrationTestFactory : WebApplicationFactory<Program>
 {
     private readonly string _dbName;
@@ -52,7 +49,6 @@ public class IntegrationTestFactory : WebApplicationFactory<Program>
 
         context.Roles.AddRange(adminRole, clientRole);
 
-        // Password hashes are SHA256 in Base64 format (as per AuthController.HashPassword)
         var adminUser = new User
         {
             Id = 1,
@@ -64,7 +60,7 @@ public class IntegrationTestFactory : WebApplicationFactory<Program>
             {
                 Id = 1,
                 LoginValue = "admin",
-                PasswordHash = "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=", // SHA256 Base64("admin")
+                PasswordHash = "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=",
                 UserId = 1
             }
         };
@@ -80,7 +76,7 @@ public class IntegrationTestFactory : WebApplicationFactory<Program>
             {
                 Id = 2,
                 LoginValue = "johndoe",
-                PasswordHash = "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", // SHA256 Base64("password")
+                PasswordHash = "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=",
                 UserId = 2
             }
         };
