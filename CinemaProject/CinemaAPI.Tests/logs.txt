@@ -1,0 +1,59 @@
+  Determining projects to restore...
+  Restored C:\directory-git\ktits-repository-1\CinemaProject\CinemaAPI\CinemaAPI.csproj (in 513 ms).
+  Restored C:\directory-git\ktits-repository-1\CinemaProject\CinemaAPI.Tests\CinemaAPI.Tests.csproj (in 567 ms).
+C:\directory-git\ktits-repository-1\CinemaProject\CinemaAPI\Controllers\AuthController.cs(104,31): warning CS8602: Dereference of a possibly null reference. [C:\directory-git\ktits-repository-1\CinemaProject\CinemaAPI\CinemaAPI.csproj]
+C:\directory-git\ktits-repository-1\CinemaProject\CinemaAPI\Controllers\AuthController.cs(112,24): warning CS8602: Dereference of a possibly null reference. [C:\directory-git\ktits-repository-1\CinemaProject\CinemaAPI\CinemaAPI.csproj]
+  CinemaAPI -> C:\directory-git\ktits-repository-1\CinemaProject\CinemaAPI\bin\Debug\net8.0\CinemaAPI.dll
+C:\directory-git\ktits-repository-1\CinemaProject\CinemaAPI.Tests\AuthApiTests.cs(40,40): warning CS8602: Dereference of a possibly null reference. [C:\directory-git\ktits-repository-1\CinemaProject\CinemaAPI.Tests\CinemaAPI.Tests.csproj]
+  CinemaAPI.Tests -> C:\directory-git\ktits-repository-1\CinemaProject\CinemaAPI.Tests\bin\Debug\net8.0\CinemaAPI.Tests.dll
+Test run for C:\directory-git\ktits-repository-1\CinemaProject\CinemaAPI.Tests\bin\Debug\net8.0\CinemaAPI.Tests.dll (.NETCoreApp,Version=v8.0)
+VSTest version 18.0.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+C:\directory-git\ktits-repository-1\CinemaProject\CinemaAPI.Tests\bin\Debug\net8.0\CinemaAPI.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.5.3.1+6b60a9e56a (64-bit .NET 8.0.24)
+[xUnit.net 00:00:00.12]   Discovering: CinemaAPI.Tests
+[xUnit.net 00:00:00.17]   Discovered:  CinemaAPI.Tests
+[xUnit.net 00:00:00.17]   Starting:    CinemaAPI.Tests
+info: Microsoft.EntityFrameworkCore.Update[30100]
+      Saved 0 entities to in-memory store.
+info: Microsoft.EntityFrameworkCore.Update[30100]
+      Saved 10 entities to in-memory store.
+warn: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3]
+      Failed to determine the https port for redirect.
+  Passed CinemaAPI.Tests.UnitTest1.Test1 [2 ms]
+info: Microsoft.EntityFrameworkCore.Update[30100]
+      Saved 1 entities to in-memory store.
+[xUnit.net 00:00:01.99]   Finished:    CinemaAPI.Tests
+  Passed CinemaAPI.Tests.AuthApiTests.GetCurrentUser_WithValidToken_ReturnsUserProfile [1 s]
+  Standard Output Messages:
+ === ARRANGE: Creating authorized client with 'admin' role ===
+ === ACT: Sending GET request to /api/Auth/me ===
+ === ASSERT: Response Status Code = OK ===
+ === Response Body: {"id":1,"surname":"Adminov","name":"Admin","description":null,"gender":"","email":"admin@cinema.com","roleId":1,"roleName":"admin"} ===
+ === User: Admin Adminov (admin@cinema.com) ===
+
+
+  Passed CinemaAPI.Tests.AuthApiTests.UpdateUserProfile_WithValidToken_UpdatesProfile [90 ms]
+  Standard Output Messages:
+ === ARRANGE: Creating authorized client with 'client' role ===
+ === Update Data: John Updated Doe Updated ===
+ === ACT: Sending PUT request to /api/Auth/me ===
+ === ASSERT: Response Status Code = NoContent ===
+ === Response Body:  ===
+
+
+  Passed CinemaAPI.Tests.AuthApiTests.GetCurrentUser_WithoutToken_ReturnsUnauthorized [10 ms]
+  Standard Output Messages:
+ === ARRANGE: Creating client WITHOUT token ===
+ === ACT: Sending GET request to /api/Auth/me (no auth) ===
+ === ASSERT: Response Status Code = Unauthorized ===
+ === Expected: Unauthorized (401) ===
+
+
+
+Test Run Successful.
+Total tests: 4
+     Passed: 4
+ Total time: 2.5946 Seconds
