@@ -43,6 +43,7 @@ public class ArkanoidDbContext : DbContext
             entity.HasIndex(e => e.UserId).IsUnique();
             entity.HasIndex(e => e.Username).IsUnique();
             entity.Property(e => e.Username).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.PasswordHash).IsRequired();
             entity.Property(e => e.Coins).HasDefaultValue(100);
         });
 

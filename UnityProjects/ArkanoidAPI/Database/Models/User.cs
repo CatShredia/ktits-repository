@@ -18,6 +18,11 @@ public class User
     public string Username { get; set; } = string.Empty;
 
     /// <summary>
+    /// Хэш пароля
+    /// </summary>
+    public string PasswordHash { get; set; } = string.Empty;
+
+    /// <summary>
     /// Баланс игровой валюты (монеты)
     /// </summary>
     public int Coins { get; set; } = 100;

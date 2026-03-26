@@ -27,7 +27,7 @@ namespace ArkanoidAPI.Migrations
                     PrefabPath = table.Column<string>(type: "text", nullable: true),
                     IsStarter = table.Column<bool>(type: "boolean", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,9 +42,10 @@ namespace ArkanoidAPI.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<string>(type: "text", nullable: false),
                     Username = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: false),
                     Coins = table.Column<int>(type: "integer", nullable: false, defaultValue: 100),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastLoginAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    LastLoginAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -60,7 +61,7 @@ namespace ArkanoidAPI.Migrations
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     SkinId = table.Column<int>(type: "integer", nullable: false),
                     Price = table.Column<int>(type: "integer", nullable: false),
-                    PurchasedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    PurchasedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -87,7 +88,7 @@ namespace ArkanoidAPI.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     SkinId = table.Column<int>(type: "integer", nullable: false),
-                    AcquiredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    AcquiredAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     AcquisitionMethod = table.Column<int>(type: "integer", nullable: false),
                     IsEquipped = table.Column<bool>(type: "boolean", nullable: false)
                 },
