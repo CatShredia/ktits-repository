@@ -1,0 +1,6 @@
+@ArkanoidAPI_HostAddress = http://localhost:5250
+
+GET {{ArkanoidAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
