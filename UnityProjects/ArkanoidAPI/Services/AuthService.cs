@@ -1,44 +1,25 @@
 using System.Security.Cryptography;
 using System.Text;
+using ArkanoidAPI.Database;
+using ArkanoidAPI.Database.DTOs;
 using ArkanoidAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArkanoidAPI.Services;
 
-/// <summary>
-/// Сервис для работы с пользователями и авторизацией
-/// </summary>
 public interface IAuthService
 {
-    /// <summary>
-    /// Регистрация нового пользователя
-    /// </summary>
     Task<AuthResponseDto?> RegisterAsync(RegisterDto dto);
 
-    /// <summary>
-    /// Вход пользователя
-    /// </summary>
     Task<AuthResponseDto?> LoginAsync(LoginDto dto);
 
-    /// <summary>
-    /// Получение пользователя по ID
-    /// </summary>
     Task<User?> GetUserByIdAsync(int id);
 
-    /// <summary>
-    /// Получение пользователя по имени
-    /// </summary>
     Task<User?> GetUserByUsernameAsync(string username);
 
-    /// <summary>
-    /// Получение всех пользователей
-    /// </summary>
     Task<IEnumerable<User>> GetAllUsersAsync();
 }
 
-/// <summary>
-/// Реализация сервиса авторизации
-/// </summary>
 public class AuthService : IAuthService
 {
     private readonly ArkanoidDbContext _context;
@@ -59,16 +40,13 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponseDto?> RegisterAsync(RegisterDto dto)
     {
-        // Проверка на существующего пользователя
         if (await _context.Users.AnyAsync(u => u.Username == dto.Username))
         {
             return null;
         }
 
-        // Хэширование пароля
         var passwordHash = HashPassword(dto.Password);
 
-        // Создание пользователя
         var user = new User
         {
             Username = dto.Username,
@@ -82,7 +60,6 @@ public class AuthService : IAuthService
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        // Генерация токена
         var token = _jwtService.GenerateToken(user.Id, user.Username, user.UserId);
 
         return new AuthResponseDto
@@ -97,24 +74,20 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponseDto?> LoginAsync(LoginDto dto)
     {
-        // Поиск пользователя
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == dto.Username);
         if (user == null)
         {
             return null;
         }
 
-        // Проверка пароля
         if (HashPassword(dto.Password) != user.PasswordHash)
         {
             return null;
         }
 
-        // Обновление времени последнего входа
         user.LastLoginAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
 
-        // Генерация токена
         var token = _jwtService.GenerateToken(user.Id, user.Username, user.UserId);
 
         return new AuthResponseDto

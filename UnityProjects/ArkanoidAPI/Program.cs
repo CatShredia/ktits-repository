@@ -1,7 +1,8 @@
 
 using System.Text;
 using System.Text.Json.Serialization;
-using ArkanoidAPI.Models;
+using ArkanoidAPI.Database;
+using ArkanoidAPI.Database.DTOs;
 using ArkanoidAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -11,24 +12,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
+// инициализация приложения
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowBlazor", policy =>
-    {
-        policy.WithOrigins(
-                "http://localhost:5156",
-                "https://localhost:5156",
-                "http://localhost:7156",
-                "https://localhost:7156"
-            )
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
-    });
-});
-
+// добавление сервисов в контейнер с игнорирование циклических ссылок 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -36,8 +23,10 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.MaxDepth = 64;
     });
 
+// фикс проблемы с временем
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
+// подключение к базе данных PostgreSQL
 builder.Services.AddDbContext<ArkanoidDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 

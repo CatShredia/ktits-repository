@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ArkanoidAPI.Models;
+using ArkanoidAPI.Database.DTOs;
 using ArkanoidAPI.Services;
 
 namespace ArkanoidAPI.Controllers;
 
-/// <summary>
-/// Контроллер для работы с пользователями
-/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
@@ -19,9 +16,6 @@ public class UsersController : ControllerBase
         _authService = authService;
     }
 
-    /// <summary>
-    /// Получение всех пользователей (требуется авторизация)
-    /// </summary>
     [HttpGet]
     [Authorize]
     [ProducesResponseType(typeof(IEnumerable<UserDto>), StatusCodes.Status200OK)]
@@ -41,10 +35,6 @@ public class UsersController : ControllerBase
         return Ok(userDtos);
     }
 
-    /// <summary>
-    /// Получение пользователя по ID (требуется авторизация)
-    /// </summary>
-    /// <param name="id">ID пользователя</param>
     [HttpGet("{id}")]
     [Authorize]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
@@ -68,9 +58,6 @@ public class UsersController : ControllerBase
         });
     }
 
-    /// <summary>
-    /// Получение текущего авторизованного пользователя
-    /// </summary>
     [HttpGet("me")]
     [Authorize]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]

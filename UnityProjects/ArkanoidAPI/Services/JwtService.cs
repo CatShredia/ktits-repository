@@ -5,20 +5,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace ArkanoidAPI.Services;
 
-/// <summary>
-/// Сервис для работы с JWT токенами
-/// </summary>
 public interface IJwtService
 {
-    /// <summary>
-    /// Генерация JWT токена для пользователя
-    /// </summary>
     string GenerateToken(int userId, string username, string userIdGuid);
 }
 
-/// <summary>
-/// Реализация сервиса JWT
-/// </summary>
 public class JwtService : IJwtService
 {
     private readonly string _secretKey;

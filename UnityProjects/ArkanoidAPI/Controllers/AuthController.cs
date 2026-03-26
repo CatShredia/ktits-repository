@@ -1,12 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using ArkanoidAPI.Models;
+using ArkanoidAPI.Database.DTOs;
 using ArkanoidAPI.Services;
 
 namespace ArkanoidAPI.Controllers;
 
-/// <summary>
-/// Контроллер для авторизации и регистрации
-/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
@@ -18,11 +15,6 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
-    /// <summary>
-    /// Регистрация нового пользователя
-    /// </summary>
-    /// <param name="dto">Данные для регистрации</param>
-    /// <returns>JWT токен и информация о пользователе</returns>
     [HttpPost("register")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -37,11 +29,6 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Вход пользователя
-    /// </summary>
-    /// <param name="dto">Данные для входа</param>
-    /// <returns>JWT токен и информация о пользователе</returns>
     [HttpPost("login")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

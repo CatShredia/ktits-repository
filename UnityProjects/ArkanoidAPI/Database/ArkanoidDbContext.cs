@@ -1,10 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using ArkanoidAPI.Models;
 
-namespace ArkanoidAPI.Models;
+namespace ArkanoidAPI.Database;
 
-/// <summary>
-/// Контекст базы данных для Arkanoid API
-/// </summary>
 public class ArkanoidDbContext : DbContext
 {
     public ArkanoidDbContext(DbContextOptions<ArkanoidDbContext> options)
@@ -12,31 +10,18 @@ public class ArkanoidDbContext : DbContext
     {
     }
 
-    /// <summary>
-    /// Таблица пользователей
-    /// </summary>
     public DbSet<User> Users { get; set; }
 
-    /// <summary>
-    /// Таблица скинов
-    /// </summary>
     public DbSet<Skin> Skins { get; set; }
 
-    /// <summary>
-    /// Таблица инвентаря пользователей (связь User-Skin)
-    /// </summary>
     public DbSet<UserSkin> UserSkins { get; set; }
 
-    /// <summary>
-    /// Таблица истории покупок
-    /// </summary>
     public DbSet<Purchase> Purchases { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Конфигурация User
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -47,7 +32,6 @@ public class ArkanoidDbContext : DbContext
             entity.Property(e => e.Coins).HasDefaultValue(100);
         });
 
-        // Конфигурация Skin
         modelBuilder.Entity<Skin>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -57,7 +41,6 @@ public class ArkanoidDbContext : DbContext
             entity.Property(e => e.IsActive).HasDefaultValue(true);
         });
 
-        // Конфигурация UserSkin
         modelBuilder.Entity<UserSkin>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -74,7 +57,6 @@ public class ArkanoidDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // Конфигурация Purchase
         modelBuilder.Entity<Purchase>(entity =>
         {
             entity.HasKey(e => e.Id);
