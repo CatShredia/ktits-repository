@@ -5,6 +5,8 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 /// <summary>
 /// Основной контроллер магазина.
@@ -110,31 +112,6 @@ public class ShopController : MonoBehaviour
 
     #endregion
 
-    #region Auto-Assign References
-
-    [Header("=== Auto-Assign (не менять) ===")]
-    [SerializeField] private bool autoAssignReferences = true;
-
-    [Tooltip("Имя объекта ShopPanel")]
-    [SerializeField] private string shopPanelName = "ShopPanel";
-
-    [Tooltip("Имя объекта StartMenuPanel")]
-    [SerializeField] private string mainMenuPanelName = "StartMenuPanel";
-
-    [Tooltip("Имя объекта PausePanel")]
-    [SerializeField] private string pausePanelName = "PausePanel";
-
-    [Tooltip("Имя объекта GameplayUI")]
-    [SerializeField] private string gameplayUIName = "GameplayUI";
-
-    [Tooltip("Имя объекта CoinsDisplay")]
-    [SerializeField] private string coinsDisplayName = "CoinsDisplay";
-
-    [Tooltip("Имя объекта BackButton")]
-    [SerializeField] private string backButtonName = "BackButton";
-
-    #endregion
-
     #region State
 
     private bool isShopOpen = false;
@@ -170,12 +147,6 @@ public class ShopController : MonoBehaviour
     /// </summary>
     private void InitializeUI()
     {
-        // Автоматическое назначение ссылок
-        if (autoAssignReferences)
-        {
-            AutoAssignReferences();
-        }
-
         // Скрываем магазин при старте
         if (shopPanel != null)
             shopPanel.SetActive(false);
@@ -197,143 +168,6 @@ public class ShopController : MonoBehaviour
             tabBallButton.onClick.AddListener(() => OnCategoryTabClicked(SkinTypeFilter.Ball));
 
         Debug.Log("[ShopController] UI initialized");
-    }
-
-    /// <summary>
-    /// Автоматический поиск и назначение UI ссылок по именам объектов
-    /// </summary>
-    private void AutoAssignReferences()
-    {
-        // Поиск на сцене по именам
-        if (shopPanel == null)
-            shopPanel = GameObject.Find(shopPanelName);
-
-        if (mainMenuPanel == null)
-            mainMenuPanel = GameObject.Find(mainMenuPanelName);
-
-        if (pausePanel == null)
-            pausePanel = GameObject.Find(pausePanelName);
-
-        if (gameplayUI == null)
-            gameplayUI = GameObject.Find(gameplayUIName);
-
-        // Поиск внутри ShopPanel
-        if (shopPanel != null)
-        {
-            if (coinsDisplay == null)
-                coinsDisplay = FindChildObject(shopPanel.transform, coinsDisplayName);
-
-            if (backButton == null)
-                backButton = FindChildComponent<Button>(shopPanel.transform, backButtonName);
-
-            if (skinsGridPanel == null)
-                skinsGridPanel = FindChildTransform(shopPanel.transform, "SkinsGridPanel")?.GetComponent<RectTransform>();
-
-            // Shop Header
-            var shopHeader = FindChildObject(shopPanel.transform, "ShopHeader");
-            if (shopHeader != null)
-            {
-                if (coinsDisplay == null)
-                    coinsDisplay = FindChildObject(shopHeader.transform, coinsDisplayName);
-
-                if (backButton == null)
-                    backButton = FindChildComponent<Button>(shopHeader.transform, backButtonName);
-            }
-
-            // Category Tabs
-            var categoryTabs = FindChildObject(shopHeader?.transform ?? shopPanel.transform, "CategoryTabs");
-            if (categoryTabs != null)
-            {
-                if (tabAllButton == null)
-                    tabAllButton = FindChildComponent<Button>(categoryTabs.transform, "TabAll");
-
-                if (tabPlatformButton == null)
-                    tabPlatformButton = FindChildComponent<Button>(categoryTabs.transform, "TabPlatform");
-
-                if (tabBallButton == null)
-                    tabBallButton = FindChildComponent<Button>(categoryTabs.transform, "TabBall");
-            }
-
-            // Skin Preview Panel
-            skinPreviewPanel = FindChildObject(shopPanel.transform, "SkinPreviewPanel");
-            if (skinPreviewPanel != null)
-            {
-                skinPreviewImage = FindChildComponent<Image>(skinPreviewPanel.transform, "SkinPreviewImage");
-                skinPreviewName = FindChildComponent<TextMeshProUGUI>(skinPreviewPanel.transform, "SkinPreviewName");
-                skinPreviewDescription = FindChildComponent<TextMeshProUGUI>(skinPreviewPanel.transform, "SkinPreviewDescription");
-                skinPreviewPrice = FindChildComponent<TextMeshProUGUI>(skinPreviewPanel.transform, "SkinPreviewPrice");
-                actionButton = FindChildComponent<Button>(skinPreviewPanel.transform, "ActionButton");
-                if (actionButton != null)
-                    actionButtonText = FindChildComponent<TextMeshProUGUI>(actionButton.transform, "Text (TMP)");
-            }
-
-            // Animator
-            if (shopAnimator == null)
-                shopAnimator = shopPanel.GetComponent<Animator>();
-        }
-
-        // Поиск префаба скина (назначается вручную в Inspector)
-        if (skinItemPrefab == null)
-        {
-            Debug.LogWarning("[ShopController] SkinItem prefab not assigned! Please assign it in Inspector.");
-        }
-
-        // Поиск CoinsDisplayText
-        if (coinsDisplayText == null && coinsDisplay != null)
-        {
-            coinsDisplayText = FindChildComponent<TextMeshProUGUI>(coinsDisplay.transform, "CoinsDisplayText");
-        }
-
-        Debug.Log("[ShopController] Auto-assign completed");
-    }
-
-    /// <summary>
-    /// Найти дочерний объект по имени
-    /// </summary>
-    private GameObject FindChildObject(Transform parent, string name)
-    {
-        if (parent == null || string.IsNullOrEmpty(name)) return null;
-
-        foreach (Transform child in parent)
-        {
-            if (child.name == name)
-                return child.gameObject;
-
-            var found = FindChildObject(child, name);
-            if (found != null)
-                return found;
-        }
-
-        return null;
-    }
-
-    /// <summary>
-    /// Найти дочерний объект и получить компонент
-    /// </summary>
-    private T FindChildComponent<T>(Transform parent, string name) where T : Component
-    {
-        var obj = FindChildObject(parent, name);
-        return obj?.GetComponent<T>();
-    }
-
-    /// <summary>
-    /// Найти дочерний объект по имени (расширенный поиск с проверкой типа)
-    /// </summary>
-    private Transform FindChildTransform(Transform parent, string name)
-    {
-        if (parent == null || string.IsNullOrEmpty(name)) return null;
-
-        foreach (Transform child in parent)
-        {
-            if (child.name == name)
-                return child;
-
-            var found = FindChildTransform(child, name);
-            if (found != null)
-                return found;
-        }
-
-        return null;
     }
 
     #endregion
@@ -369,6 +203,7 @@ public class ShopController : MonoBehaviour
     /// </summary>
     public void CloseShop()
     {
+        Debug.Log("[ShopController] Closing shop...");
         if (!isShopOpen || isAnimating) return;
 
         StartCoroutine(HideShopSequence());

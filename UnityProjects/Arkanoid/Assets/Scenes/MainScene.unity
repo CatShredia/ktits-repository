@@ -4729,13 +4729,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopController
   shopPanel: {fileID: 2142703520}
-  mainMenuPanel: {fileID: 0}
-  pausePanel: {fileID: 0}
-  gameplayUI: {fileID: 0}
-  coinsDisplayText: {fileID: 0}
-  coinsDisplay: {fileID: 0}
-  backButton: {fileID: 0}
-  skinsGridPanel: {fileID: 0}
+  mainMenuPanel: {fileID: 8864669}
+  pausePanel: {fileID: 98316230}
+  gameplayUI: {fileID: 1801467480}
+  coinsDisplayText: {fileID: 351475401}
+  coinsDisplay: {fileID: 1893945230}
+  backButton: {fileID: 2032402086}
+  skinsGridPanel: {fileID: 492603604}
   skinItemPrefab: {fileID: 6811558004079404880, guid: 2061633e855e42d4c8dc71a1b5739388, type: 3}
   skinPreviewPanel: {fileID: 0}
   skinPreviewImage: {fileID: 0}
@@ -4744,20 +4744,13 @@ MonoBehaviour:
   skinPreviewPrice: {fileID: 0}
   actionButton: {fileID: 0}
   actionButtonText: {fileID: 0}
-  tabAllButton: {fileID: 0}
-  tabPlatformButton: {fileID: 0}
-  tabBallButton: {fileID: 0}
+  tabAllButton: {fileID: 560571545}
+  tabPlatformButton: {fileID: 2015454040}
+  tabBallButton: {fileID: 560571545}
   shopAnimator: {fileID: 0}
   openParameterName: Open
   showAnimationDuration: 0.3
   hideAnimationDuration: 0.3
-  autoAssignReferences: 1
-  shopPanelName: ShopPanel
-  mainMenuPanelName: StartMenuPanel
-  pausePanelName: PausePanel
-  gameplayUIName: GameplayUI
-  coinsDisplayName: CoinsDisplay
-  backButtonName: BackButton
 --- !u!1 &1832471129
 GameObject:
   m_ObjectHideFlags: 0
@@ -5583,7 +5576,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2032402087}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1830780216}
+        m_TargetAssemblyTypeName: ShopController, Assembly-CSharp
+        m_MethodName: CloseShop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2032402087
 MonoBehaviour:
   m_ObjectHideFlags: 0
