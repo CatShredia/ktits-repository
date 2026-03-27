@@ -54,15 +54,26 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IShopService, ShopService>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazor", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Cinema API",
+        Title = "Arkanoid API",
         Version = "v1",
-        Description = "API for managing films, genres, and ratings with role-based access control"
+        Description = "API for Arkanoid game with authentication and skin shop"
     });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -97,7 +108,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cinema API v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Arkanoid API v1");
         c.RoutePrefix = string.Empty;
     });
 }
