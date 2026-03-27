@@ -70,6 +70,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
     <Compile Include="Assets\Scripts\ShopController.cs" />
+    <Compile Include="Assets\Scripts\SkinItemUI.cs" />
     <Compile Include="Assets\Scripts\BonusController.cs" />
     <Compile Include="Assets\Scripts\BonusUIManager.cs" />
     <Compile Include="Assets\Scripts\AnimationControllers\MenuController.cs" />
