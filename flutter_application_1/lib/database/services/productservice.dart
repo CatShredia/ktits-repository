@@ -113,7 +113,7 @@ class ProductService {
     String? description,
     bool? isActive,
   }) async {
-    final Map<String, dynamic> updateData = {};
+    final Map<String, Object?> updateData = {};
     if (name != null) updateData['name'] = name;
     if (priceCent != null) updateData['price_cent'] = priceCent;
     if (currency != null) updateData['currency'] = currency;

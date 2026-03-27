@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/product') {
-          final args = settings.arguments as Map<String, dynamic>?;
+          final args = settings.arguments as Map<String, Object?>?;
           final productId = args?['id'] as String?;
           if (productId != null) {
             return MaterialPageRoute(

@@ -25,9 +25,9 @@ class Product {
     required this.createdAt,
   });
 
-  factory Product.fromJson(Map<String, dynamic> json) {
-    final idValue = json['id'];
-    final createdAtValue = json['created_at'];
+  factory Product.fromJson(Map<String, Object?> json) {
+    final Object? idValue = json['id'];
+    final Object? createdAtValue = json['created_at'];
     return Product(
       id: idValue is int ? idValue.toString() : (idValue as String?) ?? '',
       userId: json['user_id'] as String?,
@@ -41,13 +41,13 @@ class Product {
       isActive: (json['is_active'] as bool?) ?? false,
       createdAt: createdAtValue != null
           ? (createdAtValue is String
-              ? DateTime.parse(createdAtValue)
-              : DateTime.now())
+                ? DateTime.parse(createdAtValue)
+                : DateTime.now())
           : DateTime.now(),
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'id': id,
       'user_id': userId,

@@ -11,21 +11,21 @@ class Category {
     required this.createdAt,
   });
 
-  factory Category.fromJson(Map<String, dynamic> json) {
-    final createdAtValue = json['created_at'];
+  factory Category.fromJson(Map<String, Object?> json) {
+    final Object? createdAtValue = json['created_at'];
     return Category(
       id: json['id'] as int,
       name: json['name'] as String,
       image: json['image'] as String?,
       createdAt: createdAtValue != null
           ? (createdAtValue is String
-              ? DateTime.parse(createdAtValue)
-              : DateTime.now())
+                ? DateTime.parse(createdAtValue)
+                : DateTime.now())
           : DateTime.now(),
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'id': id,
       'name': name,

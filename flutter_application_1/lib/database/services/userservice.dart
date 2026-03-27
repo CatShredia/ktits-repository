@@ -112,7 +112,7 @@ class UserService {
     String? password,
     String? name,
   }) async {
-    final Map<String, dynamic> updateData = {};
+    final Map<String, Object?> updateData = {};
     if (email != null) updateData['email'] = email;
     if (password != null) updateData['password'] = password;
     if (name != null) updateData['full_name'] = name;

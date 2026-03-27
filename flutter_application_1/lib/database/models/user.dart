@@ -15,7 +15,7 @@ class User {
     this.createdAt,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory User.fromJson(Map<String, Object?> json) {
     return User(
       id: json['id'] as String,
       email: json['email'] as String,
@@ -28,7 +28,7 @@ class User {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     return {
       'id': id,
       'email': email,
