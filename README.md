@@ -79,5 +79,3 @@ notifications:
 | body | text | YES | null |
 | status | text | YES | null |
 | read_at | boolean | YES | null |
-
-Сделай для всех таблиц SQL запрос удаления всех данных и вставки вместо них тестовых (в каждую таблицу минимум - 5).
