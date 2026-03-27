@@ -61,7 +61,7 @@ products:
 | is_active | boolean | YES | null |
 | created_at | timestamp without time zone | NO | null |
 
-products_categories:
+product_categories:
 | column_name | data_type | is_nullable | column_default |
 | ----------- | ------------------------ | ----------- | -------------- |
 | id | bigint | NO | null |
