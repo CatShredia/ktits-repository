@@ -107,6 +107,8 @@ public class LevelController : MonoBehaviour
         var platform = FindObjectOfType<PlatformController>();
         platform?.ResetPlatform();
 
+        DestroyBallClones();
+
         var balls = FindObjectsOfType<BallController>();
         foreach (var ball in balls)
         {
@@ -120,7 +122,37 @@ public class LevelController : MonoBehaviour
 
         BonusUIManager.Instance?.ClearEffectText();
 
+        DestroyFallingBonuses();
+
         Debug.Log("[Level] Bonus effects reset");
+    }
+
+    void DestroyFallingBonuses()
+    {
+        var bonuses = FindObjectsOfType<BonusController>();
+        foreach (var bonus in bonuses)
+        {
+            if (bonus != null)
+            {
+                Destroy(bonus.gameObject);
+            }
+        }
+
+        Debug.Log("[Level] Falling bonuses destroyed");
+    }
+
+    void DestroyBallClones()
+    {
+        var balls = FindObjectsOfType<BallController>();
+        foreach (var ball in balls)
+        {
+            if (ball != null && ball.isClone)
+            {
+                Destroy(ball.gameObject);
+            }
+        }
+
+        Debug.Log("[Level] Ball clones destroyed");
     }
 
     public int GetCurrentLevelIndex()
