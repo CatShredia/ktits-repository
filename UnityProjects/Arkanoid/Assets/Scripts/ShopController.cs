@@ -4,13 +4,11 @@ using TMPro;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 
 /// <summary>
-/// Основной контроллер магазина.
-/// Управляет UI элементами, навигацией и состояниями магазина.
+/// Контроллер магазина (Carousel версия).
+/// Переключение скинов стрелками, клик по карточке = покупка/экипировка.
 /// </summary>
 public class ShopController : MonoBehaviour
 {
@@ -52,50 +50,21 @@ public class ShopController : MonoBehaviour
     [Tooltip("Отображение монет (текст)")]
     [SerializeField] private TextMeshProUGUI coinsDisplayText;
 
-    [Tooltip("Контейнер для отображения монет")]
-    [SerializeField] private GameObject coinsDisplay;
-
     [Tooltip("Кнопка назад")]
     [SerializeField] private Button backButton;
 
-    [Header("=== Shop Content ===")]
-    [Tooltip("Panel для сетки скинов")]
-    [SerializeField] private RectTransform skinsGridPanel;
+    [Header("=== Carousel ===")]
+    [Tooltip("Контейнер для одного скина")]
+    [SerializeField] private RectTransform skinContainer;
+
+    [Tooltip("Кнопка: Назад (стрелка влево)")]
+    [SerializeField] private Button prevButton;
+
+    [Tooltip("Кнопка: Вперёд (стрелка вправо)")]
+    [SerializeField] private Button nextButton;
 
     [Tooltip("Префаб карточки скина")]
     [SerializeField] private GameObject skinItemPrefab;
-
-    [Header("=== Shop Preview ===")]
-    [Tooltip("Панель превью выбранного скина")]
-    [SerializeField] private GameObject skinPreviewPanel;
-
-    [Tooltip("Изображение превью скина")]
-    [SerializeField] private Image skinPreviewImage;
-
-    [Tooltip("Название выбранного скина")]
-    [SerializeField] private TextMeshProUGUI skinPreviewName;
-
-    [Tooltip("Описание выбранного скина")]
-    [SerializeField] private TextMeshProUGUI skinPreviewDescription;
-
-    [Tooltip("Цена выбранного скина")]
-    [SerializeField] private TextMeshProUGUI skinPreviewPrice;
-
-    [Tooltip("Кнопка покупки/экипировки")]
-    [SerializeField] private Button actionButton;
-
-    [Tooltip("Текст на кнопке действия")]
-    [SerializeField] private TextMeshProUGUI actionButtonText;
-
-    [Header("=== Category Tabs ===")]
-    [Tooltip("Кнопка: Все скины")]
-    [SerializeField] private Button tabAllButton;
-
-    [Tooltip("Кнопка: Платформы")]
-    [SerializeField] private Button tabPlatformButton;
-
-    [Tooltip("Кнопка: Мячи")]
-    [SerializeField] private Button tabBallButton;
 
     [Header("=== Animations ===")]
     [Tooltip("Аниматор панели магазина")]
@@ -117,12 +86,17 @@ public class ShopController : MonoBehaviour
     private bool isShopOpen = false;
     private bool isAnimating = false;
 
-    // Текущий выбранный скин
-    private int selectedSkinId = -1;
+    // Текущий индекс скина в карусели
+    private int currentIndex = 0;
 
     // Кэшированные данные
-    private System.Collections.Generic.List<SkinDto> allSkins = new();
+    private List<SkinDto> allSkins = new();
     private UserInventoryDto? userInventory;
+
+    // Текущий показываемый скин
+    private SkinDto? currentSkin;
+    private bool isCurrentSkinOwned;
+    private bool isCurrentSkinEquipped;
 
     #endregion
 
@@ -136,6 +110,7 @@ public class ShopController : MonoBehaviour
     void Update()
     {
         HandleEscapeKey();
+        HandleArrowKeys();
     }
 
     #endregion
@@ -155,19 +130,13 @@ public class ShopController : MonoBehaviour
         if (backButton != null)
             backButton.onClick.AddListener(OnBackButtonClicked);
 
-        if (actionButton != null)
-            actionButton.onClick.AddListener(OnActionButtonClicked);
+        if (prevButton != null)
+            prevButton.onClick.AddListener(OnPrevButtonClicked);
 
-        if (tabAllButton != null)
-            tabAllButton.onClick.AddListener(() => OnCategoryTabClicked(SkinTypeFilter.All));
+        if (nextButton != null)
+            nextButton.onClick.AddListener(OnNextButtonClicked);
 
-        if (tabPlatformButton != null)
-            tabPlatformButton.onClick.AddListener(() => OnCategoryTabClicked(SkinTypeFilter.Platform));
-
-        if (tabBallButton != null)
-            tabBallButton.onClick.AddListener(() => OnCategoryTabClicked(SkinTypeFilter.Ball));
-
-        Debug.Log("[ShopController] UI initialized");
+        Debug.Log("[ShopController] UI initialized (Carousel mode)");
     }
 
     #endregion
@@ -191,7 +160,6 @@ public class ShopController : MonoBehaviour
     {
         if (isShopOpen || isAnimating) return;
 
-        // Скрываем паузу
         if (pausePanel != null)
             pausePanel.SetActive(false);
 
@@ -213,18 +181,15 @@ public class ShopController : MonoBehaviour
     {
         isAnimating = true;
 
-        // Скрываем другие панели
         if (fromMainMenu && mainMenuPanel != null)
             mainMenuPanel.SetActive(false);
 
         if (gameplayUI != null)
             gameplayUI.SetActive(false);
 
-        // Показываем панель магазина
         if (shopPanel != null)
             shopPanel.SetActive(true);
 
-        // Запускаем анимацию открытия
         if (shopAnimator != null)
             shopAnimator.SetBool(openParameterName, true);
 
@@ -233,27 +198,23 @@ public class ShopController : MonoBehaviour
         isShopOpen = true;
         isAnimating = false;
 
-        // Загружаем данные (без await, так как это coroutine)
         _ = LoadShopData();
 
         Debug.Log("[ShopController] Shop opened");
     }
 
-    private System.Collections.IEnumerator HideShopSequence()
+    private IEnumerator HideShopSequence()
     {
         isAnimating = true;
 
-        // Запускаем анимацию закрытия
         if (shopAnimator != null)
             shopAnimator.SetBool(openParameterName, false);
 
         yield return new WaitForSecondsRealtime(hideAnimationDuration);
 
-        // Скрываем панель
         if (shopPanel != null)
             shopPanel.SetActive(false);
 
-        // Возвращаемся в меню
         if (mainMenuPanel != null)
             mainMenuPanel.SetActive(true);
 
@@ -271,31 +232,39 @@ public class ShopController : MonoBehaviour
         }
     }
 
+    private void HandleArrowKeys()
+    {
+        if (!isShopOpen || isAnimating) return;
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            OnPrevButtonClicked();
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            OnNextButtonClicked();
+        }
+    }
+
     #endregion
 
     #region Data Loading
 
     /// <summary>
-    /// Загрузка данных магазина (скины + инвентарь)
+    /// Загрузка данных магазина
     /// </summary>
     private async System.Threading.Tasks.Task LoadShopData()
     {
         // TODO: Интеграция с API
-        // await Task.WhenAll(
-        //     LoadAllSkins(),
-        //     LoadUserInventory()
-        // );
-
-        // Временно: тестовые данные
         LoadTestData();
 
         UpdateCoinsDisplay();
-        RenderSkinsGrid();
+        ShowCurrentSkin();
     }
 
     private void LoadTestData()
     {
-        allSkins = new System.Collections.Generic.List<SkinDto>
+        allSkins = new List<SkinDto>
         {
             new SkinDto { Id = 1, Name = "Неоновая платформа", SkinType = "Platform", Price = 100, Rarity = "Common" },
             new SkinDto { Id = 2, Name = "Золотой мяч", SkinType = "Ball", Price = 150, Rarity = "Rare" },
@@ -305,7 +274,7 @@ public class ShopController : MonoBehaviour
         userInventory = new UserInventoryDto
         {
             Coins = 500,
-            Skins = new System.Collections.Generic.List<UserSkinDto>
+            Skins = new List<UserSkinDto>
             {
                 new UserSkinDto { SkinId = 1, SkinName = "Неоновая платформа", IsEquipped = false }
             }
@@ -322,103 +291,107 @@ public class ShopController : MonoBehaviour
 
     #endregion
 
-    #region UI Rendering
+    #region Carousel Logic
 
     /// <summary>
-    /// Отрисовка сетки скинов
+    /// Показать текущий скин в карусели
     /// </summary>
-    private void RenderSkinsGrid(SkinTypeFilter filter = SkinTypeFilter.All)
+    private void ShowCurrentSkin()
     {
-        if (skinsGridPanel == null || skinItemPrefab == null)
+        if (allSkins.Count == 0 || skinContainer == null || skinItemPrefab == null)
         {
-            Debug.LogError("[ShopController] skinsGridPanel или skinItemPrefab не назначены!");
+            Debug.LogError("[ShopController] Cannot show skin: missing data or UI references");
             return;
         }
 
-        // Очистка сетки
-        foreach (Transform child in skinsGridPanel)
+        // Очистка контейнера
+        foreach (Transform child in skinContainer)
         {
             Destroy(child.gameObject);
         }
 
-        // Фильтрация
-        var filteredSkins = filter switch
+        // Получаем текущий скин
+        currentSkin = allSkins[currentIndex];
+
+        // Проверяем владение
+        isCurrentSkinOwned = userInventory?.Skins?.Any(s => s.SkinId == currentSkin.Id) ?? false;
+        isCurrentSkinEquipped = userInventory?.Skins?.Any(s => s.SkinId == currentSkin.Id && s.IsEquipped) ?? false;
+
+        // Спавн карточки
+        var item = Instantiate(skinItemPrefab, skinContainer, false);
+
+        // Сброс позиции и масштаба
+        var rectTransform = item.GetComponent<RectTransform>();
+        if (rectTransform != null)
         {
-            SkinTypeFilter.Platform => allSkins.FindAll(s => s.SkinType == "Platform"),
-            SkinTypeFilter.Ball => allSkins.FindAll(s => s.SkinType == "Ball"),
-            _ => allSkins
-        };
+            rectTransform.localPosition = Vector3.zero;
+            rectTransform.localScale = Vector3.one;
+        }
 
-        // Создание карточек
-        foreach (var skin in filteredSkins)
+        // Инициализация карточки (клик = покупка/экипировка)
+        var skinItemUI = item.GetComponent<SkinItemUI>();
+        if (skinItemUI != null)
         {
-            var item = Instantiate(skinItemPrefab, skinsGridPanel);
-            var skinItemUI = item.GetComponent<SkinItemUI>();
+            skinItemUI.Initialize(currentSkin, isCurrentSkinOwned, isCurrentSkinEquipped, OnSkinActionClicked);
+        }
 
-            if (skinItemUI != null)
-            {
-                bool isOwned = userInventory?.Skins?.Any(s => s.SkinId == skin.Id) ?? false;
-                bool isEquipped = userInventory?.Skins?.Any(s => s.SkinId == skin.Id && s.IsEquipped) ?? false;
+        // Обновление кнопок навигации
+        UpdateCarouselButtons();
 
-                skinItemUI.Initialize(skin, isOwned, isEquipped, OnSkinSelected);
-            }
+        Debug.Log($"[ShopController] Showing skin: {currentSkin.Name} ({currentIndex + 1}/{allSkins.Count})");
+    }
+
+    /// <summary>
+    /// Клик по скину в карусели = покупка или экипировка
+    /// </summary>
+    private void OnSkinActionClicked(int skinId)
+    {
+        if (skinId != currentSkin?.Id) return;
+
+        if (isCurrentSkinOwned)
+        {
+            EquipSkin(skinId);
+        }
+        else
+        {
+            PurchaseSkin(skinId);
         }
     }
 
     /// <summary>
-    /// Выбор скина в магазине
+    /// Кнопка: Назад
     /// </summary>
-    private void OnSkinSelected(int skinId)
+    private void OnPrevButtonClicked()
     {
-        selectedSkinId = skinId;
-        var skin = allSkins.Find(s => s.Id == skinId);
-
-        if (skin == null || skinPreviewPanel == null) return;
-
-        // Обновление превью
-        if (skinPreviewName != null)
-            skinPreviewName.text = skin.Name;
-
-        if (skinPreviewDescription != null)
-            skinPreviewDescription.text = skin.Description ?? "Нет описания";
-
-        if (skinPreviewPrice != null)
-            skinPreviewPrice.text = $"{skin.Price}";
-
-        // Обновление кнопки
-        UpdateActionButton(skin);
-
-        Debug.Log($"[ShopController] Skin selected: {skin.Name}");
+        if (currentIndex > 0)
+        {
+            currentIndex--;
+            ShowCurrentSkin();
+        }
     }
 
-    private void UpdateActionButton(SkinDto skin)
+    /// <summary>
+    /// Кнопка: Вперёд
+    /// </summary>
+    private void OnNextButtonClicked()
     {
-        if (actionButton == null || actionButtonText == null) return;
+        if (currentIndex < allSkins.Count - 1)
+        {
+            currentIndex++;
+            ShowCurrentSkin();
+        }
+    }
 
-        bool isOwned = userInventory?.Skins?.Any(s => s.SkinId == skin.Id) ?? false;
-        bool isEquipped = userInventory?.Skins?.Any(s => s.SkinId == skin.Id && s.IsEquipped) ?? false;
-        int coins = userInventory?.Coins ?? 0;
+    /// <summary>
+    /// Обновление состояния кнопок карусели
+    /// </summary>
+    private void UpdateCarouselButtons()
+    {
+        if (prevButton != null)
+            prevButton.interactable = currentIndex > 0;
 
-        if (isEquipped)
-        {
-            actionButtonText.text = "ЭКИПИРОВАНО";
-            actionButton.interactable = false;
-        }
-        else if (isOwned)
-        {
-            actionButtonText.text = "ЭКИПИРОВАТЬ";
-            actionButton.interactable = true;
-        }
-        else if (coins >= skin.Price)
-        {
-            actionButtonText.text = $"КУПИТЬ ({skin.Price})";
-            actionButton.interactable = true;
-        }
-        else
-        {
-            actionButtonText.text = $"НЕДОСТАТОЧНО СРЕДСТВ";
-            actionButton.interactable = false;
-        }
+        if (nextButton != null)
+            nextButton.interactable = currentIndex < allSkins.Count - 1;
     }
 
     #endregion
@@ -430,32 +403,6 @@ public class ShopController : MonoBehaviour
         CloseShop();
     }
 
-    private void OnActionButtonClicked()
-    {
-        if (selectedSkinId == -1) return;
-
-        var skin = allSkins.Find(s => s.Id == selectedSkinId);
-        if (skin == null) return;
-
-        bool isOwned = userInventory?.Skins?.Any(s => s.SkinId == skin.Id) ?? false;
-
-        if (isOwned)
-        {
-            // Экипировать
-            EquipSkin(skin.Id);
-        }
-        else
-        {
-            // Купить
-            PurchaseSkin(skin.Id);
-        }
-    }
-
-    private void OnCategoryTabClicked(SkinTypeFilter filter)
-    {
-        RenderSkinsGrid(filter);
-    }
-
     #endregion
 
     #region Actions
@@ -465,11 +412,34 @@ public class ShopController : MonoBehaviour
     /// </summary>
     private async void PurchaseSkin(int skinId)
     {
+        var skin = allSkins.Find(s => s.Id == skinId);
+        if (skin == null) return;
+
+        int coins = userInventory?.Coins ?? 0;
+        if (coins < skin.Price)
+        {
+            Debug.LogWarning($"[ShopController] Недостаточно монет: {coins} < {skin.Price}");
+            return;
+        }
+
         // TODO: API вызов
         // var response = await ShopAPIClient.Instance.PurchaseSkin(skinId);
-        // if (response.Success) { ... }
 
-        Debug.Log($"[ShopController] Purchase skin: {skinId}");
+        // Временно: локальное обновление
+        Debug.Log($"[ShopController] Purchase skin: {skinId} ({skin.Name}) - {skin.Price} coins");
+
+        // Обновляем данные
+        userInventory.Coins -= skin.Price;
+        userInventory.Skins.Add(new UserSkinDto
+        {
+            SkinId = skinId,
+            SkinName = skin.Name,
+            IsEquipped = false
+        });
+
+        // Обновляем UI
+        UpdateCoinsDisplay();
+        ShowCurrentSkin();
     }
 
     /// <summary>
@@ -479,21 +449,42 @@ public class ShopController : MonoBehaviour
     {
         // TODO: API вызов
         // var response = await ShopAPIClient.Instance.EquipSkin(skinId);
-        // if (response.Success) { ... }
 
+        // Временно: локальное обновление
         Debug.Log($"[ShopController] Equip skin: {skinId}");
+
+        // Обновляем данные
+        if (userInventory?.Skins != null)
+        {
+            // Снять все экипированные скины того же типа
+            var skin = allSkins.Find(s => s.Id == skinId);
+            if (skin != null)
+            {
+                foreach (var userSkin in userInventory.Skins)
+                {
+                    var s = allSkins.Find(sk => sk.Id == userSkin.SkinId);
+                    if (s?.SkinType == skin.SkinType)
+                    {
+                        userSkin.IsEquipped = false;
+                    }
+                }
+            }
+
+            // Экипировать выбранный
+            var equippedSkin = userInventory.Skins.FirstOrDefault(s => s.SkinId == skinId);
+            if (equippedSkin != null)
+            {
+                equippedSkin.IsEquipped = true;
+            }
+        }
+
+        // Обновляем UI
+        ShowCurrentSkin();
     }
 
     #endregion
 
     #region Enums & Classes
-
-    public enum SkinTypeFilter
-    {
-        All,
-        Platform,
-        Ball
-    }
 
     // Временные DTO для тестирования
     [System.Serializable]
@@ -519,7 +510,7 @@ public class ShopController : MonoBehaviour
     public class UserInventoryDto
     {
         public int Coins;
-        public System.Collections.Generic.List<UserSkinDto> Skins;
+        public List<UserSkinDto> Skins;
     }
 
     #endregion

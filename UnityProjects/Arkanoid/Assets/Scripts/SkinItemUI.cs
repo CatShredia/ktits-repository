@@ -3,8 +3,8 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// UI компонент карточки скина в магазине.
-/// Навешивается на префаб SkinItem.
+/// UI компонент карточки скина в магазине (Carousel версия).
+/// Клик по карточке = покупка или экипировка скина.
 /// </summary>
 public class SkinItemUI : MonoBehaviour
 {
@@ -54,7 +54,7 @@ public class SkinItemUI : MonoBehaviour
     private ShopController.SkinDto _skinData;
     private bool _isOwned;
     private bool _isEquipped;
-    private System.Action<int> _onItemSelected;
+    private System.Action<int> _onActionClicked;
 
     #endregion
 
@@ -80,12 +80,12 @@ public class SkinItemUI : MonoBehaviour
     /// <summary>
     /// Инициализация карточки данными скина
     /// </summary>
-    public void Initialize(ShopController.SkinDto skin, bool isOwned, bool isEquipped, System.Action<int> onItemSelected)
+    public void Initialize(ShopController.SkinDto skin, bool isOwned, bool isEquipped, System.Action<int> onActionClicked)
     {
         _skinData = skin;
         _isOwned = isOwned;
         _isEquipped = isEquipped;
-        _onItemSelected = onItemSelected;
+        _onActionClicked = onActionClicked;
 
         UpdateVisuals();
     }
@@ -110,17 +110,22 @@ public class SkinItemUI : MonoBehaviour
             };
         }
 
-        // Цена
+        // Цена / Статус
         if (priceText != null)
         {
-            if (_isOwned)
+            if (_isEquipped)
             {
-                priceText.text = _isEquipped ? "ЭКИПИРОВАНО" : "КУПЛЕНО";
+                priceText.text = "ЭКИПИРОВАНО";
+                priceText.color = Color.green;
+            }
+            else if (_isOwned)
+            {
+                priceText.text = "КУПЛЕНО";
                 priceText.color = Color.green;
             }
             else
             {
-                priceText.text = _skinData.Price.ToString();
+                priceText.text = $"{_skinData.Price}";
                 priceText.color = Color.yellow;
             }
         }
@@ -170,7 +175,7 @@ public class SkinItemUI : MonoBehaviour
 
     private void OnClicked()
     {
-        _onItemSelected?.Invoke(_skinData.Id);
+        _onActionClicked?.Invoke(_skinData.Id);
     }
 
     #endregion
