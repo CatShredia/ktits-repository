@@ -1,10 +1,11 @@
 using UnityEngine;
+using Arkanoid.Network;
 
 namespace Arkanoid.Auth
 {
     /// <summary>
     /// Менеджер аутентификации.
-    /// Хранит токен пользователя.
+    /// Хранит токен пользователя и предоставляет методы для входа/выхода.
     /// </summary>
     public class AuthService : MonoBehaviour
     {
@@ -38,6 +39,9 @@ namespace Arkanoid.Auth
         #region Properties
 
         private string _authToken;
+        private string _username;
+        private int _userId;
+        private string _userGuid;
 
         public string AuthToken
         {
@@ -45,7 +49,6 @@ namespace Arkanoid.Auth
             set
             {
                 _authToken = value;
-                // Сохраняем токен в PlayerPrefs для сохранения между сессиями
                 if (!string.IsNullOrEmpty(value))
                 {
                     PlayerPrefs.SetString("AuthToken", value);
@@ -54,6 +57,53 @@ namespace Arkanoid.Auth
                 else
                 {
                     PlayerPrefs.DeleteKey("AuthToken");
+                }
+            }
+        }
+
+        public string Username
+        {
+            get => _username;
+            set
+            {
+                _username = value;
+                if (!string.IsNullOrEmpty(value))
+                {
+                    PlayerPrefs.SetString("Username", value);
+                    PlayerPrefs.Save();
+                }
+                else
+                {
+                    PlayerPrefs.DeleteKey("Username");
+                }
+            }
+        }
+
+        public int UserId
+        {
+            get => _userId;
+            set
+            {
+                _userId = value;
+                PlayerPrefs.SetInt("UserId", value);
+                PlayerPrefs.Save();
+            }
+        }
+
+        public string UserGuid
+        {
+            get => _userGuid;
+            set
+            {
+                _userGuid = value;
+                if (!string.IsNullOrEmpty(value))
+                {
+                    PlayerPrefs.SetString("UserGuid", value);
+                    PlayerPrefs.Save();
+                }
+                else
+                {
+                    PlayerPrefs.DeleteKey("UserGuid");
                 }
             }
         }
@@ -73,8 +123,13 @@ namespace Arkanoid.Auth
             _instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // Загружаем сохранённый токен
+            // Загружаем сохранённые данные
             _authToken = PlayerPrefs.GetString("AuthToken", null);
+            _username = PlayerPrefs.GetString("Username", null);
+            _userId = PlayerPrefs.GetInt("UserId", 0);
+            _userGuid = PlayerPrefs.GetString("UserGuid", null);
+
+            Debug.Log($"[AuthService] Initialized. Authenticated: {IsAuthenticated()}");
         }
 
         #endregion
@@ -82,12 +137,80 @@ namespace Arkanoid.Auth
         #region Public Methods
 
         /// <summary>
-        /// Очистить токен (выход из системы)
+        /// Вход в систему
+        /// </summary>
+        public async System.Threading.Tasks.Task<bool> LoginAsync(string username, string password)
+        {
+            try
+            {
+                var response = await AuthAPIClient.Instance.LoginAsync(username, password);
+
+                if (response != null && response.Success)
+                {
+                    AuthToken = response.Token;
+                    Username = response.Username;
+                    UserId = response.UserId;
+                    UserGuid = response.UserGuid;
+
+                    Debug.Log($"[AuthService] Login successful: {username}");
+                    return true;
+                }
+                else
+                {
+                    Debug.LogError($"[AuthService] Login failed: {response?.Message ?? "Unknown error"}");
+                    return false;
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[AuthService] Login error: {e.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Регистрация пользователя
+        /// </summary>
+        public async System.Threading.Tasks.Task<bool> RegisterAsync(string username, string password)
+        {
+            try
+            {
+                var response = await AuthAPIClient.Instance.RegisterAsync(username, password);
+
+                if (response != null && response.Success)
+                {
+                    AuthToken = response.Token;
+                    Username = response.Username;
+                    UserId = response.UserId;
+                    UserGuid = response.UserGuid;
+
+                    Debug.Log($"[AuthService] Registration successful: {username}");
+                    return true;
+                }
+                else
+                {
+                    Debug.LogError($"[AuthService] Registration failed: {response?.Message ?? "Unknown error"}");
+                    return false;
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[AuthService] Registration error: {e.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Выход из системы
         /// </summary>
         public void Logout()
         {
-            _authToken = null;
-            PlayerPrefs.DeleteKey("AuthToken");
+            AuthToken = null;
+            Username = null;
+            UserId = 0;
+            UserGuid = null;
+
+            Debug.Log("[AuthService] Logged out");
         }
 
         /// <summary>
@@ -96,6 +219,14 @@ namespace Arkanoid.Auth
         public bool IsAuthenticated()
         {
             return !string.IsNullOrEmpty(_authToken);
+        }
+
+        /// <summary>
+        /// Получить заголовок авторизации для API запросов
+        /// </summary>
+        public string GetAuthorizationHeader()
+        {
+            return IsAuthenticated() ? $"Bearer {_authToken}" : null;
         }
 
         #endregion

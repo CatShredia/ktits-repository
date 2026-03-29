@@ -56,9 +56,10 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IShopService, ShopService>();
 
+// CORS для Unity и других клиентов
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowBlazor", builder =>
+    options.AddPolicy("AllowAll", builder =>
     {
         builder.AllowAnyOrigin()
                .AllowAnyMethod()
@@ -113,7 +114,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseCors("AllowBlazor");
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
