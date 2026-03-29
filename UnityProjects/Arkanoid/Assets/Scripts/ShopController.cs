@@ -4,7 +4,10 @@ using TMPro;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Debug = UnityEngine.Debug;
+using Arkanoid.Network;
+using Arkanoid.Auth;
 
 /// <summary>
 /// Контроллер магазина (Carousel версия).
@@ -255,8 +258,81 @@ public class ShopController : MonoBehaviour
     /// </summary>
     private async System.Threading.Tasks.Task LoadShopData()
     {
-        // TODO: Интеграция с API
-        LoadTestData();
+        try
+        {
+            // Получаем токен из AuthService
+            string token = AuthService.Instance?.AuthToken;
+
+            // Устанавливаем токен в API клиент
+            if (!string.IsNullOrEmpty(token))
+            {
+                ShopAPIClient.Instance.SetAuthToken(token);
+            }
+
+            // Загружаем скины (публично, без токена)
+            var skins = await ShopAPIClient.Instance.GetAllSkins();
+
+            if (skins != null && skins.Count > 0)
+            {
+                // Конвертируем API DTO в локальные DTO
+                allSkins = skins.Select(s => new SkinDto
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    SkinType = s.SkinType,
+                    Price = s.Price,
+                    Rarity = s.Rarity,
+                    Description = s.Description ?? "Нет описания"
+                }).ToList();
+
+                // Загружаем инвентарь (только если есть токен)
+                if (!string.IsNullOrEmpty(token))
+                {
+                    var inventory = await ShopAPIClient.Instance.GetInventory();
+                    if (inventory != null)
+                    {
+                        userInventory = new UserInventoryDto
+                        {
+                            Coins = inventory.Coins,
+                            Skins = inventory.Skins?.Select(s => new UserSkinDto
+                            {
+                                Id = s.Id,
+                                SkinId = s.SkinId,
+                                SkinName = s.SkinName,
+                                IsEquipped = s.IsEquipped
+                            }).ToList() ?? new List<UserSkinDto>()
+                        };
+                    }
+                    Debug.Log($"[ShopController] Loaded inventory: {userInventory.Coins} coins, {userInventory.Skins.Count} skins");
+                }
+                else
+                {
+                    // Тестовый инвентарь для демонстрации
+                    Debug.LogWarning("[ShopController] No auth token, using demo inventory");
+                    userInventory = new UserInventoryDto
+                    {
+                        Coins = 1000,
+                        Skins = new List<UserSkinDto>
+                        {
+                            new UserSkinDto { Id = 1, SkinId = 1, SkinName = "Неоновая платформа", IsEquipped = false }
+                        }
+                    };
+                }
+
+                Debug.Log($"[ShopController] Loaded {allSkins.Count} skins from API");
+            }
+            else
+            {
+                Debug.LogWarning("[ShopController] API returned no skins, using test data");
+                LoadTestData();
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[ShopController] Error loading shop data: {e.Message}");
+            Debug.LogWarning("Using test data as fallback");
+            LoadTestData();
+        }
 
         UpdateCoinsDisplay();
         ShowCurrentSkin();
@@ -276,7 +352,7 @@ public class ShopController : MonoBehaviour
             Coins = 500,
             Skins = new List<UserSkinDto>
             {
-                new UserSkinDto { SkinId = 1, SkinName = "Неоновая платформа", IsEquipped = false }
+                new UserSkinDto { Id = 1, SkinId = 1, SkinName = "Неоновая платформа", IsEquipped = false }
             }
         };
     }
@@ -415,6 +491,7 @@ public class ShopController : MonoBehaviour
         var skin = allSkins.Find(s => s.Id == skinId);
         if (skin == null) return;
 
+        // Проверка: достаточно ли монет (локальная)
         int coins = userInventory?.Coins ?? 0;
         if (coins < skin.Price)
         {
@@ -422,24 +499,44 @@ public class ShopController : MonoBehaviour
             return;
         }
 
-        // TODO: API вызов
-        // var response = await ShopAPIClient.Instance.PurchaseSkin(skinId);
-
-        // Временно: локальное обновление
-        Debug.Log($"[ShopController] Purchase skin: {skinId} ({skin.Name}) - {skin.Price} coins");
-
-        // Обновляем данные
-        userInventory.Coins -= skin.Price;
-        userInventory.Skins.Add(new UserSkinDto
+        try
         {
-            SkinId = skinId,
-            SkinName = skin.Name,
-            IsEquipped = false
-        });
+            // Вызов API
+            var response = await ShopAPIClient.Instance.PurchaseSkin(skinId);
 
-        // Обновляем UI
-        UpdateCoinsDisplay();
-        ShowCurrentSkin();
+            if (response != null && response.Success)
+            {
+                Debug.Log($"[ShopController] Skin purchased: {skin.Name}");
+
+                // Обновляем локальные данные
+                userInventory.Coins = response.RemainingCoins;
+
+                if (response.PurchasedSkin != null)
+                {
+                    userInventory.Skins.Add(new UserSkinDto
+                    {
+                        Id = response.PurchasedSkin.Id,
+                        SkinId = skinId,
+                        SkinName = skin.Name,
+                        IsEquipped = false
+                    });
+                }
+
+                // Обновляем UI
+                UpdateCoinsDisplay();
+                ShowCurrentSkin();
+            }
+            else
+            {
+                string errorMessage = response?.Message ?? "Неизвестная ошибка";
+                Debug.LogError($"[ShopController] Purchase failed: {errorMessage}");
+                // TODO: Показать ошибку пользователю
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[ShopController] Purchase error: {e.Message}");
+        }
     }
 
     /// <summary>
@@ -447,39 +544,58 @@ public class ShopController : MonoBehaviour
     /// </summary>
     private async void EquipSkin(int skinId)
     {
-        // TODO: API вызов
-        // var response = await ShopAPIClient.Instance.EquipSkin(skinId);
-
-        // Временно: локальное обновление
-        Debug.Log($"[ShopController] Equip skin: {skinId}");
-
-        // Обновляем данные
-        if (userInventory?.Skins != null)
+        // Находим UserSkinId для этого скина
+        var userSkin = userInventory?.Skins?.FirstOrDefault(s => s.SkinId == skinId);
+        if (userSkin == null)
         {
-            // Снять все экипированные скины того же типа
-            var skin = allSkins.Find(s => s.Id == skinId);
-            if (skin != null)
-            {
-                foreach (var userSkin in userInventory.Skins)
-                {
-                    var s = allSkins.Find(sk => sk.Id == userSkin.SkinId);
-                    if (s?.SkinType == skin.SkinType)
-                    {
-                        userSkin.IsEquipped = false;
-                    }
-                }
-            }
-
-            // Экипировать выбранный
-            var equippedSkin = userInventory.Skins.FirstOrDefault(s => s.SkinId == skinId);
-            if (equippedSkin != null)
-            {
-                equippedSkin.IsEquipped = true;
-            }
+            Debug.LogError($"[ShopController] Skin not owned: {skinId}");
+            return;
         }
 
-        // Обновляем UI
-        ShowCurrentSkin();
+        try
+        {
+            // Вызов API (передаём Id записи UserSkin, не SkinId)
+            var response = await ShopAPIClient.Instance.EquipSkin(userSkin.Id);
+
+            if (response != null && response.Success)
+            {
+                Debug.Log($"[ShopController] Skin equipped: {userSkin.SkinName}");
+
+                // Обновляем локальные данные
+                if (userInventory?.Skins != null)
+                {
+                    var skin = allSkins.Find(s => s.Id == skinId);
+                    if (skin != null)
+                    {
+                        // Снять все экипированные скины того же типа
+                        foreach (var us in userInventory.Skins)
+                        {
+                            var s = allSkins.Find(sk => sk.Id == us.SkinId);
+                            if (s?.SkinType == skin.SkinType)
+                            {
+                                us.IsEquipped = false;
+                            }
+                        }
+                    }
+
+                    // Экипировать выбранный
+                    userSkin.IsEquipped = true;
+                }
+
+                // Обновляем UI
+                ShowCurrentSkin();
+            }
+            else
+            {
+                string errorMessage = response?.Message ?? "Неизвестная ошибка";
+                Debug.LogError($"[ShopController] Equip failed: {errorMessage}");
+                // TODO: Показать ошибку пользователю
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[ShopController] Equip error: {e.Message}");
+        }
     }
 
     #endregion
@@ -501,6 +617,7 @@ public class ShopController : MonoBehaviour
     [System.Serializable]
     public class UserSkinDto
     {
+        public int Id;
         public int SkinId;
         public string SkinName;
         public bool IsEquipped;

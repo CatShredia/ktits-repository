@@ -19,9 +19,10 @@ public class ShopController : ControllerBase
     }
 
     /// <summary>
-    /// Получить все доступные скины в магазине
+    /// Получить все доступные скины в магазине (публично)
     /// </summary>
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(IEnumerable<SkinDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<SkinDto>>> GetAllSkins()
     {
@@ -30,9 +31,10 @@ public class ShopController : ControllerBase
     }
 
     /// <summary>
-    /// Получить скин по ID
+    /// Получить скин по ID (публично)
     /// </summary>
     [HttpGet("{id}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(SkinDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<SkinDto>> GetSkinById(int id)
