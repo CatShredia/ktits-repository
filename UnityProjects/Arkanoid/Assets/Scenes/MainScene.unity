@@ -5279,6 +5279,7 @@ MonoBehaviour:
   passwordInput: {fileID: 78459273}
   loginButton: {fileID: 2078692509}
   registerButton: {fileID: 0}
+  authButton: {fileID: 1523799683}
   errorText: {fileID: 838403465}
   titleText: {fileID: 1329697424}
   authPanel: {fileID: 1309228115}

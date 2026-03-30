@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1920
     height: 997
   m_ShowMode: 4
-  m_Title: Console
+  m_Title: Hierarchy
   m_RootView: {fileID: 6}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 112}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 102
+  controlID: 44
   draggingID: 0
 --- !u!114 &3
 MonoBehaviour:
@@ -742,7 +742,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Prefabs
+    - Assets/Scripts/UI
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -752,7 +752,7 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 92
   m_LastFolders:
-  - Assets/Prefabs
+  - Assets/Scripts/UI
   m_LastFoldersGridSize: 92
   m_LastProjectPath: C:\directory-git\ktits-repository-1\UnityProjects\Arkanoid
   m_LockTracker:
@@ -761,13 +761,13 @@ MonoBehaviour:
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs:
-    - m_Data: 41134
+    - m_Data: 52744
     m_LastClickedID:
-      m_Data: 41134
+      m_Data: 52744
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 39198
-    - m_Data: 39200
+    - m_Data: 45654
+    - m_Data: 46164
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -800,8 +800,8 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 39198
-    - m_Data: 39200
+    - m_Data: 45654
+    - m_Data: 46164
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -829,8 +829,8 @@ MonoBehaviour:
       m_ResourceFile: 
   m_ListAreaState:
     m_SelectedInstanceIDs:
-    - m_Data: 41144
-    m_LastClickedInstanceID: 41144
+    - m_Data: -29078
+    m_LastClickedInstanceID: -29078
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs:
     - m_Data: 40098
@@ -963,24 +963,23 @@ MonoBehaviour:
       m_LastClickedID:
         m_Data: 0
       m_ExpandedIDs:
-      - m_Data: -42034
-      - m_Data: -39348
-      - m_Data: -39340
-      - m_Data: -39320
-      - m_Data: -38052
-      - m_Data: -33862
-      - m_Data: -28946
-      - m_Data: -28352
-      - m_Data: -27470
-      - m_Data: -24274
-      - m_Data: -20420
-      - m_Data: -20090
-      - m_Data: -1318
-      - m_Data: 38452
-      - m_Data: 38472
-      - m_Data: 38684
+      - m_Data: -108822
+      - m_Data: -29078
+      - m_Data: -19612
+      - m_Data: -18358
+      - m_Data: -1326
+      - m_Data: -12
+      - m_Data: 38464
+      - m_Data: 38484
       - m_Data: 38730
-      - m_Data: 38828
+      - m_Data: 38786
+      - m_Data: 38884
+      - m_Data: 65190
+      - m_Data: 65210
+      - m_Data: 65484
+      - m_Data: 65526
+      - m_Data: 65618
+      - m_Data: 65732
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1199,12 +1198,12 @@ MonoBehaviour:
       displayed: 1
       id: Overlays/OverlayMenu
       index: 0
-      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":true,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":-26.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":2,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":true,"m_Floating":false,"m_FloatingSnapOffset":{"x":-163.0,"y":-25.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":3,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
       floating: 0
       collapsed: 0
-      snapOffset: {x: 0, y: -26}
+      snapOffset: {x: -163, y: -25}
       snapOffsetDelta: {x: 0, y: 0}
-      snapCorner: 2
+      snapCorner: 3
       layout: 4
       size: {x: 0, y: 0}
       sizeOverridden: 0
@@ -1517,9 +1516,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -0.711099, y: 0.03882078, z: -8565.584}
+    m_Target: {x: -1.0553136, y: -0.22059876, z: -8565.584}
     speed: 2
-    m_Value: {x: -0.711099, y: 0.03882078, z: -8565.584}
+    m_Value: {x: -1.0553136, y: -0.22059876, z: -8565.584}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1569,9 +1568,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 5.1675606
+    m_Target: 5.1422048
     speed: 2
-    m_Value: 5.1675606
+    m_Value: 5.1422048
   m_Ortho:
     m_Target: 1
     speed: 2

@@ -25,6 +25,9 @@ public class AuthUIController : MonoBehaviour
     [Tooltip("Кнопка регистрации")]
     [SerializeField] private Button registerButton;
 
+    [Tooltip("Кнопка авторизации в главном меню (ShopPanel)")]
+    [SerializeField] private Button authButton;
+
     [Header("=== Text ===")]
     [Tooltip("Текст ошибок")]
     [SerializeField] private TextMeshProUGUI errorText;
@@ -95,6 +98,10 @@ public class AuthUIController : MonoBehaviour
         if (registerButton != null)
             registerButton.onClick.AddListener(OnRegisterButtonClicked);
 
+        // Подписка на кнопку авторизации в главном меню
+        if (authButton != null)
+            authButton.onClick.AddListener(OnAuthButtonClicked);
+
         // Подписка на Toggles
         if (isRememberedToggle != null)
             isRememberedToggle.onValueChanged.AddListener(OnRememberedToggleChanged);
@@ -111,8 +118,15 @@ public class AuthUIController : MonoBehaviour
         // Проверка сохранённой авторизации
         if (AuthService.Instance != null && AuthService.Instance.IsAuthenticated())
         {
-            Debug.Log("[AuthUI] User already authenticated, showing shop");
-            ShowShop();
+            Debug.Log("[AuthUI] User already authenticated, hiding auth button");
+            HideAuthButton();
+            HideAuthPanel();
+        }
+        else
+        {
+            Debug.Log("[AuthUI] User not authenticated, showing auth button");
+            ShowAuthButton();
+            HideAuthPanel();
         }
     }
 
@@ -125,9 +139,6 @@ public class AuthUIController : MonoBehaviour
         if (authPanel != null)
             authPanel.SetActive(true);
 
-        if (shopPanel != null)
-            shopPanel.SetActive(false);
-
         ClearError();
         UpdateTitle();
     }
@@ -139,6 +150,9 @@ public class AuthUIController : MonoBehaviour
 
         if (shopPanel != null)
             shopPanel.SetActive(true);
+
+        // Скрываем кнопку авторизации
+        HideAuthButton();
 
         // Открываем магазин
         if (ShopController.Instance != null)
@@ -153,6 +167,24 @@ public class AuthUIController : MonoBehaviour
         {
             titleText.text = isRegisterMode ? "Регистрация" : "Вход";
         }
+    }
+
+    private void ShowAuthButton()
+    {
+        if (authButton != null)
+            authButton.gameObject.SetActive(true);
+    }
+
+    private void HideAuthButton()
+    {
+        if (authButton != null)
+            authButton.gameObject.SetActive(false);
+    }
+
+    private void HideAuthPanel()
+    {
+        if (authPanel != null)
+            authPanel.SetActive(false);
     }
 
     private void OnRememberedToggleChanged(bool value)
@@ -247,6 +279,11 @@ public class AuthUIController : MonoBehaviour
     #endregion
 
     #region Event Handlers
+
+    private void OnAuthButtonClicked()
+    {
+        ShowAuthPanel();
+    }
 
     private void OnLoginButtonClicked()
     {
