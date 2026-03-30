@@ -5,7 +5,7 @@
 
 <div class="chat-container">
     <div class="chat-box">
-        <h2>Простой чат</h2>
+        <h2>Чат</h2>
 
         <div class="status">
             Статус: @(ChatService.IsConnected ? "✅ Подключен" : "❌ Не подключен")
@@ -44,7 +44,7 @@
                 {
                     @foreach (var user in ChatService.Users)
                     {
-                        <div class="user-item @(user == fromUser ? "current-user" : "")" @onclick="() => toUser = user">
+                        <div class="user-item @(user == fromUser ? "current-user" : "")" @onclick="() => SelectUser(user)">
                             @user
                             @if (user == fromUser)
                             {
@@ -57,22 +57,31 @@
         </div>
 
         <div class="messages-list">
-            <h3>Все сообщения (@ChatService.Messages.Count):</h3>
+            <h3>Сообщения @(selectedContact != null ? $"с {selectedContact}" : "") (@ChatService.Messages.Count):</h3>
             <div class="messages-container">
                 @if (ChatService.Messages.Count == 0)
                 {
-                    <div class="no-messages">Нет сообщений. Напишите первое сообщение!</div>
+                    <div class="no-messages">
+                        @(selectedContact != null
+                            ? "Нет сообщений с этим пользователем. Напишите первое сообщение!"
+                            : "Выберите пользователя для просмотра истории сообщений")
+                    </div>
                 }
                 else
                 {
-                    @foreach (var msg in ChatService.Messages.OrderBy(m => m.Time))
+                    @foreach (var msg in ChatService.Messages)
                     {
-                        <div class="message-item">
+                        var isOwnMessage = msg.SenderName == fromUser;
+                        <div class="message-item @(isOwnMessage ? "own-message" : "")">
                             <div class="message-header">
-                                <strong class="from-user">@msg.FromUser</strong>
+                                <strong class="from-user">@msg.SenderName</strong>
                                 <span class="arrow">→</span>
-                                <strong class="to-user">@msg.ToUser</strong>
-                                <span class="time">@msg.Time.ToString("HH:mm:ss")</span>
+                                <strong class="to-user">@(msg.ReceiverName ?? "Все")</strong>
+                                <span class="time">@msg.CreatedAt.ToString("HH:mm:ss")</span>
+                                @if (msg.IsRead && isOwnMessage)
+                                {
+                                    <span class="read-badge">✓</span>
+                                }
                             </div>
                             <div class="message-text">@msg.Message</div>
                         </div>
@@ -87,12 +96,14 @@
     private string fromUser = "";
     private string toUser = "";
     private string message = "";
+    private string? selectedContact = null;
     private bool isRegistered = false;
 
     protected override async Task OnInitializedAsync()
     {
         ChatService.OnUserListUpdate = StateHasChanged;
         ChatService.OnMessageReceived = StateHasChanged;
+        ChatService.OnHistoryLoaded = StateHasChanged;
 
         await ChatService.Connect();
     }
@@ -105,6 +116,19 @@
             isRegistered = true;
             StateHasChanged();
         }
+    }
+
+    private async Task SelectUser(string user)
+    {
+        toUser = user;
+        selectedContact = user;
+        
+        if (!string.IsNullOrEmpty(fromUser))
+        {
+            await ChatService.LoadHistory(fromUser, selectedContact);
+        }
+        
+        StateHasChanged();
     }
 
     private async Task SendMessage()
@@ -132,5 +156,7 @@
     {
         ChatService.OnUserListUpdate = null;
         ChatService.OnMessageReceived = null;
+        ChatService.OnHistoryLoaded = null;
+        _ = ChatService.Disconnect();
     }
 }
