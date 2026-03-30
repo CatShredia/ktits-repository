@@ -3,130 +3,68 @@ using UnityEngine.UI;
 using TMPro;
 using Arkanoid.Auth;
 
-/// <summary>
-/// Контроллер панели авторизации.
-/// Управляет входом и регистрацией пользователя.
-/// </summary>
 public class AuthUIController : MonoBehaviour
 {
     [Header("=== Input Fields ===")]
-    [Tooltip("Поле ввода имени пользователя")]
     [SerializeField] private TMP_InputField usernameInput;
-
-    [Tooltip("Поле ввода пароля")]
     [SerializeField] private TMP_InputField passwordInput;
 
     [Header("=== Buttons ===")]
-    [Tooltip("Кнопка входа")]
     [SerializeField] private Button loginButton;
-
-    [Tooltip("Кнопка регистрации")]
     [SerializeField] private Button registerButton;
-
-    [Tooltip("Кнопка авторизации в главном меню (ShopPanel)")]
     [SerializeField] private Button authButton;
-
-    [Tooltip("Кнопка выхода из аккаунта")]
     [SerializeField] private Button logOutButton;
 
     [Header("=== Text ===")]
-    [Tooltip("Текст ошибок")]
     [SerializeField] private TextMeshProUGUI errorText;
-
-    [Tooltip("Заголовок панели")]
     [SerializeField] private TextMeshProUGUI titleText;
-
-    [Tooltip("Текст имени пользователя")]
     [SerializeField] private TextMeshProUGUI userNameText;
 
     [Header("=== Panels ===")]
-    [Tooltip("Основная панель авторизации")]
     [SerializeField] private GameObject authPanel;
-
-    [Tooltip("Панель магазина (показывается после входа)")]
     [SerializeField] private GameObject shopPanel;
 
     [Header("=== Toggles ===")]
-    [Tooltip("Чекбокс 'Запомнить меня'")]
     [SerializeField] private Toggle isRememberedToggle;
-
-    [Tooltip("Чекбокс 'Режим регистрации'")]
     [SerializeField] private Toggle isRegisterToggle;
 
     [Header("=== Settings ===")]
-    [Tooltip("Минимальная длина имени")]
     [SerializeField] private int minUsernameLength = 3;
-
-    [Tooltip("Минимальная длина пароля")]
     [SerializeField] private int minPasswordLength = 6;
 
-    private bool isProcessing = false;
-    private bool isRemembered = false;
-    private bool isRegisterMode = false;
+    private bool isProcessing;
+    private bool isRemembered;
+    private bool isRegisterMode;
 
     private const string RememberedUsernameKey = "Auth_RememberedUsername";
     private const string RememberedPasswordKey = "Auth_RememberedPassword";
 
-    void Start()
-    {
-        InitializeUI();
-    }
-
-    void Update()
-    {
-        HandleEnterKey();
-    }
+    void Start() => InitializeUI();
+    void Update() => HandleEnterKey();
 
     private void InitializeUI()
     {
-        // Скрываем панель авторизации по умолчанию
-        if (authPanel != null)
-            authPanel.SetActive(false);
+        if (authPanel != null) authPanel.SetActive(false);
 
-        // Подписка на кнопки
-        if (loginButton != null)
-            loginButton.onClick.AddListener(OnLoginButtonClicked);
+        if (loginButton != null) loginButton.onClick.AddListener(OnLoginButtonClicked);
+        if (registerButton != null) registerButton.onClick.AddListener(OnRegisterButtonClicked);
+        if (authButton != null) authButton.onClick.AddListener(OnAuthButtonClicked);
+        if (logOutButton != null) logOutButton.onClick.AddListener(OnLogOutButtonClicked);
+        if (isRememberedToggle != null) isRememberedToggle.onValueChanged.AddListener(OnRememberedToggleChanged);
+        if (isRegisterToggle != null) isRegisterToggle.onValueChanged.AddListener(OnRegisterToggleChanged);
 
-        if (registerButton != null)
-            registerButton.onClick.AddListener(OnRegisterButtonClicked);
-
-        // Подписка на кнопку авторизации в главном меню
-        if (authButton != null)
-            authButton.onClick.AddListener(OnAuthButtonClicked);
-
-        // Подписка на кнопку выхода
-        if (logOutButton != null)
-            logOutButton.onClick.AddListener(OnLogOutButtonClicked);
-
-        // Подписка на Toggles
-        if (isRememberedToggle != null)
-            isRememberedToggle.onValueChanged.AddListener(OnRememberedToggleChanged);
-
-        if (isRegisterToggle != null)
-            isRegisterToggle.onValueChanged.AddListener(OnRegisterToggleChanged);
-
-        // Загрузка сохранённых данных (если "Запомнить меня" был включён)
         LoadRememberedCredentials();
-
-        // Обновление заголовка в зависимости от режима
         UpdateTitle();
-
-        // Обновление имени пользователя
         UpdateUserNameText();
-
-        // Обновление кнопки выхода
         UpdateLogOutButton();
 
-        // Проверка сохранённой авторизации
         if (AuthService.Instance != null && AuthService.Instance.IsAuthenticated())
         {
-            Debug.Log("[AuthUI] User already authenticated, hiding auth button");
             HideAuthButton();
             HideAuthPanel();
         }
         else
         {
-            Debug.Log("[AuthUI] User not authenticated, showing auth button");
             ShowAuthButton();
             HideAuthPanel();
         }
@@ -134,43 +72,25 @@ public class AuthUIController : MonoBehaviour
 
     public void ShowAuthPanel()
     {
-        if (authPanel != null)
-            authPanel.SetActive(true);
-
+        if (authPanel != null) authPanel.SetActive(true);
         ClearError();
         UpdateTitle();
     }
 
     private void ShowShop()
     {
-        if (authPanel != null)
-            authPanel.SetActive(false);
-
-        if (shopPanel != null)
-            shopPanel.SetActive(true);
-
-        // Скрываем кнопку авторизации
+        if (authPanel != null) authPanel.SetActive(false);
+        if (shopPanel != null) shopPanel.SetActive(true);
         HideAuthButton();
-
-        // Обновляем имя пользователя
         UpdateUserNameText();
-
-        // Обновляем кнопку выхода
         UpdateLogOutButton();
-
-        // Открываем магазин
-        if (ShopController.Instance != null)
-        {
-            ShopController.Instance.OpenShopFromMenu();
-        }
+        ShopController.Instance?.OpenShopFromMenu();
     }
 
     private void UpdateTitle()
     {
         if (titleText != null)
-        {
             titleText.text = isRegisterMode ? "Регистрация" : "Вход";
-        }
     }
 
     private void UpdateUserNameText()
@@ -191,40 +111,13 @@ public class AuthUIController : MonoBehaviour
     private void UpdateLogOutButton()
     {
         if (logOutButton == null) return;
-
-        if (AuthService.Instance != null && AuthService.Instance.IsAuthenticated())
-        {
-            logOutButton.gameObject.SetActive(true);
-        }
-        else
-        {
-            logOutButton.gameObject.SetActive(false);
-        }
+        logOutButton.gameObject.SetActive(AuthService.Instance != null && AuthService.Instance.IsAuthenticated());
     }
 
-    private void ShowAuthButton()
-    {
-        if (authButton != null)
-            authButton.gameObject.SetActive(true);
-    }
-
-    private void HideAuthButton()
-    {
-        if (authButton != null)
-            authButton.gameObject.SetActive(false);
-    }
-
-    private void HideAuthPanel()
-    {
-        if (authPanel != null)
-            authPanel.SetActive(false);
-    }
-
-    private void HideShopPanel()
-    {
-        if (shopPanel != null)
-            shopPanel.SetActive(false);
-    }
+    private void ShowAuthButton() { if (authButton != null) authButton.gameObject.SetActive(true); }
+    private void HideAuthButton() { if (authButton != null) authButton.gameObject.SetActive(false); }
+    private void HideAuthPanel() { if (authPanel != null) authPanel.SetActive(false); }
+    private void HideShopPanel() { if (shopPanel != null) shopPanel.SetActive(false); }
 
     private void OnRememberedToggleChanged(bool value)
     {
@@ -243,18 +136,9 @@ public class AuthUIController : MonoBehaviour
     {
         if (PlayerPrefs.HasKey(RememberedUsernameKey))
         {
-            string username = PlayerPrefs.GetString(RememberedUsernameKey);
-            string password = PlayerPrefs.GetString(RememberedPasswordKey);
-
-            if (usernameInput != null)
-                usernameInput.text = username;
-
-            if (passwordInput != null)
-                passwordInput.text = password;
-
-            if (isRememberedToggle != null)
-                isRememberedToggle.isOn = true;
-
+            usernameInput.text = PlayerPrefs.GetString(RememberedUsernameKey);
+            passwordInput.text = PlayerPrefs.GetString(RememberedPasswordKey);
+            if (isRememberedToggle != null) isRememberedToggle.isOn = true;
             Debug.Log("[AuthUI] Loaded remembered credentials");
         }
     }
@@ -265,7 +149,6 @@ public class AuthUIController : MonoBehaviour
         {
             PlayerPrefs.SetString(RememberedUsernameKey, username);
             PlayerPrefs.SetString(RememberedPasswordKey, password);
-            PlayerPrefs.Save();
             Debug.Log("[AuthUI] Saved remembered credentials");
         }
         else
@@ -281,11 +164,7 @@ public class AuthUIController : MonoBehaviour
         Debug.Log("[AuthUI] Cleared remembered credentials");
     }
 
-    private void ClearError()
-    {
-        if (errorText != null)
-            errorText.text = "";
-    }
+    private void ClearError() { if (errorText != null) errorText.text = ""; }
 
     private void ShowError(string message)
     {
@@ -294,176 +173,70 @@ public class AuthUIController : MonoBehaviour
             errorText.text = message;
             errorText.color = Color.red;
         }
-
         Debug.LogError($"[AuthUI] Error: {message}");
     }
 
     private void SetProcessingState(bool processing)
     {
         isProcessing = processing;
-
-        if (loginButton != null)
-            loginButton.interactable = !processing;
-
-        if (registerButton != null)
-            registerButton.interactable = !processing;
-
-        if (usernameInput != null)
-            usernameInput.interactable = !processing;
-
-        if (passwordInput != null)
-            passwordInput.interactable = !processing;
+        if (loginButton != null) loginButton.interactable = !processing;
+        if (registerButton != null) registerButton.interactable = !processing;
+        if (usernameInput != null) usernameInput.interactable = !processing;
+        if (passwordInput != null) passwordInput.interactable = !processing;
     }
 
-    private void OnAuthButtonClicked()
-    {
-        ShowAuthPanel();
-    }
+    private void OnAuthButtonClicked() => ShowAuthPanel();
 
-    private void OnLogOutButtonClicked()
+    private async void OnLogOutButtonClicked()
     {
         Debug.Log("[AuthUI] Logout button clicked");
 
-        // Выполняем выход из аккаунта
-        if (AuthService.Instance != null)
-        {
-            AuthService.Instance.Logout();
-        }
-
-        // Очищаем сохранённые данные
+        AuthService.Instance?.Logout();
         ClearRememberedCredentials();
-
-        // Скрываем панель магазина
         HideShopPanel();
-
-        // Показываем кнопку авторизации
         ShowAuthButton();
 
-        // Сбрасываем поля ввода
-        if (usernameInput != null)
-            usernameInput.text = "";
+        if (usernameInput != null) usernameInput.text = "";
+        if (passwordInput != null) passwordInput.text = "";
 
-        if (passwordInput != null)
-            passwordInput.text = "";
-
-        // Обновляем отображение имени пользователя (скрываем)
         UpdateUserNameText();
-
-        // Обновляем кнопку выхода (скрываем)
         UpdateLogOutButton();
-
-        // Закрываем магазин, если он открыт
-        if (ShopController.Instance != null)
-        {
-            ShopController.Instance.CloseShop();
-        }
+        ShopController.Instance?.CloseShop();
 
         Debug.Log("[AuthUI] Logout completed");
     }
 
-    private void OnLoginButtonClicked()
+    private async void OnLoginButtonClicked()
     {
         if (isProcessing) return;
 
         string username = usernameInput?.text.Trim();
         string password = passwordInput?.text;
 
-        if (!ValidateInput(username, password))
-            return;
+        if (!ValidateInput(username, password)) return;
 
         SetProcessingState(true);
         ClearError();
 
-        StartCoroutine(LoginCoroutine(username, password));
-    }
-
-    private void OnRegisterButtonClicked()
-    {
-        if (isProcessing) return;
-
-        string username = usernameInput?.text.Trim();
-        string password = passwordInput?.text;
-
-        if (!ValidateInput(username, password))
-            return;
-
-        SetProcessingState(true);
-        ClearError();
-
-        StartCoroutine(RegisterCoroutine(username, password));
-    }
-
-    private System.Collections.IEnumerator LoginCoroutine(string username, string password)
-    {
-        // Если включён режим регистрации, используем RegisterAsync
-        if (isRegisterMode)
-        {
-            var task = AuthService.Instance.RegisterAsync(username, password);
-
-            while (!task.IsCompleted)
-            {
-                yield return null;
-            }
-
-            SetProcessingState(false);
-
-            if (task.Result)
-            {
-                Debug.Log("[AuthUI] Registration successful");
-                SaveRememberedCredentials(username, password);
-                ShowShop();
-            }
-            else
-            {
-                ShowError("Пользователь с таким именем уже существует");
-            }
-        }
-        else
-        {
-            var task = AuthService.Instance.LoginAsync(username, password);
-
-            while (!task.IsCompleted)
-            {
-                yield return null;
-            }
-
-            SetProcessingState(false);
-
-            if (task.Result)
-            {
-                Debug.Log("[AuthUI] Login successful");
-                SaveRememberedCredentials(username, password);
-                ShowShop();
-            }
-            else
-            {
-                ShowError("Неверное имя пользователя или пароль");
-            }
-        }
-    }
-
-    private System.Collections.IEnumerator RegisterCoroutine(string username, string password)
-    {
-        var task = AuthService.Instance.RegisterAsync(username, password);
-
-        while (!task.IsCompleted)
-        {
-            yield return null;
-        }
+        bool success = isRegisterMode
+            ? await AuthService.Instance.RegisterAsync(username, password)
+            : await AuthService.Instance.LoginAsync(username, password);
 
         SetProcessingState(false);
 
-        if (task.Result)
+        if (success)
         {
-            Debug.Log("[AuthUI] Registration successful");
+            Debug.Log(isRegisterMode ? "[AuthUI] Registration successful" : "[AuthUI] Login successful");
             SaveRememberedCredentials(username, password);
             ShowShop();
         }
         else
         {
-            ShowError("Пользователь с таким именем уже существует");
+            ShowError(isRegisterMode ? "Пользователь с таким именем уже существует" : "Неверное имя пользователя или пароль");
         }
     }
+
+    private void OnRegisterButtonClicked() => OnLoginButtonClicked();
 
     private bool ValidateInput(string username, string password)
     {
@@ -498,12 +271,10 @@ public class AuthUIController : MonoBehaviour
 
     private void HandleEnterKey()
     {
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            && !isProcessing && authPanel != null && authPanel.activeSelf)
         {
-            if (!isProcessing && authPanel != null && authPanel.activeSelf)
-            {
-                OnLoginButtonClicked();
-            }
+            OnLoginButtonClicked();
         }
     }
 }
