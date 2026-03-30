@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.AspNetCore.Http.Features;
+using TestSignalR320.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -101,7 +102,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Регистрация сервиса для работы с изображениями
+builder.Services.AddSignalR();
+
 builder.Services.AddScoped<IImageService, ImageService>();
 
 var app = builder.Build();
@@ -127,5 +129,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chat");
 
 app.Run();

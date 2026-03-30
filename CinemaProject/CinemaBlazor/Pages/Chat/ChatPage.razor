@@ -1,0 +1,136 @@
+﻿@page "/chat"
+@using CinemaBlazor.ApiRequests
+@inject IChatService ChatService
+@implements IDisposable
+
+<div class="chat-container">
+    <div class="chat-box">
+        <h2>Простой чат</h2>
+
+        <div class="status">
+            Статус: @(ChatService.IsConnected ? "✅ Подключен" : "❌ Не подключен")
+        </div>
+
+        <div class="input-group">
+            <label>От кого (ваше имя):</label>
+            <input @bind="fromUser" placeholder="Ваше имя" />
+            <button @onclick="RegisterUser" disabled="@(!ChatService.IsConnected || string.IsNullOrEmpty(fromUser))">
+                Зарегистрироваться
+            </button>
+        </div>
+
+        <div class="input-group">
+            <label>Кому:</label>
+            <input @bind="toUser" placeholder="Имя получателя" />
+        </div>
+
+        <div class="input-group">
+            <label>Сообщение:</label>
+            <input @bind="message" placeholder="Введите сообщение..." @onkeypress="OnEnterPress" />
+            <button @onclick="SendMessage"
+                    disabled="@(string.IsNullOrEmpty(message) || string.IsNullOrEmpty(toUser) || !isRegistered)">
+                Отправить
+            </button>
+        </div>
+
+        <div class="users-list">
+            <h3>Активные пользователи (@ChatService.Users.Count):</h3>
+            <div class="users-container">
+                @if (ChatService.Users.Count == 0)
+                {
+                    <div class="no-users">Нет активных пользователей</div>
+                }
+                else
+                {
+                    @foreach (var user in ChatService.Users)
+                    {
+                        <div class="user-item @(user == fromUser ? "current-user" : "")" @onclick="() => toUser = user">
+                            @user
+                            @if (user == fromUser)
+                            {
+                                <span class="badge">Вы</span>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="messages-list">
+            <h3>Все сообщения (@ChatService.Messages.Count):</h3>
+            <div class="messages-container">
+                @if (ChatService.Messages.Count == 0)
+                {
+                    <div class="no-messages">Нет сообщений. Напишите первое сообщение!</div>
+                }
+                else
+                {
+                    @foreach (var msg in ChatService.Messages.OrderBy(m => m.Time))
+                    {
+                        <div class="message-item">
+                            <div class="message-header">
+                                <strong class="from-user">@msg.FromUser</strong>
+                                <span class="arrow">→</span>
+                                <strong class="to-user">@msg.ToUser</strong>
+                                <span class="time">@msg.Time.ToString("HH:mm:ss")</span>
+                            </div>
+                            <div class="message-text">@msg.Message</div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string fromUser = "";
+    private string toUser = "";
+    private string message = "";
+    private bool isRegistered = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ChatService.OnUserListUpdate = StateHasChanged;
+        ChatService.OnMessageReceived = StateHasChanged;
+
+        await ChatService.Connect();
+    }
+
+    private async Task RegisterUser()
+    {
+        if (!string.IsNullOrEmpty(fromUser))
+        {
+            await ChatService.Register(fromUser);
+            isRegistered = true;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SendMessage()
+    {
+        if (!string.IsNullOrEmpty(fromUser) &&
+            !string.IsNullOrEmpty(toUser) &&
+            !string.IsNullOrEmpty(message) &&
+            isRegistered)
+        {
+            await ChatService.SendMessage(fromUser, toUser, message);
+            message = "";
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnEnterPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SendMessage();
+        }
+    }
+
+    public void Dispose()
+    {
+        ChatService.OnUserListUpdate = null;
+        ChatService.OnMessageReceived = null;
+    }
+}
