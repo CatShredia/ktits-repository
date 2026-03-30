@@ -9,174 +9,87 @@ using Debug = UnityEngine.Debug;
 using Arkanoid.Network;
 using Arkanoid.Auth;
 
-/// <summary>
-/// Контроллер магазина (Carousel версия).
-/// Переключение скинов стрелками, клик по карточке = покупка/экипировка.
-/// </summary>
 public class ShopController : MonoBehaviour
 {
-    #region Singleton
-
     public static ShopController Instance { get; private set; }
 
     void Awake()
     {
         if (Instance == null)
-        {
             Instance = this;
-        }
         else
-        {
             Destroy(gameObject);
-            return;
-        }
     }
 
-    #endregion
-
-    #region UI References
-
     [Header("=== Panels ===")]
-    [Tooltip("Основная панель магазина")]
     [SerializeField] private GameObject shopPanel;
-
-    [Tooltip("Панель главного меню")]
     [SerializeField] private GameObject mainMenuPanel;
-
-    [Tooltip("Панель паузы")]
     [SerializeField] private GameObject pausePanel;
-
-    [Tooltip("Панель игрового процесса")]
     [SerializeField] private GameObject gameplayUI;
 
-    [Header("=== Shop Header ===")]
-    [Tooltip("Отображение монет (текст)")]
-    [SerializeField] private TextMeshProUGUI coinsDisplayText;
+    [Header("=== Game Objects ===")]
+    [SerializeField] private GameObject playerPlatform;
+    [SerializeField] private GameObject ball;
 
-    [Tooltip("Кнопка назад")]
+    [Header("=== Shop Header ===")]
+    [SerializeField] private TextMeshProUGUI coinsDisplayText;
     [SerializeField] private Button backButton;
 
     [Header("=== Carousel ===")]
-    [Tooltip("Контейнер для одного скина")]
     [SerializeField] private RectTransform skinContainer;
-
-    [Tooltip("Кнопка: Назад (стрелка влево)")]
     [SerializeField] private Button prevButton;
-
-    [Tooltip("Кнопка: Вперёд (стрелка вправо)")]
     [SerializeField] private Button nextButton;
-
-    [Tooltip("Префаб карточки скина")]
     [SerializeField] private GameObject skinItemPrefab;
 
     [Header("=== Animations ===")]
-    [Tooltip("Аниматор панели магазина")]
     [SerializeField] private Animator shopAnimator;
-
-    [Tooltip("Параметр анимации открытия/закрытия")]
     [SerializeField] private string openParameterName = "Open";
-
-    [Tooltip("Длительность анимации открытия")]
     [SerializeField] private float showAnimationDuration = 0.3f;
-
-    [Tooltip("Длительность анимации закрытия")]
     [SerializeField] private float hideAnimationDuration = 0.3f;
 
-    #endregion
-
-    #region State
-
-    private bool isShopOpen = false;
-    private bool isAnimating = false;
-
-    // Текущий индекс скина в карусели
-    private int currentIndex = 0;
-
-    // Кэшированные данные
+    private bool isShopOpen;
+    private bool isAnimating;
+    private int currentIndex;
     private List<SkinDto> allSkins = new();
     private UserInventoryDto? userInventory;
-
-    // Текущий показываемый скин
     private SkinDto? currentSkin;
     private bool isCurrentSkinOwned;
     private bool isCurrentSkinEquipped;
 
-    #endregion
-
-    #region Unity Lifecycle
-
-    void Start()
-    {
-        InitializeUI();
-    }
-
+    void Start() => InitializeUI();
     void Update()
     {
         HandleEscapeKey();
         HandleArrowKeys();
     }
 
-    #endregion
-
-    #region Initialization
-
-    /// <summary>
-    /// Инициализация UI элементов и подписка на события
-    /// </summary>
     private void InitializeUI()
     {
-        // Скрываем магазин при старте
-        if (shopPanel != null)
-            shopPanel.SetActive(false);
+        if (shopPanel != null) shopPanel.SetActive(false);
 
-        // Подписка на кнопки
-        if (backButton != null)
-            backButton.onClick.AddListener(OnBackButtonClicked);
-
-        if (prevButton != null)
-            prevButton.onClick.AddListener(OnPrevButtonClicked);
-
-        if (nextButton != null)
-            nextButton.onClick.AddListener(OnNextButtonClicked);
+        if (backButton != null) backButton.onClick.AddListener(OnBackButtonClicked);
+        if (prevButton != null) prevButton.onClick.AddListener(OnPrevButtonClicked);
+        if (nextButton != null) nextButton.onClick.AddListener(OnNextButtonClicked);
 
         Debug.Log("[ShopController] UI initialized (Carousel mode)");
     }
 
-    #endregion
-
-    #region Navigation
-
-    /// <summary>
-    /// Открыть магазин из главного меню
-    /// </summary>
     public void OpenShopFromMenu()
     {
         if (isShopOpen || isAnimating) return;
-
         StartCoroutine(OpenShopSequence(true));
     }
 
-    /// <summary>
-    /// Открыть магазин из меню паузы
-    /// </summary>
     public void OpenShopFromPause()
     {
         if (isShopOpen || isAnimating) return;
-
-        if (pausePanel != null)
-            pausePanel.SetActive(false);
-
+        if (pausePanel != null) pausePanel.SetActive(false);
         StartCoroutine(OpenShopSequence(false));
     }
 
-    /// <summary>
-    /// Закрыть магазин
-    /// </summary>
     public void CloseShop()
     {
-        Debug.Log("[ShopController] Closing shop...");
         if (!isShopOpen || isAnimating) return;
-
         StartCoroutine(HideShopSequence());
     }
 
@@ -184,25 +97,18 @@ public class ShopController : MonoBehaviour
     {
         isAnimating = true;
 
-        if (fromMainMenu && mainMenuPanel != null)
-            mainMenuPanel.SetActive(false);
-
-        if (gameplayUI != null)
-            gameplayUI.SetActive(false);
-
-        if (shopPanel != null)
-            shopPanel.SetActive(true);
-
-        if (shopAnimator != null)
-            shopAnimator.SetBool(openParameterName, true);
+        if (fromMainMenu && mainMenuPanel != null) mainMenuPanel.SetActive(false);
+        if (gameplayUI != null) gameplayUI.SetActive(false);
+        if (playerPlatform != null) playerPlatform.SetActive(false);
+        if (ball != null) ball.SetActive(false);
+        if (shopPanel != null) shopPanel.SetActive(true);
+        if (shopAnimator != null) shopAnimator.SetBool(openParameterName, true);
 
         yield return new WaitForSecondsRealtime(showAnimationDuration);
 
         isShopOpen = true;
         isAnimating = false;
-
         _ = LoadShopData();
-
         Debug.Log("[ShopController] Shop opened");
     }
 
@@ -210,29 +116,24 @@ public class ShopController : MonoBehaviour
     {
         isAnimating = true;
 
-        if (shopAnimator != null)
-            shopAnimator.SetBool(openParameterName, false);
+        if (shopAnimator != null) shopAnimator.SetBool(openParameterName, false);
 
         yield return new WaitForSecondsRealtime(hideAnimationDuration);
 
-        if (shopPanel != null)
-            shopPanel.SetActive(false);
-
-        if (mainMenuPanel != null)
-            mainMenuPanel.SetActive(true);
+        if (shopPanel != null) shopPanel.SetActive(false);
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
+        if (playerPlatform != null) playerPlatform.SetActive(true);
+        if (ball != null) ball.SetActive(true);
 
         isShopOpen = false;
         isAnimating = false;
-
         Debug.Log("[ShopController] Shop closed");
     }
 
     private void HandleEscapeKey()
     {
         if (Input.GetKeyDown(KeyCode.Escape) && isShopOpen && !isAnimating)
-        {
             CloseShop();
-        }
     }
 
     private void HandleArrowKeys()
@@ -240,97 +141,78 @@ public class ShopController : MonoBehaviour
         if (!isShopOpen || isAnimating) return;
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
             OnPrevButtonClicked();
-        }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
             OnNextButtonClicked();
-        }
     }
 
-    #endregion
-
-    #region Data Loading
-
-    /// <summary>
-    /// Загрузка данных магазина
-    /// </summary>
-    private async System.Threading.Tasks.Task LoadShopData()
+    private async Task LoadShopData()
     {
-        try
+        if (ShopAPIClient.Instance == null)
         {
-            // Получаем токен из AuthService
-            string token = AuthService.Instance?.AuthToken;
+            Debug.LogError("[ShopController] ShopAPIClient.Instance is null.");
+            LoadTestData();
+            UpdateCoinsDisplay();
+            ShowCurrentSkin();
+            return;
+        }
 
-            // Устанавливаем токен в API клиент
+        string token = AuthService.Instance?.AuthToken;
+        if (!string.IsNullOrEmpty(token))
+            ShopAPIClient.Instance.SetAuthToken(token);
+
+        var skins = await ShopAPIClient.Instance.GetAllSkins();
+
+        if (skins != null && skins.Count > 0)
+        {
+            allSkins = skins.Select(s => new SkinDto
+            {
+                Id = s.Id,
+                Name = s.Name,
+                SkinType = s.SkinType,
+                Price = s.Price,
+                Rarity = s.Rarity,
+                Description = s.Description ?? "Нет описания",
+                TexturePath = s.TexturePath
+            }).ToList();
+
             if (!string.IsNullOrEmpty(token))
             {
-                ShopAPIClient.Instance.SetAuthToken(token);
-            }
-
-            // Загружаем скины (публично, без токена)
-            var skins = await ShopAPIClient.Instance.GetAllSkins();
-
-            if (skins != null && skins.Count > 0)
-            {
-                // Конвертируем API DTO в локальные DTO
-                allSkins = skins.Select(s => new SkinDto
+                var inventory = await ShopAPIClient.Instance.GetInventory();
+                if (inventory != null)
                 {
-                    Id = s.Id,
-                    Name = s.Name,
-                    SkinType = s.SkinType,
-                    Price = s.Price,
-                    Rarity = s.Rarity,
-                    Description = s.Description ?? "Нет описания"
-                }).ToList();
-
-                // Загружаем инвентарь (только если есть токен)
-                if (!string.IsNullOrEmpty(token))
-                {
-                    var inventory = await ShopAPIClient.Instance.GetInventory();
-                    if (inventory != null)
-                    {
-                        userInventory = new UserInventoryDto
-                        {
-                            Coins = inventory.Coins,
-                            Skins = inventory.Skins?.Select(s => new UserSkinDto
-                            {
-                                Id = s.Id,
-                                SkinId = s.SkinId,
-                                SkinName = s.SkinName,
-                                IsEquipped = s.IsEquipped
-                            }).ToList() ?? new List<UserSkinDto>()
-                        };
-                    }
-                    Debug.Log($"[ShopController] Loaded inventory: {userInventory.Coins} coins, {userInventory.Skins.Count} skins");
-                }
-                else
-                {
-                    // Тестовый инвентарь для демонстрации
-                    Debug.LogWarning("[ShopController] No auth token, using demo inventory");
                     userInventory = new UserInventoryDto
                     {
-                        Coins = 1000,
-                        Skins = new List<UserSkinDto>
+                        Coins = inventory.Coins,
+                        Skins = inventory.Skins?.Select(s => new UserSkinDto
                         {
-                            new UserSkinDto { Id = 1, SkinId = 1, SkinName = "Неоновая платформа", IsEquipped = false }
-                        }
+                            Id = s.Id,
+                            SkinId = s.SkinId,
+                            SkinName = s.SkinName,
+                            IsEquipped = s.IsEquipped
+                        }).ToList() ?? new List<UserSkinDto>()
                     };
+                    Debug.Log($"[ShopController] Loaded inventory: {userInventory.Coins} coins, {userInventory.Skins.Count} skins");
                 }
-
-                Debug.Log($"[ShopController] Loaded {allSkins.Count} skins from API");
             }
             else
             {
-                Debug.LogWarning("[ShopController] API returned no skins, using test data");
-                LoadTestData();
+                Debug.LogWarning("[ShopController] No auth token, using demo inventory");
+                userInventory = new UserInventoryDto
+                {
+                    Coins = 1000,
+                    Skins = new List<UserSkinDto>
+                    {
+                        new UserSkinDto { Id = 1, SkinId = 1, SkinName = "Неоновая платформа", IsEquipped = false }
+                    }
+                };
             }
+
+            Debug.Log($"[ShopController] Loaded {allSkins.Count} skins from API");
         }
-        catch (System.Exception e)
+        else
         {
-            Debug.LogError($"[ShopController] Error loading shop data: {e.Message}");
-            Debug.LogWarning("Using test data as fallback");
+            Debug.LogWarning("[ShopController] API returned no skins, using test data");
             LoadTestData();
         }
 
@@ -342,9 +224,9 @@ public class ShopController : MonoBehaviour
     {
         allSkins = new List<SkinDto>
         {
-            new SkinDto { Id = 1, Name = "Неоновая платформа", SkinType = "Platform", Price = 100, Rarity = "Common" },
-            new SkinDto { Id = 2, Name = "Золотой мяч", SkinType = "Ball", Price = 150, Rarity = "Rare" },
-            new SkinDto { Id = 3, Name = "Огненная платформа", SkinType = "Platform", Price = 200, Rarity = "Epic" },
+            new SkinDto { Id = 1, Name = "Неоновая платформа", SkinType = "Platform", Price = 100, Rarity = "Common", TexturePath = "Assets/Sprites/Skins/neon_platform" },
+            new SkinDto { Id = 2, Name = "Золотой мяч", SkinType = "Ball", Price = 150, Rarity = "Rare", TexturePath = "Assets/Sprites/Skins/gold_ball" },
+            new SkinDto { Id = 3, Name = "Огненная платформа", SkinType = "Platform", Price = 200, Rarity = "Epic", TexturePath = "Assets/Sprites/Skins/fire_platform" },
         };
 
         userInventory = new UserInventoryDto
@@ -360,18 +242,9 @@ public class ShopController : MonoBehaviour
     private void UpdateCoinsDisplay()
     {
         if (coinsDisplayText == null) return;
-
-        int coins = userInventory?.Coins ?? 0;
-        coinsDisplayText.text = $"{coins}";
+        coinsDisplayText.text = $"{userInventory?.Coins ?? 0}";
     }
 
-    #endregion
-
-    #region Carousel Logic
-
-    /// <summary>
-    /// Показать текущий скин в карусели
-    /// </summary>
     private void ShowCurrentSkin()
     {
         if (allSkins.Count == 0 || skinContainer == null || skinItemPrefab == null)
@@ -380,23 +253,14 @@ public class ShopController : MonoBehaviour
             return;
         }
 
-        // Очистка контейнера
         foreach (Transform child in skinContainer)
-        {
             Destroy(child.gameObject);
-        }
 
-        // Получаем текущий скин
         currentSkin = allSkins[currentIndex];
-
-        // Проверяем владение
         isCurrentSkinOwned = userInventory?.Skins?.Any(s => s.SkinId == currentSkin.Id) ?? false;
         isCurrentSkinEquipped = userInventory?.Skins?.Any(s => s.SkinId == currentSkin.Id && s.IsEquipped) ?? false;
 
-        // Спавн карточки
         var item = Instantiate(skinItemPrefab, skinContainer, false);
-
-        // Сброс позиции и масштаба
         var rectTransform = item.GetComponent<RectTransform>();
         if (rectTransform != null)
         {
@@ -404,41 +268,25 @@ public class ShopController : MonoBehaviour
             rectTransform.localScale = Vector3.one;
         }
 
-        // Инициализация карточки (клик = покупка/экипировка)
         var skinItemUI = item.GetComponent<SkinItemUI>();
-        if (skinItemUI != null)
-        {
-            skinItemUI.Initialize(currentSkin, isCurrentSkinOwned, isCurrentSkinEquipped, OnSkinActionClicked);
-        }
+        skinItemUI?.Initialize(currentSkin, isCurrentSkinOwned, isCurrentSkinEquipped, OnSkinActionClicked);
 
-        // Обновление кнопок навигации
         UpdateCarouselButtons();
-
         Debug.Log($"[ShopController] Showing skin: {currentSkin.Name} ({currentIndex + 1}/{allSkins.Count})");
     }
 
-    /// <summary>
-    /// Клик по скину в карусели = покупка или экипировка
-    /// </summary>
     private void OnSkinActionClicked(int skinId)
     {
         if (skinId != currentSkin?.Id) return;
-
         if (isCurrentSkinOwned)
-        {
             EquipSkin(skinId);
-        }
         else
-        {
             PurchaseSkin(skinId);
-        }
     }
 
-    /// <summary>
-    /// Кнопка: Назад
-    /// </summary>
-    private void OnPrevButtonClicked()
+    public void OnPrevButtonClicked()
     {
+        Debug.Log("prev");
         if (currentIndex > 0)
         {
             currentIndex--;
@@ -446,11 +294,9 @@ public class ShopController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Кнопка: Вперёд
-    /// </summary>
-    private void OnNextButtonClicked()
+    public void OnNextButtonClicked()
     {
+        Debug.Log("next");
         if (currentIndex < allSkins.Count - 1)
         {
             currentIndex++;
@@ -458,40 +304,19 @@ public class ShopController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Обновление состояния кнопок карусели
-    /// </summary>
     private void UpdateCarouselButtons()
     {
-        if (prevButton != null)
-            prevButton.interactable = currentIndex > 0;
-
-        if (nextButton != null)
-            nextButton.interactable = currentIndex < allSkins.Count - 1;
+        if (prevButton != null) prevButton.interactable = currentIndex > 0;
+        if (nextButton != null) nextButton.interactable = currentIndex < allSkins.Count - 1;
     }
 
-    #endregion
+    private void OnBackButtonClicked() => CloseShop();
 
-    #region Event Handlers
-
-    private void OnBackButtonClicked()
-    {
-        CloseShop();
-    }
-
-    #endregion
-
-    #region Actions
-
-    /// <summary>
-    /// Покупка скина
-    /// </summary>
     private async void PurchaseSkin(int skinId)
     {
         var skin = allSkins.Find(s => s.Id == skinId);
         if (skin == null) return;
 
-        // Проверка: достаточно ли монет (локальная)
         int coins = userInventory?.Coins ?? 0;
         if (coins < skin.Price)
         {
@@ -501,14 +326,11 @@ public class ShopController : MonoBehaviour
 
         try
         {
-            // Вызов API
             var response = await ShopAPIClient.Instance.PurchaseSkin(skinId);
 
             if (response != null && response.Success)
             {
                 Debug.Log($"[ShopController] Skin purchased: {skin.Name}");
-
-                // Обновляем локальные данные
                 userInventory.Coins = response.RemainingCoins;
 
                 if (response.PurchasedSkin != null)
@@ -522,15 +344,12 @@ public class ShopController : MonoBehaviour
                     });
                 }
 
-                // Обновляем UI
                 UpdateCoinsDisplay();
                 ShowCurrentSkin();
             }
             else
             {
-                string errorMessage = response?.Message ?? "Неизвестная ошибка";
-                Debug.LogError($"[ShopController] Purchase failed: {errorMessage}");
-                // TODO: Показать ошибку пользователю
+                Debug.LogError($"[ShopController] Purchase failed: {response?.Message ?? "Неизвестная ошибка"}");
             }
         }
         catch (System.Exception e)
@@ -539,12 +358,8 @@ public class ShopController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Экипировка скина
-    /// </summary>
     private async void EquipSkin(int skinId)
     {
-        // Находим UserSkinId для этого скина
         var userSkin = userInventory?.Skins?.FirstOrDefault(s => s.SkinId == skinId);
         if (userSkin == null)
         {
@@ -554,42 +369,32 @@ public class ShopController : MonoBehaviour
 
         try
         {
-            // Вызов API (передаём Id записи UserSkin, не SkinId)
             var response = await ShopAPIClient.Instance.EquipSkin(userSkin.Id);
 
             if (response != null && response.Success)
             {
                 Debug.Log($"[ShopController] Skin equipped: {userSkin.SkinName}");
 
-                // Обновляем локальные данные
                 if (userInventory?.Skins != null)
                 {
                     var skin = allSkins.Find(s => s.Id == skinId);
                     if (skin != null)
                     {
-                        // Снять все экипированные скины того же типа
                         foreach (var us in userInventory.Skins)
                         {
                             var s = allSkins.Find(sk => sk.Id == us.SkinId);
                             if (s?.SkinType == skin.SkinType)
-                            {
                                 us.IsEquipped = false;
-                            }
                         }
                     }
-
-                    // Экипировать выбранный
                     userSkin.IsEquipped = true;
                 }
 
-                // Обновляем UI
                 ShowCurrentSkin();
             }
             else
             {
-                string errorMessage = response?.Message ?? "Неизвестная ошибка";
-                Debug.LogError($"[ShopController] Equip failed: {errorMessage}");
-                // TODO: Показать ошибку пользователю
+                Debug.LogError($"[ShopController] Equip failed: {response?.Message ?? "Неизвестная ошибка"}");
             }
         }
         catch (System.Exception e)
@@ -598,11 +403,6 @@ public class ShopController : MonoBehaviour
         }
     }
 
-    #endregion
-
-    #region Enums & Classes
-
-    // Временные DTO для тестирования
     [System.Serializable]
     public class SkinDto
     {
@@ -612,6 +412,7 @@ public class ShopController : MonoBehaviour
         public int Price;
         public string Rarity;
         public string Description;
+        public string TexturePath;
     }
 
     [System.Serializable]
@@ -629,6 +430,4 @@ public class ShopController : MonoBehaviour
         public int Coins;
         public List<UserSkinDto> Skins;
     }
-
-    #endregion
 }

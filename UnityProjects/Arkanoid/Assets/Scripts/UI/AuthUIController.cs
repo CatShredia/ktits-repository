@@ -210,6 +210,13 @@ public class AuthUIController : MonoBehaviour
     {
         if (isProcessing) return;
 
+        if (AuthService.Instance == null)
+        {
+            ShowError("AuthService не найден на сцене!");
+            Debug.LogError("[AuthUI] AuthService.Instance is null. Make sure AuthService is on the scene.");
+            return;
+        }
+
         string username = usernameInput?.text.Trim();
         string password = passwordInput?.text;
 

@@ -2,42 +2,21 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// UI компонент карточки скина в магазине (Carousel версия).
-/// Клик по карточке = покупка или экипировка скина.
-/// </summary>
 public class SkinItemUI : MonoBehaviour
 {
-    #region UI References
-
     [Header("=== Visual Elements ===")]
-    [Tooltip("Фон карточки")]
     [SerializeField] private Image background;
-
-    [Tooltip("Изображение скина")]
     [SerializeField] private Image skinIcon;
-
-    [Tooltip("Свечение по редкости")]
     [SerializeField] private Image rarityGlow;
 
     [Header("=== Text Elements ===")]
-    [Tooltip("Название скина")]
     [SerializeField] private TextMeshProUGUI nameText;
-
-    [Tooltip("Тип скина (Платформа/Мяч)")]
     [SerializeField] private TextMeshProUGUI typeText;
-
-    [Tooltip("Цена скина")]
     [SerializeField] private TextMeshProUGUI priceText;
 
     [Header("=== Indicators ===")]
-    [Tooltip("Индикатор: куплено")]
     [SerializeField] private GameObject ownedBadge;
-
-    [Tooltip("Индикатор: экипировано")]
     [SerializeField] private GameObject equipIndicator;
-
-    [Tooltip("Кнопка (для клика)")]
     [SerializeField] private Button selectButton;
 
     [Header("=== Rarity Colors ===")]
@@ -47,39 +26,20 @@ public class SkinItemUI : MonoBehaviour
     [SerializeField] private Color epicColor = new Color(0.63f, 0.13f, 0.94f, 1f);
     [SerializeField] private Color legendaryColor = new Color(1f, 0.84f, 0f, 1f);
 
-    #endregion
-
-    #region Data
-
     private ShopController.SkinDto _skinData;
     private bool _isOwned;
     private bool _isEquipped;
     private System.Action<int> _onActionClicked;
 
-    #endregion
-
-    #region Unity Lifecycle
-
     void Awake()
     {
         if (selectButton == null)
-        {
             selectButton = GetComponent<Button>();
-        }
 
         if (selectButton != null)
-        {
             selectButton.onClick.AddListener(OnClicked);
-        }
     }
 
-    #endregion
-
-    #region Initialization
-
-    /// <summary>
-    /// Инициализация карточки данными скина
-    /// </summary>
     public void Initialize(ShopController.SkinDto skin, bool isOwned, bool isEquipped, System.Action<int> onActionClicked)
     {
         _skinData = skin;
@@ -88,18 +48,14 @@ public class SkinItemUI : MonoBehaviour
         _onActionClicked = onActionClicked;
 
         UpdateVisuals();
+        LoadSkinIcon();
     }
 
-    /// <summary>
-    /// Обновление визуальных элементов
-    /// </summary>
     private void UpdateVisuals()
     {
-        // Название
         if (nameText != null)
             nameText.text = _skinData.Name;
 
-        // Тип
         if (typeText != null)
         {
             typeText.text = _skinData.SkinType switch
@@ -110,7 +66,6 @@ public class SkinItemUI : MonoBehaviour
             };
         }
 
-        // Цена / Статус
         if (priceText != null)
         {
             if (_isEquipped)
@@ -130,10 +85,8 @@ public class SkinItemUI : MonoBehaviour
             }
         }
 
-        // Цвет редкости
         SetRarityColor(_skinData.Rarity);
 
-        // Индикаторы
         if (ownedBadge != null)
             ownedBadge.SetActive(_isOwned);
 
@@ -141,9 +94,28 @@ public class SkinItemUI : MonoBehaviour
             equipIndicator.SetActive(_isEquipped);
     }
 
-    /// <summary>
-    /// Установка цвета по редкости
-    /// </summary>
+    private void LoadSkinIcon()
+    {
+        if (skinIcon == null || string.IsNullOrEmpty(_skinData.TexturePath))
+            return;
+
+        // Загружаем спрайт по пути из БД (путь от Assets/)
+        Sprite sprite = Resources.Load<Sprite>(_skinData.TexturePath);
+
+        if (sprite == null)
+        {
+            // Пробуем загрузить через AssetDatabase (для редактора)
+#if UNITY_EDITOR
+            sprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(_skinData.TexturePath);
+#endif
+        }
+
+        if (sprite != null)
+            skinIcon.sprite = sprite;
+        else
+            Debug.LogWarning($"[SkinItemUI] Не удалось загрузить спрайт: {_skinData.TexturePath}");
+    }
+
     private void SetRarityColor(string rarity)
     {
         Color color = rarity switch
@@ -157,9 +129,7 @@ public class SkinItemUI : MonoBehaviour
         };
 
         if (rarityGlow != null)
-        {
             rarityGlow.color = color;
-        }
 
         if (background != null)
         {
@@ -169,28 +139,15 @@ public class SkinItemUI : MonoBehaviour
         }
     }
 
-    #endregion
-
-    #region Events
-
     private void OnClicked()
     {
         _onActionClicked?.Invoke(_skinData.Id);
     }
 
-    #endregion
-
-    #region Public Methods
-
-    /// <summary>
-    /// Обновить состояние (после покупки/экипировки)
-    /// </summary>
     public void UpdateState(bool isOwned, bool isEquipped)
     {
         _isOwned = isOwned;
         _isEquipped = isEquipped;
         UpdateVisuals();
     }
-
-    #endregion
 }
