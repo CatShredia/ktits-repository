@@ -1,131 +1,163 @@
 ﻿@page "/chat"
 @using CinemaBlazor.ApiRequests
+@using CinemaBlazor.Services
 @inject IChatService ChatService
+@inject IAuthService AuthService
 @implements IDisposable
 
 <div class="chat-container">
     <div class="chat-box">
         <h2>Чат</h2>
 
-        <div class="status">
-            Статус: @(ChatService.IsConnected ? "✅ Подключен" : "❌ Не подключен")
-        </div>
-
-        <div class="input-group">
-            <label>От кого (ваше имя):</label>
-            <input @bind="fromUser" placeholder="Ваше имя" />
-            <button @onclick="RegisterUser" disabled="@(!ChatService.IsConnected || string.IsNullOrEmpty(fromUser))">
-                Зарегистрироваться
-            </button>
-        </div>
-
-        <div class="input-group">
-            <label>Кому:</label>
-            <input @bind="toUser" placeholder="Имя получателя" />
-        </div>
-
-        <div class="input-group">
-            <label>Сообщение:</label>
-            <input @bind="message" placeholder="Введите сообщение..." @onkeypress="OnEnterPress" />
-            <button @onclick="SendMessage"
-                    disabled="@(string.IsNullOrEmpty(message) || string.IsNullOrEmpty(toUser) || !isRegistered)">
-                Отправить
-            </button>
-        </div>
-
-        <div class="users-list">
-            <h3>Активные пользователи (@ChatService.Users.Count):</h3>
-            <div class="users-container">
-                @if (ChatService.Users.Count == 0)
-                {
-                    <div class="no-users">Нет активных пользователей</div>
-                }
-                else
-                {
-                    @foreach (var user in ChatService.Users)
-                    {
-                        <div class="user-item @(user == fromUser ? "current-user" : "")" @onclick="() => SelectUser(user)">
-                            @user
-                            @if (user == fromUser)
-                            {
-                                <span class="badge">Вы</span>
-                            }
-                        </div>
-                    }
-                }
+        @if (!isAuthenticated)
+        {
+            <div class="not-authenticated">
+                <p>Для доступа к чату необходимо войти в систему</p>
             </div>
-        </div>
+        }
+        else if (currentUser == null)
+        {
+            <div class="loading">Загрузка...</div>
+        }
+        else
+        {
+            <div class="status">
+                Статус: @(ChatService.IsConnected ? "✅ Подключен" : "❌ Не подключен")
+                <span class="current-user">Вы: @currentUser.FullName</span>
+            </div>
 
-        <div class="messages-list">
-            <h3>Сообщения @(selectedContact != null ? $"с {selectedContact}" : "") (@ChatService.Messages.Count):</h3>
-            <div class="messages-container">
-                @if (ChatService.Messages.Count == 0)
-                {
-                    <div class="no-messages">
-                        @(selectedContact != null
-                            ? "Нет сообщений с этим пользователем. Напишите первое сообщение!"
-                            : "Выберите пользователя для просмотра истории сообщений")
-                    </div>
-                }
-                else
-                {
-                    @foreach (var msg in ChatService.Messages)
+            <div class="search-group">
+                <label>Поиск пользователя по логину:</label>
+                <input @bind="searchQuery" @bind:event="oninput" placeholder="Введите логин для поиска"
+                       @onkeyup="SearchUsers" />
+            </div>
+
+            @if (searchResults.Count > 0)
+            {
+                <div class="search-results">
+                    @foreach (var user in searchResults)
                     {
-                        var isOwnMessage = msg.SenderName == fromUser;
-                        <div class="message-item @(isOwnMessage ? "own-message" : "")">
-                            <div class="message-header">
-                                <strong class="from-user">@msg.SenderName</strong>
-                                <span class="arrow">→</span>
-                                <strong class="to-user">@(msg.ReceiverName ?? "Все")</strong>
-                                <span class="time">@msg.CreatedAt.ToString("HH:mm:ss")</span>
-                                @if (msg.IsRead && isOwnMessage)
-                                {
-                                    <span class="read-badge">✓</span>
-                                }
+                        <div class="search-result-item @(selectedContact?.Id == user.Id ? "selected" : "")"
+                             @onclick="() => SelectUser(user)">
+                            <div class="user-info">
+                                <strong>@user.FullName</strong>
+                                <span class="user-login">@user.Login</span>
                             </div>
-                            <div class="message-text">@msg.Message</div>
                         </div>
                     }
-                }
+                </div>
+            }
+
+            <div class="input-group">
+                <label>Сообщение:</label>
+                <input @bind="message"
+                       placeholder="@(selectedContact != null ? $"Сообщение для {selectedContact.FullName}" : "Выберите пользователя для отправки сообщения")"
+                       @onkeypress="OnEnterPress" disabled="@(selectedContact == null)" />
+                <button @onclick="SendMessage"
+                        disabled="@(string.IsNullOrEmpty(message) || selectedContact == null || !ChatService.IsConnected)">
+                    Отправить
+                </button>
             </div>
+
+            <div class="messages-list">
+                <h3>Сообщения @(selectedContact != null ? $"с {selectedContact.FullName}" : "")
+                    (@ChatService.Messages.Count):</h3>
+                    <div class="messages-container">
+                        @if (ChatService.Messages.Count == 0)
+                        {
+                            <div class="no-messages">
+                                @(selectedContact != null
+                                    ? "Нет сообщений с этим пользователем. Напишите первое сообщение!"
+                                    : "Выберите пользователя для просмотра истории сообщений")
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var msg in ChatService.Messages)
+                            {
+                                var isOwnMessage = msg.SenderName == currentUser?.FullName;
+                                <div class="message-item @(isOwnMessage ? "own-message" : "")">
+                                    <div class="message-header">
+                                        <strong class="from-user">@msg.SenderName</strong>
+                                        <span class="arrow">→</span>
+                                        <strong class="to-user">@(msg.ReceiverName ?? "Все")</strong>
+                                        <span class="time">@msg.CreatedAt.ToString("HH:mm:ss")</span>
+                                        @if (msg.IsRead && isOwnMessage)
+                                        {
+                                            <span class="read-badge">✓</span>
+                                        }
+                                    </div>
+                                    <div class="message-text">@msg.Message</div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
         </div>
     </div>
-</div>
 
 @code {
-    private string fromUser = "";
-    private string toUser = "";
+    private CurrentUser? currentUser;
     private string message = "";
-    private string? selectedContact = null;
-    private bool isRegistered = false;
+    private UserSearchResult? selectedContact = null;
+    private string searchQuery = "";
+    private List<UserSearchResult> searchResults = new();
+    private bool isAuthenticated = false;
+    private System.Timers.Timer? _debounceTimer;
 
     protected override async Task OnInitializedAsync()
     {
-        ChatService.OnUserListUpdate = StateHasChanged;
-        ChatService.OnMessageReceived = StateHasChanged;
-        ChatService.OnHistoryLoaded = StateHasChanged;
-
-        await ChatService.Connect();
-    }
-
-    private async Task RegisterUser()
-    {
-        if (!string.IsNullOrEmpty(fromUser))
+        isAuthenticated = await AuthService.IsAuthenticatedAsync();
+        
+        if (isAuthenticated)
         {
-            await ChatService.Register(fromUser);
-            isRegistered = true;
-            StateHasChanged();
+            ChatService.OnUserListUpdate = StateHasChanged;
+            ChatService.OnMessageReceived = StateHasChanged;
+            ChatService.OnHistoryLoaded = StateHasChanged;
+
+            await ChatService.Connect();
+            currentUser = await ChatService.GetCurrentUserAsync();
+            
+            if (currentUser != null)
+            {
+                await ChatService.Register();
+            }
         }
     }
 
-    private async Task SelectUser(string user)
+    private async Task SearchUsers()
     {
-        toUser = user;
-        selectedContact = user;
-        
-        if (!string.IsNullOrEmpty(fromUser))
+        if (_debounceTimer != null)
         {
-            await ChatService.LoadHistory(fromUser, selectedContact);
+            _debounceTimer.Stop();
+            _debounceTimer.Dispose();
+        }
+
+        _debounceTimer = new System.Timers.Timer(300);
+        _debounceTimer.Elapsed += async (s, e) =>
+        {
+            if (_debounceTimer != null)
+            {
+                _debounceTimer.Stop();
+                searchResults = await ChatService.SearchUsersAsync(searchQuery);
+                await InvokeAsync(StateHasChanged);
+            }
+        };
+        _debounceTimer.AutoReset = false;
+        _debounceTimer.Start();
+    }
+
+    private async Task SelectUser(UserSearchResult user)
+    {
+        selectedContact = user;
+        ChatService.SelectContact(user);
+        searchResults.Clear();
+        searchQuery = "";
+        
+        if (currentUser != null)
+        {
+            await ChatService.LoadHistory(currentUser.Id, selectedContact.Id);
         }
         
         StateHasChanged();
@@ -133,12 +165,9 @@
 
     private async Task SendMessage()
     {
-        if (!string.IsNullOrEmpty(fromUser) &&
-            !string.IsNullOrEmpty(toUser) &&
-            !string.IsNullOrEmpty(message) &&
-            isRegistered)
+        if (!string.IsNullOrEmpty(message) && selectedContact != null && currentUser != null && ChatService.IsConnected)
         {
-            await ChatService.SendMessage(fromUser, toUser, message);
+            await ChatService.SendMessage(selectedContact.Id, message);
             message = "";
             StateHasChanged();
         }
@@ -157,6 +186,7 @@
         ChatService.OnUserListUpdate = null;
         ChatService.OnMessageReceived = null;
         ChatService.OnHistoryLoaded = null;
+        _debounceTimer?.Dispose();
         _ = ChatService.Disconnect();
     }
 }

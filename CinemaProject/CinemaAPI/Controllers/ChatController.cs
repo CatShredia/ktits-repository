@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using CinemaAPI.Data;
 using CinemaAPI.Models.Chat;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace CinemaAPI.Controllers;
 
@@ -16,42 +17,77 @@ public class ChatController : ControllerBase
         _dbContext = dbContext;
     }
 
-    [HttpGet("history")]
-    public async Task<ActionResult<List<ChatMessageDto>>> GetChatHistory(
-        [FromQuery] string currentUser,
-        [FromQuery] string? contact,
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 50)
+    [HttpGet("me")]
+    public async Task<ActionResult<CurrentUserDto>> GetCurrentUser()
     {
-        var senderLogin = await _dbContext.Logins
-            .Include(l => l.User)
-            .FirstOrDefaultAsync(l => l.LoginValue == currentUser);
-
-        if (senderLogin?.User == null)
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
         {
             return Unauthorized();
         }
 
+        var user = await _dbContext.Users
+            .Include(u => u.Login)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        return new CurrentUserDto
+        {
+            Id = user.Id,
+            Login = user.Login?.LoginValue ?? "",
+            Name = user.Name,
+            Surname = user.Surname,
+            FullName = $"{user.Name} {user.Surname}"
+        };
+    }
+
+    [HttpGet("users/search")]
+    public async Task<ActionResult<List<UserSearchResultDto>>> SearchUsers([FromQuery] string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return new List<UserSearchResultDto>();
+        }
+
+        var users = await _dbContext.Logins
+            .Include(l => l.User)
+            .Where(l => l.LoginValue.Contains(query))
+            .Select(l => new UserSearchResultDto
+            {
+                Id = l.User.Id,
+                Login = l.LoginValue,
+                Name = l.User.Name,
+                Surname = l.User.Surname,
+                FullName = $"{l.User.Name} {l.User.Surname}"
+            })
+            .Take(10)
+            .ToListAsync();
+
+        return users;
+    }
+
+    [HttpGet("history")]
+    public async Task<ActionResult<List<ChatMessageDto>>> GetChatHistory(
+        [FromQuery] int currentUserId,
+        [FromQuery] int? contactId,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 50)
+    {
         var query = _dbContext.ChatMessages
             .Include(m => m.Sender)
             .Include(m => m.Receiver)
-            .Where(m => m.SenderId == senderLogin.User.Id || 
-                        (contact != null && m.Receiver != null && m.Receiver.Login!.LoginValue == contact) ||
-                        (contact == null && m.ReceiverId == null))
+            .Where(m => m.SenderId == currentUserId || m.ReceiverId == currentUserId)
             .AsQueryable();
 
-        if (!string.IsNullOrEmpty(contact))
+        if (contactId.HasValue)
         {
-            var receiverLogin = await _dbContext.Logins
-                .Include(l => l.User)
-                .FirstOrDefaultAsync(l => l.LoginValue == contact);
-
-            if (receiverLogin?.User != null)
-            {
-                query = query.Where(m => 
-                    (m.SenderId == senderLogin.User.Id && m.ReceiverId == receiverLogin.User.Id) ||
-                    (m.SenderId == receiverLogin.User.Id && m.ReceiverId == senderLogin.User.Id));
-            }
+            query = query.Where(m =>
+                (m.SenderId == currentUserId && m.ReceiverId == contactId.Value) ||
+                (m.SenderId == contactId.Value && m.ReceiverId == currentUserId));
         }
 
         var messages = await query
@@ -91,25 +127,12 @@ public class ChatController : ControllerBase
 
     [HttpPost("mark-read")]
     public async Task<ActionResult> MarkMessagesAsRead(
-        [FromQuery] string currentUser,
-        [FromQuery] string contact)
+        [FromQuery] int currentUserId,
+        [FromQuery] int contactId)
     {
-        var userLogin = await _dbContext.Logins
-            .Include(l => l.User)
-            .FirstOrDefaultAsync(l => l.LoginValue == currentUser);
-
-        var contactLogin = await _dbContext.Logins
-            .Include(l => l.User)
-            .FirstOrDefaultAsync(l => l.LoginValue == contact);
-
-        if (userLogin?.User == null || contactLogin?.User == null)
-        {
-            return BadRequest();
-        }
-
         var messages = await _dbContext.ChatMessages
-            .Where(m => m.SenderId == contactLogin.User.Id && 
-                        m.ReceiverId == userLogin.User.Id && 
+            .Where(m => m.SenderId == contactId &&
+                        m.ReceiverId == currentUserId &&
                         !m.IsRead)
             .ToListAsync();
 

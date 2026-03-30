@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.SignalR.Client;
 using System.Net.Http.Json;
+using CinemaBlazor.Services;
 
 namespace CinemaBlazor.ApiRequests
 {
@@ -22,6 +23,24 @@ namespace CinemaBlazor.ApiRequests
         public string UserName { get; set; } = string.Empty;
     }
 
+    public class UserSearchResult
+    {
+        public int Id { get; set; }
+        public string Login { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Surname { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
+    }
+
+    public class CurrentUser
+    {
+        public int Id { get; set; }
+        public string Login { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Surname { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
+    }
+
     public interface IChatService
     {
         List<string> Users { get; }
@@ -30,36 +49,47 @@ namespace CinemaBlazor.ApiRequests
         Action OnMessageReceived { get; set; }
         Action OnHistoryLoaded { get; set; }
         bool IsConnected { get; }
-        string? CurrentUserName { get; }
+        CurrentUser? CurrentUser { get; }
+        UserSearchResult? SelectedContact { get; }
 
         Task Connect();
-        Task Register(string userName);
-        Task SendMessage(string fromUser, string toUser, string message);
-        Task LoadHistory(string currentUser, string? contact);
-        Task MarkMessagesAsRead(string currentUser, string contact);
+        Task Register();
+        Task SendMessage(int receiverId, string message);
+        Task LoadHistory(int currentUserId, int? contactId);
+        Task MarkMessagesAsRead(int currentUserId, int contactId);
         Task Disconnect();
+        Task<CurrentUser?> GetCurrentUserAsync();
+        Task<List<UserSearchResult>> SearchUsersAsync(string query);
+        void SelectContact(UserSearchResult? contact);
     }
 
     public class ChatService : IChatService
     {
         private readonly HttpClient _httpClient;
+        private readonly IAuthService _authService;
         private HubConnection _hubConnection;
         public List<string> Users { get; private set; } = new List<string>();
         public List<ChatMessage> Messages { get; private set; } = new List<ChatMessage>();
         public Action OnUserListUpdate { get; set; }
         public Action OnMessageReceived { get; set; }
         public Action OnHistoryLoaded { get; set; }
-        public string? CurrentUserName { get; private set; }
+        public CurrentUser? CurrentUser { get; private set; }
+        public UserSearchResult? SelectedContact { get; private set; }
 
-        public ChatService(HttpClient httpClient)
+        public ChatService(HttpClient httpClient, IAuthService authService)
         {
             _httpClient = httpClient;
+            _authService = authService;
         }
 
         public async Task Connect()
         {
+            var token = await _authService.GetTokenAsync();
+
+            Console.WriteLine($"[ChatService] Connecting with token: {(string.IsNullOrEmpty(token) ? "NULL" : token.Substring(0, Math.Min(20, token.Length)))}...");
+
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5268/chat")
+                .WithUrl($"http://localhost:5268/chat?access_token={Uri.EscapeDataString(token ?? "")}")
                 .WithAutomaticReconnect()
                 .Build();
 
@@ -80,41 +110,73 @@ namespace CinemaBlazor.ApiRequests
                 });
                 OnMessageReceived?.Invoke();
 
-                if (!string.IsNullOrEmpty(CurrentUserName) && fromUser != CurrentUserName)
+                if (CurrentUser != null && fromUser != $"{CurrentUser.Name} {CurrentUser.Surname}")
                 {
-                    await MarkMessagesAsRead(CurrentUserName, fromUser);
+                    await MarkMessagesAsRead(CurrentUser.Id, SelectedContact?.Id ?? 0);
                 }
             });
 
+            _hubConnection.Closed += async (error) =>
+            {
+                Console.WriteLine($"[ChatService] Connection closed: {error?.Message}");
+                await Task.CompletedTask;
+            };
+
+            _hubConnection.Reconnecting += async (error) =>
+            {
+                Console.WriteLine($"[ChatService] Reconnecting: {error?.Message}");
+                await Task.CompletedTask;
+            };
+
+            _hubConnection.Reconnected += async (connectionId) =>
+            {
+                Console.WriteLine($"[ChatService] Reconnected with connectionId: {connectionId}");
+                await Task.CompletedTask;
+            };
+
+            Console.WriteLine($"[ChatService] Starting connection...");
             await _hubConnection.StartAsync();
+            Console.WriteLine($"[ChatService] Connection started. State: {_hubConnection.State}");
         }
 
-        public async Task Register(string userName)
+        public async Task Register()
         {
             if (_hubConnection?.State == HubConnectionState.Connected)
             {
-                CurrentUserName = userName;
-                await _hubConnection.InvokeAsync("Register", userName);
-                await LoadHistory(userName, null);
+                await _hubConnection.InvokeAsync("Register");
             }
         }
 
-        public async Task SendMessage(string fromUser, string toUser, string message)
+        public async Task SendMessage(int receiverId, string message)
         {
+            Console.WriteLine($"[ChatService] SendMessage called: receiverId={receiverId}, message={message}, State={_hubConnection?.State}");
+
             if (_hubConnection?.State == HubConnectionState.Connected)
             {
-                await _hubConnection.InvokeAsync("SendMessage", fromUser, toUser, message);
+                try
+                {
+                    await _hubConnection.InvokeAsync("SendMessage", receiverId, message);
+                    Console.WriteLine($"[ChatService] SendMessage succeeded");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[ChatService] SendMessage error: {ex.Message}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"[ChatService] SendMessage failed - not connected. State: {_hubConnection?.State}");
             }
         }
 
-        public async Task LoadHistory(string currentUser, string? contact)
+        public async Task LoadHistory(int currentUserId, int? contactId)
         {
             try
             {
-                var queryParams = $"currentUser={Uri.EscapeDataString(currentUser)}";
-                if (!string.IsNullOrEmpty(contact))
+                var queryParams = $"currentUserId={currentUserId}";
+                if (contactId.HasValue)
                 {
-                    queryParams += $"&contact={Uri.EscapeDataString(contact)}";
+                    queryParams += $"&contactId={contactId.Value}";
                 }
 
                 var response = await _httpClient.GetAsync($"api/chat/history?{queryParams}");
@@ -135,11 +197,11 @@ namespace CinemaBlazor.ApiRequests
             }
         }
 
-        public async Task MarkMessagesAsRead(string currentUser, string contact)
+        public async Task MarkMessagesAsRead(int currentUserId, int contactId)
         {
             try
             {
-                var queryParams = $"currentUser={Uri.EscapeDataString(currentUser)}&contact={Uri.EscapeDataString(contact)}";
+                var queryParams = $"currentUserId={currentUserId}&contactId={contactId}";
                 await _httpClient.PostAsync($"api/chat/mark-read?{queryParams}", null);
             }
             catch (Exception ex)
@@ -155,6 +217,52 @@ namespace CinemaBlazor.ApiRequests
                 await _hubConnection.StopAsync();
                 await _hubConnection.DisposeAsync();
             }
+        }
+
+        public async Task<CurrentUser?> GetCurrentUserAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("api/chat/me");
+                if (response.IsSuccessStatusCode)
+                {
+                    CurrentUser = await response.Content.ReadFromJsonAsync<CurrentUser>();
+                    return CurrentUser;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting current user: {ex.Message}");
+            }
+            return null;
+        }
+
+        public async Task<List<UserSearchResult>> SearchUsersAsync(string query)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(query))
+                {
+                    return new List<UserSearchResult>();
+                }
+
+                var response = await _httpClient.GetAsync($"api/chat/users/search?query={Uri.EscapeDataString(query)}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var users = await response.Content.ReadFromJsonAsync<List<UserSearchResult>>();
+                    return users ?? new List<UserSearchResult>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error searching users: {ex.Message}");
+            }
+            return new List<UserSearchResult>();
+        }
+
+        public void SelectContact(UserSearchResult? contact)
+        {
+            SelectedContact = contact;
         }
 
         public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
