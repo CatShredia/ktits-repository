@@ -6,13 +6,10 @@ using Newtonsoft.Json;
 
 namespace Arkanoid.Network
 {
-    /// <summary>
-    /// API клиент для аутентификации.
-    /// </summary>
+    // ! Подкючение к БД для авторизации
     public class AuthAPIClient : MonoBehaviour
     {
-        #region Singleton
-
+        // singleton - спавним неразрушаемый объект в сцене для доступа из любого места к токену
         private static AuthAPIClient _instance;
         public static AuthAPIClient Instance
         {
@@ -36,20 +33,9 @@ namespace Arkanoid.Network
             }
         }
 
-        #endregion
-
-        #region Configuration
-
         private const string BASE_URL = "http://localhost:5250/api/auth";
 
-        #endregion
-
-        #region API Methods
-
-        /// <summary>
-        /// Регистрация пользователя
-        /// POST /api/auth/register
-        /// </summary>
+        // ! Регистрация пользователя
         public async Task<AuthResponseDto> RegisterAsync(string username, string password)
         {
             try
@@ -71,10 +57,7 @@ namespace Arkanoid.Network
             }
         }
 
-        /// <summary>
-        /// Вход пользователя
-        /// POST /api/auth/login
-        /// </summary>
+        // !Вход пользователя
         public async Task<AuthResponseDto> LoginAsync(string username, string password)
         {
             try
@@ -95,10 +78,6 @@ namespace Arkanoid.Network
                 return null;
             }
         }
-
-        #endregion
-
-        #region HTTP Helpers
 
         private async Task<string> PostRequest(string url, string json)
         {
@@ -121,7 +100,6 @@ namespace Arkanoid.Network
             {
                 Debug.LogError($"[AuthAPI] POST error: {request.error} - {request.downloadHandler.text}");
 
-                // Попытка распарсить ошибку от сервера
                 if (!string.IsNullOrEmpty(request.downloadHandler.text))
                 {
                     try
@@ -138,10 +116,6 @@ namespace Arkanoid.Network
                 return null;
             }
         }
-
-        #endregion
-
-        #region DTO Classes
 
         [Serializable]
         public class AuthResponseDto
@@ -171,7 +145,5 @@ namespace Arkanoid.Network
             [JsonProperty("message")]
             public string Message;
         }
-
-        #endregion
     }
 }

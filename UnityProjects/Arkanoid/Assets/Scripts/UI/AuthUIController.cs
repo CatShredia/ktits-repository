@@ -9,8 +9,6 @@ using Arkanoid.Auth;
 /// </summary>
 public class AuthUIController : MonoBehaviour
 {
-    #region UI References
-
     [Header("=== Input Fields ===")]
     [Tooltip("Поле ввода имени пользователя")]
     [SerializeField] private TMP_InputField usernameInput;
@@ -62,20 +60,12 @@ public class AuthUIController : MonoBehaviour
     [Tooltip("Минимальная длина пароля")]
     [SerializeField] private int minPasswordLength = 6;
 
-    #endregion
-
-    #region State
-
     private bool isProcessing = false;
     private bool isRemembered = false;
     private bool isRegisterMode = false;
 
     private const string RememberedUsernameKey = "Auth_RememberedUsername";
     private const string RememberedPasswordKey = "Auth_RememberedPassword";
-
-    #endregion
-
-    #region Unity Lifecycle
 
     void Start()
     {
@@ -86,10 +76,6 @@ public class AuthUIController : MonoBehaviour
     {
         HandleEnterKey();
     }
-
-    #endregion
-
-    #region Initialization
 
     private void InitializeUI()
     {
@@ -145,10 +131,6 @@ public class AuthUIController : MonoBehaviour
             HideAuthPanel();
         }
     }
-
-    #endregion
-
-    #region UI Methods
 
     public void ShowAuthPanel()
     {
@@ -333,10 +315,6 @@ public class AuthUIController : MonoBehaviour
             passwordInput.interactable = !processing;
     }
 
-    #endregion
-
-    #region Event Handlers
-
     private void OnAuthButtonClicked()
     {
         ShowAuthPanel();
@@ -415,10 +393,6 @@ public class AuthUIController : MonoBehaviour
         StartCoroutine(RegisterCoroutine(username, password));
     }
 
-    #endregion
-
-    #region Coroutines
-
     private System.Collections.IEnumerator LoginCoroutine(string username, string password)
     {
         // Если включён режим регистрации, используем RegisterAsync
@@ -491,10 +465,6 @@ public class AuthUIController : MonoBehaviour
         }
     }
 
-    #endregion
-
-    #region Validation
-
     private bool ValidateInput(string username, string password)
     {
         ClearError();
@@ -526,10 +496,6 @@ public class AuthUIController : MonoBehaviour
         return true;
     }
 
-    #endregion
-
-    #region Helpers
-
     private void HandleEnterKey()
     {
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
@@ -540,6 +506,4 @@ public class AuthUIController : MonoBehaviour
             }
         }
     }
-
-    #endregion
 }

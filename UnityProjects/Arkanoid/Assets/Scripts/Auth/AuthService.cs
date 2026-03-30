@@ -3,14 +3,10 @@ using Arkanoid.Network;
 
 namespace Arkanoid.Auth
 {
-    /// <summary>
-    /// Менеджер аутентификации.
-    /// Хранит токен пользователя и предоставляет методы для входа/выхода.
-    /// </summary>
+    // ! Хранит токен пользователя и предоставляет методы для входа/выхода.
     public class AuthService : MonoBehaviour
     {
-        #region Singleton
-
+        // singleton - спавним неразрушаемый объект в сцене для доступа из любого места к токену
         private static AuthService _instance;
         public static AuthService Instance
         {
@@ -34,15 +30,13 @@ namespace Arkanoid.Auth
             }
         }
 
-        #endregion
-
-        #region Properties
-
         private string _authToken;
         private string _username;
         private string _userId;
         private string _userGuid;
 
+        // токен хранится в PlayerPrefs для сохранения между сессиями. 
+        // При загрузке игры он восстанавливается, и если токен валиден, пользователь остаётся авторизованным.
         public string AuthToken
         {
             get => _authToken;
@@ -115,10 +109,6 @@ namespace Arkanoid.Auth
             }
         }
 
-        #endregion
-
-        #region Unity Lifecycle
-
         void Awake()
         {
             if (_instance != null && _instance != this)
@@ -130,23 +120,14 @@ namespace Arkanoid.Auth
             _instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // Загружаем сохранённые данные
             _authToken = PlayerPrefs.GetString("AuthToken", null);
             _username = PlayerPrefs.GetString("Username", null);
             _userId = PlayerPrefs.GetString("UserId", null);
             _userGuid = PlayerPrefs.GetString("UserGuid", null);
-
-            Debug.Log($"[AuthService] Initialized. Authenticated: {IsAuthenticated()}");
         }
 
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Вход в систему
-        /// </summary>
-        public async System.Threading.Tasks.Task<bool> LoginAsync(string username, string password)
+        // ! Вход в систему
+        public async Task<bool> LoginAsync(string username, string password)
         {
             try
             {
@@ -159,7 +140,6 @@ namespace Arkanoid.Auth
                     UserId = response.UserId;
                     UserGuid = response.UserGuid;
 
-                    Debug.Log($"[AuthService] Login successful: {username}");
                     return true;
                 }
                 else
@@ -175,10 +155,8 @@ namespace Arkanoid.Auth
             }
         }
 
-        /// <summary>
-        /// Регистрация пользователя
-        /// </summary>
-        public async System.Threading.Tasks.Task<bool> RegisterAsync(string username, string password)
+        // ! Регистрация пользователя
+        public async Task<bool> RegisterAsync(string username, string password)
         {
             try
             {
@@ -207,9 +185,7 @@ namespace Arkanoid.Auth
             }
         }
 
-        /// <summary>
-        /// Выход из системы
-        /// </summary>
+        // ! Выход из системы
         public void Logout()
         {
             AuthToken = null;
@@ -220,22 +196,15 @@ namespace Arkanoid.Auth
             Debug.Log("[AuthService] Logged out");
         }
 
-        /// <summary>
-        /// Проверка: авторизован ли пользователь
-        /// </summary>
+        // ! Проверка: авторизован ли пользователь
         public bool IsAuthenticated()
         {
             return !string.IsNullOrEmpty(_authToken);
         }
 
-        /// <summary>
-        /// Получить заголовок авторизации для API запросов
-        /// </summary>
         public string GetAuthorizationHeader()
         {
             return IsAuthenticated() ? $"Bearer {_authToken}" : null;
         }
-
-        #endregion
     }
 }

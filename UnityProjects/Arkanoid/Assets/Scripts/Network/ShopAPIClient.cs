@@ -12,8 +12,6 @@ namespace Arkanoid.Network
     /// </summary>
     public class ShopAPIClient : MonoBehaviour
     {
-        #region Singleton
-
         private static ShopAPIClient _instance;
         public static ShopAPIClient Instance
         {
@@ -29,10 +27,6 @@ namespace Arkanoid.Network
             }
         }
 
-        #endregion
-
-        #region Configuration
-
         private const string BASE_URL = "http://localhost:5250/api/shop";
         private string _authToken;
 
@@ -40,10 +34,6 @@ namespace Arkanoid.Network
         {
             _authToken = token;
         }
-
-        #endregion
-
-        #region API Methods
 
         /// <summary>
         /// Получить все доступные скины
@@ -147,10 +137,6 @@ namespace Arkanoid.Network
             }
         }
 
-        #endregion
-
-        #region HTTP Helpers
-
         private async Task<string> GetRequest(string url, bool auth = false)
         {
             using var request = new UnityWebRequest(url, "GET");
@@ -207,11 +193,7 @@ namespace Arkanoid.Network
                 return null;
             }
         }
-
-        #endregion
     }
-
-    #region DTO Classes
 
     /// <summary>
     /// DTO скина (ответ от API)
@@ -334,6 +316,4 @@ namespace Arkanoid.Network
         [JsonProperty("equippedSkinId")]
         public int EquippedSkinId;
     }
-
-    #endregion
 }
