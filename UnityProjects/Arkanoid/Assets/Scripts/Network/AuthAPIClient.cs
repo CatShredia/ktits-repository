@@ -40,7 +40,7 @@ namespace Arkanoid.Network
 
         #region Configuration
 
-        private const string BASE_URL = "http://localhost:5000/api/auth";
+        private const string BASE_URL = "http://localhost:5250/api/auth";
 
         #endregion
 
@@ -67,10 +67,10 @@ namespace Arkanoid.Network
             catch (Exception e)
             {
                 Debug.LogError($"[AuthAPI] Register error: {e.Message}");
-                return new AuthResponseDto 
-                { 
-                    Success = false, 
-                    Message = $"Ошибка сети: {e.Message}" 
+                return new AuthResponseDto
+                {
+                    Success = false,
+                    Message = $"Ошибка сети: {e.Message}"
                 };
             }
         }
@@ -96,10 +96,10 @@ namespace Arkanoid.Network
             catch (Exception e)
             {
                 Debug.LogError($"[AuthAPI] Login error: {e.Message}");
-                return new AuthResponseDto 
-                { 
-                    Success = false, 
-                    Message = $"Ошибка сети: {e.Message}" 
+                return new AuthResponseDto
+                {
+                    Success = false,
+                    Message = $"Ошибка сети: {e.Message}"
                 };
             }
         }
@@ -128,7 +128,7 @@ namespace Arkanoid.Network
             else
             {
                 Debug.LogError($"[AuthAPI] POST error: {request.error} - {request.downloadHandler.text}");
-                
+
                 // Попытка распарсить ошибку от сервера
                 if (!string.IsNullOrEmpty(request.downloadHandler.text))
                 {
@@ -142,7 +142,7 @@ namespace Arkanoid.Network
                     }
                     catch { }
                 }
-                
+
                 return null;
             }
         }
@@ -164,7 +164,7 @@ namespace Arkanoid.Network
             public string Token;
 
             [JsonProperty("userId")]
-            public int UserId;
+            public string UserId;
 
             [JsonProperty("userGuid")]
             public string UserGuid;

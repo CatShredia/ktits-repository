@@ -40,7 +40,7 @@ namespace Arkanoid.Auth
 
         private string _authToken;
         private string _username;
-        private int _userId;
+        private string _userId;
         private string _userGuid;
 
         public string AuthToken
@@ -79,14 +79,21 @@ namespace Arkanoid.Auth
             }
         }
 
-        public int UserId
+        public string UserId
         {
             get => _userId;
             set
             {
                 _userId = value;
-                PlayerPrefs.SetInt("UserId", value);
-                PlayerPrefs.Save();
+                if (!string.IsNullOrEmpty(value))
+                {
+                    PlayerPrefs.SetString("UserId", value);
+                    PlayerPrefs.Save();
+                }
+                else
+                {
+                    PlayerPrefs.DeleteKey("UserId");
+                }
             }
         }
 
@@ -126,7 +133,7 @@ namespace Arkanoid.Auth
             // Загружаем сохранённые данные
             _authToken = PlayerPrefs.GetString("AuthToken", null);
             _username = PlayerPrefs.GetString("Username", null);
-            _userId = PlayerPrefs.GetInt("UserId", 0);
+            _userId = PlayerPrefs.GetString("UserId", null);
             _userGuid = PlayerPrefs.GetString("UserGuid", null);
 
             Debug.Log($"[AuthService] Initialized. Authenticated: {IsAuthenticated()}");
@@ -207,7 +214,7 @@ namespace Arkanoid.Auth
         {
             AuthToken = null;
             Username = null;
-            UserId = 0;
+            UserId = null;
             UserGuid = null;
 
             Debug.Log("[AuthService] Logged out");
