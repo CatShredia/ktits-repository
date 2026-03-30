@@ -152,7 +152,7 @@ namespace Arkanoid.Auth
             {
                 var response = await AuthAPIClient.Instance.LoginAsync(username, password);
 
-                if (response != null && response.Success)
+                if (response != null && !string.IsNullOrEmpty(response.Token))
                 {
                     AuthToken = response.Token;
                     Username = response.Username;
@@ -164,7 +164,7 @@ namespace Arkanoid.Auth
                 }
                 else
                 {
-                    Debug.LogError($"[AuthService] Login failed: {response?.Message ?? "Unknown error"}");
+                    Debug.LogError("[AuthService] Login failed: Invalid credentials");
                     return false;
                 }
             }
@@ -184,7 +184,7 @@ namespace Arkanoid.Auth
             {
                 var response = await AuthAPIClient.Instance.RegisterAsync(username, password);
 
-                if (response != null && response.Success)
+                if (response != null && !string.IsNullOrEmpty(response.Token))
                 {
                     AuthToken = response.Token;
                     Username = response.Username;
@@ -196,7 +196,7 @@ namespace Arkanoid.Auth
                 }
                 else
                 {
-                    Debug.LogError($"[AuthService] Registration failed: {response?.Message ?? "Unknown error"}");
+                    Debug.LogError("[AuthService] Registration failed: User already exists");
                     return false;
                 }
             }

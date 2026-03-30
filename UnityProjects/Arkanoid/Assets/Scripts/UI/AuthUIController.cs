@@ -28,12 +28,18 @@ public class AuthUIController : MonoBehaviour
     [Tooltip("Кнопка авторизации в главном меню (ShopPanel)")]
     [SerializeField] private Button authButton;
 
+    [Tooltip("Кнопка выхода из аккаунта")]
+    [SerializeField] private Button logOutButton;
+
     [Header("=== Text ===")]
     [Tooltip("Текст ошибок")]
     [SerializeField] private TextMeshProUGUI errorText;
 
     [Tooltip("Заголовок панели")]
     [SerializeField] private TextMeshProUGUI titleText;
+
+    [Tooltip("Текст имени пользователя")]
+    [SerializeField] private TextMeshProUGUI userNameText;
 
     [Header("=== Panels ===")]
     [Tooltip("Основная панель авторизации")]
@@ -102,6 +108,10 @@ public class AuthUIController : MonoBehaviour
         if (authButton != null)
             authButton.onClick.AddListener(OnAuthButtonClicked);
 
+        // Подписка на кнопку выхода
+        if (logOutButton != null)
+            logOutButton.onClick.AddListener(OnLogOutButtonClicked);
+
         // Подписка на Toggles
         if (isRememberedToggle != null)
             isRememberedToggle.onValueChanged.AddListener(OnRememberedToggleChanged);
@@ -114,6 +124,12 @@ public class AuthUIController : MonoBehaviour
 
         // Обновление заголовка в зависимости от режима
         UpdateTitle();
+
+        // Обновление имени пользователя
+        UpdateUserNameText();
+
+        // Обновление кнопки выхода
+        UpdateLogOutButton();
 
         // Проверка сохранённой авторизации
         if (AuthService.Instance != null && AuthService.Instance.IsAuthenticated())
@@ -154,6 +170,12 @@ public class AuthUIController : MonoBehaviour
         // Скрываем кнопку авторизации
         HideAuthButton();
 
+        // Обновляем имя пользователя
+        UpdateUserNameText();
+
+        // Обновляем кнопку выхода
+        UpdateLogOutButton();
+
         // Открываем магазин
         if (ShopController.Instance != null)
         {
@@ -166,6 +188,35 @@ public class AuthUIController : MonoBehaviour
         if (titleText != null)
         {
             titleText.text = isRegisterMode ? "Регистрация" : "Вход";
+        }
+    }
+
+    private void UpdateUserNameText()
+    {
+        if (userNameText == null) return;
+
+        if (AuthService.Instance != null && AuthService.Instance.IsAuthenticated())
+        {
+            userNameText.text = AuthService.Instance.Username;
+            userNameText.gameObject.SetActive(true);
+        }
+        else
+        {
+            userNameText.gameObject.SetActive(false);
+        }
+    }
+
+    private void UpdateLogOutButton()
+    {
+        if (logOutButton == null) return;
+
+        if (AuthService.Instance != null && AuthService.Instance.IsAuthenticated())
+        {
+            logOutButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            logOutButton.gameObject.SetActive(false);
         }
     }
 
@@ -185,6 +236,12 @@ public class AuthUIController : MonoBehaviour
     {
         if (authPanel != null)
             authPanel.SetActive(false);
+    }
+
+    private void HideShopPanel()
+    {
+        if (shopPanel != null)
+            shopPanel.SetActive(false);
     }
 
     private void OnRememberedToggleChanged(bool value)
@@ -283,6 +340,47 @@ public class AuthUIController : MonoBehaviour
     private void OnAuthButtonClicked()
     {
         ShowAuthPanel();
+    }
+
+    private void OnLogOutButtonClicked()
+    {
+        Debug.Log("[AuthUI] Logout button clicked");
+
+        // Выполняем выход из аккаунта
+        if (AuthService.Instance != null)
+        {
+            AuthService.Instance.Logout();
+        }
+
+        // Очищаем сохранённые данные
+        ClearRememberedCredentials();
+
+        // Скрываем панель магазина
+        HideShopPanel();
+
+        // Показываем кнопку авторизации
+        ShowAuthButton();
+
+        // Сбрасываем поля ввода
+        if (usernameInput != null)
+            usernameInput.text = "";
+
+        if (passwordInput != null)
+            passwordInput.text = "";
+
+        // Обновляем отображение имени пользователя (скрываем)
+        UpdateUserNameText();
+
+        // Обновляем кнопку выхода (скрываем)
+        UpdateLogOutButton();
+
+        // Закрываем магазин, если он открыт
+        if (ShopController.Instance != null)
+        {
+            ShopController.Instance.CloseShop();
+        }
+
+        Debug.Log("[AuthUI] Logout completed");
     }
 
     private void OnLoginButtonClicked()

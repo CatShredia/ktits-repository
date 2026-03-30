@@ -67,11 +67,7 @@ namespace Arkanoid.Network
             catch (Exception e)
             {
                 Debug.LogError($"[AuthAPI] Register error: {e.Message}");
-                return new AuthResponseDto
-                {
-                    Success = false,
-                    Message = $"Ошибка сети: {e.Message}"
-                };
+                return null;
             }
         }
 
@@ -96,11 +92,7 @@ namespace Arkanoid.Network
             catch (Exception e)
             {
                 Debug.LogError($"[AuthAPI] Login error: {e.Message}");
-                return new AuthResponseDto
-                {
-                    Success = false,
-                    Message = $"Ошибка сети: {e.Message}"
-                };
+                return null;
             }
         }
 
@@ -154,14 +146,8 @@ namespace Arkanoid.Network
         [Serializable]
         public class AuthResponseDto
         {
-            [JsonProperty("success")]
-            public bool Success;
-
-            [JsonProperty("message")]
-            public string Message;
-
-            [JsonProperty("token")]
-            public string Token;
+            [JsonProperty("id")]
+            public int Id;
 
             [JsonProperty("userId")]
             public string UserId;
@@ -171,6 +157,9 @@ namespace Arkanoid.Network
 
             [JsonProperty("username")]
             public string Username;
+
+            [JsonProperty("token")]
+            public string Token;
 
             [JsonProperty("expiresAt")]
             public DateTime ExpiresAt;
