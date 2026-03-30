@@ -15,6 +15,7 @@ public class DatabaseContext : DbContext
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Login> Logins { get; set; } = null!;
     public DbSet<Role> Roles { get; set; } = null!;
+    public DbSet<ChatMessage> ChatMessages { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -73,6 +74,27 @@ public class DatabaseContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.LoginValue).IsRequired();
             entity.HasIndex(e => e.LoginValue).IsUnique();
+        });
+
+        modelBuilder.Entity<ChatMessage>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Message).IsRequired();
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(e => e.Sender)
+                  .WithMany()
+                  .HasForeignKey(e => e.SenderId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Receiver)
+                  .WithMany()
+                  .HasForeignKey(e => e.ReceiverId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasIndex(e => e.SenderId);
+            entity.HasIndex(e => e.ReceiverId);
+            entity.HasIndex(e => e.CreatedAt);
         });
     }
 }
