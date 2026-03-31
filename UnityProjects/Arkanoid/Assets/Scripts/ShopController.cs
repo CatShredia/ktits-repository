@@ -50,6 +50,8 @@ public class ShopController : MonoBehaviour
     private bool isShopOpen;
     private bool isAnimating;
     private int currentIndex;
+    private float lastClickTime;
+    private const float CLICK_COOLDOWN = 0.2f; // Защита от повторных нажатий
     private List<SkinDto> allSkins = new();
     private UserInventoryDto? userInventory;
     private SkinDto? currentSkin;
@@ -257,10 +259,13 @@ public class ShopController : MonoBehaviour
             Destroy(child.gameObject);
 
         currentSkin = allSkins[currentIndex];
+        Debug.Log($"[ShopController] Showing skin #{currentIndex}: Id={currentSkin.Id}, Name={currentSkin.Name}, Type={currentSkin.SkinType}");
+
         isCurrentSkinOwned = userInventory?.Skins?.Any(s => s.SkinId == currentSkin.Id) ?? false;
         isCurrentSkinEquipped = userInventory?.Skins?.Any(s => s.SkinId == currentSkin.Id && s.IsEquipped) ?? false;
 
         var item = Instantiate(skinItemPrefab, skinContainer, false);
+
         var rectTransform = item.GetComponent<RectTransform>();
         if (rectTransform != null)
         {
@@ -269,10 +274,16 @@ public class ShopController : MonoBehaviour
         }
 
         var skinItemUI = item.GetComponent<SkinItemUI>();
-        skinItemUI?.Initialize(currentSkin, isCurrentSkinOwned, isCurrentSkinEquipped, OnSkinActionClicked);
+        if (skinItemUI != null)
+        {
+            skinItemUI.Initialize(currentSkin, isCurrentSkinOwned, isCurrentSkinEquipped, OnSkinActionClicked);
+        }
+        else
+        {
+            Debug.LogError("[ShopController] SkinItemUI component not found on instantiated prefab!");
+        }
 
         UpdateCarouselButtons();
-        Debug.Log($"[ShopController] Showing skin: {currentSkin.Name} ({currentIndex + 1}/{allSkins.Count})");
     }
 
     private void OnSkinActionClicked(int skinId)
@@ -286,28 +297,62 @@ public class ShopController : MonoBehaviour
 
     public void OnPrevButtonClicked()
     {
-        Debug.Log("prev");
-        if (currentIndex > 0)
+        // Защита от повторных нажатий
+        if (Time.time - lastClickTime < CLICK_COOLDOWN)
         {
-            currentIndex--;
-            ShowCurrentSkin();
+            Debug.Log($"[ShopController] Prev click ignored (cooldown)");
+            return;
         }
+        lastClickTime = Time.time;
+
+        Debug.Log($"[ShopController] OnPrevButtonClicked вызван! allSkins.Count={allSkins.Count}, currentIndex={currentIndex}");
+
+        if (allSkins.Count == 0)
+        {
+            Debug.LogWarning("[ShopController] Нет скинов для навигации");
+            return;
+        }
+
+        currentIndex--;
+        if (currentIndex < 0)
+            currentIndex = allSkins.Count - 1; // Циклический переход на последний элемент
+
+        Debug.Log($"[ShopController] Prev clicked: newIndex={currentIndex}");
+        ShowCurrentSkin();
     }
 
     public void OnNextButtonClicked()
     {
-        Debug.Log("next");
-        if (currentIndex < allSkins.Count - 1)
+        // Защита от повторных нажатий
+        if (Time.time - lastClickTime < CLICK_COOLDOWN)
         {
-            currentIndex++;
-            ShowCurrentSkin();
+            Debug.Log($"[ShopController] Next click ignored (cooldown)");
+            return;
         }
+        lastClickTime = Time.time;
+
+        if (allSkins.Count == 0) return;
+
+        currentIndex++;
+        if (currentIndex >= allSkins.Count)
+            currentIndex = 0; // Циклический переход на первый элемент
+
+        Debug.Log($"[ShopController] Next clicked: newIndex={currentIndex}");
+        ShowCurrentSkin();
     }
 
     private void UpdateCarouselButtons()
     {
-        if (prevButton != null) prevButton.interactable = currentIndex > 0;
-        if (nextButton != null) nextButton.interactable = currentIndex < allSkins.Count - 1;
+        // При циклической навигации кнопки всегда активны, если есть скины
+        bool hasSkins = allSkins.Count > 0;
+
+        if (prevButton != null)
+            prevButton.interactable = hasSkins;
+
+        if (nextButton != null)
+            nextButton.interactable = hasSkins;
+
+        Debug.Log($"[ShopController] Buttons updated: prev={prevButton?.interactable}, next={nextButton?.interactable}, total={allSkins.Count}");
     }
 
     private void OnBackButtonClicked() => CloseShop();

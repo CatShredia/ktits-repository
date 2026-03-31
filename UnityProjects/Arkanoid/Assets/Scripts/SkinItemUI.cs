@@ -5,22 +5,30 @@ using TMPro;
 public class SkinItemUI : MonoBehaviour
 {
     [Header("=== Visual Elements ===")]
-    [SerializeField] private Image background;
+    [SerializeField]
+    private Image background;
+
     [SerializeField] private Image skinIcon;
     [SerializeField] private Image rarityGlow;
 
     [Header("=== Text Elements ===")]
-    [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField]
+    private TextMeshProUGUI nameText;
+
     [SerializeField] private TextMeshProUGUI typeText;
     [SerializeField] private TextMeshProUGUI priceText;
 
     [Header("=== Indicators ===")]
-    [SerializeField] private GameObject ownedBadge;
+    [SerializeField]
+    private GameObject ownedBadge;
+
     [SerializeField] private GameObject equipIndicator;
     [SerializeField] private Button selectButton;
 
     [Header("=== Rarity Colors ===")]
-    [SerializeField] private Color commonColor = new Color(0.7f, 0.7f, 0.7f, 1f);
+    [SerializeField]
+    private Color commonColor = new Color(0.7f, 0.7f, 0.7f, 1f);
+
     [SerializeField] private Color uncommonColor = new Color(0.2f, 0.8f, 0.2f, 1f);
     [SerializeField] private Color rareColor = new Color(0.2f, 0.4f, 0.9f, 1f);
     [SerializeField] private Color epicColor = new Color(0.63f, 0.13f, 0.94f, 1f);
@@ -40,7 +48,8 @@ public class SkinItemUI : MonoBehaviour
             selectButton.onClick.AddListener(OnClicked);
     }
 
-    public void Initialize(ShopController.SkinDto skin, bool isOwned, bool isEquipped, System.Action<int> onActionClicked)
+    public void Initialize(ShopController.SkinDto skin, bool isOwned, bool isEquipped,
+        System.Action<int> onActionClicked)
     {
         _skinData = skin;
         _isOwned = isOwned;
@@ -54,7 +63,9 @@ public class SkinItemUI : MonoBehaviour
     private void UpdateVisuals()
     {
         if (nameText != null)
+        {
             nameText.text = _skinData.Name;
+        }
 
         if (typeText != null)
         {
@@ -96,7 +107,10 @@ public class SkinItemUI : MonoBehaviour
 
     private void LoadSkinIcon()
     {
-        if (skinIcon == null || string.IsNullOrEmpty(_skinData.TexturePath))
+        if (skinIcon == null)
+            return;
+
+        if (string.IsNullOrEmpty(_skinData.TexturePath))
             return;
 
         // Загружаем спрайт по пути из БД (путь от Assets/)
@@ -112,8 +126,6 @@ public class SkinItemUI : MonoBehaviour
 
         if (sprite != null)
             skinIcon.sprite = sprite;
-        else
-            Debug.LogWarning($"[SkinItemUI] Не удалось загрузить спрайт: {_skinData.TexturePath}");
     }
 
     private void SetRarityColor(string rarity)
