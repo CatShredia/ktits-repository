@@ -360,13 +360,6 @@ public class ShopController : MonoBehaviour
         var skin = allSkins.Find(s => s.Id == skinId);
         if (skin == null) return;
 
-        int coins = userInventory?.Coins ?? 0;
-        if (coins < skin.Price)
-        {
-            Debug.LogWarning($"[ShopController] Недостаточно монет: {coins} < {skin.Price}");
-            return;
-        }
-
         try
         {
             var response = await ShopAPIClient.Instance.PurchaseSkin(skinId);
@@ -392,13 +385,35 @@ public class ShopController : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"[ShopController] Purchase failed: {response?.Message ?? "Неизвестная ошибка"}");
+                var errorCode = (PurchaseErrorCode)(response?.ErrorCode ?? 0);
+
+                if (SkinsError.Instance != null)
+                {
+                    SkinsError.Instance.ShowPurchaseError(errorCode, response?.Message);
+                }
+                else
+                {
+                    Debug.LogError($"[ShopController] Purchase failed: {response?.Message ?? GetPurchaseErrorMessage(errorCode)}");
+                }
             }
         }
         catch (System.Exception e)
         {
             Debug.LogError($"[ShopController] Purchase error: {e.Message}");
         }
+    }
+
+    private string GetPurchaseErrorMessage(PurchaseErrorCode code)
+    {
+        return code switch
+        {
+            PurchaseErrorCode.AlreadyOwned => "Этот скин уже есть у вас",
+            PurchaseErrorCode.InsufficientCoins => "Недостаточно монет",
+            PurchaseErrorCode.SkinNotFound => "Скин не найден",
+            PurchaseErrorCode.SkinNotAvailable => "Скин недоступен для покупки",
+            PurchaseErrorCode.UserNotFound => "Пользователь не найден",
+            _ => "Ошибка покупки"
+        };
     }
 
     private async void EquipSkin(int skinId)
@@ -437,13 +452,34 @@ public class ShopController : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"[ShopController] Equip failed: {response?.Message ?? "Неизвестная ошибка"}");
+                var errorCode = (EquipErrorCode)(response?.ErrorCode ?? 0);
+
+                if (SkinsError.Instance != null)
+                {
+                    SkinsError.Instance.ShowEquipError(errorCode, response?.Message);
+                }
+                else
+                {
+                    Debug.LogError($"[ShopController] Equip failed: {response?.Message ?? GetEquipErrorMessage(errorCode)}");
+                }
             }
         }
         catch (System.Exception e)
         {
             Debug.LogError($"[ShopController] Equip error: {e.Message}");
         }
+    }
+
+    private string GetEquipErrorMessage(EquipErrorCode code)
+    {
+        return code switch
+        {
+            EquipErrorCode.AlreadyEquipped => "Этот скин уже экипирован",
+            EquipErrorCode.SkinNotFound => "Скин не найден или не принадлежит вам",
+            EquipErrorCode.SkinNotOwned => "Скин не принадлежит вам",
+            EquipErrorCode.SkinDataNotFound => "Данные скина не найдены",
+            _ => "Ошибка экипировки"
+        };
     }
 
     [System.Serializable]

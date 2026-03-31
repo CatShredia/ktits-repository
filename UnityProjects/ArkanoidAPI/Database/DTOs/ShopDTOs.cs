@@ -1,5 +1,24 @@
 namespace ArkanoidAPI.Database.DTOs;
 
+public enum PurchaseErrorCode
+{
+    None = 0,
+    SkinNotFound = 1,
+    SkinNotAvailable = 2,
+    AlreadyOwned = 3,
+    InsufficientCoins = 4,
+    UserNotFound = 5
+}
+
+public enum EquipErrorCode
+{
+    None = 0,
+    SkinNotFound = 1,
+    SkinNotOwned = 2,
+    AlreadyEquipped = 3,
+    SkinDataNotFound = 4
+}
+
 public class SkinDto
 {
     public int Id { get; set; }
@@ -54,6 +73,8 @@ public class PurchaseResponse
     public int RemainingCoins { get; set; }
 
     public UserSkinDto? PurchasedSkin { get; set; }
+
+    public PurchaseErrorCode? ErrorCode { get; set; }
 }
 
 public class EquipSkinRequest
@@ -68,6 +89,8 @@ public class EquipSkinResponse
     public string Message { get; set; } = string.Empty;
 
     public int EquippedSkinId { get; set; }
+
+    public EquipErrorCode? ErrorCode { get; set; }
 }
 
 public class UserInventoryDto

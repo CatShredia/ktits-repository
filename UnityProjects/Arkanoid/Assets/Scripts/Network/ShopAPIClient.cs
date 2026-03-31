@@ -71,12 +71,22 @@ namespace Arkanoid.Network
             using var request = new UnityWebRequest(url, "POST");
             request.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json));
             request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
 
             if (auth && !string.IsNullOrEmpty(_authToken))
                 request.SetRequestHeader("Authorization", $"Bearer {_authToken}");
 
             await request.SendWebRequest();
-            return request.result == UnityWebRequest.Result.Success ? request.downloadHandler.text : null;
+
+            // Читаем ответ даже при ошибке (например, 400 Bad Request)
+            if (request.result == UnityWebRequest.Result.Success ||
+                request.result == UnityWebRequest.Result.ProtocolError ||
+                request.result == UnityWebRequest.Result.ConnectionError)
+            {
+                return request.downloadHandler.text;
+            }
+
+            return null;
         }
     }
 
@@ -124,6 +134,7 @@ namespace Arkanoid.Network
         [JsonProperty("message")] public string Message;
         [JsonProperty("remainingCoins")] public int RemainingCoins;
         [JsonProperty("purchasedSkin")] public ShopUserSkinDto PurchasedSkin;
+        [JsonProperty("errorCode")] public int? ErrorCode;
     }
 
     [Serializable]
@@ -132,5 +143,6 @@ namespace Arkanoid.Network
         [JsonProperty("success")] public bool Success;
         [JsonProperty("message")] public string Message;
         [JsonProperty("equippedSkinId")] public int EquippedSkinId;
+        [JsonProperty("errorCode")] public int? ErrorCode;
     }
 }

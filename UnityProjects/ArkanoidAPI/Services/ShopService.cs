@@ -145,7 +145,8 @@ public class ShopService : IShopService
             return new PurchaseResponse
             {
                 Success = false,
-                Message = "Пользователь не найден"
+                Message = "Пользователь не найден",
+                ErrorCode = PurchaseErrorCode.UserNotFound
             };
         }
 
@@ -155,7 +156,8 @@ public class ShopService : IShopService
             return new PurchaseResponse
             {
                 Success = false,
-                Message = "Скин не найден"
+                Message = "Скин не найден",
+                ErrorCode = PurchaseErrorCode.SkinNotFound
             };
         }
 
@@ -164,7 +166,8 @@ public class ShopService : IShopService
             return new PurchaseResponse
             {
                 Success = false,
-                Message = "Скин недоступен для покупки"
+                Message = "Скин недоступен для покупки",
+                ErrorCode = PurchaseErrorCode.SkinNotAvailable
             };
         }
 
@@ -175,7 +178,8 @@ public class ShopService : IShopService
             return new PurchaseResponse
             {
                 Success = false,
-                Message = "Этот скин уже есть у пользователя"
+                Message = "Этот скин уже есть у пользователя",
+                ErrorCode = PurchaseErrorCode.AlreadyOwned
             };
         }
 
@@ -185,7 +189,8 @@ public class ShopService : IShopService
             return new PurchaseResponse
             {
                 Success = false,
-                Message = $"Недостаточно монет. Требуется: {skin.Price}, Доступно: {user.Coins}"
+                Message = $"Недостаточно монет. Требуется: {skin.Price}, Доступно: {user.Coins}",
+                ErrorCode = PurchaseErrorCode.InsufficientCoins
             };
         }
 
@@ -245,7 +250,8 @@ public class ShopService : IShopService
             return new EquipSkinResponse
             {
                 Success = false,
-                Message = "Скин не найден или не принадлежит пользователю"
+                Message = "Скин не найден или не принадлежит пользователю",
+                ErrorCode = EquipErrorCode.SkinNotFound
             };
         }
 
@@ -254,7 +260,19 @@ public class ShopService : IShopService
             return new EquipSkinResponse
             {
                 Success = false,
-                Message = "Данные скина не найдены"
+                Message = "Данные скина не найдены",
+                ErrorCode = EquipErrorCode.SkinDataNotFound
+            };
+        }
+
+        // Проверка: уже экипирован ли этот скин
+        if (userSkin.IsEquipped)
+        {
+            return new EquipSkinResponse
+            {
+                Success = false,
+                Message = "Этот скин уже экипирован",
+                ErrorCode = EquipErrorCode.AlreadyEquipped
             };
         }
 
@@ -295,7 +313,8 @@ public class ShopService : IShopService
             return new EquipSkinResponse
             {
                 Success = false,
-                Message = "Скин не найден или не принадлежит пользователю"
+                Message = "Скин не найден или не принадлежит пользователю",
+                ErrorCode = EquipErrorCode.SkinNotFound
             };
         }
 
@@ -304,7 +323,8 @@ public class ShopService : IShopService
             return new EquipSkinResponse
             {
                 Success = false,
-                Message = "Скин уже не экипирован"
+                Message = "Скин уже не экипирован",
+                ErrorCode = EquipErrorCode.AlreadyEquipped
             };
         }
 
