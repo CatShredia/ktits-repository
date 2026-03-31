@@ -1,0 +1,22 @@
+// Validating benchmarks:
+// Benchmark FilmsControllerBenchmarks.GetAllFilms: DefaultJob
+//    * Benchmark FilmsControllerBenchmarks.GetAllFilms returns a deferred execution result (Task<IEnumerable<FilmDto>>). You need to either change the method declaration to return a materialized result or consume it on your own. You can use .Consume() extension method to do that.
+
+// Benchmark FilmsControllerBenchmarks.GetFilmsSortedByRating: DefaultJob
+//    * Benchmark FilmsControllerBenchmarks.GetFilmsSortedByRating returns a deferred execution result (Task<IEnumerable<FilmDto>>). You need to either change the method declaration to return a materialized result or consume it on your own. You can use .Consume() extension method to do that.
+
+// Benchmark FilmsControllerBenchmarks.GetFilmsSortedByRatingDesc: DefaultJob
+//    * Benchmark FilmsControllerBenchmarks.GetFilmsSortedByRatingDesc returns a deferred execution result (Task<IEnumerable<FilmDto>>). You need to either change the method declaration to return a materialized result or consume it on your own. You can use .Consume() extension method to do that.
+
+// Benchmark FilmsControllerBenchmarks.GetFilmsByGenre: DefaultJob
+//    * Benchmark FilmsControllerBenchmarks.GetFilmsByGenre returns a deferred execution result (Task<IEnumerable<FilmDto>>). You need to either change the method declaration to return a materialized result or consume it on your own. You can use .Consume() extension method to do that.
+
+// Benchmark FilmsControllerBenchmarks.GetFilmsBySearch: DefaultJob
+//    * Benchmark FilmsControllerBenchmarks.GetFilmsBySearch returns a deferred execution result (Task<IEnumerable<FilmDto>>). You need to either change the method declaration to return a materialized result or consume it on your own. You can use .Consume() extension method to do that.
+
+// Benchmark FilmsControllerBenchmarks.GetFilmsWithAllFilters: DefaultJob
+//    * Benchmark FilmsControllerBenchmarks.GetFilmsWithAllFilters returns a deferred execution result (Task<IEnumerable<FilmDto>>). You need to either change the method declaration to return a materialized result or consume it on your own. You can use .Consume() extension method to do that.
+
+// Benchmark RatingsControllerBenchmarks.GetAllRatings: DefaultJob
+//    * Benchmark RatingsControllerBenchmarks.GetAllRatings returns a deferred execution result (Task<IEnumerable<RatingResponseDto>>). You need to either change the method declaration to return a materialized result or consume it on your own. You can use .Consume() extension method to do that.
+

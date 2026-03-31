@@ -1,0 +1,1780 @@
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 20 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+// start dotnet  restore /p:UseSharedCompilation=false /p:BuildInParallel=false /m:1 /p:Deterministic=true /p:Optimize=true in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f
+// command took 1.73 sec and exited with 0
+// start dotnet  build -c Release --no-restore /p:UseSharedCompilation=false /p:BuildInParallel=false /m:1 /p:Deterministic=true /p:Optimize=true in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f
+// command took 8.54 sec and exited with 0
+// ***** Done, took 00:00:10 (10.52 sec)   *****
+// Found 7 benchmarks:
+//   AuthControllerBenchmarks.RegisterUser: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   AuthControllerBenchmarks.RegisterDuplicateLogin: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   AuthControllerBenchmarks.LoginUser: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   AuthControllerBenchmarks.LoginInvalidUser: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   AuthControllerBenchmarks.LoginNonExistentUser: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   AuthControllerBenchmarks.HashPassword: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   AuthControllerBenchmarks.VerifyPassword: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: AuthControllerBenchmarks.RegisterUser: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1576 1476 --benchmarkName CinemaAPI.Benchmarks.AuthControllerBenchmarks.RegisterUser --job ShortRun --benchmarkId 0 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 203700.00 ns, 203.7000 us/op
+WorkloadJitting  1: 1 op, 152276800.00 ns, 152.2768 ms/op
+
+WorkloadPilot    1: 2 op, 2885200.00 ns, 1.4426 ms/op
+WorkloadPilot    2: 3 op, 1767900.00 ns, 589.3000 us/op
+WorkloadPilot    3: 4 op, 1919500.00 ns, 479.8750 us/op
+WorkloadPilot    4: 5 op, 2352700.00 ns, 470.5400 us/op
+WorkloadPilot    5: 6 op, 3458100.00 ns, 576.3500 us/op
+WorkloadPilot    6: 7 op, 4241400.00 ns, 605.9143 us/op
+WorkloadPilot    7: 8 op, 5399400.00 ns, 674.9250 us/op
+WorkloadPilot    8: 9 op, 6712800.00 ns, 745.8667 us/op
+WorkloadPilot    9: 10 op, 8464800.00 ns, 846.4800 us/op
+WorkloadPilot   10: 11 op, 10703500.00 ns, 973.0455 us/op
+WorkloadPilot   11: 12 op, 12820800.00 ns, 1.0684 ms/op
+WorkloadPilot   12: 13 op, 15599800.00 ns, 1.2000 ms/op
+WorkloadPilot   13: 14 op, 18601300.00 ns, 1.3287 ms/op
+WorkloadPilot   14: 15 op, 21977400.00 ns, 1.4652 ms/op
+WorkloadPilot   15: 16 op, 25269400.00 ns, 1.5793 ms/op
+WorkloadPilot   16: 32 op, 72985600.00 ns, 2.2808 ms/op
+WorkloadPilot   17: 64 op, 148183000.00 ns, 2.3154 ms/op
+WorkloadPilot   18: 128 op, 579851600.00 ns, 4.5301 ms/op
+
+WorkloadWarmup   1: 128 op, 997095900.00 ns, 7.7898 ms/op
+
+// BeforeActualRun
+WorkloadActual   1: 128 op, 1456725600.00 ns, 11.3807 ms/op
+WorkloadActual   2: 128 op, 181073300.00 ns, 1.4146 ms/op
+WorkloadActual   3: 128 op, 187325400.00 ns, 1.4635 ms/op
+
+// AfterActualRun
+WorkloadResult   1: 128 op, 1456725600.00 ns, 11.3807 ms/op
+WorkloadResult   2: 128 op, 181073300.00 ns, 1.4146 ms/op
+WorkloadResult   3: 128 op, 187325400.00 ns, 1.4635 ms/op
+// GC:  23 2 0 196218424 128
+// Threading:  0 0 128
+
+// AfterAll
+// Benchmark Process 18404 has exited with code 0.
+
+Mean = 4.753 ms, StdErr = 3.314 ms (69.72%), N = 3, StdDev = 5.740 ms
+Min = 1.415 ms, Q1 = 1.439 ms, Median = 1.463 ms, Q3 = 6.422 ms, Max = 11.381 ms
+IQR = 4.983 ms, LowerFence = -6.035 ms, UpperFence = 13.897 ms
+ConfidenceInterval = [-99.963 ms; 109.469 ms] (CI 99.9%), Margin = 104.716 ms (2203.19% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 19 (95.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:05 (0h 2m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: AuthControllerBenchmarks.RegisterDuplicateLogin: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1420 1576 --benchmarkName CinemaAPI.Benchmarks.AuthControllerBenchmarks.RegisterDuplicateLogin --job ShortRun --benchmarkId 1 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 200800.00 ns, 200.8000 us/op
+WorkloadJitting  1: 1 op, 84915700.00 ns, 84.9157 ms/op
+
+WorkloadPilot    1: 2 op, 1685600.00 ns, 842.8000 us/op
+WorkloadPilot    2: 3 op, 223700.00 ns, 74.5667 us/op
+WorkloadPilot    3: 4 op, 293200.00 ns, 73.3000 us/op
+WorkloadPilot    4: 5 op, 257800.00 ns, 51.5600 us/op
+WorkloadPilot    5: 6 op, 286000.00 ns, 47.6667 us/op
+WorkloadPilot    6: 7 op, 337400.00 ns, 48.2000 us/op
+WorkloadPilot    7: 8 op, 432300.00 ns, 54.0375 us/op
+WorkloadPilot    8: 9 op, 431500.00 ns, 47.9444 us/op
+WorkloadPilot    9: 10 op, 444000.00 ns, 44.4000 us/op
+WorkloadPilot   10: 11 op, 494400.00 ns, 44.9455 us/op
+WorkloadPilot   11: 12 op, 523300.00 ns, 43.6083 us/op
+WorkloadPilot   12: 13 op, 614500.00 ns, 47.2692 us/op
+WorkloadPilot   13: 14 op, 598500.00 ns, 42.7500 us/op
+WorkloadPilot   14: 15 op, 628000.00 ns, 41.8667 us/op
+WorkloadPilot   15: 16 op, 667700.00 ns, 41.7313 us/op
+WorkloadPilot   16: 32 op, 1356200.00 ns, 42.3813 us/op
+WorkloadPilot   17: 64 op, 2741100.00 ns, 42.8297 us/op
+WorkloadPilot   18: 128 op, 5332800.00 ns, 41.6625 us/op
+WorkloadPilot   19: 256 op, 14412200.00 ns, 56.2977 us/op
+WorkloadPilot   20: 512 op, 21400100.00 ns, 41.7971 us/op
+WorkloadPilot   21: 1024 op, 41156600.00 ns, 40.1920 us/op
+WorkloadPilot   22: 2048 op, 81020700.00 ns, 39.5609 us/op
+WorkloadPilot   23: 4096 op, 190480000.00 ns, 46.5039 us/op
+WorkloadPilot   24: 8192 op, 397083200.00 ns, 48.4721 us/op
+WorkloadPilot   25: 16384 op, 793422000.00 ns, 48.4266 us/op
+
+WorkloadWarmup   1: 16384 op, 628797700.00 ns, 38.3788 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 16384 op, 253802100.00 ns, 15.4909 us/op
+WorkloadActual   2: 16384 op, 178664500.00 ns, 10.9048 us/op
+WorkloadActual   3: 16384 op, 186012300.00 ns, 11.3533 us/op
+
+// AfterActualRun
+WorkloadResult   1: 16384 op, 253802100.00 ns, 15.4909 us/op
+WorkloadResult   2: 16384 op, 178664500.00 ns, 10.9048 us/op
+WorkloadResult   3: 16384 op, 186012300.00 ns, 11.3533 us/op
+// GC:  12 0 0 102630496 16384
+// Threading:  0 0 16384
+
+// AfterAll
+// Benchmark Process 6072 has exited with code 0.
+
+Mean = 12.583 μs, StdErr = 1.460 μs (11.60%), N = 3, StdDev = 2.528 μs
+Min = 10.905 μs, Q1 = 11.129 μs, Median = 11.353 μs, Q3 = 13.422 μs, Max = 15.491 μs
+IQR = 2.293 μs, LowerFence = 7.690 μs, UpperFence = 16.862 μs
+ConfidenceInterval = [-33.542 μs; 58.708 μs] (CI 99.9%), Margin = 46.125 μs (366.56% of Mean)
+Skewness = 0.37, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 18 (90.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 1m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: AuthControllerBenchmarks.LoginUser: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1464 1584 --benchmarkName CinemaAPI.Benchmarks.AuthControllerBenchmarks.LoginUser --job ShortRun --benchmarkId 2 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 255500.00 ns, 255.5000 us/op
+WorkloadJitting  1: 1 op, 137482400.00 ns, 137.4824 ms/op
+
+WorkloadPilot    1: 2 op, 1967100.00 ns, 983.5500 us/op
+WorkloadPilot    2: 3 op, 405600.00 ns, 135.2000 us/op
+WorkloadPilot    3: 4 op, 512600.00 ns, 128.1500 us/op
+WorkloadPilot    4: 5 op, 533700.00 ns, 106.7400 us/op
+WorkloadPilot    5: 6 op, 744900.00 ns, 124.1500 us/op
+WorkloadPilot    6: 7 op, 744300.00 ns, 106.3286 us/op
+WorkloadPilot    7: 8 op, 836500.00 ns, 104.5625 us/op
+WorkloadPilot    8: 9 op, 909200.00 ns, 101.0222 us/op
+WorkloadPilot    9: 10 op, 1030500.00 ns, 103.0500 us/op
+WorkloadPilot   10: 11 op, 1108300.00 ns, 100.7545 us/op
+WorkloadPilot   11: 12 op, 1184500.00 ns, 98.7083 us/op
+WorkloadPilot   12: 13 op, 1256300.00 ns, 96.6385 us/op
+WorkloadPilot   13: 14 op, 1445800.00 ns, 103.2714 us/op
+WorkloadPilot   14: 15 op, 1480600.00 ns, 98.7067 us/op
+WorkloadPilot   15: 16 op, 1579300.00 ns, 98.7062 us/op
+WorkloadPilot   16: 32 op, 3123200.00 ns, 97.6000 us/op
+WorkloadPilot   17: 64 op, 6292300.00 ns, 98.3172 us/op
+WorkloadPilot   18: 128 op, 12394500.00 ns, 96.8320 us/op
+WorkloadPilot   19: 256 op, 24868800.00 ns, 97.1437 us/op
+WorkloadPilot   20: 512 op, 61194800.00 ns, 119.5211 us/op
+WorkloadPilot   21: 1024 op, 129826600.00 ns, 126.7838 us/op
+WorkloadPilot   22: 2048 op, 217199600.00 ns, 106.0545 us/op
+WorkloadPilot   23: 4096 op, 484551400.00 ns, 118.2987 us/op
+WorkloadPilot   24: 8192 op, 924350500.00 ns, 112.8358 us/op
+
+WorkloadWarmup   1: 8192 op, 779849300.00 ns, 95.1964 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 8192 op, 433497200.00 ns, 52.9171 us/op
+WorkloadActual   2: 8192 op, 260208700.00 ns, 31.7638 us/op
+WorkloadActual   3: 8192 op, 267713500.00 ns, 32.6799 us/op
+
+// AfterActualRun
+WorkloadResult   1: 8192 op, 433497200.00 ns, 52.9171 us/op
+WorkloadResult   2: 8192 op, 260208700.00 ns, 31.7638 us/op
+WorkloadResult   3: 8192 op, 267713500.00 ns, 32.6799 us/op
+// GC:  14 0 0 117772432 8192
+// Threading:  0 0 8192
+
+// AfterAll
+// Benchmark Process 15348 has exited with code 0.
+
+Mean = 39.120 μs, StdErr = 6.904 μs (17.65%), N = 3, StdDev = 11.957 μs
+Min = 31.764 μs, Q1 = 32.222 μs, Median = 32.680 μs, Q3 = 42.799 μs, Max = 52.917 μs
+IQR = 10.577 μs, LowerFence = 16.357 μs, UpperFence = 58.664 μs
+ConfidenceInterval = [-179.024 μs; 257.265 μs] (CI 99.9%), Margin = 218.144 μs (557.63% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 17 (85.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 1m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: AuthControllerBenchmarks.LoginInvalidUser: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1420 1580 --benchmarkName CinemaAPI.Benchmarks.AuthControllerBenchmarks.LoginInvalidUser --job ShortRun --benchmarkId 3 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 197000.00 ns, 197.0000 us/op
+WorkloadJitting  1: 1 op, 135319200.00 ns, 135.3192 ms/op
+
+WorkloadPilot    1: 2 op, 2115800.00 ns, 1.0579 ms/op
+WorkloadPilot    2: 3 op, 448100.00 ns, 149.3667 us/op
+WorkloadPilot    3: 4 op, 529100.00 ns, 132.2750 us/op
+WorkloadPilot    4: 5 op, 578400.00 ns, 115.6800 us/op
+WorkloadPilot    5: 6 op, 774600.00 ns, 129.1000 us/op
+WorkloadPilot    6: 7 op, 721700.00 ns, 103.1000 us/op
+WorkloadPilot    7: 8 op, 777700.00 ns, 97.2125 us/op
+WorkloadPilot    8: 9 op, 861400.00 ns, 95.7111 us/op
+WorkloadPilot    9: 10 op, 1123100.00 ns, 112.3100 us/op
+WorkloadPilot   10: 11 op, 1214000.00 ns, 110.3636 us/op
+WorkloadPilot   11: 12 op, 1180400.00 ns, 98.3667 us/op
+WorkloadPilot   12: 13 op, 1357800.00 ns, 104.4462 us/op
+WorkloadPilot   13: 14 op, 1427700.00 ns, 101.9786 us/op
+WorkloadPilot   14: 15 op, 1431900.00 ns, 95.4600 us/op
+WorkloadPilot   15: 16 op, 1693000.00 ns, 105.8125 us/op
+WorkloadPilot   16: 32 op, 3198900.00 ns, 99.9656 us/op
+WorkloadPilot   17: 64 op, 6270700.00 ns, 97.9797 us/op
+WorkloadPilot   18: 128 op, 12738900.00 ns, 99.5227 us/op
+WorkloadPilot   19: 256 op, 25193800.00 ns, 98.4133 us/op
+WorkloadPilot   20: 512 op, 78354000.00 ns, 153.0352 us/op
+WorkloadPilot   21: 1024 op, 120896100.00 ns, 118.0626 us/op
+WorkloadPilot   22: 2048 op, 217876500.00 ns, 106.3850 us/op
+WorkloadPilot   23: 4096 op, 430350300.00 ns, 105.0660 us/op
+WorkloadPilot   24: 8192 op, 853357700.00 ns, 104.1696 us/op
+
+WorkloadWarmup   1: 8192 op, 781031700.00 ns, 95.3408 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 8192 op, 477342800.00 ns, 58.2694 us/op
+WorkloadActual   2: 8192 op, 270186400.00 ns, 32.9817 us/op
+WorkloadActual   3: 8192 op, 263691300.00 ns, 32.1889 us/op
+
+// AfterActualRun
+WorkloadResult   1: 8192 op, 477342800.00 ns, 58.2694 us/op
+WorkloadResult   2: 8192 op, 270186400.00 ns, 32.9817 us/op
+WorkloadResult   3: 8192 op, 263691300.00 ns, 32.1889 us/op
+// GC:  14 0 0 117772432 8192
+// Threading:  0 0 8192
+
+// AfterAll
+// Benchmark Process 5212 has exited with code 0.
+
+Mean = 41.147 μs, StdErr = 8.564 μs (20.81%), N = 3, StdDev = 14.834 μs
+Min = 32.189 μs, Q1 = 32.585 μs, Median = 32.982 μs, Q3 = 45.626 μs, Max = 58.269 μs
+IQR = 13.040 μs, LowerFence = 13.025 μs, UpperFence = 65.186 μs
+ConfidenceInterval = [-229.481 μs; 311.774 μs] (CI 99.9%), Margin = 270.627 μs (657.71% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 16 (80.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 1m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: AuthControllerBenchmarks.LoginNonExistentUser: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1580 1596 --benchmarkName CinemaAPI.Benchmarks.AuthControllerBenchmarks.LoginNonExistentUser --job ShortRun --benchmarkId 4 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 301000.00 ns, 301.0000 us/op
+WorkloadJitting  1: 1 op, 124853100.00 ns, 124.8531 ms/op
+
+WorkloadPilot    1: 2 op, 1872900.00 ns, 936.4500 us/op
+WorkloadPilot    2: 3 op, 407200.00 ns, 135.7333 us/op
+WorkloadPilot    3: 4 op, 436800.00 ns, 109.2000 us/op
+WorkloadPilot    4: 5 op, 395900.00 ns, 79.1800 us/op
+WorkloadPilot    5: 6 op, 497700.00 ns, 82.9500 us/op
+WorkloadPilot    6: 7 op, 572200.00 ns, 81.7429 us/op
+WorkloadPilot    7: 8 op, 687200.00 ns, 85.9000 us/op
+WorkloadPilot    8: 9 op, 744400.00 ns, 82.7111 us/op
+WorkloadPilot    9: 10 op, 722900.00 ns, 72.2900 us/op
+WorkloadPilot   10: 11 op, 832100.00 ns, 75.6455 us/op
+WorkloadPilot   11: 12 op, 851300.00 ns, 70.9417 us/op
+WorkloadPilot   12: 13 op, 1066900.00 ns, 82.0692 us/op
+WorkloadPilot   13: 14 op, 1037800.00 ns, 74.1286 us/op
+WorkloadPilot   14: 15 op, 1064700.00 ns, 70.9800 us/op
+WorkloadPilot   15: 16 op, 1123000.00 ns, 70.1875 us/op
+WorkloadPilot   16: 32 op, 2408900.00 ns, 75.2781 us/op
+WorkloadPilot   17: 64 op, 4882800.00 ns, 76.2938 us/op
+WorkloadPilot   18: 128 op, 8944200.00 ns, 69.8766 us/op
+WorkloadPilot   19: 256 op, 18942300.00 ns, 73.9934 us/op
+WorkloadPilot   20: 512 op, 43896100.00 ns, 85.7346 us/op
+WorkloadPilot   21: 1024 op, 119846300.00 ns, 117.0374 us/op
+WorkloadPilot   22: 2048 op, 173371100.00 ns, 84.6539 us/op
+WorkloadPilot   23: 4096 op, 362830500.00 ns, 88.5817 us/op
+WorkloadPilot   24: 8192 op, 690908900.00 ns, 84.3395 us/op
+
+WorkloadWarmup   1: 8192 op, 590465000.00 ns, 72.0782 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 8192 op, 264079300.00 ns, 32.2362 us/op
+WorkloadActual   2: 8192 op, 210895400.00 ns, 25.7441 us/op
+WorkloadActual   3: 8192 op, 203930900.00 ns, 24.8939 us/op
+
+// AfterActualRun
+WorkloadResult   1: 8192 op, 264079300.00 ns, 32.2362 us/op
+WorkloadResult   2: 8192 op, 210895400.00 ns, 25.7441 us/op
+WorkloadResult   3: 8192 op, 203930900.00 ns, 24.8939 us/op
+// GC:  11 0 0 94045280 8192
+// Threading:  0 0 8192
+
+// AfterAll
+// Benchmark Process 1968 has exited with code 0.
+
+Mean = 27.625 μs, StdErr = 2.319 μs (8.39%), N = 3, StdDev = 4.016 μs
+Min = 24.894 μs, Q1 = 25.319 μs, Median = 25.744 μs, Q3 = 28.990 μs, Max = 32.236 μs
+IQR = 3.671 μs, LowerFence = 19.812 μs, UpperFence = 34.497 μs
+ConfidenceInterval = [-45.646 μs; 100.896 μs] (CI 99.9%), Margin = 73.271 μs (265.24% of Mean)
+Skewness = 0.37, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 15 (75.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 1m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: AuthControllerBenchmarks.HashPassword: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1628 1636 --benchmarkName CinemaAPI.Benchmarks.AuthControllerBenchmarks.HashPassword --job ShortRun --benchmarkId 5 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 217600.00 ns, 217.6000 us/op
+WorkloadJitting  1: 1 op, 4470800.00 ns, 4.4708 ms/op
+
+OverheadJitting  2: 16 op, 425500.00 ns, 26.5938 us/op
+WorkloadJitting  2: 16 op, 533500.00 ns, 33.3438 us/op
+
+WorkloadPilot    1: 16 op, 35300.00 ns, 2.2062 us/op
+WorkloadPilot    2: 32 op, 47700.00 ns, 1.4906 us/op
+WorkloadPilot    3: 64 op, 67500.00 ns, 1.0547 us/op
+WorkloadPilot    4: 128 op, 121200.00 ns, 946.8750 ns/op
+WorkloadPilot    5: 256 op, 239700.00 ns, 936.3281 ns/op
+WorkloadPilot    6: 512 op, 487000.00 ns, 951.1719 ns/op
+WorkloadPilot    7: 1024 op, 879300.00 ns, 858.6914 ns/op
+WorkloadPilot    8: 2048 op, 1581600.00 ns, 772.2656 ns/op
+WorkloadPilot    9: 4096 op, 3400200.00 ns, 830.1270 ns/op
+WorkloadPilot   10: 8192 op, 7660400.00 ns, 935.1074 ns/op
+WorkloadPilot   11: 16384 op, 18931500.00 ns, 1.1555 us/op
+WorkloadPilot   12: 32768 op, 27031900.00 ns, 824.9481 ns/op
+WorkloadPilot   13: 65536 op, 54649700.00 ns, 833.8882 ns/op
+WorkloadPilot   14: 131072 op, 103502000.00 ns, 789.6576 ns/op
+WorkloadPilot   15: 262144 op, 229123300.00 ns, 874.0360 ns/op
+WorkloadPilot   16: 524288 op, 464861900.00 ns, 886.6537 ns/op
+WorkloadPilot   17: 1048576 op, 465831400.00 ns, 444.2514 ns/op
+WorkloadPilot   18: 2097152 op, 911660500.00 ns, 434.7136 ns/op
+
+OverheadWarmup   1: 2097152 op, 6960400.00 ns, 3.3190 ns/op
+OverheadWarmup   2: 2097152 op, 12237300.00 ns, 5.8352 ns/op
+OverheadWarmup   3: 2097152 op, 6924700.00 ns, 3.3020 ns/op
+OverheadWarmup   4: 2097152 op, 6920100.00 ns, 3.2998 ns/op
+OverheadWarmup   5: 2097152 op, 12442000.00 ns, 5.9328 ns/op
+OverheadWarmup   6: 2097152 op, 11936000.00 ns, 5.6915 ns/op
+
+OverheadActual   1: 2097152 op, 7350200.00 ns, 3.5048 ns/op
+OverheadActual   2: 2097152 op, 6964900.00 ns, 3.3211 ns/op
+OverheadActual   3: 2097152 op, 9938600.00 ns, 4.7391 ns/op
+OverheadActual   4: 2097152 op, 6961400.00 ns, 3.3195 ns/op
+OverheadActual   5: 2097152 op, 7041800.00 ns, 3.3578 ns/op
+OverheadActual   6: 2097152 op, 7011700.00 ns, 3.3434 ns/op
+OverheadActual   7: 2097152 op, 7023600.00 ns, 3.3491 ns/op
+OverheadActual   8: 2097152 op, 6992100.00 ns, 3.3341 ns/op
+OverheadActual   9: 2097152 op, 6977600.00 ns, 3.3272 ns/op
+OverheadActual  10: 2097152 op, 6992200.00 ns, 3.3341 ns/op
+OverheadActual  11: 2097152 op, 6996900.00 ns, 3.3364 ns/op
+OverheadActual  12: 2097152 op, 7028100.00 ns, 3.3513 ns/op
+OverheadActual  13: 2097152 op, 6965100.00 ns, 3.3212 ns/op
+OverheadActual  14: 2097152 op, 6945000.00 ns, 3.3116 ns/op
+OverheadActual  15: 2097152 op, 6942800.00 ns, 3.3106 ns/op
+
+WorkloadWarmup   1: 2097152 op, 928602100.00 ns, 442.7920 ns/op
+
+// BeforeActualRun
+WorkloadActual   1: 2097152 op, 910818600.00 ns, 434.3122 ns/op
+WorkloadActual   2: 2097152 op, 920763200.00 ns, 439.0541 ns/op
+WorkloadActual   3: 2097152 op, 901131300.00 ns, 429.6929 ns/op
+
+// AfterActualRun
+WorkloadResult   1: 2097152 op, 903826400.00 ns, 430.9780 ns/op
+WorkloadResult   2: 2097152 op, 913771000.00 ns, 435.7200 ns/op
+WorkloadResult   3: 2097152 op, 894139100.00 ns, 426.3587 ns/op
+// GC:  98 0 0 822104864 2097152
+// Threading:  0 0 2097152
+
+// AfterAll
+// Benchmark Process 18128 has exited with code 0.
+
+Mean = 431.019 ns, StdErr = 2.702 ns (0.63%), N = 3, StdDev = 4.681 ns
+Min = 426.359 ns, Q1 = 428.668 ns, Median = 430.978 ns, Q3 = 433.349 ns, Max = 435.720 ns
+IQR = 4.681 ns, LowerFence = 421.647 ns, UpperFence = 440.370 ns
+ConfidenceInterval = [345.625 ns; 516.413 ns] (CI 99.9%), Margin = 85.394 ns (19.81% of Mean)
+Skewness = 0.01, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 14 (70.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 1m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: AuthControllerBenchmarks.VerifyPassword: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1640 1480 --benchmarkName CinemaAPI.Benchmarks.AuthControllerBenchmarks.VerifyPassword --job ShortRun --benchmarkId 6 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 200200.00 ns, 200.2000 us/op
+WorkloadJitting  1: 1 op, 4477200.00 ns, 4.4772 ms/op
+
+OverheadJitting  2: 16 op, 347700.00 ns, 21.7312 us/op
+WorkloadJitting  2: 16 op, 492300.00 ns, 30.7688 us/op
+
+WorkloadPilot    1: 16 op, 43200.00 ns, 2.7000 us/op
+WorkloadPilot    2: 32 op, 52700.00 ns, 1.6469 us/op
+WorkloadPilot    3: 64 op, 81000.00 ns, 1.2656 us/op
+WorkloadPilot    4: 128 op, 119300.00 ns, 932.0312 ns/op
+WorkloadPilot    5: 256 op, 233100.00 ns, 910.5469 ns/op
+WorkloadPilot    6: 512 op, 462500.00 ns, 903.3203 ns/op
+WorkloadPilot    7: 1024 op, 901800.00 ns, 880.6641 ns/op
+WorkloadPilot    8: 2048 op, 1635200.00 ns, 798.4375 ns/op
+WorkloadPilot    9: 4096 op, 3307600.00 ns, 807.5195 ns/op
+WorkloadPilot   10: 8192 op, 9241800.00 ns, 1.1281 us/op
+WorkloadPilot   11: 16384 op, 13759900.00 ns, 839.8376 ns/op
+WorkloadPilot   12: 32768 op, 27471000.00 ns, 838.3484 ns/op
+WorkloadPilot   13: 65536 op, 59753900.00 ns, 911.7722 ns/op
+WorkloadPilot   14: 131072 op, 120601900.00 ns, 920.1195 ns/op
+WorkloadPilot   15: 262144 op, 236306900.00 ns, 901.4393 ns/op
+WorkloadPilot   16: 524288 op, 457635300.00 ns, 872.8701 ns/op
+WorkloadPilot   17: 1048576 op, 455323400.00 ns, 434.2302 ns/op
+WorkloadPilot   18: 2097152 op, 909643200.00 ns, 433.7517 ns/op
+
+OverheadWarmup   1: 2097152 op, 4364700.00 ns, 2.0813 ns/op
+OverheadWarmup   2: 2097152 op, 9691000.00 ns, 4.6210 ns/op
+OverheadWarmup   3: 2097152 op, 4035800.00 ns, 1.9244 ns/op
+OverheadWarmup   4: 2097152 op, 4894800.00 ns, 2.3340 ns/op
+OverheadWarmup   5: 2097152 op, 4177700.00 ns, 1.9921 ns/op
+
+OverheadActual   1: 2097152 op, 10095100.00 ns, 4.8137 ns/op
+OverheadActual   2: 2097152 op, 3963900.00 ns, 1.8901 ns/op
+OverheadActual   3: 2097152 op, 21094200.00 ns, 10.0585 ns/op
+OverheadActual   4: 2097152 op, 38690200.00 ns, 18.4489 ns/op
+OverheadActual   5: 2097152 op, 43808400.00 ns, 20.8895 ns/op
+OverheadActual   6: 2097152 op, 4212600.00 ns, 2.0087 ns/op
+OverheadActual   7: 2097152 op, 27388700.00 ns, 13.0599 ns/op
+OverheadActual   8: 2097152 op, 4022800.00 ns, 1.9182 ns/op
+OverheadActual   9: 2097152 op, 4014500.00 ns, 1.9143 ns/op
+OverheadActual  10: 2097152 op, 4009200.00 ns, 1.9117 ns/op
+OverheadActual  11: 2097152 op, 3980100.00 ns, 1.8979 ns/op
+OverheadActual  12: 2097152 op, 3100000.00 ns, 1.4782 ns/op
+OverheadActual  13: 2097152 op, 3213700.00 ns, 1.5324 ns/op
+OverheadActual  14: 2097152 op, 3177100.00 ns, 1.5150 ns/op
+OverheadActual  15: 2097152 op, 3131300.00 ns, 1.4931 ns/op
+OverheadActual  16: 2097152 op, 8453500.00 ns, 4.0309 ns/op
+OverheadActual  17: 2097152 op, 3191900.00 ns, 1.5220 ns/op
+OverheadActual  18: 2097152 op, 3334400.00 ns, 1.5900 ns/op
+OverheadActual  19: 2097152 op, 3184000.00 ns, 1.5182 ns/op
+OverheadActual  20: 2097152 op, 3201300.00 ns, 1.5265 ns/op
+
+WorkloadWarmup   1: 2097152 op, 919466200.00 ns, 438.4356 ns/op
+
+// BeforeActualRun
+WorkloadActual   1: 2097152 op, 917043200.00 ns, 437.2803 ns/op
+WorkloadActual   2: 2097152 op, 904618000.00 ns, 431.3555 ns/op
+WorkloadActual   3: 2097152 op, 901049300.00 ns, 429.6538 ns/op
+
+// AfterActualRun
+WorkloadResult   1: 2097152 op, 913048550.00 ns, 435.3755 ns/op
+WorkloadResult   2: 2097152 op, 900623350.00 ns, 429.4507 ns/op
+WorkloadResult   3: 2097152 op, 897054650.00 ns, 427.7490 ns/op
+// GC:  98 0 0 822104864 2097152
+// Threading:  0 0 2097152
+
+// AfterAll
+// Benchmark Process 15936 has exited with code 0.
+
+Mean = 430.858 ns, StdErr = 2.311 ns (0.54%), N = 3, StdDev = 4.003 ns
+Min = 427.749 ns, Q1 = 428.600 ns, Median = 429.451 ns, Q3 = 432.413 ns, Max = 435.375 ns
+IQR = 3.813 ns, LowerFence = 422.880 ns, UpperFence = 438.133 ns
+ConfidenceInterval = [357.822 ns; 503.895 ns] (CI 99.9%), Margin = 73.037 ns (16.95% of Mean)
+Skewness = 0.31, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 13 (65.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 1m from now) **
+Successfully reverted power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// ***** BenchmarkRunner: Finish  *****
+
+// * Export *
+  BenchmarkDotNet.Artifacts\results\CinemaAPI.Benchmarks.AuthControllerBenchmarks-report.csv
+  BenchmarkDotNet.Artifacts\results\CinemaAPI.Benchmarks.AuthControllerBenchmarks-report-github.md
+  BenchmarkDotNet.Artifacts\results\CinemaAPI.Benchmarks.AuthControllerBenchmarks-report.html
+  BenchmarkDotNet.Artifacts\results\CinemaAPI.Benchmarks.AuthControllerBenchmarks-report-default.md
+
+// * Detailed results *
+AuthControllerBenchmarks.RegisterUser: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 4.753 ms, StdErr = 3.314 ms (69.72%), N = 3, StdDev = 5.740 ms
+Min = 1.415 ms, Q1 = 1.439 ms, Median = 1.463 ms, Q3 = 6.422 ms, Max = 11.381 ms
+IQR = 4.983 ms, LowerFence = -6.035 ms, UpperFence = 13.897 ms
+ConfidenceInterval = [-99.963 ms; 109.469 ms] (CI 99.9%), Margin = 104.716 ms (2203.19% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[1.174 ms ; 11.621 ms) | @@@
+---------------------------------------------------
+
+AuthControllerBenchmarks.RegisterDuplicateLogin: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 12.583 μs, StdErr = 1.460 μs (11.60%), N = 3, StdDev = 2.528 μs
+Min = 10.905 μs, Q1 = 11.129 μs, Median = 11.353 μs, Q3 = 13.422 μs, Max = 15.491 μs
+IQR = 2.293 μs, LowerFence = 7.690 μs, UpperFence = 16.862 μs
+ConfidenceInterval = [-33.542 μs; 58.708 μs] (CI 99.9%), Margin = 46.125 μs (366.56% of Mean)
+Skewness = 0.37, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[10.897 μs ; 15.499 μs) | @@@
+---------------------------------------------------
+
+AuthControllerBenchmarks.LoginUser: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 39.120 μs, StdErr = 6.904 μs (17.65%), N = 3, StdDev = 11.957 μs
+Min = 31.764 μs, Q1 = 32.222 μs, Median = 32.680 μs, Q3 = 42.799 μs, Max = 52.917 μs
+IQR = 10.577 μs, LowerFence = 16.357 μs, UpperFence = 58.664 μs
+ConfidenceInterval = [-179.024 μs; 257.265 μs] (CI 99.9%), Margin = 218.144 μs (557.63% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[31.459 μs ; 53.222 μs) | @@@
+---------------------------------------------------
+
+AuthControllerBenchmarks.LoginInvalidUser: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 41.147 μs, StdErr = 8.564 μs (20.81%), N = 3, StdDev = 14.834 μs
+Min = 32.189 μs, Q1 = 32.585 μs, Median = 32.982 μs, Q3 = 45.626 μs, Max = 58.269 μs
+IQR = 13.040 μs, LowerFence = 13.025 μs, UpperFence = 65.186 μs
+ConfidenceInterval = [-229.481 μs; 311.774 μs] (CI 99.9%), Margin = 270.627 μs (657.71% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[31.730 μs ; 58.729 μs) | @@@
+---------------------------------------------------
+
+AuthControllerBenchmarks.LoginNonExistentUser: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 27.625 μs, StdErr = 2.319 μs (8.39%), N = 3, StdDev = 4.016 μs
+Min = 24.894 μs, Q1 = 25.319 μs, Median = 25.744 μs, Q3 = 28.990 μs, Max = 32.236 μs
+IQR = 3.671 μs, LowerFence = 19.812 μs, UpperFence = 34.497 μs
+ConfidenceInterval = [-45.646 μs; 100.896 μs] (CI 99.9%), Margin = 73.271 μs (265.24% of Mean)
+Skewness = 0.37, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[21.239 μs ; 28.974 μs) | @@
+[28.974 μs ; 35.891 μs) | @
+---------------------------------------------------
+
+AuthControllerBenchmarks.HashPassword: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 431.019 ns, StdErr = 2.702 ns (0.63%), N = 3, StdDev = 4.681 ns
+Min = 426.359 ns, Q1 = 428.668 ns, Median = 430.978 ns, Q3 = 433.349 ns, Max = 435.720 ns
+IQR = 4.681 ns, LowerFence = 421.647 ns, UpperFence = 440.370 ns
+ConfidenceInterval = [345.625 ns; 516.413 ns] (CI 99.9%), Margin = 85.394 ns (19.81% of Mean)
+Skewness = 0.01, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[424.382 ns ; 439.980 ns) | @@@
+---------------------------------------------------
+
+AuthControllerBenchmarks.VerifyPassword: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 430.858 ns, StdErr = 2.311 ns (0.54%), N = 3, StdDev = 4.003 ns
+Min = 427.749 ns, Q1 = 428.600 ns, Median = 429.451 ns, Q3 = 432.413 ns, Max = 435.375 ns
+IQR = 3.813 ns, LowerFence = 422.880 ns, UpperFence = 438.133 ns
+ConfidenceInterval = [357.822 ns; 503.895 ns] (CI 99.9%), Margin = 73.037 ns (16.95% of Mean)
+Skewness = 0.31, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[424.106 ns ; 439.019 ns) | @@@
+---------------------------------------------------
+
+// * Summary *
+
+BenchmarkDotNet v0.13.12, Windows 11 (10.0.22631.6199/23H2/2023Update/SunValley3)
+AMD Ryzen 5 5600H with Radeon Graphics, 1 CPU, 12 logical and 6 physical cores
+.NET SDK 10.0.103
+  [Host]   : .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+  ShortRun : .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+
+Job=ShortRun  IterationCount=3  LaunchCount=1  
+WarmupCount=1  
+
+| Method                 | Mean           | Error             | StdDev          | Median         | Gen0     | Gen1    | Allocated |
+|----------------------- |---------------:|------------------:|----------------:|---------------:|---------:|--------:|----------:|
+| RegisterUser           | 4,752,927.9 ns | 104,716,120.87 ns | 5,739,843.93 ns | 1,463,479.7 ns | 179.6875 | 15.6250 | 1532956 B |
+| RegisterDuplicateLogin |    12,583.0 ns |      46,124.67 ns |     2,528.25 ns |    11,353.3 ns |   0.7324 |       - |    6264 B |
+| LoginUser              |    39,120.3 ns |     218,144.35 ns |    11,957.23 ns |    32,679.9 ns |   1.7090 |       - |   14377 B |
+| LoginInvalidUser       |    41,146.7 ns |     270,627.50 ns |    14,834.01 ns |    32,981.7 ns |   1.7090 |       - |   14377 B |
+| LoginNonExistentUser   |    27,624.7 ns |      73,271.12 ns |     4,016.24 ns |    25,744.1 ns |   1.3428 |       - |   11480 B |
+| HashPassword           |       431.0 ns |          85.39 ns |         4.68 ns |       431.0 ns |   0.0467 |       - |     392 B |
+| VerifyPassword         |       430.9 ns |          73.04 ns |         4.00 ns |       429.5 ns |   0.0467 |       - |     392 B |
+
+// * Warnings *
+ZeroMeasurement
+  AuthControllerBenchmarks.RegisterUser: ShortRun -> The method duration is indistinguishable from the empty method duration
+// * Config Issues *
+
+// * Warnings *
+Configuration
+  Summary -> The exporter MarkdownExporter-github is already present in configuration. There may be unexpected results.
+  Summary -> The exporter HtmlExporter is already present in configuration. There may be unexpected results.
+  Summary -> The exporter HtmlExporter is already present in configuration. There may be unexpected results.
+
+// * Legends *
+  Mean      : Arithmetic mean of all measurements
+  Error     : Half of 99.9% confidence interval
+  StdDev    : Standard deviation of all measurements
+  Median    : Value separating the higher half of all measurements (50th percentile)
+  Gen0      : GC Generation 0 collects per 1000 operations
+  Gen1      : GC Generation 1 collects per 1000 operations
+  Allocated : Allocated memory per single operation (managed only, inclusive, 1KB = 1024B)
+  1 ns      : 1 Nanosecond (0.000000001 sec)
+
+// * Diagnostic Output - MemoryDiagnoser *
+
+
+// ***** BenchmarkRunner: End *****
+Run time: 00:00:39 (39.61 sec), executed benchmarks: 7
+
+// Found 7 benchmarks:
+//   FilmsControllerBenchmarks.GetAllFilms: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   FilmsControllerBenchmarks.GetFilmsSortedByRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   FilmsControllerBenchmarks.GetFilmsSortedByRatingDesc: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   FilmsControllerBenchmarks.GetFilmsByGenre: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   FilmsControllerBenchmarks.GetFilmsBySearch: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   FilmsControllerBenchmarks.GetFilmById: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   FilmsControllerBenchmarks.GetAverageRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: FilmsControllerBenchmarks.GetAllFilms: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1740 1620 --benchmarkName CinemaAPI.Benchmarks.FilmsControllerBenchmarks.GetAllFilms --job ShortRun --benchmarkId 7 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 204700.00 ns, 204.7000 us/op
+WorkloadJitting  1: 1 op, 127750000.00 ns, 127.7500 ms/op
+
+WorkloadPilot    1: 2 op, 1557200.00 ns, 778.6000 us/op
+WorkloadPilot    2: 3 op, 547000.00 ns, 182.3333 us/op
+WorkloadPilot    3: 4 op, 527800.00 ns, 131.9500 us/op
+WorkloadPilot    4: 5 op, 616300.00 ns, 123.2600 us/op
+WorkloadPilot    5: 6 op, 720000.00 ns, 120.0000 us/op
+WorkloadPilot    6: 7 op, 973100.00 ns, 139.0143 us/op
+WorkloadPilot    7: 8 op, 902000.00 ns, 112.7500 us/op
+WorkloadPilot    8: 9 op, 1189100.00 ns, 132.1222 us/op
+WorkloadPilot    9: 10 op, 1145900.00 ns, 114.5900 us/op
+WorkloadPilot   10: 11 op, 1349000.00 ns, 122.6364 us/op
+WorkloadPilot   11: 12 op, 1407500.00 ns, 117.2917 us/op
+WorkloadPilot   12: 13 op, 1475800.00 ns, 113.5231 us/op
+WorkloadPilot   13: 14 op, 1592500.00 ns, 113.7500 us/op
+WorkloadPilot   14: 15 op, 1660300.00 ns, 110.6867 us/op
+WorkloadPilot   15: 16 op, 1775100.00 ns, 110.9437 us/op
+WorkloadPilot   16: 32 op, 3665000.00 ns, 114.5312 us/op
+WorkloadPilot   17: 64 op, 7359800.00 ns, 114.9969 us/op
+WorkloadPilot   18: 128 op, 15148600.00 ns, 118.3484 us/op
+WorkloadPilot   19: 256 op, 36315200.00 ns, 141.8562 us/op
+WorkloadPilot   20: 512 op, 73643400.00 ns, 143.8348 us/op
+WorkloadPilot   21: 1024 op, 157676700.00 ns, 153.9812 us/op
+WorkloadPilot   22: 2048 op, 577351900.00 ns, 281.9101 us/op
+
+WorkloadWarmup   1: 2048 op, 287148700.00 ns, 140.2093 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 2048 op, 279331100.00 ns, 136.3921 us/op
+WorkloadActual   2: 2048 op, 363301700.00 ns, 177.3934 us/op
+WorkloadActual   3: 2048 op, 140176800.00 ns, 68.4457 us/op
+
+// AfterActualRun
+WorkloadResult   1: 2048 op, 279331100.00 ns, 136.3921 us/op
+WorkloadResult   2: 2048 op, 363301700.00 ns, 177.3934 us/op
+WorkloadResult   3: 2048 op, 140176800.00 ns, 68.4457 us/op
+// GC:  7 0 0 64111280 2048
+// Threading:  0 0 2048
+
+// AfterAll
+// Benchmark Process 8140 has exited with code 0.
+
+Mean = 127.410 μs, StdErr = 31.770 μs (24.93%), N = 3, StdDev = 55.026 μs
+Min = 68.446 μs, Q1 = 102.419 μs, Median = 136.392 μs, Q3 = 156.893 μs, Max = 177.393 μs
+IQR = 54.474 μs, LowerFence = 20.708 μs, UpperFence = 238.604 μs
+ConfidenceInterval = [-876.476 μs; 1,131.297 μs] (CI 99.9%), Margin = 1,003.886 μs (787.92% of Mean)
+Skewness = -0.16, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 12 (60.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 1m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: FilmsControllerBenchmarks.GetFilmsSortedByRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1800 1796 --benchmarkName CinemaAPI.Benchmarks.FilmsControllerBenchmarks.GetFilmsSortedByRating --job ShortRun --benchmarkId 8 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 265400.00 ns, 265.4000 us/op
+WorkloadJitting  1: 1 op, 145678400.00 ns, 145.6784 ms/op
+
+WorkloadPilot    1: 2 op, 1627100.00 ns, 813.5500 us/op
+WorkloadPilot    2: 3 op, 569100.00 ns, 189.7000 us/op
+WorkloadPilot    3: 4 op, 698700.00 ns, 174.6750 us/op
+WorkloadPilot    4: 5 op, 758600.00 ns, 151.7200 us/op
+WorkloadPilot    5: 6 op, 918400.00 ns, 153.0667 us/op
+WorkloadPilot    6: 7 op, 1169900.00 ns, 167.1286 us/op
+WorkloadPilot    7: 8 op, 1293600.00 ns, 161.7000 us/op
+WorkloadPilot    8: 9 op, 1300500.00 ns, 144.5000 us/op
+WorkloadPilot    9: 10 op, 1504700.00 ns, 150.4700 us/op
+WorkloadPilot   10: 11 op, 1781700.00 ns, 161.9727 us/op
+WorkloadPilot   11: 12 op, 1742600.00 ns, 145.2167 us/op
+WorkloadPilot   12: 13 op, 1996700.00 ns, 153.5923 us/op
+WorkloadPilot   13: 14 op, 1995300.00 ns, 142.5214 us/op
+WorkloadPilot   14: 15 op, 2100500.00 ns, 140.0333 us/op
+WorkloadPilot   15: 16 op, 2405800.00 ns, 150.3625 us/op
+WorkloadPilot   16: 32 op, 4730800.00 ns, 147.8375 us/op
+WorkloadPilot   17: 64 op, 9423300.00 ns, 147.2391 us/op
+WorkloadPilot   18: 128 op, 28236900.00 ns, 220.6008 us/op
+WorkloadPilot   19: 256 op, 45161500.00 ns, 176.4121 us/op
+WorkloadPilot   20: 512 op, 90931000.00 ns, 177.5996 us/op
+WorkloadPilot   21: 1024 op, 174030900.00 ns, 169.9521 us/op
+WorkloadPilot   22: 2048 op, 355900700.00 ns, 173.7796 us/op
+WorkloadPilot   23: 4096 op, 704848100.00 ns, 172.0821 us/op
+
+WorkloadWarmup   1: 4096 op, 449325700.00 ns, 109.6987 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 4096 op, 288698600.00 ns, 70.4831 us/op
+WorkloadActual   2: 4096 op, 273152300.00 ns, 66.6876 us/op
+WorkloadActual   3: 4096 op, 262482200.00 ns, 64.0826 us/op
+
+// AfterActualRun
+WorkloadResult   1: 4096 op, 288698600.00 ns, 70.4831 us/op
+WorkloadResult   2: 4096 op, 273152300.00 ns, 66.6876 us/op
+WorkloadResult   3: 4096 op, 262482200.00 ns, 64.0826 us/op
+// GC:  18 0 0 155845296 4096
+// Threading:  0 0 4096
+
+// AfterAll
+// Benchmark Process 14020 has exited with code 0.
+
+Mean = 67.084 μs, StdErr = 1.858 μs (2.77%), N = 3, StdDev = 3.219 μs
+Min = 64.083 μs, Q1 = 65.385 μs, Median = 66.688 μs, Q3 = 68.585 μs, Max = 70.483 μs
+IQR = 3.200 μs, LowerFence = 60.585 μs, UpperFence = 73.386 μs
+ConfidenceInterval = [8.364 μs; 125.804 μs] (CI 99.9%), Margin = 58.720 μs (87.53% of Mean)
+Skewness = 0.12, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 11 (55.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: FilmsControllerBenchmarks.GetFilmsSortedByRatingDesc: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1832 1656 --benchmarkName CinemaAPI.Benchmarks.FilmsControllerBenchmarks.GetFilmsSortedByRatingDesc --job ShortRun --benchmarkId 9 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 213800.00 ns, 213.8000 us/op
+WorkloadJitting  1: 1 op, 143219700.00 ns, 143.2197 ms/op
+
+WorkloadPilot    1: 2 op, 1664300.00 ns, 832.1500 us/op
+WorkloadPilot    2: 3 op, 641500.00 ns, 213.8333 us/op
+WorkloadPilot    3: 4 op, 651800.00 ns, 162.9500 us/op
+WorkloadPilot    4: 5 op, 820400.00 ns, 164.0800 us/op
+WorkloadPilot    5: 6 op, 905200.00 ns, 150.8667 us/op
+WorkloadPilot    6: 7 op, 1250200.00 ns, 178.6000 us/op
+WorkloadPilot    7: 8 op, 1165000.00 ns, 145.6250 us/op
+WorkloadPilot    8: 9 op, 1302800.00 ns, 144.7556 us/op
+WorkloadPilot    9: 10 op, 1580500.00 ns, 158.0500 us/op
+WorkloadPilot   10: 11 op, 1704600.00 ns, 154.9636 us/op
+WorkloadPilot   11: 12 op, 1740500.00 ns, 145.0417 us/op
+WorkloadPilot   12: 13 op, 1929300.00 ns, 148.4077 us/op
+WorkloadPilot   13: 14 op, 2080500.00 ns, 148.6071 us/op
+WorkloadPilot   14: 15 op, 2142400.00 ns, 142.8267 us/op
+WorkloadPilot   15: 16 op, 2342200.00 ns, 146.3875 us/op
+WorkloadPilot   16: 32 op, 4711700.00 ns, 147.2406 us/op
+WorkloadPilot   17: 64 op, 9418100.00 ns, 147.1578 us/op
+WorkloadPilot   18: 128 op, 19531200.00 ns, 152.5875 us/op
+WorkloadPilot   19: 256 op, 44308800.00 ns, 173.0813 us/op
+WorkloadPilot   20: 512 op, 85345100.00 ns, 166.6896 us/op
+WorkloadPilot   21: 1024 op, 179365600.00 ns, 175.1617 us/op
+WorkloadPilot   22: 2048 op, 366829900.00 ns, 179.1162 us/op
+WorkloadPilot   23: 4096 op, 704704200.00 ns, 172.0469 us/op
+
+WorkloadWarmup   1: 4096 op, 477761600.00 ns, 116.6410 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 4096 op, 261038900.00 ns, 63.7302 us/op
+WorkloadActual   2: 4096 op, 263496100.00 ns, 64.3301 us/op
+WorkloadActual   3: 4096 op, 260917900.00 ns, 63.7007 us/op
+
+// AfterActualRun
+WorkloadResult   1: 4096 op, 261038900.00 ns, 63.7302 us/op
+WorkloadResult   2: 4096 op, 263496100.00 ns, 64.3301 us/op
+WorkloadResult   3: 4096 op, 260917900.00 ns, 63.7007 us/op
+// GC:  18 0 0 155845296 4096
+// Threading:  0 0 4096
+
+// AfterAll
+// Benchmark Process 15056 has exited with code 0.
+
+Mean = 63.920 μs, StdErr = 0.205 μs (0.32%), N = 3, StdDev = 0.355 μs
+Min = 63.701 μs, Q1 = 63.715 μs, Median = 63.730 μs, Q3 = 64.030 μs, Max = 64.330 μs
+IQR = 0.315 μs, LowerFence = 63.243 μs, UpperFence = 64.502 μs
+ConfidenceInterval = [57.440 μs; 70.400 μs] (CI 99.9%), Margin = 6.480 μs (10.14% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 10 (50.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: FilmsControllerBenchmarks.GetFilmsByGenre: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1844 1840 --benchmarkName CinemaAPI.Benchmarks.FilmsControllerBenchmarks.GetFilmsByGenre --job ShortRun --benchmarkId 10 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 209200.00 ns, 209.2000 us/op
+WorkloadJitting  1: 1 op, 130899300.00 ns, 130.8993 ms/op
+
+WorkloadPilot    1: 2 op, 1828100.00 ns, 914.0500 us/op
+WorkloadPilot    2: 3 op, 581300.00 ns, 193.7667 us/op
+WorkloadPilot    3: 4 op, 564500.00 ns, 141.1250 us/op
+WorkloadPilot    4: 5 op, 746600.00 ns, 149.3200 us/op
+WorkloadPilot    5: 6 op, 848400.00 ns, 141.4000 us/op
+WorkloadPilot    6: 7 op, 952100.00 ns, 136.0143 us/op
+WorkloadPilot    7: 8 op, 1053400.00 ns, 131.6750 us/op
+WorkloadPilot    8: 9 op, 1220900.00 ns, 135.6556 us/op
+WorkloadPilot    9: 10 op, 1273800.00 ns, 127.3800 us/op
+WorkloadPilot   10: 11 op, 1442800.00 ns, 131.1636 us/op
+WorkloadPilot   11: 12 op, 1809300.00 ns, 150.7750 us/op
+WorkloadPilot   12: 13 op, 1607400.00 ns, 123.6462 us/op
+WorkloadPilot   13: 14 op, 1848600.00 ns, 132.0429 us/op
+WorkloadPilot   14: 15 op, 2174200.00 ns, 144.9467 us/op
+WorkloadPilot   15: 16 op, 1971200.00 ns, 123.2000 us/op
+WorkloadPilot   16: 32 op, 4038500.00 ns, 126.2031 us/op
+WorkloadPilot   17: 64 op, 8113600.00 ns, 126.7750 us/op
+WorkloadPilot   18: 128 op, 17099200.00 ns, 133.5875 us/op
+WorkloadPilot   19: 256 op, 47638800.00 ns, 186.0891 us/op
+WorkloadPilot   20: 512 op, 79913600.00 ns, 156.0813 us/op
+WorkloadPilot   21: 1024 op, 147342500.00 ns, 143.8892 us/op
+WorkloadPilot   22: 2048 op, 284149200.00 ns, 138.7447 us/op
+WorkloadPilot   23: 4096 op, 599440700.00 ns, 146.3478 us/op
+
+WorkloadWarmup   1: 4096 op, 574480800.00 ns, 140.2541 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 4096 op, 491225400.00 ns, 119.9281 us/op
+WorkloadActual   2: 4096 op, 268117000.00 ns, 65.4583 us/op
+WorkloadActual   3: 4096 op, 198443900.00 ns, 48.4482 us/op
+
+// AfterActualRun
+WorkloadResult   1: 4096 op, 491225400.00 ns, 119.9281 us/op
+WorkloadResult   2: 4096 op, 268117000.00 ns, 65.4583 us/op
+WorkloadResult   3: 4096 op, 198443900.00 ns, 48.4482 us/op
+// GC:  12 0 0 100533352 4096
+// Threading:  0 0 4096
+
+// AfterAll
+// Benchmark Process 3292 has exited with code 0.
+
+Mean = 77.945 μs, StdErr = 21.558 μs (27.66%), N = 3, StdDev = 37.340 μs
+Min = 48.448 μs, Q1 = 56.953 μs, Median = 65.458 μs, Q3 = 92.693 μs, Max = 119.928 μs
+IQR = 35.740 μs, LowerFence = 3.343 μs, UpperFence = 146.303 μs
+ConfidenceInterval = [-603.277 μs; 759.166 μs] (CI 99.9%), Margin = 681.221 μs (873.98% of Mean)
+Skewness = 0.3, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 9 (45.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: FilmsControllerBenchmarks.GetFilmsBySearch: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1900 1896 --benchmarkName CinemaAPI.Benchmarks.FilmsControllerBenchmarks.GetFilmsBySearch --job ShortRun --benchmarkId 11 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 201400.00 ns, 201.4000 us/op
+WorkloadJitting  1: 1 op, 133750400.00 ns, 133.7504 ms/op
+
+WorkloadPilot    1: 2 op, 1663300.00 ns, 831.6500 us/op
+WorkloadPilot    2: 3 op, 644600.00 ns, 214.8667 us/op
+WorkloadPilot    3: 4 op, 588900.00 ns, 147.2250 us/op
+WorkloadPilot    4: 5 op, 693300.00 ns, 138.6600 us/op
+WorkloadPilot    5: 6 op, 1017800.00 ns, 169.6333 us/op
+WorkloadPilot    6: 7 op, 1196500.00 ns, 170.9286 us/op
+WorkloadPilot    7: 8 op, 1045900.00 ns, 130.7375 us/op
+WorkloadPilot    8: 9 op, 1187300.00 ns, 131.9222 us/op
+WorkloadPilot    9: 10 op, 1380300.00 ns, 138.0300 us/op
+WorkloadPilot   10: 11 op, 1476600.00 ns, 134.2364 us/op
+WorkloadPilot   11: 12 op, 1567600.00 ns, 130.6333 us/op
+WorkloadPilot   12: 13 op, 1687800.00 ns, 129.8308 us/op
+WorkloadPilot   13: 14 op, 1870300.00 ns, 133.5929 us/op
+WorkloadPilot   14: 15 op, 1954700.00 ns, 130.3133 us/op
+WorkloadPilot   15: 16 op, 2039100.00 ns, 127.4437 us/op
+WorkloadPilot   16: 32 op, 4293900.00 ns, 134.1844 us/op
+WorkloadPilot   17: 64 op, 8272700.00 ns, 129.2609 us/op
+WorkloadPilot   18: 128 op, 16836900.00 ns, 131.5383 us/op
+WorkloadPilot   19: 256 op, 47459900.00 ns, 185.3902 us/op
+WorkloadPilot   20: 512 op, 83125600.00 ns, 162.3547 us/op
+WorkloadPilot   21: 1024 op, 152112400.00 ns, 148.5473 us/op
+WorkloadPilot   22: 2048 op, 308639000.00 ns, 150.7026 us/op
+WorkloadPilot   23: 4096 op, 619607600.00 ns, 151.2714 us/op
+
+WorkloadWarmup   1: 4096 op, 591651200.00 ns, 144.4461 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 4096 op, 490368100.00 ns, 119.7188 us/op
+WorkloadActual   2: 4096 op, 213633300.00 ns, 52.1566 us/op
+WorkloadActual   3: 4096 op, 552285000.00 ns, 134.8352 us/op
+
+// AfterActualRun
+WorkloadResult   1: 4096 op, 490368100.00 ns, 119.7188 us/op
+WorkloadResult   2: 4096 op, 213633300.00 ns, 52.1566 us/op
+WorkloadResult   3: 4096 op, 552285000.00 ns, 134.8352 us/op
+// GC:  13 0 0 112103032 4096
+// Threading:  0 0 4096
+
+// AfterAll
+// Benchmark Process 3604 has exited with code 0.
+
+Mean = 102.237 μs, StdErr = 25.418 μs (24.86%), N = 3, StdDev = 44.024 μs
+Min = 52.157 μs, Q1 = 85.938 μs, Median = 119.719 μs, Q3 = 127.277 μs, Max = 134.835 μs
+IQR = 41.339 μs, LowerFence = 23.929 μs, UpperFence = 189.286 μs
+ConfidenceInterval = [-700.933 μs; 905.407 μs] (CI 99.9%), Margin = 803.170 μs (785.60% of Mean)
+Skewness = -0.33, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 8 (40.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: FilmsControllerBenchmarks.GetFilmById: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1536 1768 --benchmarkName CinemaAPI.Benchmarks.FilmsControllerBenchmarks.GetFilmById --job ShortRun --benchmarkId 12 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 202500.00 ns, 202.5000 us/op
+WorkloadJitting  1: 1 op, 135290800.00 ns, 135.2908 ms/op
+
+WorkloadPilot    1: 2 op, 1745000.00 ns, 872.5000 us/op
+WorkloadPilot    2: 3 op, 522000.00 ns, 174.0000 us/op
+WorkloadPilot    3: 4 op, 575100.00 ns, 143.7750 us/op
+WorkloadPilot    4: 5 op, 591700.00 ns, 118.3400 us/op
+WorkloadPilot    5: 6 op, 680700.00 ns, 113.4500 us/op
+WorkloadPilot    6: 7 op, 819000.00 ns, 117.0000 us/op
+WorkloadPilot    7: 8 op, 990200.00 ns, 123.7750 us/op
+WorkloadPilot    8: 9 op, 976600.00 ns, 108.5111 us/op
+WorkloadPilot    9: 10 op, 1083700.00 ns, 108.3700 us/op
+WorkloadPilot   10: 11 op, 1191200.00 ns, 108.2909 us/op
+WorkloadPilot   11: 12 op, 1320200.00 ns, 110.0167 us/op
+WorkloadPilot   12: 13 op, 1370500.00 ns, 105.4231 us/op
+WorkloadPilot   13: 14 op, 1466700.00 ns, 104.7643 us/op
+WorkloadPilot   14: 15 op, 1656600.00 ns, 110.4400 us/op
+WorkloadPilot   15: 16 op, 1670100.00 ns, 104.3812 us/op
+WorkloadPilot   16: 32 op, 3468100.00 ns, 108.3781 us/op
+WorkloadPilot   17: 64 op, 7198400.00 ns, 112.4750 us/op
+WorkloadPilot   18: 128 op, 14020300.00 ns, 109.5336 us/op
+WorkloadPilot   19: 256 op, 37609700.00 ns, 146.9129 us/op
+WorkloadPilot   20: 512 op, 80419400.00 ns, 157.0691 us/op
+WorkloadPilot   21: 1024 op, 141130400.00 ns, 137.8227 us/op
+WorkloadPilot   22: 2048 op, 253015800.00 ns, 123.5429 us/op
+WorkloadPilot   23: 4096 op, 543177900.00 ns, 132.6118 us/op
+
+WorkloadWarmup   1: 4096 op, 592323800.00 ns, 144.6103 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 4096 op, 416235900.00 ns, 101.6201 us/op
+WorkloadActual   2: 4096 op, 203762500.00 ns, 49.7467 us/op
+WorkloadActual   3: 4096 op, 160402700.00 ns, 39.1608 us/op
+
+// AfterActualRun
+WorkloadResult   1: 4096 op, 416235900.00 ns, 101.6201 us/op
+WorkloadResult   2: 4096 op, 203762500.00 ns, 49.7467 us/op
+WorkloadResult   3: 4096 op, 160402700.00 ns, 39.1608 us/op
+// GC:  9 0 0 82510944 4096
+// Threading:  0 0 4096
+
+// AfterAll
+// Benchmark Process 8056 has exited with code 0.
+
+Mean = 63.509 μs, StdErr = 19.299 μs (30.39%), N = 3, StdDev = 33.427 μs
+Min = 39.161 μs, Q1 = 44.454 μs, Median = 49.747 μs, Q3 = 75.683 μs, Max = 101.620 μs
+IQR = 31.230 μs, LowerFence = -2.391 μs, UpperFence = 122.528 μs
+ConfidenceInterval = [-546.318 μs; 673.337 μs] (CI 99.9%), Margin = 609.828 μs (960.22% of Mean)
+Skewness = 0.34, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 7 (35.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: FilmsControllerBenchmarks.GetAverageRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1536 1768 --benchmarkName CinemaAPI.Benchmarks.FilmsControllerBenchmarks.GetAverageRating --job ShortRun --benchmarkId 13 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 175700.00 ns, 175.7000 us/op
+WorkloadJitting  1: 1 op, 100125700.00 ns, 100.1257 ms/op
+
+WorkloadPilot    1: 2 op, 1624800.00 ns, 812.4000 us/op
+WorkloadPilot    2: 3 op, 252100.00 ns, 84.0333 us/op
+WorkloadPilot    3: 4 op, 331800.00 ns, 82.9500 us/op
+WorkloadPilot    4: 5 op, 279600.00 ns, 55.9200 us/op
+WorkloadPilot    5: 6 op, 367800.00 ns, 61.3000 us/op
+WorkloadPilot    6: 7 op, 380100.00 ns, 54.3000 us/op
+WorkloadPilot    7: 8 op, 428600.00 ns, 53.5750 us/op
+WorkloadPilot    8: 9 op, 439900.00 ns, 48.8778 us/op
+WorkloadPilot    9: 10 op, 486300.00 ns, 48.6300 us/op
+WorkloadPilot   10: 11 op, 588700.00 ns, 53.5182 us/op
+WorkloadPilot   11: 12 op, 598700.00 ns, 49.8917 us/op
+WorkloadPilot   12: 13 op, 611200.00 ns, 47.0154 us/op
+WorkloadPilot   13: 14 op, 661900.00 ns, 47.2786 us/op
+WorkloadPilot   14: 15 op, 768300.00 ns, 51.2200 us/op
+WorkloadPilot   15: 16 op, 767600.00 ns, 47.9750 us/op
+WorkloadPilot   16: 32 op, 1483000.00 ns, 46.3438 us/op
+WorkloadPilot   17: 64 op, 2972100.00 ns, 46.4391 us/op
+WorkloadPilot   18: 128 op, 5952300.00 ns, 46.5023 us/op
+WorkloadPilot   19: 256 op, 11587700.00 ns, 45.2645 us/op
+WorkloadPilot   20: 512 op, 23453800.00 ns, 45.8082 us/op
+WorkloadPilot   21: 1024 op, 56221500.00 ns, 54.9038 us/op
+WorkloadPilot   22: 2048 op, 108819600.00 ns, 53.1346 us/op
+WorkloadPilot   23: 4096 op, 202781600.00 ns, 49.5072 us/op
+WorkloadPilot   24: 8192 op, 424713100.00 ns, 51.8449 us/op
+WorkloadPilot   25: 16384 op, 732174300.00 ns, 44.6884 us/op
+
+WorkloadWarmup   1: 16384 op, 314307900.00 ns, 19.1838 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 16384 op, 191278300.00 ns, 11.6747 us/op
+WorkloadActual   2: 16384 op, 191623700.00 ns, 11.6958 us/op
+WorkloadActual   3: 16384 op, 192433000.00 ns, 11.7452 us/op
+
+// AfterActualRun
+WorkloadResult   1: 16384 op, 191278300.00 ns, 11.6747 us/op
+WorkloadResult   2: 16384 op, 191623700.00 ns, 11.6958 us/op
+WorkloadResult   3: 16384 op, 192433000.00 ns, 11.7452 us/op
+// GC:  14 0 0 118752352 16384
+// Threading:  0 0 16384
+
+// AfterAll
+// Benchmark Process 4396 has exited with code 0.
+
+Mean = 11.705 μs, StdErr = 0.021 μs (0.18%), N = 3, StdDev = 0.036 μs
+Min = 11.675 μs, Q1 = 11.685 μs, Median = 11.696 μs, Q3 = 11.720 μs, Max = 11.745 μs
+IQR = 0.035 μs, LowerFence = 11.632 μs, UpperFence = 11.773 μs
+ConfidenceInterval = [11.045 μs; 12.365 μs] (CI 99.9%), Margin = 0.660 μs (5.64% of Mean)
+Skewness = 0.24, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 6 (30.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 0m from now) **
+Successfully reverted power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// ***** BenchmarkRunner: Finish  *****
+
+// * Export *
+  BenchmarkDotNet.Artifacts\results\CinemaAPI.Benchmarks.FilmsControllerBenchmarks-report.csv
+  BenchmarkDotNet.Artifacts\results\CinemaAPI.Benchmarks.FilmsControllerBenchmarks-report-github.md
+  BenchmarkDotNet.Artifacts\results\CinemaAPI.Benchmarks.FilmsControllerBenchmarks-report.html
+  BenchmarkDotNet.Artifacts\results\CinemaAPI.Benchmarks.FilmsControllerBenchmarks-report-default.md
+
+// * Detailed results *
+FilmsControllerBenchmarks.GetAllFilms: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 127.410 μs, StdErr = 31.770 μs (24.93%), N = 3, StdDev = 55.026 μs
+Min = 68.446 μs, Q1 = 102.419 μs, Median = 136.392 μs, Q3 = 156.893 μs, Max = 177.393 μs
+IQR = 54.474 μs, LowerFence = 20.708 μs, UpperFence = 238.604 μs
+ConfidenceInterval = [-876.476 μs; 1,131.297 μs] (CI 99.9%), Margin = 1,003.886 μs (787.92% of Mean)
+Skewness = -0.16, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[ 18.370 μs ; 106.817 μs) | @
+[106.817 μs ; 206.969 μs) | @@
+---------------------------------------------------
+
+FilmsControllerBenchmarks.GetFilmsSortedByRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 67.084 μs, StdErr = 1.858 μs (2.77%), N = 3, StdDev = 3.219 μs
+Min = 64.083 μs, Q1 = 65.385 μs, Median = 66.688 μs, Q3 = 68.585 μs, Max = 70.483 μs
+IQR = 3.200 μs, LowerFence = 60.585 μs, UpperFence = 73.386 μs
+ConfidenceInterval = [8.364 μs; 125.804 μs] (CI 99.9%), Margin = 58.720 μs (87.53% of Mean)
+Skewness = 0.12, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[62.456 μs ; 68.314 μs) | @@
+[68.314 μs ; 73.412 μs) | @
+---------------------------------------------------
+
+FilmsControllerBenchmarks.GetFilmsSortedByRatingDesc: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 63.920 μs, StdErr = 0.205 μs (0.32%), N = 3, StdDev = 0.355 μs
+Min = 63.701 μs, Q1 = 63.715 μs, Median = 63.730 μs, Q3 = 64.030 μs, Max = 64.330 μs
+IQR = 0.315 μs, LowerFence = 63.243 μs, UpperFence = 64.502 μs
+ConfidenceInterval = [57.440 μs; 70.400 μs] (CI 99.9%), Margin = 6.480 μs (10.14% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[63.692 μs ; 64.339 μs) | @@@
+---------------------------------------------------
+
+FilmsControllerBenchmarks.GetFilmsByGenre: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 77.945 μs, StdErr = 21.558 μs (27.66%), N = 3, StdDev = 37.340 μs
+Min = 48.448 μs, Q1 = 56.953 μs, Median = 65.458 μs, Q3 = 92.693 μs, Max = 119.928 μs
+IQR = 35.740 μs, LowerFence = 3.343 μs, UpperFence = 146.303 μs
+ConfidenceInterval = [-603.277 μs; 759.166 μs] (CI 99.9%), Margin = 681.221 μs (873.98% of Mean)
+Skewness = 0.3, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[22.972 μs ;  90.934 μs) | @@
+[90.934 μs ; 153.909 μs) | @
+---------------------------------------------------
+
+FilmsControllerBenchmarks.GetFilmsBySearch: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 102.237 μs, StdErr = 25.418 μs (24.86%), N = 3, StdDev = 44.024 μs
+Min = 52.157 μs, Q1 = 85.938 μs, Median = 119.719 μs, Q3 = 127.277 μs, Max = 134.835 μs
+IQR = 41.339 μs, LowerFence = 23.929 μs, UpperFence = 189.286 μs
+ConfidenceInterval = [-700.933 μs; 905.407 μs] (CI 99.9%), Margin = 803.170 μs (785.60% of Mean)
+Skewness = -0.33, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[12.093 μs ;  87.213 μs) | @
+[87.213 μs ; 174.899 μs) | @@
+---------------------------------------------------
+
+FilmsControllerBenchmarks.GetFilmById: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 63.509 μs, StdErr = 19.299 μs (30.39%), N = 3, StdDev = 33.427 μs
+Min = 39.161 μs, Q1 = 44.454 μs, Median = 49.747 μs, Q3 = 75.683 μs, Max = 101.620 μs
+IQR = 31.230 μs, LowerFence = -2.391 μs, UpperFence = 122.528 μs
+ConfidenceInterval = [-546.318 μs; 673.337 μs] (CI 99.9%), Margin = 609.828 μs (960.22% of Mean)
+Skewness = 0.34, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[ 8.741 μs ;  74.873 μs) | @@
+[74.873 μs ; 132.040 μs) | @
+---------------------------------------------------
+
+FilmsControllerBenchmarks.GetAverageRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 11.705 μs, StdErr = 0.021 μs (0.18%), N = 3, StdDev = 0.036 μs
+Min = 11.675 μs, Q1 = 11.685 μs, Median = 11.696 μs, Q3 = 11.720 μs, Max = 11.745 μs
+IQR = 0.035 μs, LowerFence = 11.632 μs, UpperFence = 11.773 μs
+ConfidenceInterval = [11.045 μs; 12.365 μs] (CI 99.9%), Margin = 0.660 μs (5.64% of Mean)
+Skewness = 0.24, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[11.642 μs ; 11.778 μs) | @@@
+---------------------------------------------------
+
+// * Summary *
+
+BenchmarkDotNet v0.13.12, Windows 11 (10.0.22631.6199/23H2/2023Update/SunValley3)
+AMD Ryzen 5 5600H with Radeon Graphics, 1 CPU, 12 logical and 6 physical cores
+.NET SDK 10.0.103
+  [Host]   : .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+  ShortRun : .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+
+Job=ShortRun  IterationCount=3  LaunchCount=1  
+WarmupCount=1  
+
+| Method                     | Mean      | Error        | StdDev    | Median    | Gen0   | Allocated |
+|--------------------------- |----------:|-------------:|----------:|----------:|-------:|----------:|
+| GetAllFilms                | 127.41 μs | 1,003.886 μs | 55.026 μs | 136.39 μs | 3.4180 |  30.57 KB |
+| GetFilmsSortedByRating     |  67.08 μs |    58.720 μs |  3.219 μs |  66.69 μs | 4.3945 |  37.16 KB |
+| GetFilmsSortedByRatingDesc |  63.92 μs |     6.480 μs |  0.355 μs |  63.73 μs | 4.3945 |  37.16 KB |
+| GetFilmsByGenre            |  77.94 μs |   681.221 μs | 37.340 μs |  65.46 μs | 2.9297 |  23.97 KB |
+| GetFilmsBySearch           | 102.24 μs |   803.170 μs | 44.024 μs | 119.72 μs | 3.1738 |  26.73 KB |
+| GetFilmById                |  63.51 μs |   609.828 μs | 33.427 μs |  49.75 μs | 2.1973 |  19.67 KB |
+| GetAverageRating           |  11.71 μs |     0.660 μs |  0.036 μs |  11.70 μs | 0.8545 |   7.08 KB |
+// * Config Issues *
+
+// * Warnings *
+Configuration
+  Summary -> The exporter MarkdownExporter-github is already present in configuration. There may be unexpected results.
+  Summary -> The exporter HtmlExporter is already present in configuration. There may be unexpected results.
+  Summary -> The exporter HtmlExporter is already present in configuration. There may be unexpected results.
+
+// * Legends *
+  Mean      : Arithmetic mean of all measurements
+  Error     : Half of 99.9% confidence interval
+  StdDev    : Standard deviation of all measurements
+  Median    : Value separating the higher half of all measurements (50th percentile)
+  Gen0      : GC Generation 0 collects per 1000 operations
+  Allocated : Allocated memory per single operation (managed only, inclusive, 1KB = 1024B)
+  1 μs      : 1 Microsecond (0.000001 sec)
+
+// * Diagnostic Output - MemoryDiagnoser *
+
+
+// ***** BenchmarkRunner: End *****
+Run time: 00:00:26 (26.56 sec), executed benchmarks: 7
+
+// Found 6 benchmarks:
+//   RatingsControllerBenchmarks.GetAllRatings: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   RatingsControllerBenchmarks.GetRatingById: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   RatingsControllerBenchmarks.CreateRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   RatingsControllerBenchmarks.UpdateRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   RatingsControllerBenchmarks.DeleteRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+//   RatingsControllerBenchmarks.GetMyRatingForFilm: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: RatingsControllerBenchmarks.GetAllRatings: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1932 1924 --benchmarkName CinemaAPI.Benchmarks.RatingsControllerBenchmarks.GetAllRatings --job ShortRun --benchmarkId 14 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 203400.00 ns, 203.4000 us/op
+WorkloadJitting  1: 1 op, 118293300.00 ns, 118.2933 ms/op
+
+WorkloadPilot    1: 2 op, 1511600.00 ns, 755.8000 us/op
+WorkloadPilot    2: 3 op, 505900.00 ns, 168.6333 us/op
+WorkloadPilot    3: 4 op, 393500.00 ns, 98.3750 us/op
+WorkloadPilot    4: 5 op, 506100.00 ns, 101.2200 us/op
+WorkloadPilot    5: 6 op, 539200.00 ns, 89.8667 us/op
+WorkloadPilot    6: 7 op, 777900.00 ns, 111.1286 us/op
+WorkloadPilot    7: 8 op, 719800.00 ns, 89.9750 us/op
+WorkloadPilot    8: 9 op, 805100.00 ns, 89.4556 us/op
+WorkloadPilot    9: 10 op, 898600.00 ns, 89.8600 us/op
+WorkloadPilot   10: 11 op, 1113200.00 ns, 101.2000 us/op
+WorkloadPilot   11: 12 op, 1037100.00 ns, 86.4250 us/op
+WorkloadPilot   12: 13 op, 1116000.00 ns, 85.8462 us/op
+WorkloadPilot   13: 14 op, 1284500.00 ns, 91.7500 us/op
+WorkloadPilot   14: 15 op, 1287400.00 ns, 85.8267 us/op
+WorkloadPilot   15: 16 op, 1361700.00 ns, 85.1063 us/op
+WorkloadPilot   16: 32 op, 2932900.00 ns, 91.6531 us/op
+WorkloadPilot   17: 64 op, 5724200.00 ns, 89.4406 us/op
+WorkloadPilot   18: 128 op, 11627100.00 ns, 90.8367 us/op
+WorkloadPilot   19: 256 op, 22332800.00 ns, 87.2375 us/op
+WorkloadPilot   20: 512 op, 53490500.00 ns, 104.4736 us/op
+WorkloadPilot   21: 1024 op, 108461100.00 ns, 105.9190 us/op
+WorkloadPilot   22: 2048 op, 457963500.00 ns, 223.6150 us/op
+WorkloadPilot   23: 4096 op, 440574100.00 ns, 107.5620 us/op
+WorkloadPilot   24: 8192 op, 557548200.00 ns, 68.0601 us/op
+
+WorkloadWarmup   1: 8192 op, 281708900.00 ns, 34.3883 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 8192 op, 284382700.00 ns, 34.7147 us/op
+WorkloadActual   2: 8192 op, 289504900.00 ns, 35.3400 us/op
+WorkloadActual   3: 8192 op, 287389900.00 ns, 35.0818 us/op
+
+// AfterActualRun
+WorkloadResult   1: 8192 op, 284382700.00 ns, 34.7147 us/op
+WorkloadResult   2: 8192 op, 289504900.00 ns, 35.3400 us/op
+WorkloadResult   3: 8192 op, 287389900.00 ns, 35.0818 us/op
+// GC:  30 0 0 256115376 8192
+// Threading:  0 0 8192
+
+// AfterAll
+// Benchmark Process 5012 has exited with code 0.
+
+Mean = 35.045 μs, StdErr = 0.181 μs (0.52%), N = 3, StdDev = 0.314 μs
+Min = 34.715 μs, Q1 = 34.898 μs, Median = 35.082 μs, Q3 = 35.211 μs, Max = 35.340 μs
+IQR = 0.313 μs, LowerFence = 34.429 μs, UpperFence = 35.680 μs
+ConfidenceInterval = [29.313 μs; 40.778 μs] (CI 99.9%), Margin = 5.732 μs (16.36% of Mean)
+Skewness = -0.11, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 5 (25.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: RatingsControllerBenchmarks.GetRatingById: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1904 1332 --benchmarkName CinemaAPI.Benchmarks.RatingsControllerBenchmarks.GetRatingById --job ShortRun --benchmarkId 15 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 216600.00 ns, 216.6000 us/op
+WorkloadJitting  1: 1 op, 125363500.00 ns, 125.3635 ms/op
+
+WorkloadPilot    1: 2 op, 1809600.00 ns, 904.8000 us/op
+WorkloadPilot    2: 3 op, 400300.00 ns, 133.4333 us/op
+WorkloadPilot    3: 4 op, 403800.00 ns, 100.9500 us/op
+WorkloadPilot    4: 5 op, 470200.00 ns, 94.0400 us/op
+WorkloadPilot    5: 6 op, 619600.00 ns, 103.2667 us/op
+WorkloadPilot    6: 7 op, 680100.00 ns, 97.1571 us/op
+WorkloadPilot    7: 8 op, 726200.00 ns, 90.7750 us/op
+WorkloadPilot    8: 9 op, 793100.00 ns, 88.1222 us/op
+WorkloadPilot    9: 10 op, 955000.00 ns, 95.5000 us/op
+WorkloadPilot   10: 11 op, 1057400.00 ns, 96.1273 us/op
+WorkloadPilot   11: 12 op, 1032300.00 ns, 86.0250 us/op
+WorkloadPilot   12: 13 op, 1129700.00 ns, 86.9000 us/op
+WorkloadPilot   13: 14 op, 6670300.00 ns, 476.4500 us/op
+WorkloadPilot   14: 15 op, 1300100.00 ns, 86.6733 us/op
+WorkloadPilot   15: 16 op, 1544200.00 ns, 96.5125 us/op
+WorkloadPilot   16: 32 op, 2811900.00 ns, 87.8719 us/op
+WorkloadPilot   17: 64 op, 5658200.00 ns, 88.4094 us/op
+WorkloadPilot   18: 128 op, 11289300.00 ns, 88.1977 us/op
+WorkloadPilot   19: 256 op, 22231400.00 ns, 86.8414 us/op
+WorkloadPilot   20: 512 op, 64698500.00 ns, 126.3643 us/op
+WorkloadPilot   21: 1024 op, 114392700.00 ns, 111.7116 us/op
+WorkloadPilot   22: 2048 op, 204325000.00 ns, 99.7681 us/op
+WorkloadPilot   23: 4096 op, 407085300.00 ns, 99.3861 us/op
+WorkloadPilot   24: 8192 op, 844857600.00 ns, 103.1320 us/op
+
+WorkloadWarmup   1: 8192 op, 397706300.00 ns, 48.5481 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 8192 op, 257350800.00 ns, 31.4149 us/op
+WorkloadActual   2: 8192 op, 326660800.00 ns, 39.8756 us/op
+WorkloadActual   3: 8192 op, 253448200.00 ns, 30.9385 us/op
+
+// AfterActualRun
+WorkloadResult   1: 8192 op, 257350800.00 ns, 31.4149 us/op
+WorkloadResult   2: 8192 op, 326660800.00 ns, 39.8756 us/op
+WorkloadResult   3: 8192 op, 253448200.00 ns, 30.9385 us/op
+// GC:  16 0 0 136709216 8192
+// Threading:  0 0 8192
+
+// AfterAll
+// Benchmark Process 18352 has exited with code 0.
+
+Mean = 34.076 μs, StdErr = 2.903 μs (8.52%), N = 3, StdDev = 5.028 μs
+Min = 30.939 μs, Q1 = 31.177 μs, Median = 31.415 μs, Q3 = 35.645 μs, Max = 39.876 μs
+IQR = 4.469 μs, LowerFence = 24.474 μs, UpperFence = 42.348 μs
+ConfidenceInterval = [-57.652 μs; 125.805 μs] (CI 99.9%), Margin = 91.729 μs (269.19% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 4 (20.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: RatingsControllerBenchmarks.CreateRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1840 1844 --benchmarkName CinemaAPI.Benchmarks.RatingsControllerBenchmarks.CreateRating --job ShortRun --benchmarkId 16 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 199700.00 ns, 199.7000 us/op
+
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation.
+ ---> System.NullReferenceException: Object reference not set to an instance of an object.
+   at CinemaAPI.Controllers.RatingsController.GetCurrentUserId() in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI\Controllers\RatingsController.cs:line 160
+   at CinemaAPI.Controllers.RatingsController.PostRating(RatingCreateDto dto) in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI\Controllers\RatingsController.cs:line 75
+   at CinemaAPI.Benchmarks.RatingsControllerBenchmarks.CreateRating() in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\RatingsControllerBenchmarks.cs:line 142
+   at BenchmarkDotNet.Autogenerated.Runnable_16.<.ctor>b__3_2() in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\91d970e8-1438-43f2-84b4-13629031750f.notcs:line 3411
+   at BenchmarkDotNet.Autogenerated.Runnable_16.WorkloadActionNoUnroll(Int64 invokeCount) in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\91d970e8-1438-43f2-84b4-13629031750f.notcs:line 3527
+   at BenchmarkDotNet.Engines.Engine.RunIteration(IterationData data)
+   at BenchmarkDotNet.Engines.EngineFactory.Jit(Engine engine, Int32 jitIndex, Int32 invokeCount, Int32 unrollFactor)
+   at BenchmarkDotNet.Engines.EngineFactory.CreateReadyToRun(EngineParameters engineParameters)
+   at BenchmarkDotNet.Autogenerated.Runnable_16.Run(IHost host, String benchmarkName) in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\91d970e8-1438-43f2-84b4-13629031750f.notcs:line 3390
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   --- End of inner exception stack trace ---
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at BenchmarkDotNet.Autogenerated.UniqueProgramName.AfterAssemblyLoadingAttached(String[] args) in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\91d970e8-1438-43f2-84b4-13629031750f.notcs:line 57
+// AfterAll
+No Workload Results were obtained from the run.
+// Benchmark Process 14240 has exited with code -1.
+
+// ** Remained 3 (15.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: RatingsControllerBenchmarks.UpdateRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1928 1688 --benchmarkName CinemaAPI.Benchmarks.RatingsControllerBenchmarks.UpdateRating --job ShortRun --benchmarkId 17 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 187200.00 ns, 187.2000 us/op
+WorkloadJitting  1: 1 op, 11421600.00 ns, 11.4216 ms/op
+
+OverheadJitting  2: 16 op, 365600.00 ns, 22.8500 us/op
+WorkloadJitting  2: 16 op, 2275600.00 ns, 142.2250 us/op
+
+WorkloadPilot    1: 16 op, 1869100.00 ns, 116.8187 us/op
+WorkloadPilot    2: 32 op, 3690900.00 ns, 115.3406 us/op
+WorkloadPilot    3: 64 op, 6691900.00 ns, 104.5609 us/op
+WorkloadPilot    4: 128 op, 13598200.00 ns, 106.2359 us/op
+WorkloadPilot    5: 256 op, 27676300.00 ns, 108.1105 us/op
+WorkloadPilot    6: 512 op, 56850700.00 ns, 111.0365 us/op
+WorkloadPilot    7: 1024 op, 108947200.00 ns, 106.3937 us/op
+WorkloadPilot    8: 2048 op, 323793200.00 ns, 158.1021 us/op
+WorkloadPilot    9: 4096 op, 79293800.00 ns, 19.3588 us/op
+WorkloadPilot   10: 8192 op, 167871800.00 ns, 20.4922 us/op
+WorkloadPilot   11: 16384 op, 301098800.00 ns, 18.3776 us/op
+WorkloadPilot   12: 32768 op, 596245000.00 ns, 18.1960 us/op
+
+OverheadWarmup   1: 32768 op, 69200.00 ns, 2.1118 ns/op
+OverheadWarmup   2: 32768 op, 67800.00 ns, 2.0691 ns/op
+OverheadWarmup   3: 32768 op, 69400.00 ns, 2.1179 ns/op
+OverheadWarmup   4: 32768 op, 62200.00 ns, 1.8982 ns/op
+OverheadWarmup   5: 32768 op, 68600.00 ns, 2.0935 ns/op
+OverheadWarmup   6: 32768 op, 68200.00 ns, 2.0813 ns/op
+
+OverheadActual   1: 32768 op, 68700.00 ns, 2.0966 ns/op
+OverheadActual   2: 32768 op, 60200.00 ns, 1.8372 ns/op
+OverheadActual   3: 32768 op, 68100.00 ns, 2.0782 ns/op
+OverheadActual   4: 32768 op, 60900.00 ns, 1.8585 ns/op
+OverheadActual   5: 32768 op, 68500.00 ns, 2.0905 ns/op
+OverheadActual   6: 32768 op, 59800.00 ns, 1.8250 ns/op
+OverheadActual   7: 32768 op, 67300.00 ns, 2.0538 ns/op
+OverheadActual   8: 32768 op, 59800.00 ns, 1.8250 ns/op
+OverheadActual   9: 32768 op, 67900.00 ns, 2.0721 ns/op
+OverheadActual  10: 32768 op, 65700.00 ns, 2.0050 ns/op
+OverheadActual  11: 32768 op, 67400.00 ns, 2.0569 ns/op
+OverheadActual  12: 32768 op, 59600.00 ns, 1.8188 ns/op
+OverheadActual  13: 32768 op, 67500.00 ns, 2.0599 ns/op
+OverheadActual  14: 32768 op, 67300.00 ns, 2.0538 ns/op
+OverheadActual  15: 32768 op, 68500.00 ns, 2.0905 ns/op
+OverheadActual  16: 32768 op, 60000.00 ns, 1.8311 ns/op
+OverheadActual  17: 32768 op, 67700.00 ns, 2.0660 ns/op
+OverheadActual  18: 32768 op, 60200.00 ns, 1.8372 ns/op
+OverheadActual  19: 32768 op, 69200.00 ns, 2.1118 ns/op
+OverheadActual  20: 32768 op, 63500.00 ns, 1.9379 ns/op
+
+WorkloadWarmup   1: 32768 op, 599031100.00 ns, 18.2810 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 32768 op, 603775900.00 ns, 18.4258 us/op
+WorkloadActual   2: 32768 op, 590561000.00 ns, 18.0225 us/op
+WorkloadActual   3: 32768 op, 584613500.00 ns, 17.8410 us/op
+
+// AfterActualRun
+WorkloadResult   1: 32768 op, 603708600.00 ns, 18.4237 us/op
+WorkloadResult   2: 32768 op, 590493700.00 ns, 18.0204 us/op
+WorkloadResult   3: 32768 op, 584546200.00 ns, 17.8389 us/op
+// GC:  67 0 0 564658864 32768
+// Threading:  0 0 32768
+
+// AfterAll
+// Benchmark Process 7524 has exited with code 0.
+
+Mean = 18.094 μs, StdErr = 0.173 μs (0.96%), N = 3, StdDev = 0.299 μs
+Min = 17.839 μs, Q1 = 17.930 μs, Median = 18.020 μs, Q3 = 18.222 μs, Max = 18.424 μs
+IQR = 0.292 μs, LowerFence = 17.491 μs, UpperFence = 18.661 μs
+ConfidenceInterval = [12.634 μs; 23.555 μs] (CI 99.9%), Margin = 5.461 μs (30.18% of Mean)
+Skewness = 0.23, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 2 (10.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: RatingsControllerBenchmarks.DeleteRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1500 1860 --benchmarkName CinemaAPI.Benchmarks.RatingsControllerBenchmarks.DeleteRating --job ShortRun --benchmarkId 18 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 192000.00 ns, 192.0000 us/op
+WorkloadJitting  1: 1 op, 15133900.00 ns, 15.1339 ms/op
+
+OverheadJitting  2: 16 op, 324000.00 ns, 20.2500 us/op
+WorkloadJitting  2: 16 op, 100855200.00 ns, 6.3034 ms/op
+
+WorkloadPilot    1: 16 op, 1333000.00 ns, 83.3125 us/op
+WorkloadPilot    2: 32 op, 2661900.00 ns, 83.1844 us/op
+WorkloadPilot    3: 64 op, 5058200.00 ns, 79.0344 us/op
+WorkloadPilot    4: 128 op, 9992800.00 ns, 78.0687 us/op
+WorkloadPilot    5: 256 op, 19972600.00 ns, 78.0180 us/op
+WorkloadPilot    6: 512 op, 63746700.00 ns, 124.5053 us/op
+WorkloadPilot    7: 1024 op, 98519100.00 ns, 96.2101 us/op
+WorkloadPilot    8: 2048 op, 196792400.00 ns, 96.0900 us/op
+WorkloadPilot    9: 4096 op, 346291700.00 ns, 84.5439 us/op
+WorkloadPilot   10: 8192 op, 707684300.00 ns, 86.3872 us/op
+
+OverheadWarmup   1: 8192 op, 16800.00 ns, 2.0508 ns/op
+OverheadWarmup   2: 8192 op, 15000.00 ns, 1.8311 ns/op
+OverheadWarmup   3: 8192 op, 15500.00 ns, 1.8921 ns/op
+OverheadWarmup   4: 8192 op, 15700.00 ns, 1.9165 ns/op
+OverheadWarmup   5: 8192 op, 15200.00 ns, 1.8555 ns/op
+OverheadWarmup   6: 8192 op, 15000.00 ns, 1.8311 ns/op
+OverheadWarmup   7: 8192 op, 14900.00 ns, 1.8188 ns/op
+OverheadWarmup   8: 8192 op, 15100.00 ns, 1.8433 ns/op
+OverheadWarmup   9: 8192 op, 17500.00 ns, 2.1362 ns/op
+OverheadWarmup  10: 8192 op, 15100.00 ns, 1.8433 ns/op
+
+OverheadActual   1: 8192 op, 15200.00 ns, 1.8555 ns/op
+OverheadActual   2: 8192 op, 15000.00 ns, 1.8311 ns/op
+OverheadActual   3: 8192 op, 20400.00 ns, 2.4902 ns/op
+OverheadActual   4: 8192 op, 15100.00 ns, 1.8433 ns/op
+OverheadActual   5: 8192 op, 15200.00 ns, 1.8555 ns/op
+OverheadActual   6: 8192 op, 15100.00 ns, 1.8433 ns/op
+OverheadActual   7: 8192 op, 17000.00 ns, 2.0752 ns/op
+OverheadActual   8: 8192 op, 15100.00 ns, 1.8433 ns/op
+OverheadActual   9: 8192 op, 15100.00 ns, 1.8433 ns/op
+OverheadActual  10: 8192 op, 15100.00 ns, 1.8433 ns/op
+OverheadActual  11: 8192 op, 18800.00 ns, 2.2949 ns/op
+OverheadActual  12: 8192 op, 15100.00 ns, 1.8433 ns/op
+OverheadActual  13: 8192 op, 15100.00 ns, 1.8433 ns/op
+OverheadActual  14: 8192 op, 24600.00 ns, 3.0029 ns/op
+OverheadActual  15: 8192 op, 16300.00 ns, 1.9897 ns/op
+OverheadActual  16: 8192 op, 15000.00 ns, 1.8311 ns/op
+OverheadActual  17: 8192 op, 15700.00 ns, 1.9165 ns/op
+
+WorkloadWarmup   1: 8192 op, 676040000.00 ns, 82.5244 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 8192 op, 386294800.00 ns, 47.1551 us/op
+WorkloadActual   2: 8192 op, 217920600.00 ns, 26.6016 us/op
+WorkloadActual   3: 8192 op, 202238000.00 ns, 24.6873 us/op
+
+// AfterActualRun
+WorkloadResult   1: 8192 op, 386279700.00 ns, 47.1533 us/op
+WorkloadResult   2: 8192 op, 217905500.00 ns, 26.5998 us/op
+WorkloadResult   3: 8192 op, 202222900.00 ns, 24.6854 us/op
+// GC:  9 0 0 77728704 8192
+// Threading:  0 0 8192
+
+// AfterAll
+// Benchmark Process 16544 has exited with code 0.
+
+Mean = 32.813 μs, StdErr = 7.191 μs (21.92%), N = 3, StdDev = 12.456 μs
+Min = 24.685 μs, Q1 = 25.643 μs, Median = 26.600 μs, Q3 = 36.877 μs, Max = 47.153 μs
+IQR = 11.234 μs, LowerFence = 8.792 μs, UpperFence = 53.727 μs
+ConfidenceInterval = [-194.432 μs; 260.057 μs] (CI 99.9%), Margin = 227.244 μs (692.55% of Mean)
+Skewness = 0.37, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 1 (5.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: RatingsControllerBenchmarks.GetMyRatingForFilm: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 91d970e8-1438-43f2-84b4-13629031750f.dll --anonymousPipes 1952 1572 --benchmarkName CinemaAPI.Benchmarks.RatingsControllerBenchmarks.GetMyRatingForFilm --job ShortRun --benchmarkId 19 in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.13.12
+// Runtime=.NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+OverheadJitting  1: 1 op, 179100.00 ns, 179.1000 us/op
+
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation.
+ ---> System.NullReferenceException: Object reference not set to an instance of an object.
+   at CinemaAPI.Controllers.RatingsController.GetCurrentUserId() in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI\Controllers\RatingsController.cs:line 160
+   at CinemaAPI.Controllers.RatingsController.GetMyRatingForFilm(Int32 filmId) in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI\Controllers\RatingsController.cs:line 141
+   at CinemaAPI.Benchmarks.RatingsControllerBenchmarks.GetMyRatingForFilm() in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\RatingsControllerBenchmarks.cs:line 167
+   at BenchmarkDotNet.Autogenerated.Runnable_19.<.ctor>b__3_2() in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\91d970e8-1438-43f2-84b4-13629031750f.notcs:line 4011
+   at BenchmarkDotNet.Autogenerated.Runnable_19.WorkloadActionNoUnroll(Int64 invokeCount) in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\91d970e8-1438-43f2-84b4-13629031750f.notcs:line 4127
+   at BenchmarkDotNet.Engines.Engine.RunIteration(IterationData data)
+   at BenchmarkDotNet.Engines.EngineFactory.Jit(Engine engine, Int32 jitIndex, Int32 invokeCount, Int32 unrollFactor)
+   at BenchmarkDotNet.Engines.EngineFactory.CreateReadyToRun(EngineParameters engineParameters)
+   at BenchmarkDotNet.Autogenerated.Runnable_19.Run(IHost host, String benchmarkName) in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\91d970e8-1438-43f2-84b4-13629031750f.notcs:line 3990
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   --- End of inner exception stack trace ---
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at BenchmarkDotNet.Autogenerated.UniqueProgramName.AfterAssemblyLoadingAttached(String[] args) in C:\directory-git\ktits-repository-4\CinemaProject\CinemaAPI.Benchmarks\bin\Release\net8.0\91d970e8-1438-43f2-84b4-13629031750f\91d970e8-1438-43f2-84b4-13629031750f.notcs:line 57
+// AfterAll
+No Workload Results were obtained from the run.
+// Benchmark Process 6912 has exited with code -1.
+
+// ** Remained 0 (0.0%) benchmark(s) to run. Estimated finish 2026-03-31 12:04 (0h 0m from now) **
+Successfully reverted power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// ***** BenchmarkRunner: Finish  *****
+
+// * Export *
+  BenchmarkDotNet.Artifacts\results\CinemaAPI.Benchmarks.RatingsControllerBenchmarks-report.csv
+  BenchmarkDotNet.Artifacts\results\CinemaAPI.Benchmarks.RatingsControllerBenchmarks-report-github.md
+  BenchmarkDotNet.Artifacts\results\CinemaAPI.Benchmarks.RatingsControllerBenchmarks-report.html
+  BenchmarkDotNet.Artifacts\results\CinemaAPI.Benchmarks.RatingsControllerBenchmarks-report-default.md
+
+// * Detailed results *
+RatingsControllerBenchmarks.GetAllRatings: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 35.045 μs, StdErr = 0.181 μs (0.52%), N = 3, StdDev = 0.314 μs
+Min = 34.715 μs, Q1 = 34.898 μs, Median = 35.082 μs, Q3 = 35.211 μs, Max = 35.340 μs
+IQR = 0.313 μs, LowerFence = 34.429 μs, UpperFence = 35.680 μs
+ConfidenceInterval = [29.313 μs; 40.778 μs] (CI 99.9%), Margin = 5.732 μs (16.36% of Mean)
+Skewness = -0.11, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[34.429 μs ; 35.563 μs) | @@@
+---------------------------------------------------
+
+RatingsControllerBenchmarks.GetRatingById: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 34.076 μs, StdErr = 2.903 μs (8.52%), N = 3, StdDev = 5.028 μs
+Min = 30.939 μs, Q1 = 31.177 μs, Median = 31.415 μs, Q3 = 35.645 μs, Max = 39.876 μs
+IQR = 4.469 μs, LowerFence = 24.474 μs, UpperFence = 42.348 μs
+ConfidenceInterval = [-57.652 μs; 125.805 μs] (CI 99.9%), Margin = 91.729 μs (269.19% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[30.831 μs ; 39.983 μs) | @@@
+---------------------------------------------------
+
+RatingsControllerBenchmarks.CreateRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+There are not any results runs
+
+RatingsControllerBenchmarks.UpdateRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 18.094 μs, StdErr = 0.173 μs (0.96%), N = 3, StdDev = 0.299 μs
+Min = 17.839 μs, Q1 = 17.930 μs, Median = 18.020 μs, Q3 = 18.222 μs, Max = 18.424 μs
+IQR = 0.292 μs, LowerFence = 17.491 μs, UpperFence = 18.661 μs
+ConfidenceInterval = [12.634 μs; 23.555 μs] (CI 99.9%), Margin = 5.461 μs (30.18% of Mean)
+Skewness = 0.23, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[17.657 μs ; 18.202 μs) | @@
+[18.202 μs ; 18.696 μs) | @
+---------------------------------------------------
+
+RatingsControllerBenchmarks.DeleteRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 32.813 μs, StdErr = 7.191 μs (21.92%), N = 3, StdDev = 12.456 μs
+Min = 24.685 μs, Q1 = 25.643 μs, Median = 26.600 μs, Q3 = 36.877 μs, Max = 47.153 μs
+IQR = 11.234 μs, LowerFence = 8.792 μs, UpperFence = 53.727 μs
+ConfidenceInterval = [-194.432 μs; 260.057 μs] (CI 99.9%), Margin = 227.244 μs (692.55% of Mean)
+Skewness = 0.37, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[24.584 μs ; 47.255 μs) | @@@
+---------------------------------------------------
+
+RatingsControllerBenchmarks.GetMyRatingForFilm: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+Runtime = .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2; GC = Concurrent Workstation
+There are not any results runs
+
+// * Summary *
+
+BenchmarkDotNet v0.13.12, Windows 11 (10.0.22631.6199/23H2/2023Update/SunValley3)
+AMD Ryzen 5 5600H with Radeon Graphics, 1 CPU, 12 logical and 6 physical cores
+.NET SDK 10.0.103
+  [Host]   : .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+  ShortRun : .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+
+Job=ShortRun  IterationCount=3  LaunchCount=1  
+WarmupCount=1  
+
+| Method             | Mean     | Error      | StdDev    | Gen0   | Allocated |
+|------------------- |---------:|-----------:|----------:|-------:|----------:|
+| GetAllRatings      | 35.05 μs |   5.732 μs |  0.314 μs | 3.6621 |  30.53 KB |
+| GetRatingById      | 34.08 μs |  91.729 μs |  5.028 μs | 1.9531 |   16.3 KB |
+| CreateRating       |       NA |         NA |        NA |     NA |        NA |
+| UpdateRating       | 18.09 μs |   5.461 μs |  0.299 μs | 2.0447 |  16.83 KB |
+| DeleteRating       | 32.81 μs | 227.244 μs | 12.456 μs | 1.0986 |   9.27 KB |
+| GetMyRatingForFilm |       NA |         NA |        NA |     NA |        NA |
+
+Benchmarks with issues:
+  RatingsControllerBenchmarks.CreateRating: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+  RatingsControllerBenchmarks.GetMyRatingForFilm: ShortRun(IterationCount=3, LaunchCount=1, WarmupCount=1)
+
+// * Warnings *
+Environment
+  Summary -> Detected error exit code from one of the benchmarks. It might be caused by following antivirus software:
+        - Windows Defender (windowsdefender://)
+Use InProcessEmitToolchain or InProcessNoEmitToolchain to avoid new process creation.
+
+// * Config Issues *
+
+// * Warnings *
+Configuration
+  Summary -> The exporter MarkdownExporter-github is already present in configuration. There may be unexpected results.
+  Summary -> The exporter HtmlExporter is already present in configuration. There may be unexpected results.
+  Summary -> The exporter HtmlExporter is already present in configuration. There may be unexpected results.
+
+// * Legends *
+  Mean      : Arithmetic mean of all measurements
+  Error     : Half of 99.9% confidence interval
+  StdDev    : Standard deviation of all measurements
+  Gen0      : GC Generation 0 collects per 1000 operations
+  Allocated : Allocated memory per single operation (managed only, inclusive, 1KB = 1024B)
+  1 μs      : 1 Microsecond (0.000001 sec)
+
+// * Diagnostic Output - MemoryDiagnoser *
+
+
+// ***** BenchmarkRunner: End *****
+Run time: 00:00:18 (18.73 sec), executed benchmarks: 6
+
+Global total time: 00:01:36 (96.07 sec), executed benchmarks: 20
+// * Artifacts cleanup *
+Artifacts cleanup is finished
