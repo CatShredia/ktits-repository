@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Variant8Statistics.Tests/">
+    <Project Path="Variant8Statistics.Tests/Statistics.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Variant8Statistics/">
+    <Project Path="Variant8Statistics/Statistics.csproj" />
+  </Folder>
+</Solution>
