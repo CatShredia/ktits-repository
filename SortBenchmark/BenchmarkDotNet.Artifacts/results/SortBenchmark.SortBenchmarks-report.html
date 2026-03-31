@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>SortBenchmark.SortBenchmarks-20260331-180356</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.13.12, Windows 11 (10.0.22631.6199/23H2/2023Update/SunValley3)
+AMD Ryzen 5 5600H with Radeon Graphics, 1 CPU, 12 logical and 6 physical cores
+.NET SDK 8.0.418
+  [Host]     : .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.24 (8.0.2426.7010), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method     </th><th>Mean   </th><th>Error </th><th>StdDev</th><th>Gen0</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>ArraySort1_Large</td><td>7,450.49 ns</td><td>106.007 ns</td><td>93.973 ns</td><td>0.4730</td><td>4056 B</td>
+</tr><tr><td>ArraySort2_Large</td><td>454,877.12 ns</td><td>8,418.931 ns</td><td>7,875.073 ns</td><td>-</td><td>4056 B</td>
+</tr><tr><td>ArraySort3_Large</td><td>13,907.10 ns</td><td>80.526 ns</td><td>75.324 ns</td><td>0.4730</td><td>4056 B</td>
+</tr><tr><td>ArraySort4_Large</td><td>23,532.81 ns</td><td>192.756 ns</td><td>180.304 ns</td><td>0.9460</td><td>8080 B</td>
+</tr><tr><td>ArraySort1_Medium</td><td>442.95 ns</td><td>6.595 ns</td><td>5.846 ns</td><td>0.0544</td><td>456 B</td>
+</tr><tr><td>ArraySort2_Medium</td><td>4,698.94 ns</td><td>50.524 ns</td><td>47.260 ns</td><td>0.0534</td><td>456 B</td>
+</tr><tr><td>ArraySort3_Medium</td><td>755.00 ns</td><td>14.792 ns</td><td>13.837 ns</td><td>0.0544</td><td>456 B</td>
+</tr><tr><td>ArraySort4_Medium</td><td>1,766.50 ns</td><td>23.552 ns</td><td>19.667 ns</td><td>0.1049</td><td>880 B</td>
+</tr><tr><td>ArraySort1_Small</td><td>46.33 ns</td><td>0.671 ns</td><td>0.628 ns</td><td>0.0114</td><td>96 B</td>
+</tr><tr><td>ArraySort2_Small</td><td>72.25 ns</td><td>0.741 ns</td><td>0.693 ns</td><td>0.0114</td><td>96 B</td>
+</tr><tr><td>ArraySort3_Small</td><td>72.56 ns</td><td>1.351 ns</td><td>1.264 ns</td><td>0.0114</td><td>96 B</td>
+</tr><tr><td>ArraySort4_Small</td><td>140.82 ns</td><td>2.640 ns</td><td>2.340 ns</td><td>0.0191</td><td>160 B</td>
+</tr></tbody></table>
+</body>
+</html>
