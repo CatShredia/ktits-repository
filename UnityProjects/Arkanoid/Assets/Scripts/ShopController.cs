@@ -259,8 +259,6 @@ public class ShopController : MonoBehaviour
             Destroy(child.gameObject);
 
         currentSkin = allSkins[currentIndex];
-        Debug.Log($"[ShopController] Showing skin #{currentIndex}: Id={currentSkin.Id}, Name={currentSkin.Name}, Type={currentSkin.SkinType}");
-
         isCurrentSkinOwned = userInventory?.Skins?.Any(s => s.SkinId == currentSkin.Id) ?? false;
         isCurrentSkinEquipped = userInventory?.Skins?.Any(s => s.SkinId == currentSkin.Id && s.IsEquipped) ?? false;
 
