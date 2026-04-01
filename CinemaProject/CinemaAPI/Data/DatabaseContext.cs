@@ -16,6 +16,7 @@ public class DatabaseContext : DbContext
     public DbSet<Login> Logins { get; set; } = null!;
     public DbSet<Role> Roles { get; set; } = null!;
     public DbSet<ChatMessage> ChatMessages { get; set; } = null!;
+    public DbSet<Chat> Chats { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -87,14 +88,32 @@ public class DatabaseContext : DbContext
                   .HasForeignKey(e => e.SenderId)
                   .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasOne(e => e.Receiver)
-                  .WithMany()
-                  .HasForeignKey(e => e.ReceiverId)
-                  .OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(e => e.Chat)
+                  .WithMany(c => c.Messages)
+                  .HasForeignKey(e => e.ChatId)
+                  .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasIndex(e => e.SenderId);
-            entity.HasIndex(e => e.ReceiverId);
+            entity.HasIndex(e => e.ChatId);
             entity.HasIndex(e => e.CreatedAt);
+        });
+
+        modelBuilder.Entity<Chat>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired();
+            entity.Property(e => e.IsGeneral).HasDefaultValue(false);
+
+            entity.HasIndex(e => e.IsGeneral).IsUnique();
+
+            entity.HasOne(e => e.User1)
+                  .WithMany()
+                  .HasForeignKey(e => e.User1Id)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.User2)
+                  .WithMany()
+                  .HasForeignKey(e => e.User2Id)
+                  .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

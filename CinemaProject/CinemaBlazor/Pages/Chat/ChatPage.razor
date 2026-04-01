@@ -3,171 +3,133 @@
 @using CinemaBlazor.Services
 @inject IChatService ChatService
 @inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 @implements IDisposable
 
 <div class="chat-container">
-    <div class="chat-box">
-        <h2>Чат</h2>
+    <div class="chat-header">
+        <h2>Общий чат</h2>
+    </div>
 
-        @if (!isAuthenticated)
-        {
-            <div class="not-authenticated">
-                <p>Для доступа к чату необходимо войти в систему</p>
-            </div>
-        }
-        else if (currentUser == null)
-        {
-            <div class="loading">Загрузка...</div>
-        }
-        else
-        {
-            <div class="status">
-                Статус: @(ChatService.IsConnected ? "✅ Подключен" : "❌ Не подключен")
-                <span class="current-user">Вы: @currentUser.FullName</span>
-            </div>
+    @if (!isAuthenticated)
+    {
+        <div class="not-authenticated">
+            <p>Для доступа к чату необходимо войти в систему</p>
+            <a href="/login" class="btn btn-primary">Войти</a>
+        </div>
+    }
+    else if (currentUser == null)
+    {
+        <div class="loading">Загрузка...</div>
+    }
+    else if (generalChat == null)
+    {
+        <div class="loading">Загрузка общего чата...</div>
+    }
+    else
+    {
+        <div class="status">
+            Статус: @(ChatService.IsConnected ? "✅ Подключен" : "❌ Не подключен")
+            <span class="current-user">Вы: @currentUser.FullName</span>
+            <a href="/chats" class="btn btn-sm btn-outline-secondary ms-3">Личные чаты</a>
+        </div>
 
-            <div class="search-group">
-                <label>Поиск пользователя по логину:</label>
-                <input @bind="searchQuery" @bind:event="oninput" placeholder="Введите логин для поиска"
-                       @onkeyup="SearchUsers" />
-            </div>
-
-            @if (searchResults.Count > 0)
+        <div class="messages-list">
+            @if (ChatService.Messages.Count == 0)
             {
-                <div class="search-results">
-                    @foreach (var user in searchResults)
-                    {
-                        <div class="search-result-item @(selectedContact?.Id == user.Id ? "selected" : "")"
-                             @onclick="() => SelectUser(user)">
-                            <div class="user-info">
-                                <strong>@user.FullName</strong>
-                                <span class="user-login">@user.Login</span>
-                            </div>
-                        </div>
-                    }
+                <div class="no-messages">
+                    Пока нет сообщений. Будьте первыми!
                 </div>
             }
-
-            <div class="input-group">
-                <label>Сообщение:</label>
-                <input @bind="message"
-                       placeholder="@(selectedContact != null ? $"Сообщение для {selectedContact.FullName}" : "Выберите пользователя для отправки сообщения")"
-                       @onkeypress="OnEnterPress" disabled="@(selectedContact == null)" />
-                <button @onclick="SendMessage"
-                        disabled="@(string.IsNullOrEmpty(message) || selectedContact == null || !ChatService.IsConnected)">
-                    Отправить
-                </button>
-            </div>
-
-            <div class="messages-list">
-                <h3>Сообщения @(selectedContact != null ? $"с {selectedContact.FullName}" : "")
-                    (@ChatService.Messages.Count):</h3>
-                    <div class="messages-container">
-                        @if (ChatService.Messages.Count == 0)
-                        {
-                            <div class="no-messages">
-                                @(selectedContact != null
-                                    ? "Нет сообщений с этим пользователем. Напишите первое сообщение!"
-                                    : "Выберите пользователя для просмотра истории сообщений")
-                            </div>
-                        }
-                        else
-                        {
-                            @foreach (var msg in ChatService.Messages)
+            else
+            {
+                @foreach (var msg in ChatService.Messages)
+                {
+                    var isOwnMessage = msg.SenderName == currentUser?.FullName;
+                    <div class="message-item @(isOwnMessage ? "own-message" : "")">
+                        <div class="message-header">
+                            <strong class="sender-name">@msg.SenderName</strong>
+                            <span class="message-time">@msg.CreatedAt.ToString("HH:mm:ss")</span>
+                            @if (msg.IsRead && isOwnMessage)
                             {
-                                var isOwnMessage = msg.SenderName == currentUser?.FullName;
-                                <div class="message-item @(isOwnMessage ? "own-message" : "")">
-                                    <div class="message-header">
-                                        <strong class="from-user">@msg.SenderName</strong>
-                                        <span class="arrow">→</span>
-                                        <strong class="to-user">@(msg.ReceiverName ?? "Все")</strong>
-                                        <span class="time">@msg.CreatedAt.ToString("HH:mm:ss")</span>
-                                        @if (msg.IsRead && isOwnMessage)
-                                        {
-                                            <span class="read-badge">✓</span>
-                                        }
-                                    </div>
-                                    <div class="message-text">@msg.Message</div>
-                                </div>
+                                <span class="read-badge" title="Прочитано">✓</span>
                             }
-                        }
+                        </div>
+                        <div class="message-text">@msg.Message</div>
                     </div>
-                </div>
+                }
             }
         </div>
-    </div>
+
+        <div class="message-input">
+            <input @bind="message"
+                   @bind:event="oninput"
+                   @onkeypress="OnEnterPress"
+                   placeholder="Введите сообщение..."
+                   disabled="@(ChatService.IsConnected == false)" />
+            <button @onclick="SendMessage"
+                    disabled="@(string.IsNullOrEmpty(message) || ChatService.IsConnected == false)">
+                Отправить
+            </button>
+        </div>
+    }
+</div>
 
 @code {
     private CurrentUser? currentUser;
+    private Chat? generalChat;
     private string message = "";
-    private UserSearchResult? selectedContact = null;
-    private string searchQuery = "";
-    private List<UserSearchResult> searchResults = new();
     private bool isAuthenticated = false;
-    private System.Timers.Timer? _debounceTimer;
 
     protected override async Task OnInitializedAsync()
     {
         isAuthenticated = await AuthService.IsAuthenticatedAsync();
-        
+
         if (isAuthenticated)
         {
-            ChatService.OnUserListUpdate = StateHasChanged;
             ChatService.OnMessageReceived = StateHasChanged;
             ChatService.OnHistoryLoaded = StateHasChanged;
+            ChatService.OnChatsUpdate = StateHasChanged;
 
             await ChatService.Connect();
             currentUser = await ChatService.GetCurrentUserAsync();
-            
+
             if (currentUser != null)
             {
                 await ChatService.Register();
+                
+                // Сначала получаем общий чат для установки GeneralChatId
+                generalChat = await ChatService.GetGeneralChat();
+                
+                if (generalChat != null)
+                {
+                    // Подписываемся на общий чат
+                    await ChatService.JoinGeneralChat();
+                    
+                    // Загружаем историю
+                    await ChatService.LoadHistory(generalChat.Id);
+                    await ChatService.MarkMessagesAsRead(generalChat.Id);
+                }
             }
         }
     }
 
-    private async Task SearchUsers()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (_debounceTimer != null)
+        // Автоскролл к последнему сообщению
+        try
         {
-            _debounceTimer.Stop();
-            _debounceTimer.Dispose();
+            await JS.InvokeVoidAsync("eval", "setTimeout(() => { var el = document.querySelector('.messages-list'); if(el) el.scrollTop = el.scrollHeight; }, 100);");
         }
-
-        _debounceTimer = new System.Timers.Timer(300);
-        _debounceTimer.Elapsed += async (s, e) =>
-        {
-            if (_debounceTimer != null)
-            {
-                _debounceTimer.Stop();
-                searchResults = await ChatService.SearchUsersAsync(searchQuery);
-                await InvokeAsync(StateHasChanged);
-            }
-        };
-        _debounceTimer.AutoReset = false;
-        _debounceTimer.Start();
-    }
-
-    private async Task SelectUser(UserSearchResult user)
-    {
-        selectedContact = user;
-        ChatService.SelectContact(user);
-        searchResults.Clear();
-        searchQuery = "";
-        
-        if (currentUser != null)
-        {
-            await ChatService.LoadHistory(currentUser.Id, selectedContact.Id);
-        }
-        
-        StateHasChanged();
+        catch { }
     }
 
     private async Task SendMessage()
     {
-        if (!string.IsNullOrEmpty(message) && selectedContact != null && currentUser != null && ChatService.IsConnected)
+        if (!string.IsNullOrEmpty(message) && generalChat != null && ChatService.IsConnected)
         {
-            await ChatService.SendMessage(selectedContact.Id, message);
+            await ChatService.SendMessageToChat(generalChat.Id, message);
             message = "";
             StateHasChanged();
         }
@@ -183,10 +145,9 @@
 
     public void Dispose()
     {
-        ChatService.OnUserListUpdate = null;
         ChatService.OnMessageReceived = null;
         ChatService.OnHistoryLoaded = null;
-        _debounceTimer?.Dispose();
+        ChatService.OnChatsUpdate = null;
         _ = ChatService.Disconnect();
     }
 }

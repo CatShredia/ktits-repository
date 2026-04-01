@@ -108,6 +108,28 @@ builder.Services.AddScoped<IImageService, ImageService>();
 
 var app = builder.Build();
 
+// Инициализация общего чата
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+    
+    if (!dbContext.Chats.Any(c => c.IsGeneral))
+    {
+        dbContext.Chats.Add(new CinemaAPI.Models.Chat
+        {
+            Name = "Общий чат",
+            IsGeneral = true,
+            CreatedAt = DateTime.Now
+        });
+        await dbContext.SaveChangesAsync();
+        Console.WriteLine("[Program] General chat created successfully");
+    }
+    else
+    {
+        Console.WriteLine("[Program] General chat already exists");
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

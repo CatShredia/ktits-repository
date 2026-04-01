@@ -10,6 +10,7 @@ namespace TestSignalR320.Hubs
     {
         private readonly DatabaseContext _dbContext;
         private static readonly Dictionary<int, string> _userConnections = new Dictionary<int, string>();
+        private static readonly HashSet<int> _generalChatSubscribers = new HashSet<int>();
 
         public ChatHub(DatabaseContext dbContext)
         {
@@ -18,7 +19,6 @@ namespace TestSignalR320.Hubs
 
         private int? GetCurrentUserId()
         {
-            // Сначала пробуем из Claims (если авторизация работает через заголовки)
             var userIdClaim = Context.User?.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
             {
@@ -26,7 +26,6 @@ namespace TestSignalR320.Hubs
                 return userId;
             }
 
-            // Пробуем получить токен из query string
             var token = Context.GetHttpContext()?.Request.Query["access_token"];
             Console.WriteLine($"[ChatHub] Token from query: {(string.IsNullOrEmpty(token) ? "NULL" : "Present")}");
 
@@ -71,7 +70,6 @@ namespace TestSignalR320.Hubs
                     Console.WriteLine($"[ChatHub] Added connection for userId {userId.Value}: {Context.ConnectionId}");
                 }
 
-                // Получаем список онлайн пользователей из памяти, т.к. Dictionary.ContainsKey не транслируется в SQL
                 var onlineUserIds = _userConnections.Keys.ToList();
                 var onlineUsers = await _dbContext.Users
                     .Where(u => onlineUserIds.Contains(u.Id))
@@ -80,6 +78,14 @@ namespace TestSignalR320.Hubs
 
                 Console.WriteLine($"[ChatHub] Sending UpdateUsers with {onlineUsers.Count} users");
                 await Clients.Caller.SendAsync("UpdateUsers", onlineUsers.Select(u => $"{u.Name} {u.Surname}").ToList());
+
+                // Подписка на общий чат
+                _generalChatSubscribers.Add(userId.Value);
+                var generalChat = await _dbContext.Chats.FirstOrDefaultAsync(c => c.IsGeneral);
+                if (generalChat != null)
+                {
+                    await Clients.Caller.SendAsync("JoinedGeneralChat", generalChat.Id);
+                }
             }
             else
             {
@@ -88,33 +94,98 @@ namespace TestSignalR320.Hubs
             }
         }
 
-        public async Task SendMessage(int receiverId, string message)
+        public async Task SendMessageToChat(int chatId, string message)
         {
             var senderId = GetCurrentUserId();
-            if (senderId.HasValue)
+            if (!senderId.HasValue)
             {
-                var sender = await _dbContext.Users.FindAsync(senderId.Value);
-                var receiver = await _dbContext.Users.FindAsync(receiverId);
+                throw new HubException("User not authenticated");
+            }
 
-                if (sender != null)
+            var chat = await _dbContext.Chats
+                .Include(c => c.User1)
+                .Include(c => c.User2)
+                .FirstOrDefaultAsync(c => c.Id == chatId);
+
+            if (chat == null)
+            {
+                throw new HubException("Chat not found");
+            }
+
+            // Проверка доступа к чату
+            if (!chat.IsGeneral && chat.User1Id != senderId.Value && chat.User2Id != senderId.Value)
+            {
+                throw new HubException("No access to this chat");
+            }
+
+            var sender = await _dbContext.Users.FindAsync(senderId.Value);
+            if (sender == null)
+            {
+                throw new HubException("Sender not found");
+            }
+
+            var chatMessage = new ChatMessage
+            {
+                SenderId = senderId.Value,
+                ChatId = chatId,
+                Message = message,
+                CreatedAt = DateTime.Now,
+                IsRead = false
+            };
+
+            _dbContext.ChatMessages.Add(chatMessage);
+            await _dbContext.SaveChangesAsync();
+
+            var senderName = $"{sender.Name} {sender.Surname}";
+
+            if (chat.IsGeneral)
+            {
+                // Отправка всем подписчикам общего чата
+                var subscriberConnectionIds = _generalChatSubscribers
+                    .Where(uid => _userConnections.ContainsKey(uid))
+                    .Select(uid => _userConnections[uid])
+                    .ToList();
+                
+                foreach (var connectionId in subscriberConnectionIds)
                 {
-                    var chatMessage = new ChatMessage
-                    {
-                        SenderId = senderId.Value,
-                        ReceiverId = receiverId,
-                        Message = message,
-                        CreatedAt = DateTime.Now,
-                        IsRead = false
-                    };
-
-                    _dbContext.ChatMessages.Add(chatMessage);
-                    await _dbContext.SaveChangesAsync();
-
-                    var senderName = $"{sender.Name} {sender.Surname}";
-                    var receiverName = receiver != null ? $"{receiver.Name} {receiver.Surname}" : null;
-
-                    await Clients.All.SendAsync("NewMessage", senderName, receiverName, message, chatMessage.CreatedAt);
+                    await Clients.Client(connectionId).SendAsync("NewMessage", chatId, senderName, message, chatMessage.CreatedAt, chatMessage.Id);
                 }
+            }
+            else
+            {
+                // Отправка участникам личного чата
+                var recipientIds = new List<int> { chat.User1Id ?? 0, chat.User2Id ?? 0 }
+                    .Where(id => id != 0 && _userConnections.ContainsKey(id))
+                    .Select(id => _userConnections[id])
+                    .ToList();
+
+                if (recipientIds.Any())
+                {
+                    await Clients.Clients(recipientIds).SendAsync("NewMessage", chatId, senderName, message, chatMessage.CreatedAt, chatMessage.Id);
+                }
+            }
+        }
+
+        public async Task JoinGeneralChat()
+        {
+            var userId = GetCurrentUserId();
+            if (userId.HasValue)
+            {
+                _generalChatSubscribers.Add(userId.Value);
+                var generalChat = await _dbContext.Chats.FirstOrDefaultAsync(c => c.IsGeneral);
+                if (generalChat != null)
+                {
+                    await Clients.Caller.SendAsync("JoinedGeneralChat", generalChat.Id);
+                }
+            }
+        }
+
+        public async Task LeaveGeneralChat()
+        {
+            var userId = GetCurrentUserId();
+            if (userId.HasValue)
+            {
+                _generalChatSubscribers.Remove(userId.Value);
             }
         }
 
@@ -124,9 +195,10 @@ namespace TestSignalR320.Hubs
 
             if (connectionToRemove.Key != 0)
             {
-                _userConnections.Remove(connectionToRemove.Key);
+                var userId = connectionToRemove.Key;
+                _userConnections.Remove(userId);
+                _generalChatSubscribers.Remove(userId);
 
-                // Получаем список онлайн пользователей из памяти
                 var onlineUserIds = _userConnections.Keys.ToList();
                 var onlineUsers = await _dbContext.Users
                     .Where(u => onlineUserIds.Contains(u.Id))

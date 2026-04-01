@@ -1,4 +1,4 @@
-namespace CinemaAPI.Models.Chat;
+namespace CinemaAPI.Models.ChatModels;
 
 public class UserSearchResultDto
 {

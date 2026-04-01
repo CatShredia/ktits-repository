@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.SignalR.Client;
+﻿using Microsoft.AspNetCore.SignalR.Client;
 using System.Net.Http.Json;
 using CinemaBlazor.Services;
 
@@ -10,11 +9,24 @@ namespace CinemaBlazor.ApiRequests
         public int Id { get; set; }
         public int SenderId { get; set; }
         public string SenderName { get; set; } = string.Empty;
-        public int? ReceiverId { get; set; }
-        public string? ReceiverName { get; set; }
+        public int ChatId { get; set; }
         public string Message { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public bool IsRead { get; set; }
+    }
+
+    public class Chat
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public bool IsGeneral { get; set; }
+        public int? User1Id { get; set; }
+        public string? User1Name { get; set; }
+        public int? User2Id { get; set; }
+        public string? User2Name { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public int UnreadCount { get; set; }
+        public ChatMessage? LastMessage { get; set; }
     }
 
     public class OnlineUser
@@ -41,26 +53,39 @@ namespace CinemaBlazor.ApiRequests
         public string FullName { get; set; } = string.Empty;
     }
 
+    public class SendMessageRequest
+    {
+        public int ChatId { get; set; }
+        public string Message { get; set; } = string.Empty;
+    }
+
     public interface IChatService
     {
         List<string> Users { get; }
         List<ChatMessage> Messages { get; }
+        List<Chat> Chats { get; }
         Action OnUserListUpdate { get; set; }
         Action OnMessageReceived { get; set; }
         Action OnHistoryLoaded { get; set; }
+        Action OnChatsUpdate { get; set; }
         bool IsConnected { get; }
         CurrentUser? CurrentUser { get; }
-        UserSearchResult? SelectedContact { get; }
+        Chat? SelectedChat { get; }
+        int? GeneralChatId { get; }
 
         Task Connect();
         Task Register();
-        Task SendMessage(int receiverId, string message);
-        Task LoadHistory(int currentUserId, int? contactId);
-        Task MarkMessagesAsRead(int currentUserId, int contactId);
+        Task SendMessageToChat(int chatId, string message);
+        Task LoadHistory(int chatId);
+        Task LoadChats();
+        Task MarkMessagesAsRead(int chatId);
         Task Disconnect();
         Task<CurrentUser?> GetCurrentUserAsync();
         Task<List<UserSearchResult>> SearchUsersAsync(string query);
-        void SelectContact(UserSearchResult? contact);
+        Task<Chat?> CreateOrGetPersonalChat(int userId);
+        Task<Chat?> GetGeneralChat();
+        void SelectChat(Chat? chat);
+        Task JoinGeneralChat();
     }
 
     public class ChatService : IChatService
@@ -70,11 +95,14 @@ namespace CinemaBlazor.ApiRequests
         private HubConnection _hubConnection;
         public List<string> Users { get; private set; } = new List<string>();
         public List<ChatMessage> Messages { get; private set; } = new List<ChatMessage>();
+        public List<Chat> Chats { get; private set; } = new List<Chat>();
         public Action OnUserListUpdate { get; set; }
         public Action OnMessageReceived { get; set; }
         public Action OnHistoryLoaded { get; set; }
+        public Action OnChatsUpdate { get; set; }
         public CurrentUser? CurrentUser { get; private set; }
-        public UserSearchResult? SelectedContact { get; private set; }
+        public Chat? SelectedChat { get; private set; }
+        public int? GeneralChatId { get; private set; }
 
         public ChatService(HttpClient httpClient, IAuthService authService)
         {
@@ -99,21 +127,34 @@ namespace CinemaBlazor.ApiRequests
                 OnUserListUpdate?.Invoke();
             });
 
-            _hubConnection.On<string, string, string, DateTime>("NewMessage", async (fromUser, toUser, message, timestamp) =>
+            _hubConnection.On<int, string, string, DateTime, int>("NewMessage", (chatId, fromUser, message, timestamp, messageId) =>
             {
-                Messages.Add(new ChatMessage
+                var newMessage = new ChatMessage
                 {
+                    Id = messageId,
+                    ChatId = chatId,
                     SenderName = fromUser,
-                    ReceiverName = toUser,
                     Message = message,
-                    CreatedAt = timestamp
-                });
-                OnMessageReceived?.Invoke();
+                    CreatedAt = timestamp,
+                    IsRead = false
+                };
 
-                if (CurrentUser != null && fromUser != $"{CurrentUser.Name} {CurrentUser.Surname}")
+                // Если сообщение в выбранном чате или в общем чате, добавляем в список
+                if ((SelectedChat != null && SelectedChat.Id == chatId) || 
+                    (GeneralChatId.HasValue && GeneralChatId.Value == chatId))
                 {
-                    await MarkMessagesAsRead(CurrentUser.Id, SelectedContact?.Id ?? 0);
+                    Messages.Add(newMessage);
+                    OnMessageReceived?.Invoke();
                 }
+
+                // Обновляем список чатов
+                _ = LoadChats();
+            });
+
+            _hubConnection.On<int>("JoinedGeneralChat", (generalChatId) =>
+            {
+                GeneralChatId = generalChatId;
+                Console.WriteLine($"[ChatService] Joined general chat with ID: {generalChatId}");
             });
 
             _hubConnection.Closed += async (error) =>
@@ -147,39 +188,41 @@ namespace CinemaBlazor.ApiRequests
             }
         }
 
-        public async Task SendMessage(int receiverId, string message)
+        public async Task JoinGeneralChat()
         {
-            Console.WriteLine($"[ChatService] SendMessage called: receiverId={receiverId}, message={message}, State={_hubConnection?.State}");
+            if (_hubConnection?.State == HubConnectionState.Connected)
+            {
+                await _hubConnection.InvokeAsync("JoinGeneralChat");
+            }
+        }
+
+        public async Task SendMessageToChat(int chatId, string message)
+        {
+            Console.WriteLine($"[ChatService] SendMessageToChat called: chatId={chatId}, message={message}, State={_hubConnection?.State}");
 
             if (_hubConnection?.State == HubConnectionState.Connected)
             {
                 try
                 {
-                    await _hubConnection.InvokeAsync("SendMessage", receiverId, message);
-                    Console.WriteLine($"[ChatService] SendMessage succeeded");
+                    await _hubConnection.InvokeAsync("SendMessageToChat", chatId, message);
+                    Console.WriteLine($"[ChatService] SendMessageToChat succeeded");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[ChatService] SendMessage error: {ex.Message}");
+                    Console.WriteLine($"[ChatService] SendMessageToChat error: {ex.Message}");
                 }
             }
             else
             {
-                Console.WriteLine($"[ChatService] SendMessage failed - not connected. State: {_hubConnection?.State}");
+                Console.WriteLine($"[ChatService] SendMessageToChat failed - not connected. State: {_hubConnection?.State}");
             }
         }
 
-        public async Task LoadHistory(int currentUserId, int? contactId)
+        public async Task LoadHistory(int chatId)
         {
             try
             {
-                var queryParams = $"currentUserId={currentUserId}";
-                if (contactId.HasValue)
-                {
-                    queryParams += $"&contactId={contactId.Value}";
-                }
-
-                var response = await _httpClient.GetAsync($"api/chat/history?{queryParams}");
+                var response = await _httpClient.GetAsync($"api/chat/chats/{chatId}/messages");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -197,12 +240,73 @@ namespace CinemaBlazor.ApiRequests
             }
         }
 
-        public async Task MarkMessagesAsRead(int currentUserId, int contactId)
+        public async Task LoadChats()
         {
             try
             {
-                var queryParams = $"currentUserId={currentUserId}&contactId={contactId}";
-                await _httpClient.PostAsync($"api/chat/mark-read?{queryParams}", null);
+                var response = await _httpClient.GetAsync("api/chat/chats");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var chats = await response.Content.ReadFromJsonAsync<List<Chat>>();
+                    if (chats != null)
+                    {
+                        Chats = chats;
+                        OnChatsUpdate?.Invoke();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading chats: {ex.Message}");
+            }
+        }
+
+        public async Task<Chat?> GetGeneralChat()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("api/chat/chats/general");
+                if (response.IsSuccessStatusCode)
+                {
+                    var chat = await response.Content.ReadFromJsonAsync<Chat>();
+                    if (chat != null)
+                    {
+                        GeneralChatId = chat.Id;
+                    }
+                    return chat;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting general chat: {ex.Message}");
+            }
+            return null;
+        }
+
+        public async Task<Chat?> CreateOrGetPersonalChat(int userId)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsync($"api/chat/chats/personal/{userId}", null);
+                if (response.IsSuccessStatusCode)
+                {
+                    var chat = await response.Content.ReadFromJsonAsync<Chat>();
+                    return chat;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creating personal chat: {ex.Message}");
+            }
+            return null;
+        }
+
+        public async Task MarkMessagesAsRead(int chatId)
+        {
+            try
+            {
+                await _httpClient.PostAsync($"api/chat/chats/{chatId}/mark-read", null);
             }
             catch (Exception ex)
             {
@@ -214,6 +318,7 @@ namespace CinemaBlazor.ApiRequests
         {
             if (_hubConnection?.State == HubConnectionState.Connected)
             {
+                await _hubConnection.InvokeAsync("LeaveGeneralChat");
                 await _hubConnection.StopAsync();
                 await _hubConnection.DisposeAsync();
             }
@@ -260,9 +365,9 @@ namespace CinemaBlazor.ApiRequests
             return new List<UserSearchResult>();
         }
 
-        public void SelectContact(UserSearchResult? contact)
+        public void SelectChat(Chat? chat)
         {
-            SelectedContact = contact;
+            SelectedChat = chat;
         }
 
         public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
