@@ -9,9 +9,9 @@ using System.Text;
 
 namespace CinemaAPI.Controllers;
 
-/// <summary>
-/// Контроллер для управления пользователями (только для администраторов)
-/// </summary>
+
+// Контроллер для управления пользователями (только для администраторов)
+
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Roles = "admin")]

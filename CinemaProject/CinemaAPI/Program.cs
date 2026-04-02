@@ -1,4 +1,5 @@
 using CinemaAPI.Data;
+using CinemaAPI.Hubs;
 using CinemaAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -104,6 +105,9 @@ builder.Services.AddSwaggerGen(c =>
 // Регистрация сервиса для работы с изображениями
 builder.Services.AddScoped<IImageService, ImageService>();
 
+// Регистрация SignalR
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -127,5 +131,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// SignalR hub endpoint
+app.MapHub<ChatHub>("/chathub");
 
 app.Run();

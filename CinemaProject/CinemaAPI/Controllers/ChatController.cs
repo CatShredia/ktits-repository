@@ -1,25 +1,33 @@
 using CinemaAPI.Data;
+using CinemaAPI.Hubs;
 using CinemaAPI.Models;
 using CinemaAPI.Models.Chat;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CinemaAPI.Controllers;
 
-/// <summary>
-/// Контроллер для управления чатами и сообщениями
-/// </summary>
+
+// Контроллер для управления чатами и сообщениями
+
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
 public class ChatController : ControllerBase
 {
     private readonly DatabaseContext _context;
+    private readonly IHubContext<ChatHub, IChatClient> _hubContext;
+    private readonly ILogger<ChatController> _logger;
 
-    public ChatController(DatabaseContext context)
+    public ChatController(DatabaseContext context,
+        IHubContext<ChatHub, IChatClient> hubContext,
+        ILogger<ChatController> logger)
     {
         _context = context;
+        _hubContext = hubContext;
+        _logger = logger;
     }
 
     // ! GetCurrentUser
@@ -266,7 +274,7 @@ public class ChatController : ControllerBase
     }
 
     // ! SendConversationMessage
-    // Создаёт сообщение в чате и возвращает его (MessageDto)
+    // Создаёт сообщение в чате и возвращает его (MessageDto), отправляет через SignalR
     [HttpPost("conversations/{conversationId}/messages")]
     public async Task<ActionResult<MessageDto>> SendConversationMessage(int conversationId, [FromBody] SendMessageDto dto)
     {
@@ -314,7 +322,7 @@ public class ChatController : ControllerBase
             return NotFound("Failed to create message");
         }
 
-        return new MessageDto
+        var messageDto = new MessageDto
         {
             Id = createdMessage.Id,
             ConversationId = createdMessage.ConversationId,
@@ -324,6 +332,24 @@ public class ChatController : ControllerBase
             CreatedAt = createdMessage.CreatedAt,
             UpdatedAt = createdMessage.UpdatedAt
         };
+
+        // Отправка сообщения через SignalR всем участникам чата
+        await _hubContext.Clients.Group(GetConversationGroupName(conversationId))
+            .ReceiveMessage(new MessageResponse
+            {
+                Id = messageDto.Id,
+                ConversationId = messageDto.ConversationId,
+                SenderId = messageDto.SenderId,
+                SenderName = messageDto.SenderName,
+                Content = messageDto.Content,
+                CreatedAt = messageDto.CreatedAt,
+                UpdatedAt = messageDto.UpdatedAt
+            });
+
+        _logger.LogInformation("User {UserId} sent message {MessageId} to conversation {ConversationId}",
+            currentUserId, messageDto.Id, conversationId);
+
+        return messageDto;
     }
 
     #region Helper Methods
@@ -337,6 +363,12 @@ public class ChatController : ControllerBase
             return userId;
         }
         return null;
+    }
+
+    // ! Получение имени группы SignalR для чата
+    private string GetConversationGroupName(int conversationId)
+    {
+        return $"conversation_{conversationId}";
     }
 
     // ! Поиск существующего Direct чата между двумя пользователями
