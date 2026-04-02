@@ -173,14 +173,21 @@ public class ChatController : ControllerBase
             return NotFound($"Users with IDs {string.Join(", ", missingUsers)} not found");
         }
 
-        // Если только один участник + автор = Direct чат
-        var isDirect = dto.ParticipantIds.Count == 1 && !dto.ParticipantIds.Contains(currentUserId);
+        // Минимальное количество участников - 2 (автор + хотя бы 1 пользователь)
+        if (allParticipantIds.Count < 2)
+        {
+            return BadRequest("At least one other participant is required");
+        }
+
+        // Если всего 2 участника (автор + 1 пользователь) = Direct чат, иначе Group
+        var isDirect = allParticipantIds.Count == 2;
         var conversationType = isDirect ? ConversationType.Direct : ConversationType.Group;
 
         // Для Direct чата проверяем существующий чат между теми же пользователями
         if (isDirect)
         {
-            var existingDirect = await FindExistingDirectChat(currentUserId, dto.ParticipantIds[0]);
+            var otherUserId = allParticipantIds.First(id => id != currentUserId);
+            var existingDirect = await FindExistingDirectChat(currentUserId, otherUserId);
             if (existingDirect != null)
             {
                 return Ok(await MapConversationToDto(existingDirect));
