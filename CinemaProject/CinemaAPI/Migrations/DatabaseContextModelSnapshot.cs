@@ -267,7 +267,7 @@ namespace CinemaAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("CinemaAPI.Models.User", "User")
-                        .WithMany()
+                        .WithMany("ConversationParticipants")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -314,7 +314,7 @@ namespace CinemaAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("CinemaAPI.Models.User", "Sender")
-                        .WithMany()
+                        .WithMany("Messages")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -371,9 +371,13 @@ namespace CinemaAPI.Migrations
 
             modelBuilder.Entity("CinemaAPI.Models.User", b =>
                 {
+                    b.Navigation("ConversationParticipants");
+
                     b.Navigation("Films");
 
                     b.Navigation("Login");
+
+                    b.Navigation("Messages");
 
                     b.Navigation("Ratings");
                 });

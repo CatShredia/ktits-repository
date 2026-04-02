@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CinemaAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20260402125512_InitialChatRelations")]
+    [Migration("20260402132724_InitialChatRelations")]
     partial class InitialChatRelations
     {
         /// <inheritdoc />
@@ -270,7 +270,7 @@ namespace CinemaAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("CinemaAPI.Models.User", "User")
-                        .WithMany()
+                        .WithMany("ConversationParticipants")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -317,7 +317,7 @@ namespace CinemaAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("CinemaAPI.Models.User", "Sender")
-                        .WithMany()
+                        .WithMany("Messages")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -374,9 +374,13 @@ namespace CinemaAPI.Migrations
 
             modelBuilder.Entity("CinemaAPI.Models.User", b =>
                 {
+                    b.Navigation("ConversationParticipants");
+
                     b.Navigation("Films");
 
                     b.Navigation("Login");
+
+                    b.Navigation("Messages");
 
                     b.Navigation("Ratings");
                 });

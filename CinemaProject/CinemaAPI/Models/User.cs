@@ -15,4 +15,6 @@ public class User
     public Login? Login { get; set; }
     public ICollection<Film>? Films { get; set; }
     public ICollection<Rating>? Ratings { get; set; }
+    public ICollection<ConversationParticipant>? ConversationParticipants { get; set; }
+    public ICollection<Message>? Messages { get; set; }
 }

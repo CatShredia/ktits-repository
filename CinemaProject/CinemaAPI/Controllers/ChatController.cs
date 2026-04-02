@@ -1,0 +1,391 @@
+using CinemaAPI.Data;
+using CinemaAPI.Models;
+using CinemaAPI.Models.Chat;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace CinemaAPI.Controllers;
+
+/// <summary>
+/// Контроллер для управления чатами и сообщениями
+/// </summary>
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+public class ChatController : ControllerBase
+{
+    private readonly DatabaseContext _context;
+
+    public ChatController(DatabaseContext context)
+    {
+        _context = context;
+    }
+
+    // ! GetCurrentUser
+    // Возвращает данные авторизованного пользователя (UserChatDto)
+    [HttpGet("me")]
+    public async Task<ActionResult<UserChatDto>> GetCurrentUser()
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var user = await _context.Users
+            .Include(u => u.Login)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        return new UserChatDto
+        {
+            Id = user.Id,
+            Login = user.Login?.LoginValue ?? string.Empty,
+            Name = user.Name,
+            Surname = user.Surname,
+            FullName = $"{user.Surname} {user.Name}"
+        };
+    }
+
+    // ! SearchUser
+    // Возвращает найденного пользователя по логину (UserChatDto) или 404
+    [HttpGet("search")]
+    public async Task<ActionResult<UserChatDto>> SearchUser([FromQuery] string login)
+    {
+        if (string.IsNullOrEmpty(login))
+        {
+            return BadRequest("Login parameter is required");
+        }
+
+        var user = await _context.Users
+            .Include(u => u.Login)
+            .FirstOrDefaultAsync(u => u.Login != null && u.Login.LoginValue == login);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        return new UserChatDto
+        {
+            Id = user.Id,
+            Login = user.Login?.LoginValue ?? string.Empty,
+            Name = user.Name,
+            Surname = user.Surname,
+            FullName = $"{user.Surname} {user.Name}"
+        };
+    }
+
+    // ! GetUserConversation
+    // Возвращает список чатов пользователя с последними сообщениями (List<ConversationDto>)
+    [HttpGet("conversations")]
+    public async Task<ActionResult<List<ConversationDto>>> GetUserConversation()
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var participantIds = await _context.ConversationParticipants
+            .Where(p => p.UserId == userId)
+            .Select(p => p.ConversationId)
+            .ToListAsync();
+
+        var conversations = await _context.Conversations
+            .Where(c => participantIds.Contains(c.Id))
+            .Include(c => c.Participants)
+                .ThenInclude(p => p.User)
+            .Include(c => c.Messages)
+                .OrderByDescending(m => m.CreatedAt)
+            .ToListAsync();
+
+        var result = conversations.Select(c =>
+        {
+            var lastMessage = c.Messages.FirstOrDefault();
+            return new ConversationDto
+            {
+                Id = c.Id,
+                Type = c.Type,
+                CreatedAt = c.CreatedAt,
+                Participants = c.Participants.Select(p => new UserChatDto
+                {
+                    Id = p.User.Id,
+                    Login = p.User.Login?.LoginValue ?? string.Empty,
+                    Name = p.User.Name,
+                    Surname = p.User.Surname,
+                    FullName = $"{p.User.Surname} {p.User.Name}"
+                }).ToList(),
+                LastMessage = lastMessage != null ? new MessageDto
+                {
+                    Id = lastMessage.Id,
+                    ConversationId = lastMessage.ConversationId,
+                    SenderId = lastMessage.SenderId,
+                    SenderName = $"{lastMessage.Sender.Surname} {lastMessage.Sender.Name}",
+                    Content = lastMessage.Content,
+                    CreatedAt = lastMessage.CreatedAt,
+                    UpdatedAt = lastMessage.UpdatedAt
+                } : null
+            };
+        }).ToList();
+
+        return result;
+    }
+
+    // ! CreateOrGetPersonalChat
+    // Создаёт или возвращает существующий чат (Direct/Group) (ConversationDto)
+    [HttpPost("conversations/create")]
+    public async Task<ActionResult<ConversationDto>> CreateOrGetPersonalChat([FromBody] CreateConversationDto dto)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var currentUserId = userId.Value;
+
+        if (dto.ParticipantIds == null || dto.ParticipantIds.Count == 0)
+        {
+            return BadRequest("ParticipantIds cannot be empty");
+        }
+
+        // Проверка существования всех участников
+        var allParticipantIds = dto.ParticipantIds.Distinct().ToList();
+        if (!allParticipantIds.Contains(currentUserId))
+        {
+            allParticipantIds.Add(currentUserId);
+        }
+
+        var existingUsers = await _context.Users
+            .Where(u => allParticipantIds.Contains(u.Id))
+            .Select(u => u.Id)
+            .ToListAsync();
+
+        var missingUsers = allParticipantIds.Except(existingUsers).ToList();
+        if (missingUsers.Count > 0)
+        {
+            return NotFound($"Users with IDs {string.Join(", ", missingUsers)} not found");
+        }
+
+        // Если только один участник + автор = Direct чат
+        var isDirect = dto.ParticipantIds.Count == 1 && !dto.ParticipantIds.Contains(currentUserId);
+        var conversationType = isDirect ? ConversationType.Direct : ConversationType.Group;
+
+        // Для Direct чата проверяем существующий чат между теми же пользователями
+        if (isDirect)
+        {
+            var existingDirect = await FindExistingDirectChat(currentUserId, dto.ParticipantIds[0]);
+            if (existingDirect != null)
+            {
+                return Ok(await MapConversationToDto(existingDirect));
+            }
+        }
+
+        // Создание нового чата
+        var conversation = new Conversation
+        {
+            Type = conversationType,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.Conversations.Add(conversation);
+        await _context.SaveChangesAsync();
+
+        // Добавление участников
+        var participants = allParticipantIds.Select(id => new ConversationParticipant
+        {
+            ConversationId = conversation.Id,
+            UserId = id
+        }).ToList();
+
+        _context.ConversationParticipants.AddRange(participants);
+        await _context.SaveChangesAsync();
+
+        var createdConversation = await _context.Conversations
+            .Include(c => c.Participants)
+                .ThenInclude(p => p.User)
+            .FirstOrDefaultAsync(c => c.Id == conversation.Id);
+
+        if (createdConversation == null)
+        {
+            return NotFound("Failed to create conversation");
+        }
+
+        return await MapConversationToDto(createdConversation);
+    }
+
+    // ! GetConversationMessages
+    // Возвращает все сообщения чата отсортированные по дате (List<MessageDto>)
+    [HttpGet("conversations/{conversationId}/messages")]
+    public async Task<ActionResult<List<MessageDto>>> GetConversationMessages(int conversationId)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        // Проверка, что пользователь является участником чата
+        var isParticipant = await _context.ConversationParticipants
+            .AnyAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+
+        if (!isParticipant)
+        {
+            return Forbid("You are not a participant of this conversation");
+        }
+
+        var messages = await _context.Messages
+            .Where(m => m.ConversationId == conversationId)
+            .Include(m => m.Sender)
+            .OrderBy(m => m.CreatedAt)
+            .ToListAsync();
+
+        return messages.Select(m => new MessageDto
+        {
+            Id = m.Id,
+            ConversationId = m.ConversationId,
+            SenderId = m.SenderId,
+            SenderName = $"{m.Sender.Surname} {m.Sender.Name}",
+            Content = m.Content,
+            CreatedAt = m.CreatedAt,
+            UpdatedAt = m.UpdatedAt
+        }).ToList();
+    }
+
+    // ! SendConversationMessage
+    // Создаёт сообщение в чате и возвращает его (MessageDto)
+    [HttpPost("conversations/{conversationId}/messages")]
+    public async Task<ActionResult<MessageDto>> SendConversationMessage(int conversationId, [FromBody] SendMessageDto dto)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var currentUserId = userId.Value;
+
+        // Проверка существования чата
+        var conversation = await _context.Conversations.FindAsync(conversationId);
+        if (conversation == null)
+        {
+            return NotFound("Conversation not found");
+        }
+
+        // Проверка, что пользователь является участником чата
+        var isParticipant = await _context.ConversationParticipants
+            .AnyAsync(p => p.ConversationId == conversationId && p.UserId == currentUserId);
+
+        if (!isParticipant)
+        {
+            return Forbid("You are not a participant of this conversation");
+        }
+
+        var message = new Message
+        {
+            ConversationId = conversationId,
+            SenderId = currentUserId,
+            Content = dto.Content,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.Messages.Add(message);
+        await _context.SaveChangesAsync();
+
+        var createdMessage = await _context.Messages
+            .Include(m => m.Sender)
+            .FirstOrDefaultAsync(m => m.Id == message.Id);
+
+        if (createdMessage == null)
+        {
+            return NotFound("Failed to create message");
+        }
+
+        return new MessageDto
+        {
+            Id = createdMessage.Id,
+            ConversationId = createdMessage.ConversationId,
+            SenderId = createdMessage.SenderId,
+            SenderName = $"{createdMessage.Sender.Surname} {createdMessage.Sender.Name}",
+            Content = createdMessage.Content,
+            CreatedAt = createdMessage.CreatedAt,
+            UpdatedAt = createdMessage.UpdatedAt
+        };
+    }
+
+    #region Helper Methods
+
+    // ! Get userId from JWT token
+    private int? GetCurrentUserId()
+    {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
+        {
+            return userId;
+        }
+        return null;
+    }
+
+    // ! Поиск существующего Direct чата между двумя пользователями
+    private async Task<Conversation?> FindExistingDirectChat(int userId1, int userId2)
+    {
+        var conversations = await _context.Conversations
+            .Include(c => c.Participants)
+            .Where(c => c.Type == ConversationType.Direct)
+            .ToListAsync();
+
+        foreach (var conversation in conversations)
+        {
+            var participantIds = conversation.Participants.Select(p => p.UserId).ToList();
+            if (participantIds.Contains(userId1) && participantIds.Contains(userId2) && participantIds.Count == 2)
+            {
+                return conversation;
+            }
+        }
+
+        return null;
+    }
+
+    // ! Маппинг Conversation в ConversationDto
+    private async Task<ConversationDto> MapConversationToDto(Conversation conversation)
+    {
+        var lastMessage = await _context.Messages
+            .Where(m => m.ConversationId == conversation.Id)
+            .Include(m => m.Sender)
+            .OrderByDescending(m => m.CreatedAt)
+            .FirstOrDefaultAsync();
+
+        return new ConversationDto
+        {
+            Id = conversation.Id,
+            Type = conversation.Type,
+            CreatedAt = conversation.CreatedAt,
+            Participants = conversation.Participants.Select(p => new UserChatDto
+            {
+                Id = p.User.Id,
+                Login = p.User.Login?.LoginValue ?? string.Empty,
+                Name = p.User.Name,
+                Surname = p.User.Surname,
+                FullName = $"{p.User.Surname} {p.User.Name}"
+            }).ToList(),
+            LastMessage = lastMessage != null ? new MessageDto
+            {
+                Id = lastMessage.Id,
+                ConversationId = lastMessage.ConversationId,
+                SenderId = lastMessage.SenderId,
+                SenderName = $"{lastMessage.Sender.Surname} {lastMessage.Sender.Name}",
+                Content = lastMessage.Content,
+                CreatedAt = lastMessage.CreatedAt,
+                UpdatedAt = lastMessage.UpdatedAt
+            } : null
+        };
+    }
+
+    #endregion
+}

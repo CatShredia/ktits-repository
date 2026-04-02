@@ -100,7 +100,7 @@ public class DatabaseContext : DbContext
                   .HasForeignKey(e => e.ConversationId)
                   .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(e => e.User)
-                  .WithMany()
+                  .WithMany(u => u.ConversationParticipants)
                   .HasForeignKey(e => e.UserId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
@@ -114,7 +114,7 @@ public class DatabaseContext : DbContext
                   .HasForeignKey(e => e.ConversationId)
                   .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(e => e.Sender)
-                  .WithMany()
+                  .WithMany(u => u.Messages)
                   .HasForeignKey(e => e.SenderId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
