@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7295881979920556645}
   - component: {fileID: 3244026285986548585}
   - component: {fileID: 893579225402850800}
+  - component: {fileID: 7797915194406382085}
   m_Layer: 0
   m_Name: Platform
   m_TagString: Player
@@ -151,3 +152,16 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 0.24}
   m_EdgeRadius: 0
+--- !u!114 &7797915194406382085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8150623482628355015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00e297f0d31d8dc4d96bea0de1f022a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkinApplier
+  SkinType: Platform

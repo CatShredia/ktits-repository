@@ -314,6 +314,16 @@ public class ShopController : MonoBehaviour
                 Debug.Log($"[ShopController]   Skin[{i}]: Id={allSkins[i].Id}, Name='{allSkins[i].Name}', PrefabPath='{allSkins[i].PrefabPath}'");
             }
 
+            // Зарегистрировать маппинг Name → PrefabPath в SkinManager для разрешения старых PlayerPrefs
+            if (SkinManager.Instance != null)
+            {
+                foreach (var skin in allSkins)
+                {
+                    SkinManager.Instance.RegisterSkinNameMapping(skin.Name, skin.PrefabPath);
+                }
+                Debug.Log($"[ShopController] Registered {allSkins.Count} skin name mappings in SkinManager");
+            }
+
             if (!string.IsNullOrEmpty(token))
             {
                 Debug.Log("[ShopController] Calling GetInventory...");
@@ -602,19 +612,26 @@ public class ShopController : MonoBehaviour
             {
                 Debug.Log($"[ShopController] Skin equipped: {userSkin.SkinName}");
 
-                if (userInventory?.Skins != null)
+                var skin = allSkins.Find(s => s.Id == skinId);
+
+                if (userInventory?.Skins != null && skin != null)
                 {
-                    var skin = allSkins.Find(s => s.Id == skinId);
-                    if (skin != null)
+                    foreach (var us in userInventory.Skins)
                     {
-                        foreach (var us in userInventory.Skins)
-                        {
-                            var s = allSkins.Find(sk => sk.Id == us.SkinId);
-                            if (s?.SkinType == skin.SkinType)
-                                us.IsEquipped = false;
-                        }
+                        var s = allSkins.Find(sk => sk.Id == us.SkinId);
+                        if (s?.SkinType == skin.SkinType)
+                            us.IsEquipped = false;
                     }
                     userSkin.IsEquipped = true;
+                }
+
+                // Применить скин в игре через SkinManager
+                if (skin != null && SkinManager.Instance != null)
+                {
+                    // Используем PrefabPath как ключ для поиска спрайта (это имя спрайта в Unity)
+                    string spriteKey = skin.PrefabPath;
+                    SkinManager.Instance.EquipSkin(skin.SkinType, spriteKey);
+                    Debug.Log($"[ShopController] Applied skin '{skin.Name}' ({skin.SkinType}), spriteKey='{spriteKey}' via SkinManager");
                 }
 
                 ShowCurrentSkin();

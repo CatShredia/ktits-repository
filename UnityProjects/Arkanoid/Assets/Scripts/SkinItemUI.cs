@@ -24,7 +24,8 @@ public class SkinItemUI : MonoBehaviour
     private GameObject ownedBadge;
 
     [SerializeField] private GameObject equipIndicator;
-    [SerializeField] private Button selectButton;
+    [SerializeField] private Button selectButton;  // BuyButton (для покупки)
+    [SerializeField] private Button equipButton;   // EquipButton (для экипировки)
 
     [Header("=== Rarity Colors ===")]
     [SerializeField]
@@ -47,6 +48,9 @@ public class SkinItemUI : MonoBehaviour
 
         if (selectButton != null)
             selectButton.onClick.AddListener(OnClicked);
+
+        if (equipButton != null)
+            equipButton.onClick.AddListener(OnEquipClicked);
     }
 
     public void Initialize(ShopController.SkinDto skin, bool isOwned, bool isEquipped,
@@ -104,6 +108,13 @@ public class SkinItemUI : MonoBehaviour
 
         if (equipIndicator != null)
             equipIndicator.SetActive(_isEquipped);
+
+        // Показывать/скрывать кнопки в зависимости от состояния
+        if (selectButton != null)
+            selectButton.gameObject.SetActive(!_isOwned);  // BuyButton видна только для некупленных
+
+        if (equipButton != null)
+            equipButton.gameObject.SetActive(_isOwned && !_isEquipped);  // EquipButton для купленных, но не экипированных
     }
 
     private void SetSkinSprite(Sprite sprite)
@@ -170,6 +181,12 @@ public class SkinItemUI : MonoBehaviour
 
     private void OnClicked()
     {
+        _onActionClicked?.Invoke(_skinData.Id);
+    }
+
+    private void OnEquipClicked()
+    {
+        // EquipButton вызывает ту же логику, что и OnClicked для owned скина
         _onActionClicked?.Invoke(_skinData.Id);
     }
 

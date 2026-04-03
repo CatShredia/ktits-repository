@@ -46,6 +46,9 @@ public class LevelController : MonoBehaviour
 
             totalBlocksAtStart = GetDestructibleBlocksCount();
 
+            // Применить экипированные скины после загрузки уровня
+            SkinManager.Instance?.ApplyAllEquippedSkins();
+
             Debug.Log($"[Level] Loaded level {currentLevelIndex + 1}: {levelPrefabs[currentLevelIndex].name}");
             Debug.Log($"[Level] Total blocks at start: {totalBlocksAtStart}");
 

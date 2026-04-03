@@ -71,7 +71,9 @@
     <Compile Include="Assets\Scripts\SoundManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\Auth\AuthService.cs" />
+    <Compile Include="Assets\Scripts\SkinManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
+    <Compile Include="Assets\Scripts\SkinApplier.cs" />
     <Compile Include="Assets\Scripts\ShopController.cs" />
     <Compile Include="Assets\Scripts\SkinItemUI.cs" />
     <Compile Include="Assets\Scripts\UI\SkinsError.cs" />

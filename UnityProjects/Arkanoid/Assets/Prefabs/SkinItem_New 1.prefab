@@ -1129,6 +1129,7 @@ MonoBehaviour:
   ownedBadge: {fileID: 0}
   equipIndicator: {fileID: 0}
   selectButton: {fileID: 6293832627618522774}
+  equipButton: {fileID: 6112610316446429526}
   commonColor: {r: 0.7, g: 0.7, b: 0.7, a: 1}
   uncommonColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
   rareColor: {r: 0.2, g: 0.4, b: 0.9, a: 1}
