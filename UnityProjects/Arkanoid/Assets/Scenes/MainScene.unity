@@ -8881,6 +8881,8 @@ MonoBehaviour:
   prevButton: {fileID: 604761448}
   nextButton: {fileID: 1397241125}
   skinItemPrefab: {fileID: 8177805500802035827, guid: 339c16f79129a854aa6c416282f2c755, type: 3}
+  platformTabButton: {fileID: 2015454040}
+  ballTabButton: {fileID: 560571545}
   shopAnimator: {fileID: 0}
   openParameterName: Open
   showAnimationDuration: 0.3

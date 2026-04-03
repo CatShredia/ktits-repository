@@ -43,6 +43,10 @@ public class ShopController : MonoBehaviour
     [SerializeField] private Button nextButton;
     [SerializeField] private GameObject skinItemPrefab;
 
+    [Header("=== Tabs ===")]
+    [SerializeField] private Button platformTabButton;
+    [SerializeField] private Button ballTabButton;
+
     [Header("=== Animations ===")]
     [SerializeField] private Animator shopAnimator;
     [SerializeField] private string openParameterName = "Open";
@@ -58,7 +62,9 @@ public class ShopController : MonoBehaviour
     private int currentIndex;
     private float lastClickTime;
     private const float CLICK_COOLDOWN = 0.2f;
+    private string selectedSkinType = "Platform"; // по умолчанию Platform
     private List<SkinDto> allSkins = new();
+    private List<SkinDto> filteredSkins = new();
     private UserInventoryDto? userInventory;
     private SkinDto? currentSkin;
     private bool isCurrentSkinOwned;
@@ -79,6 +85,9 @@ public class ShopController : MonoBehaviour
         if (prevButton != null) prevButton.onClick.AddListener(OnPrevButtonClicked);
         if (nextButton != null) nextButton.onClick.AddListener(OnNextButtonClicked);
 
+        if (platformTabButton != null) platformTabButton.onClick.AddListener(OnPlatformTabClicked);
+        if (ballTabButton != null) ballTabButton.onClick.AddListener(OnBallTabClicked);
+
         // Построить словарь для быстрого поиска спрайтов по имени
         _skinSpriteLookup = new Dictionary<string, Sprite>();
         if (skinSprites != null)
@@ -94,6 +103,7 @@ public class ShopController : MonoBehaviour
 
         Debug.Log($"[ShopController] UI initialized (Carousel mode). Registered {_skinSpriteLookup.Count} skin sprites.");
         UpdateShopHeaderVisibility();
+        UpdateTabAppearance();
     }
 
     private void UpdateShopHeaderVisibility()
@@ -105,6 +115,64 @@ public class ShopController : MonoBehaviour
             coinsDisplayContainer.SetActive(isAuthenticated);
 
         Debug.Log($"[ShopController] Shop header: auth={isAuthenticated}, coinsDisplay={(coinsDisplayContainer?.activeSelf == true ? "VISIBLE" : "HIDDEN")}");
+    }
+
+    private void UpdateTabAppearance()
+    {
+        // Активный таб — 100% непрозрачность, неактивный — 50%
+        if (platformTabButton != null)
+        {
+            var image = platformTabButton.GetComponent<Image>();
+            if (image != null)
+            {
+                var color = image.color;
+                color.a = selectedSkinType == "Platform" ? 1f : 0.5f;
+                image.color = color;
+            }
+        }
+
+        if (ballTabButton != null)
+        {
+            var image = ballTabButton.GetComponent<Image>();
+            if (image != null)
+            {
+                var color = image.color;
+                color.a = selectedSkinType == "Ball" ? 1f : 0.5f;
+                image.color = color;
+            }
+        }
+    }
+
+    private void ApplySkinTypeFilter()
+    {
+        filteredSkins = allSkins.Where(s => s.SkinType == selectedSkinType).ToList();
+        Debug.Log($"[ShopController] Filter applied: type='{selectedSkinType}', {filteredSkins.Count} skins (out of {allSkins.Count} total)");
+        for (int i = 0; i < filteredSkins.Count; i++)
+        {
+            Debug.Log($"[ShopController]   FilteredSkin[{i}]: Id={filteredSkins[i].Id}, Name='{filteredSkins[i].Name}'");
+        }
+    }
+
+    private void OnPlatformTabClicked()
+    {
+        if (selectedSkinType == "Platform") return;
+        selectedSkinType = "Platform";
+        currentIndex = 0;
+        UpdateTabAppearance();
+        ApplySkinTypeFilter();
+        ShowCurrentSkin();
+        Debug.Log($"[ShopController] Platform tab selected, showing {filteredSkins.Count} platform skins");
+    }
+
+    private void OnBallTabClicked()
+    {
+        if (selectedSkinType == "Ball") return;
+        selectedSkinType = "Ball";
+        currentIndex = 0;
+        UpdateTabAppearance();
+        ApplySkinTypeFilter();
+        ShowCurrentSkin();
+        Debug.Log($"[ShopController] Ball tab selected, showing {filteredSkins.Count} ball skins");
     }
 
     /// <summary>
@@ -295,11 +363,15 @@ public class ShopController : MonoBehaviour
             }
 
             Debug.Log($"[ShopController] Loaded {allSkins.Count} skins from API");
+
+            // Применить фильтр по типу
+            ApplySkinTypeFilter();
         }
         else
         {
             Debug.LogWarning("[ShopController] API returned no skins, using test data");
             LoadTestData();
+            ApplySkinTypeFilter();
         }
 
         Debug.Log($"[ShopController] UpdateCoinsDisplay: coins={userInventory?.Coins ?? 0}");
@@ -337,16 +409,16 @@ public class ShopController : MonoBehaviour
 
     private void ShowCurrentSkin()
     {
-        if (allSkins.Count == 0 || skinContainer == null || skinItemPrefab == null)
+        if (filteredSkins.Count == 0 || skinContainer == null || skinItemPrefab == null)
         {
-            Debug.LogError("[ShopController] Cannot show skin: missing data or UI references");
+            Debug.LogError($"[ShopController] Cannot show skin: filteredSkins.Count={filteredSkins.Count}, missing UI references");
             return;
         }
 
         foreach (Transform child in skinContainer)
             Destroy(child.gameObject);
 
-        currentSkin = allSkins[currentIndex];
+        currentSkin = filteredSkins[currentIndex];
         isCurrentSkinOwned = userInventory?.Skins?.Any(s => s.SkinId == currentSkin.Id) ?? false;
         isCurrentSkinEquipped = userInventory?.Skins?.Any(s => s.SkinId == currentSkin.Id && s.IsEquipped) ?? false;
 
@@ -396,7 +468,6 @@ public class ShopController : MonoBehaviour
 
     public void OnPrevButtonClicked()
     {
-        // Защита от повторных нажатий
         if (Time.time - lastClickTime < CLICK_COOLDOWN)
         {
             Debug.Log($"[ShopController] Prev click ignored (cooldown)");
@@ -404,9 +475,7 @@ public class ShopController : MonoBehaviour
         }
         lastClickTime = Time.time;
 
-        Debug.Log($"[ShopController] OnPrevButtonClicked вызван! allSkins.Count={allSkins.Count}, currentIndex={currentIndex}");
-
-        if (allSkins.Count == 0)
+        if (filteredSkins.Count == 0)
         {
             Debug.LogWarning("[ShopController] Нет скинов для навигации");
             return;
@@ -414,7 +483,7 @@ public class ShopController : MonoBehaviour
 
         currentIndex--;
         if (currentIndex < 0)
-            currentIndex = allSkins.Count - 1; // Циклический переход на последний элемент
+            currentIndex = filteredSkins.Count - 1;
 
         Debug.Log($"[ShopController] Prev clicked: newIndex={currentIndex}");
         ShowCurrentSkin();
@@ -422,7 +491,6 @@ public class ShopController : MonoBehaviour
 
     public void OnNextButtonClicked()
     {
-        // Защита от повторных нажатий
         if (Time.time - lastClickTime < CLICK_COOLDOWN)
         {
             Debug.Log($"[ShopController] Next click ignored (cooldown)");
@@ -430,11 +498,11 @@ public class ShopController : MonoBehaviour
         }
         lastClickTime = Time.time;
 
-        if (allSkins.Count == 0) return;
+        if (filteredSkins.Count == 0) return;
 
         currentIndex++;
-        if (currentIndex >= allSkins.Count)
-            currentIndex = 0; // Циклический переход на первый элемент
+        if (currentIndex >= filteredSkins.Count)
+            currentIndex = 0;
 
         Debug.Log($"[ShopController] Next clicked: newIndex={currentIndex}");
         ShowCurrentSkin();
@@ -442,8 +510,7 @@ public class ShopController : MonoBehaviour
 
     private void UpdateCarouselButtons()
     {
-        // При циклической навигации кнопки всегда активны, если есть скины
-        bool hasSkins = allSkins.Count > 0;
+        bool hasSkins = filteredSkins.Count > 0;
 
         if (prevButton != null)
             prevButton.interactable = hasSkins;
@@ -451,7 +518,7 @@ public class ShopController : MonoBehaviour
         if (nextButton != null)
             nextButton.interactable = hasSkins;
 
-        Debug.Log($"[ShopController] Buttons updated: prev={prevButton?.interactable}, next={nextButton?.interactable}, total={allSkins.Count}");
+        Debug.Log($"[ShopController] Buttons updated: prev={prevButton?.interactable}, next={nextButton?.interactable}, total={filteredSkins.Count}");
     }
 
     private void OnBackButtonClicked() => CloseShop();
