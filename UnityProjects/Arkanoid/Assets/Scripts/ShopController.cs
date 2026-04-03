@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,6 +34,7 @@ public class ShopController : MonoBehaviour
 
     [Header("=== Shop Header ===")]
     [SerializeField] private TextMeshProUGUI coinsDisplayText;
+    [SerializeField] private GameObject coinsDisplayContainer;
     [SerializeField] private Button backButton;
 
     [Header("=== Carousel ===")]
@@ -91,6 +93,40 @@ public class ShopController : MonoBehaviour
         }
 
         Debug.Log($"[ShopController] UI initialized (Carousel mode). Registered {_skinSpriteLookup.Count} skin sprites.");
+        UpdateShopHeaderVisibility();
+    }
+
+    private void UpdateShopHeaderVisibility()
+    {
+        bool isAuthenticated = AuthService.Instance?.IsAuthenticated() ?? false;
+
+        // Показываем/скрываем контейнер монет
+        if (coinsDisplayContainer != null)
+            coinsDisplayContainer.SetActive(isAuthenticated);
+
+        Debug.Log($"[ShopController] Shop header: auth={isAuthenticated}, coinsDisplay={(coinsDisplayContainer?.activeSelf == true ? "VISIBLE" : "HIDDEN")}");
+    }
+
+    /// <summary>
+    /// Вызывается после изменения состояния авторизации (вход/выход)
+    /// </summary>
+    public void RefreshAuthState()
+    {
+        UpdateShopHeaderVisibility();
+        UpdateCoinsDisplay();
+    }
+
+    /// <summary>
+    /// Возвращает, открыт ли сейчас магазин
+    /// </summary>
+    public bool IsShopOpen => isShopOpen;
+
+    /// <summary>
+    /// Перезагружает данные магазина (инвентарь и скины) без перезапуска анимации
+    /// </summary>
+    public void ReloadShopData()
+    {
+        _ = LoadShopData();
     }
 
     public void OpenShopFromMenu()
@@ -167,6 +203,8 @@ public class ShopController : MonoBehaviour
 
     private async Task LoadShopData()
     {
+        Debug.Log("[ShopController] === LoadShopData START ===");
+
         if (ShopAPIClient.Instance == null)
         {
             Debug.LogError("[ShopController] ShopAPIClient.Instance is null.");
@@ -177,10 +215,16 @@ public class ShopController : MonoBehaviour
         }
 
         string token = AuthService.Instance?.AuthToken;
+        Debug.Log($"[ShopController] Auth token: {(string.IsNullOrEmpty(token) ? "NULL/EMPTY" : $"present (len={token.Length})")}");
+
         if (!string.IsNullOrEmpty(token))
             ShopAPIClient.Instance.SetAuthToken(token);
+        else
+            Debug.LogWarning("[ShopController] No auth token found in AuthService.Instance");
 
+        Debug.Log("[ShopController] Calling GetAllSkins...");
         var skins = await ShopAPIClient.Instance.GetAllSkins();
+        Debug.Log($"[ShopController] GetAllSkins returned: {skins?.Count ?? 0} skins");
 
         if (skins != null && skins.Count > 0)
         {
@@ -196,9 +240,18 @@ public class ShopController : MonoBehaviour
                 PrefabPath = s.PrefabPath
             }).ToList();
 
+            Debug.Log($"[ShopController] Mapped {allSkins.Count} skins to DTOs");
+            for (int i = 0; i < allSkins.Count; i++)
+            {
+                Debug.Log($"[ShopController]   Skin[{i}]: Id={allSkins[i].Id}, Name='{allSkins[i].Name}', PrefabPath='{allSkins[i].PrefabPath}'");
+            }
+
             if (!string.IsNullOrEmpty(token))
             {
+                Debug.Log("[ShopController] Calling GetInventory...");
                 var inventory = await ShopAPIClient.Instance.GetInventory();
+                Debug.Log($"[ShopController] GetInventory returned: {(inventory == null ? "NULL" : $"Coins={inventory.Coins}, Skins={inventory.Skins?.Count ?? 0}")}");
+
                 if (inventory != null)
                 {
                     userInventory = new UserInventoryDto
@@ -213,6 +266,19 @@ public class ShopController : MonoBehaviour
                         }).ToList() ?? new List<UserSkinDto>()
                     };
                     Debug.Log($"[ShopController] Loaded inventory: {userInventory.Coins} coins, {userInventory.Skins.Count} skins");
+                    for (int i = 0; i < userInventory.Skins.Count; i++)
+                    {
+                        Debug.Log($"[ShopController]   OwnedSkin[{i}]: Id={userInventory.Skins[i].Id}, SkinId={userInventory.Skins[i].SkinId}, Name='{userInventory.Skins[i].SkinName}', Equipped={userInventory.Skins[i].IsEquipped}");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("[ShopController] GetInventory returned NULL, coins will show 0");
+                    userInventory = new UserInventoryDto
+                    {
+                        Coins = 0,
+                        Skins = new List<UserSkinDto>()
+                    };
                 }
             }
             else
@@ -236,8 +302,12 @@ public class ShopController : MonoBehaviour
             LoadTestData();
         }
 
+        Debug.Log($"[ShopController] UpdateCoinsDisplay: coins={userInventory?.Coins ?? 0}");
         UpdateCoinsDisplay();
+        UpdateShopHeaderVisibility();
+        Debug.Log("[ShopController] ShowCurrentSkin");
         ShowCurrentSkin();
+        Debug.Log("[ShopController] === LoadShopData END ===");
     }
 
     private void LoadTestData()
@@ -412,6 +482,7 @@ public class ShopController : MonoBehaviour
                 }
 
                 UpdateCoinsDisplay();
+                UpdateShopHeaderVisibility();
                 ShowCurrentSkin();
             }
             else

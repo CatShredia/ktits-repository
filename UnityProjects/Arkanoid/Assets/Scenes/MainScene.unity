@@ -8105,7 +8105,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1684674147
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8875,6 +8875,7 @@ MonoBehaviour:
   playerPlatform: {fileID: 5191726466286821700}
   ball: {fileID: 1143630381}
   coinsDisplayText: {fileID: 351475401}
+  coinsDisplayContainer: {fileID: 1893945230}
   backButton: {fileID: 2032402086}
   skinContainer: {fileID: 114691870}
   prevButton: {fileID: 604761448}
@@ -8895,6 +8896,10 @@ MonoBehaviour:
     sprite: {fileID: 6679334925510924448, guid: 9038ec61c207f6945b76783f3fe25556, type: 3}
   - spriteName: Button-Photoroom_3
     sprite: {fileID: 8440550326994734283, guid: 9038ec61c207f6945b76783f3fe25556, type: 3}
+  - spriteName: i (2)-no-bg-preview (carve.photos)_3
+    sprite: {fileID: -6703213334057972612, guid: 6551b13935b8c234ea09ff5e357c4307, type: 3}
+  - spriteName: BasicArkanoidPack_10
+    sprite: {fileID: 3345604596107148701, guid: ac60de040a2aa2840b00b8dc2dab4da1, type: 3}
 --- !u!114 &1830780217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9996,7 +10001,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2015454041}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1830780210}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2015454041
 MonoBehaviour:
   m_ObjectHideFlags: 0

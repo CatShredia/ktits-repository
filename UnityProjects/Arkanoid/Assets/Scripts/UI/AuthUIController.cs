@@ -84,7 +84,23 @@ public class AuthUIController : MonoBehaviour
         HideAuthButton();
         UpdateUserNameText();
         UpdateLogOutButton();
-        ShopController.Instance?.OpenShopFromMenu();
+
+        // Если магазин уже открыт, обновляем состояние авторизации и данные
+        if (ShopController.Instance != null)
+        {
+            ShopController.Instance.RefreshAuthState();
+
+            // Если магазин уже открыт (isShopOpen = true), нужно перезагрузить инвентарь
+            // OpenShopFromMenu вернётся сразу, поэтому вызываем LoadShopData напрямую
+            if (ShopController.Instance.IsShopOpen)
+            {
+                ShopController.Instance.ReloadShopData();
+            }
+            else
+            {
+                ShopController.Instance?.OpenShopFromMenu();
+            }
+        }
     }
 
     private void UpdateTitle()
@@ -201,6 +217,13 @@ public class AuthUIController : MonoBehaviour
 
         UpdateUserNameText();
         UpdateLogOutButton();
+
+        // Обновить состояние монет в магазине перед закрытием
+        if (ShopController.Instance != null)
+        {
+            ShopController.Instance.RefreshAuthState();
+        }
+
         ShopController.Instance?.CloseShop();
 
         Debug.Log("[AuthUI] Logout completed");

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using ArkanoidAPI.Database;
@@ -59,6 +60,28 @@ public class AuthService : IAuthService
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
+
+        // Выдать стартовые скины
+        var starterSkins = await _context.Skins
+            .Where(s => s.IsStarter && s.IsActive)
+            .ToListAsync();
+
+        Debug.WriteLine($"Выдача стартовых скинов пользователю {user.Username} (ID: {user.Id}): {starterSkins.Count} скинов");
+
+        if (starterSkins.Count > 0)
+        {
+            var userSkins = starterSkins.Select(skin => new UserSkin
+            {
+                UserId = user.Id,
+                SkinId = skin.Id,
+                AcquiredAt = DateTime.UtcNow,
+                AcquisitionMethod = AcquisitionMethod.Starter,
+                IsEquipped = false
+            }).ToList();
+
+            _context.UserSkins.AddRange(userSkins);
+            await _context.SaveChangesAsync();
+        }
 
         var token = _jwtService.GenerateToken(user.Id, user.Username, user.UserId);
 
