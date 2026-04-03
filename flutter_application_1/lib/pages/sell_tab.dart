@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../database/models/product.dart';
 import '../database/services/productservice.dart';
+import '../database/services/userservice.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class SellTab extends StatefulWidget {
@@ -13,17 +14,24 @@ class SellTab extends StatefulWidget {
 
 class _SellTabState extends State<SellTab> {
   final ProductService _productService = ProductService();
+  final UserService _userService = UserService();
   late Future<List<Product>> _productsFuture;
 
   @override
   void initState() {
     super.initState();
-    _productsFuture = _productService.getActiveProducts();
+    _productsFuture = _loadUserProducts();
+  }
+
+  Future<List<Product>> _loadUserProducts() async {
+    final user = _userService.getCurrentUser();
+    if (user == null) return [];
+    return await _productService.getProductsByUser(user.id);
   }
 
   void _refreshProducts() {
     setState(() {
-      _productsFuture = _productService.getActiveProducts();
+      _productsFuture = _loadUserProducts();
     });
   }
 

@@ -242,7 +242,7 @@ class _ProfileTabState extends State<ProfileTab> {
               width: MediaQuery.of(context).size.width * 0.8,
               child: ElevatedButton(
                 onPressed: () {
-                  // Разместить объявление
+                  Navigator.pushNamed(context, '/create-listing');
                 },
                 style: ButtonStyle(
                   shape: WidgetStatePropertyAll(

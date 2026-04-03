@@ -87,7 +87,11 @@ class ProductService {
     String? description,
     bool isActive = true,
   }) async {
+    // Генерируем уникальный ID на основе timestamp
+    final generatedId = DateTime.now().millisecondsSinceEpoch;
+
     final response = await _client.from('products').insert({
+      'id': generatedId,
       'name': name,
       'price_cents': priceCent,
       'currency': currency,
@@ -97,6 +101,7 @@ class ProductService {
       'image': image,
       'description': description,
       'is_active': isActive,
+      'created_at': DateTime.now().toIso8601String(),
     }).select();
 
     return Product.fromJson(response.first);

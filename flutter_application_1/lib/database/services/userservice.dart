@@ -8,6 +8,8 @@ class UserService {
   final SupabaseClient _client = Supabase.instance.client;
   static const String _avatarBucket = 'avatars';
 
+  SupabaseClient get client => _client;
+
   // Авторизация
   Future<supabase_flutter.AuthResponse> signIn(
     String email,

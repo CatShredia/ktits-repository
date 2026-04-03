@@ -8,6 +8,7 @@ import 'forgot_password.dart';
 import 'home.dart';
 import 'debug_connection.dart';
 import 'pages/product_page.dart';
+import 'pages/create_listing_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomePage(),
         '/profile-edit': (context) => const ProfileEdit(),
         '/notifications': (context) => const NotificationsPage(),
+        '/create-listing': (context) => const CreateListingPage(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/product') {
