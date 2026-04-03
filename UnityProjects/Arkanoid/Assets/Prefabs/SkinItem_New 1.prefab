@@ -1120,7 +1120,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkinItemUI
   background: {fileID: 0}
-  skinIcon: {fileID: 393940468604174552}
+  iconContainer: {fileID: 4345824336192045800}
+  skinImage: {fileID: 0}
   rarityGlow: {fileID: 0}
   nameText: {fileID: 351054145664992300}
   typeText: {fileID: 1879494726474634152}
@@ -1380,12 +1381,24 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7295881979920556645, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7295881979920556645, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
       propertyPath: m_SortingLayer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7295881979920556645, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
+      propertyPath: m_WasSpriteAssigned
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8150623482628355015, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
       propertyPath: m_Name
       value: SkinIcon
+      objectReference: {fileID: 0}
+    - target: {fileID: 8150623482628355015, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

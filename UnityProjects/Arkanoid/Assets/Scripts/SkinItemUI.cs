@@ -8,7 +8,8 @@ public class SkinItemUI : MonoBehaviour
     [SerializeField]
     private Image background;
 
-    [SerializeField] private Image skinIcon;
+    [SerializeField] private Transform iconContainer;
+    [SerializeField] private Image skinImage;
     [SerializeField] private Image rarityGlow;
 
     [Header("=== Text Elements ===")]
@@ -49,7 +50,7 @@ public class SkinItemUI : MonoBehaviour
     }
 
     public void Initialize(ShopController.SkinDto skin, bool isOwned, bool isEquipped,
-        System.Action<int> onActionClicked)
+        System.Action<int> onActionClicked, Sprite sprite)
     {
         _skinData = skin;
         _isOwned = isOwned;
@@ -57,7 +58,7 @@ public class SkinItemUI : MonoBehaviour
         _onActionClicked = onActionClicked;
 
         UpdateVisuals();
-        LoadSkinIcon();
+        SetSkinSprite(sprite);
     }
 
     private void UpdateVisuals()
@@ -105,27 +106,43 @@ public class SkinItemUI : MonoBehaviour
             equipIndicator.SetActive(_isEquipped);
     }
 
-    private void LoadSkinIcon()
+    private void SetSkinSprite(Sprite sprite)
     {
-        if (skinIcon == null)
-            return;
-
-        if (string.IsNullOrEmpty(_skinData.TexturePath))
-            return;
-
-        // Загружаем спрайт по пути из БД (путь от Assets/)
-        Sprite sprite = Resources.Load<Sprite>(_skinData.TexturePath);
-
-        if (sprite == null)
+        if (skinImage == null)
         {
-            // Пробуем загрузить через AssetDatabase (для редактора)
-#if UNITY_EDITOR
-            sprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(_skinData.TexturePath);
-#endif
+            // Если skinImage не назначен, создаём Image на iconContainer
+            if (iconContainer == null)
+            {
+                Debug.LogError("[SkinItemUI] iconContainer not assigned and skinImage is null!");
+                return;
+            }
+
+            GameObject imgObj = new GameObject("SkinImage");
+            imgObj.transform.SetParent(iconContainer, false);
+            skinImage = imgObj.AddComponent<Image>();
+
+            RectTransform rt = imgObj.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.anchorMin = Vector2.zero;
+                rt.anchorMax = Vector2.one;
+                rt.offsetMin = Vector2.zero;
+                rt.offsetMax = Vector2.zero;
+            }
         }
 
         if (sprite != null)
-            skinIcon.sprite = sprite;
+        {
+            skinImage.sprite = sprite;
+            skinImage.preserveAspect = true;
+            skinImage.type = Image.Type.Simple;
+            skinImage.enabled = true;
+            Debug.Log($"[SkinItemUI] Set sprite: {sprite.name}");
+        }
+        else
+        {
+            Debug.LogWarning($"[SkinItemUI] No sprite provided for skin: {_skinData?.Name}");
+        }
     }
 
     private void SetRarityColor(string rarity)

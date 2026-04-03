@@ -100,6 +100,7 @@ namespace Arkanoid.Network
         [JsonProperty("price")] public int Price;
         [JsonProperty("description")] public string Description;
         [JsonProperty("texturePath")] public string TexturePath;
+        [JsonProperty("prefabPath")] public string PrefabPath;
         [JsonProperty("isActive")] public bool IsActive;
         [JsonProperty("isStarter")] public bool IsStarter;
     }

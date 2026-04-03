@@ -47,11 +47,15 @@ public class ShopController : MonoBehaviour
     [SerializeField] private float showAnimationDuration = 0.3f;
     [SerializeField] private float hideAnimationDuration = 0.3f;
 
+    [Header("=== Skin Sprites (название из БД → Sprite) ===")]
+    [SerializeField] private SkinSpriteEntry[] skinSprites;
+    private Dictionary<string, Sprite> _skinSpriteLookup;
+
     private bool isShopOpen;
     private bool isAnimating;
     private int currentIndex;
     private float lastClickTime;
-    private const float CLICK_COOLDOWN = 0.2f; // Защита от повторных нажатий
+    private const float CLICK_COOLDOWN = 0.2f;
     private List<SkinDto> allSkins = new();
     private UserInventoryDto? userInventory;
     private SkinDto? currentSkin;
@@ -73,7 +77,20 @@ public class ShopController : MonoBehaviour
         if (prevButton != null) prevButton.onClick.AddListener(OnPrevButtonClicked);
         if (nextButton != null) nextButton.onClick.AddListener(OnNextButtonClicked);
 
-        Debug.Log("[ShopController] UI initialized (Carousel mode)");
+        // Построить словарь для быстрого поиска спрайтов по имени
+        _skinSpriteLookup = new Dictionary<string, Sprite>();
+        if (skinSprites != null)
+        {
+            foreach (var entry in skinSprites)
+            {
+                if (!string.IsNullOrEmpty(entry.spriteName) && entry.sprite != null)
+                {
+                    _skinSpriteLookup[entry.spriteName] = entry.sprite;
+                }
+            }
+        }
+
+        Debug.Log($"[ShopController] UI initialized (Carousel mode). Registered {_skinSpriteLookup.Count} skin sprites.");
     }
 
     public void OpenShopFromMenu()
@@ -175,7 +192,8 @@ public class ShopController : MonoBehaviour
                 Price = s.Price,
                 Rarity = s.Rarity,
                 Description = s.Description ?? "Нет описания",
-                TexturePath = s.TexturePath
+                TexturePath = s.TexturePath,
+                PrefabPath = s.PrefabPath
             }).ToList();
 
             if (!string.IsNullOrEmpty(token))
@@ -226,9 +244,9 @@ public class ShopController : MonoBehaviour
     {
         allSkins = new List<SkinDto>
         {
-            new SkinDto { Id = 1, Name = "Неоновая платформа", SkinType = "Platform", Price = 100, Rarity = "Common", TexturePath = "Assets/Sprites/Skins/neon_platform" },
-            new SkinDto { Id = 2, Name = "Золотой мяч", SkinType = "Ball", Price = 150, Rarity = "Rare", TexturePath = "Assets/Sprites/Skins/gold_ball" },
-            new SkinDto { Id = 3, Name = "Огненная платформа", SkinType = "Platform", Price = 200, Rarity = "Epic", TexturePath = "Assets/Sprites/Skins/fire_platform" },
+            new SkinDto { Id = 1, Name = "Неоновая платформа", SkinType = "Platform", Price = 100, Rarity = "Common", TexturePath = "Assets/Sprites/Skins/neon_platform", PrefabPath = "Assets/Prefabs/Skins/neon_platform" },
+            new SkinDto { Id = 2, Name = "Золотой мяч", SkinType = "Ball", Price = 150, Rarity = "Rare", TexturePath = "Assets/Sprites/Skins/gold_ball", PrefabPath = "Assets/Prefabs/Skins/gold_ball" },
+            new SkinDto { Id = 3, Name = "Огненная платформа", SkinType = "Platform", Price = 200, Rarity = "Epic", TexturePath = "Assets/Sprites/Skins/fire_platform", PrefabPath = "Assets/Prefabs/Skins/fire_platform" },
         };
 
         userInventory = new UserInventoryDto
@@ -271,10 +289,23 @@ public class ShopController : MonoBehaviour
             rectTransform.localScale = Vector3.one;
         }
 
+        // Найти спрайт по имени из БД (PrefabPath содержит название спрайта)
+        Sprite sprite = null;
+        string spriteName = currentSkin.PrefabPath;
+        if (!string.IsNullOrEmpty(spriteName) && _skinSpriteLookup != null)
+        {
+            _skinSpriteLookup.TryGetValue(spriteName, out sprite);
+        }
+
+        if (sprite == null)
+        {
+            Debug.LogWarning($"[ShopController] Sprite not found for skin '{currentSkin.Name}', spriteName='{spriteName}'");
+        }
+
         var skinItemUI = item.GetComponent<SkinItemUI>();
         if (skinItemUI != null)
         {
-            skinItemUI.Initialize(currentSkin, isCurrentSkinOwned, isCurrentSkinEquipped, OnSkinActionClicked);
+            skinItemUI.Initialize(currentSkin, isCurrentSkinOwned, isCurrentSkinEquipped, OnSkinActionClicked, sprite);
         }
         else
         {
@@ -492,6 +523,7 @@ public class ShopController : MonoBehaviour
         public string Rarity;
         public string Description;
         public string TexturePath;
+        public string PrefabPath;
     }
 
     [System.Serializable]
@@ -508,5 +540,12 @@ public class ShopController : MonoBehaviour
     {
         public int Coins;
         public List<UserSkinDto> Skins;
+    }
+
+    [System.Serializable]
+    public class SkinSpriteEntry
+    {
+        public string spriteName;
+        public Sprite sprite;
     }
 }
