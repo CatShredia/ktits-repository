@@ -1,0 +1,479 @@
+@page "/chat"
+@using CinemaBlazor.Models.Chat
+@using CinemaBlazor.Services
+@inject IChatService ChatService
+@inject ChatHubService ChatHub
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@implements IDisposable
+
+<div class="container-fluid mt-4">
+    <h2><i class="bi bi-chat-dots"></i> Чат</h2>
+
+    @if (!_isAuthenticated)
+    {
+        <div class="alert alert-warning">Пожалуйста, войдите в систему для использования чата.</div>
+    }
+    else if (_currentUser == null)
+    {
+        <div class="text-center mt-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
+            <p class="mt-2">Подключение к чату...</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <!-- Левая панель: список чатов -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Диалоги</h6>
+                        <button class="btn btn-sm btn-primary" @onclick="ShowNewChatModal">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (_conversations.Count == 0)
+                        {
+                            <p class="text-muted text-center p-3 mb-0">Нет диалогов</p>
+                        }
+                        else
+                        {
+                            @foreach (var conv in _conversations)
+                            {
+                                var isActive = _selectedConversation?.Id == conv.Id;
+                                var otherParticipants = conv.Participants
+                                    .Where(p => p.Id != _currentUser?.Id)
+                                    .ToList();
+                                var chatName = conv.Type == ConversationType.Direct
+                                    ? string.Join(", ", otherParticipants.Select(p => p.FullName))
+                                    : $"Группа ({conv.Participants.Count} уч.)";
+
+                                <div class="conversation-item p-2 border-bottom @GetActiveClass(isActive)"
+                                     @onclick="() => SelectConversation(conv)" style="cursor:pointer;">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="fw-bold text-truncate">@chatName</div>
+                                        @if (conv.LastMessage != null)
+                                        {
+                                            <small class="text-muted">@FormatTime(conv.LastMessage.CreatedAt)</small>
+                                        }
+                                    </div>
+                                    @if (conv.LastMessage != null)
+                                    {
+                                        <small class="text-muted text-truncate d-block">@conv.LastMessage.Content</small>
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Правая панель: сообщения -->
+            <div class="col-md-8">
+                @if (_selectedConversation == null)
+                {
+                    <div class="card h-100 d-flex align-items-center justify-content-center">
+                        <div class="text-center text-muted p-5">
+                            <i class="bi bi-chat-text" style="font-size: 3rem;"></i>
+                            <p class="mt-3">Выберите диалог или создайте новый</p>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    var otherParticipants = _selectedConversation.Participants
+                        .Where(p => p.Id != _currentUser?.Id)
+                        .ToList();
+                    var chatName = _selectedConversation.Type == ConversationType.Direct
+                        ? string.Join(", ", otherParticipants.Select(p => p.FullName))
+                        : $"Группа ({_selectedConversation.Participants.Count} уч.)";
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">@chatName</h6>
+                            @if (!string.IsNullOrEmpty(_typingUsers))
+                            {
+                                <small class="text-muted fst-italic">@_typingUsers печатает...</small>
+                            }
+                        </div>
+                        <div class="card-body" id="messages-container" style="height: 400px; overflow-y: auto;">
+                            @if (_messages.Count == 0)
+                            {
+                                <p class="text-muted text-center">Нет сообщений</p>
+                            }
+                            else
+                            {
+                                @foreach (var msg in _messages)
+                                {
+                                    var isMine = msg.SenderId == _currentUser?.Id;
+                                    <div class="d-flex @(isMine ? "justify-content-end" : "justify-content-start") mb-2">
+                                        <div class="@(isMine ? "bg-primary text-white" : "bg-light") rounded p-2"
+                                             style="max-width: 70%;">
+                                            @if (!isMine)
+                                            {
+                                                <small class="fw-bold d-block">@msg.SenderName</small>
+                                            }
+                                            <div>@msg.Content</div>
+                                            <small class="@(isMine ? "text-white-50" : "text-muted")" style="font-size: 0.75rem;">
+                                                @FormatTime(msg.CreatedAt)
+                                            </small>
+                                            @if (isMine)
+                                            {
+                                                <button class="btn btn-sm btn-link text-white-50 p-0 ms-2" style="font-size: 0.75rem;"
+                                                        @onclick="() => DeleteMessage(msg.Id)" title="Удалить">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <div class="card-footer">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Введите сообщение..."
+                                       @bind="_newMessagesText" @onkeydown="HandleKeyDown" @onkeyup="OnTyping" />
+                                <button class="btn btn-primary" @onclick="SendMessageAsync"
+                                        disabled="@(string.IsNullOrWhiteSpace(_newMessagesText))">
+                                    <i class="bi bi-send"></i> Отправить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Модальное окно: новый диалог -->
+@if (_showNewChatModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Новый диалог</h5>
+                    <button type="button" class="btn-close" @onclick="() => _showNewChatModal = false"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Поиск по логину..." @bind="_searchLogin"
+                               @onkeydown="HandleSearchKeyDown" />
+                        <button class="btn btn-outline-secondary" @onclick="SearchUser">Найти</button>
+                    </div>
+
+                    @if (_searchResult != null)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"
+                                           @onchange="() => ToggleUserSelection(_searchResult.Id)"
+                                           checked="@_selectedUserIds.Contains(_searchResult.Id)" />
+                                    <label class="form-check-label">
+                                        @_searchResult.FullName (@_searchResult.Login)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (_searchError != null)
+                    {
+                        <div class="alert alert-danger">@_searchError</div>
+                    }
+
+                    @if (_selectedUserIds.Count > 0)
+                    {
+                        <p class="text-muted">Выбрано пользователей: @_selectedUserIds.Count</p>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            @onclick="() => _showNewChatModal = false">Отмена</button>
+                    <button type="button" class="btn btn-primary" @onclick="CreateConversation"
+                            disabled="@(_selectedUserIds.Count == 0)">Создать</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .conversation-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .conversation-item.active {
+        background-color: #e7f1ff;
+    }
+</style>
+
+@code {
+    private UserChatDto? _currentUser;
+    private List<ConversationDto> _conversations = new();
+    private ConversationDto? _selectedConversation;
+    private List<MessageDto> _messages = new();
+    private string _newMessagesText = "";
+    private bool _isAuthenticated;
+    private bool _showNewChatModal;
+    private string _searchLogin = "";
+    private UserChatDto? _searchResult;
+    private string? _searchError;
+    private HashSet<int> _selectedUserIds = new();
+    private HashSet<int> _typingUserIds = new();
+    private string? _typingUsers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isAuthenticated = await AuthService.IsAuthenticatedAsync();
+        if (!_isAuthenticated)
+            return;
+
+        await LoadConversationsAsync();
+
+        // Подключение к SignalR
+        var token = await ChatService.GetTokenAsync();
+        if (!string.IsNullOrEmpty(token))
+        {
+            ChatHub.OnMessageReceived += OnMessageReceived;
+            ChatHub.OnUserTyping += OnUserTypingEvent;
+            ChatHub.OnMessageDeleted += OnMessageDeletedEvent;
+            await ChatHub.StartAsync(token);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _currentUser != null)
+        {
+            // Подключение к текущему чату
+            if (_selectedConversation != null)
+            {
+                await ChatHub.JoinConversationAsync(_selectedConversation.Id);
+            }
+        }
+    }
+
+    private async Task LoadConversationsAsync()
+    {
+        _currentUser = await ChatService.GetCurrentUserAsync();
+        _conversations = await ChatService.GetConversationsAsync();
+        StateHasChanged();
+    }
+
+    private async Task SelectConversation(ConversationDto conv)
+    {
+        // Покинуть предыдущий чат
+        if (_selectedConversation != null)
+        {
+            await ChatHub.LeaveConversationAsync(_selectedConversation.Id);
+        }
+
+        _selectedConversation = conv;
+        _messages = await ChatService.GetMessagesAsync(conv.Id);
+        _typingUserIds.Clear();
+        _typingUsers = null;
+        StateHasChanged();
+
+        // Присоединиться к новому чату
+        await ChatHub.JoinConversationAsync(conv.Id);
+    }
+
+    private async Task SendMessageAsync()
+    {
+        if (_selectedConversation == null || string.IsNullOrWhiteSpace(_newMessagesText))
+            return;
+
+        await ChatHub.SendMessageAsync(_selectedConversation.Id, _newMessagesText.Trim());
+        _newMessagesText = "";
+        StateHasChanged();
+    }
+
+    private async Task OnTyping(KeyboardEventArgs args)
+    {
+        if (_selectedConversation != null)
+        {
+            await ChatHub.SendTypingAsync(_selectedConversation.Id);
+        }
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter" && !string.IsNullOrWhiteSpace(_newMessagesText))
+        {
+            SendMessageAsync();
+        }
+    }
+
+    private async Task DeleteMessage(int messageId)
+    {
+        if (_selectedConversation == null)
+            return;
+
+        await ChatHub.DeleteMessageAsync(messageId, _selectedConversation.Id);
+    }
+
+    private void OnMessageReceived(MessageResponse message)
+    {
+        if (_selectedConversation != null && message.ConversationId == _selectedConversation.Id)
+        {
+            // Добавить сообщение в список
+            var dto = new MessageDto
+            {
+                Id = message.Id,
+                ConversationId = message.ConversationId,
+                SenderId = message.SenderId,
+                SenderName = message.SenderName,
+                Content = message.Content,
+                CreatedAt = message.CreatedAt,
+                UpdatedAt = message.UpdatedAt
+            };
+            _messages.Add(dto);
+            StateHasChanged();
+        }
+
+        // Обновить последнее сообщение в списке диалогов
+        var conv = _conversations.FirstOrDefault(c => c.Id == message.ConversationId);
+        if (conv != null)
+        {
+            conv.LastMessage = new MessageDto
+            {
+                Id = message.Id,
+                ConversationId = message.ConversationId,
+                SenderId = message.SenderId,
+                SenderName = message.SenderName,
+                Content = message.Content,
+                CreatedAt = message.CreatedAt,
+                UpdatedAt = message.UpdatedAt
+            };
+        }
+
+        // Переместить диалог наверх
+        _conversations.Remove(conv!);
+        _conversations.Insert(0, conv!);
+        StateHasChanged();
+    }
+
+    private void OnUserTypingEvent(int conversationId, int userId, string userName)
+    {
+        if (_selectedConversation?.Id == conversationId)
+        {
+            _typingUserIds.Add(userId);
+            _typingUsers = userName;
+            StateHasChanged();
+
+            // Убрать индикатор через 3 секунды
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(3000);
+                _typingUserIds.Remove(userId);
+                _typingUsers = _typingUserIds.Count > 0
+                    ? _conversations
+                        .SelectMany(c => c.Participants)
+                        .FirstOrDefault(p => p.Id == _typingUserIds.FirstOrDefault())?.FullName
+                    : null;
+                InvokeAsync(StateHasChanged);
+            });
+        }
+    }
+
+    private void OnMessageDeletedEvent(int messageId, int conversationId)
+    {
+        if (_selectedConversation?.Id == conversationId)
+        {
+            _messages.RemoveAll(m => m.Id == messageId);
+            StateHasChanged();
+        }
+    }
+
+    private void ShowNewChatModal()
+    {
+        _showNewChatModal = true;
+        _searchLogin = "";
+        _searchResult = null;
+        _searchError = null;
+        _selectedUserIds.Clear();
+    }
+
+    private async Task SearchUser()
+    {
+        if (string.IsNullOrWhiteSpace(_searchLogin))
+        {
+            _searchError = "Введите логин";
+            return;
+        }
+
+        _searchResult = await ChatService.SearchUserAsync(_searchLogin.Trim());
+        if (_searchResult == null)
+        {
+            _searchError = "Пользователь не найден";
+        }
+        else
+        {
+            _searchError = null;
+        }
+    }
+
+    private void ToggleUserSelection(int userId)
+    {
+        if (_selectedUserIds.Contains(userId))
+            _selectedUserIds.Remove(userId);
+        else
+            _selectedUserIds.Add(userId);
+    }
+
+    private void HandleSearchKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            SearchUser();
+        }
+    }
+
+    private async Task CreateConversation()
+    {
+        if (_currentUser == null || _selectedUserIds.Count == 0)
+            return;
+
+        var dto = new CreateConversationDto
+        {
+            ParticipantIds = _selectedUserIds.ToList()
+        };
+
+        var result = await ChatService.CreateConversationAsync(dto);
+        if (result != null)
+        {
+            _showNewChatModal = false;
+            _conversations.Insert(0, result);
+            await SelectConversation(result);
+        }
+    }
+
+    private string GetActiveClass(bool isActive)
+    {
+        return isActive ? "active" : "";
+    }
+
+    private string FormatTime(DateTime time)
+    {
+        var localTime = time.ToLocalTime();
+        if (localTime.Date == DateTime.Today)
+            return localTime.ToString("HH:mm");
+        if (localTime.Date == DateTime.Today.AddDays(-1))
+            return "Вчера";
+        return localTime.ToString("dd.MM.yyyy");
+    }
+
+    public void Dispose()
+    {
+        ChatHub.OnMessageReceived -= OnMessageReceived;
+        ChatHub.OnUserTyping -= OnUserTypingEvent;
+        ChatHub.OnMessageDeleted -= OnMessageDeletedEvent;
+    }
+}
