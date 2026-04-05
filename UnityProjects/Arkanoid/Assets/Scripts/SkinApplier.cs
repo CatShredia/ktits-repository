@@ -13,68 +13,41 @@ public class SkinApplier : MonoBehaviour
     [SerializeField] public string SkinType = "Platform";
 
     private SpriteRenderer _spriteRenderer;
-    private Vector2 _originalSpriteSize;  // native world size of original sprite
-    private Vector2 _originalColliderSize;
-    private float _appliedScaleFactor = 1f; // текущий применённый scaleFactor (для отмены)
-    private Vector3 _baseLocalScale; // localScale после инициализации контроллера
+    private BoxCollider2D _collider;
+    private Sprite _defaultSprite;               // дефолтный спрайт (запомнен в Start)
+    private float _defaultSpriteNativeHeight;    // нативная высота дефолтного спрайта
+    private Vector2 _defaultColliderSize;       // размер коллайдера при дефолтном масштабе
+    private Vector3 _defaultLocalScale;          // localScale при дефолтном спрайте
 
     void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _collider = GetComponent<BoxCollider2D>();
     }
 
     void Start()
     {
-        // Если ApplySprite уже вызывался (через ApplySkinToAll из ShopController),
-        // то transform.localScale уже содержит scaleFactor. Нужно восстановить базовый scale.
-        if (_appliedScaleFactor > 0 && _appliedScaleFactor != 1f)
+        // Запомнить состояние ПОСЛЕ всех других Start() (PlatformController, BallController)
+        _defaultLocalScale = transform.localScale;
+        _defaultSprite = _spriteRenderer != null ? _spriteRenderer.sprite : null;
+        if (_defaultSprite != null)
         {
-            _baseLocalScale = transform.localScale / _appliedScaleFactor;
-            var collider = GetComponent<BoxCollider2D>();
-            if (collider != null)
-            {
-                _originalColliderSize = collider.size * _appliedScaleFactor;
-            }
-            // _originalSpriteSize уже установлен в ApplySprite, НЕ перезаписываем
+            _defaultSpriteNativeHeight = _defaultSprite.rect.height / _defaultSprite.pixelsPerUnit;
         }
-        else
+        if (_collider != null)
         {
-            _baseLocalScale = transform.localScale;
-            var collider = GetComponent<BoxCollider2D>();
-            if (collider != null)
-            {
-                _originalColliderSize = collider.size;
-            }
-            // Только если ещё не установлен (ApplySprite не вызывался)
-            if (_originalSpriteSize == Vector2.zero && _spriteRenderer != null && _spriteRenderer.sprite != null)
-            {
-                _originalSpriteSize = GetSpriteNativeSize(_spriteRenderer.sprite);
-            }
+            _defaultColliderSize = _collider.size;
         }
 
-        // Применить экипированный скин.
-        // Если скин уже был применён через ApplySkinToAll, ApplySprite — идемпотентен
-        // и пересчитает те же значения (refSize == newSize → scaleFactor=1, scale не меняется).
         ApplyEquippedSkin();
-    }
-
-    /// <summary>
-    /// Получить нативный размер спрайта в мировых единицах.
-    /// </summary>
-    private Vector2 GetSpriteNativeSize(Sprite sprite)
-    {
-        if (sprite == null) return Vector2.zero;
-        return new Vector2(
-            sprite.rect.width / sprite.pixelsPerUnit,
-            sprite.rect.height / sprite.pixelsPerUnit
-        );
     }
 
     /// <summary>
     /// Применить спрайт к объекту.
     /// Масштабирует объект так, чтобы новый спрайт визуально совпадал
-    /// с размером исходного спрайта. Коллайдер остаётся неизменным
-    /// в мировом пространстве (localSize компенсируется scaleFactor).
+    /// с размером дефолтного спрайта. Коллайдер сохраняет мировой размер.
+    ///
+    /// Идемпотентен: повторный вызов с тем же спрайтом ничего не меняет.
     /// </summary>
     public void ApplySprite(Sprite sprite)
     {
@@ -84,60 +57,50 @@ public class SkinApplier : MonoBehaviour
             return;
         }
 
-        // Если _originalSpriteSize ещё не установлен (вызов до Start()),
-        // запоминаем нативный размер ТЕКУЩЕГО спрайта как референс
-        if (_originalSpriteSize == Vector2.zero && _spriteRenderer.sprite != null)
+        if (_defaultSpriteNativeHeight <= 0)
         {
-            _originalSpriteSize = GetSpriteNativeSize(_spriteRenderer.sprite);
+            Debug.LogWarning($"[SkinApplier] Default sprite height is 0 on {gameObject.name}");
+            _spriteRenderer.sprite = sprite;
+            return;
         }
 
-        Vector2 refSize = _originalSpriteSize;
-        Vector2 newSize = GetSpriteNativeSize(sprite);
-        float scaleFactor = 1f;
-        if (refSize.y > 0 && newSize.y > 0)
+        float newNativeHeight = sprite.rect.height / sprite.pixelsPerUnit;
+        if (newNativeHeight <= 0)
         {
-            scaleFactor = refSize.y / newSize.y;
+            Debug.LogWarning($"[SkinApplier] New sprite height is 0: {sprite.name}");
+            _spriteRenderer.sprite = sprite;
+            return;
         }
 
-        _appliedScaleFactor = scaleFactor;
+        // Коэффициент масштабирования: во сколько раз новый спрайт меньше/больше дефолтного
+        float scaleFactor = _defaultSpriteNativeHeight / newNativeHeight;
 
-        // Определяем базовый scale
-        Vector3 baseScale = _baseLocalScale != Vector3.zero ? _baseLocalScale : transform.localScale;
+        // Всегда считаем от _defaultLocalScale — это гарантирует стабильность
+        // независимо от текущего состояния (скин уже применён или нет)
+        float newScaleY = _defaultLocalScale.y * scaleFactor;
+        float newScaleX = _defaultLocalScale.x * scaleFactor;
+        float newScaleZ = _defaultLocalScale.z * scaleFactor;
 
-        // Если это первый вызов ДО Start(), запоминаем базу
-        if (_baseLocalScale == Vector3.zero)
-        {
-            _baseLocalScale = baseScale;
-
-            // Также запоминаем размер коллайдера
-            var collider = GetComponent<BoxCollider2D>();
-            if (collider != null && _originalColliderSize == Vector2.zero)
-            {
-                _originalColliderSize = collider.size;
-            }
-        }
-
-        // Применяем новый scale
-        transform.localScale = new Vector3(
-            baseScale.x * scaleFactor,
-            baseScale.y * scaleFactor,
-            baseScale.z * scaleFactor
-        );
+        transform.localScale = new Vector3(newScaleX, newScaleY, newScaleZ);
 
         // Применяем спрайт
         _spriteRenderer.sprite = sprite;
 
-        // Корректируем коллайдер
-        var col = GetComponent<BoxCollider2D>();
-        if (col != null && scaleFactor > 0)
+        // Корректируем коллайдер: сохраняем мировой размер
+        // worldSize = localSize * localScale → localSize = worldSize / localScale
+        // worldSize (базовый) = _defaultColliderSize * _defaultLocalScale
+        float colliderScaleRatio = scaleFactor; // масштаб относительно дефолта
+        if (_collider != null && colliderScaleRatio > 0)
         {
-            col.size = new Vector2(
-                _originalColliderSize.x / scaleFactor,
-                _originalColliderSize.y / scaleFactor
+            _collider.size = new Vector2(
+                _defaultColliderSize.x / colliderScaleRatio,
+                _defaultColliderSize.y / colliderScaleRatio
             );
         }
 
-        Debug.Log($"[SkinApplier] Applied '{sprite.name}' to {gameObject.name}, scaleFactor={scaleFactor:F3}");
+        Debug.Log($"[SkinApplier] Applied '{sprite.name}' to {gameObject.name}: " +
+                  $"defH={_defaultSpriteNativeHeight:F2}, newH={newNativeHeight:F2}, " +
+                  $"sf={scaleFactor:F3}, scale=({newScaleX:F2},{newScaleY:F2},{newScaleZ:F2})");
     }
 
     /// <summary>

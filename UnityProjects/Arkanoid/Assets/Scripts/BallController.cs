@@ -54,6 +54,25 @@ public class BallController : MonoBehaviour
         ballSpeed = Mathf.Clamp(ballSpeed, minSpeed, maxSpeed);
     }
 
+    /// <summary>
+    /// Вернуть мяч на платформу и сбросить состояние.
+    /// Вызывается из LevelController при смене уровня.
+    /// </summary>
+    public void ResetBall()
+    {
+        isActiveBalls = false;
+
+        if (playerObject == null)
+            playerObject = GameObject.FindWithTag("Player");
+
+        if (playerObject != null)
+        {
+            ballPosition = transform.position;
+            ballPosition.x = playerObject.transform.position.x;
+            transform.position = ballPosition;
+        }
+    }
+
     void Update()
     {
         if (MenuController.Instance != null && !MenuController.Instance.IsGameStarted) return;

@@ -32,6 +32,10 @@ public class LevelController : MonoBehaviour
             ResetBonusEffects();
         }
 
+        // После сброса — применить экипированные скины заново
+        // (ResetPlatform сбросил localScale, SkinApplier должен пересчитать масштаб)
+        SkinManager.Instance?.ApplyAllEquippedSkins();
+
         if (currentLevelInstance != null)
         {
             Destroy(currentLevelInstance);
@@ -111,14 +115,13 @@ public class LevelController : MonoBehaviour
 
         DestroyBallClones();
 
+        // Сбросить основной мяч: вернуть на платформу и обновить кэш позиции
         var balls = FindObjectsOfType<BallController>();
         foreach (var ball in balls)
         {
-            if (ball != null && !ball.isClone && ball.playerObject != null)
+            if (ball != null && !ball.isClone)
             {
-                ball.isActiveBalls = false;
-                var platformPos = ball.playerObject.transform.position;
-                ball.transform.position = new Vector3(platformPos.x, ball.transform.position.y, ball.transform.position.z);
+                ball.ResetBall();
             }
         }
 
@@ -131,6 +134,7 @@ public class LevelController : MonoBehaviour
 
     void DestroyFallingBonuses()
     {
+        // Include inactive — бонусы могут быть на отключённых объектах
         var bonuses = FindObjectsOfType<BonusController>();
         foreach (var bonus in bonuses)
         {

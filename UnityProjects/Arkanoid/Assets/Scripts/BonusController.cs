@@ -70,7 +70,7 @@ public class BonusController : MonoBehaviour
                 break;
 
             case BonusType.PlatformShrink:
-                platform?.ShrinkPlatform(platformExpandAmount);
+                platform?.ShrinkPlatform(-platformExpandAmount);
                 BonusUIManager.Instance?.ShowEffect("Уменьшение платформы", effectDuration);
                 break;
 
