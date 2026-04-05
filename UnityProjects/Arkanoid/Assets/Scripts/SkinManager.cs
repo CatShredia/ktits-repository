@@ -119,6 +119,7 @@ public class SkinManager : MonoBehaviour
 
     /// <summary>
     /// Применить скин ко всем SkinApplier в сцене указанного типа.
+    /// Включает неактивные GameObject (например, когда платформа/мяч скрыты магазином).
     /// Вызывается при загрузке уровня или после экипировки.
     /// </summary>
     public void ApplySkinToAll(string skinType, string skinName)
@@ -130,12 +131,14 @@ public class SkinManager : MonoBehaviour
             return;
         }
 
-        var appliers = FindObjectsByType<SkinApplier>(FindObjectsSortMode.None);
+        // FindObjectsInactive.Include — находит SkinApplier даже на deactivated GameObject
+        var appliers = FindObjectsByType<SkinApplier>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (var applier in appliers)
         {
             if (applier.SkinType == skinType)
             {
                 applier.ApplySprite(sprite);
+                Debug.Log($"[SkinManager] Applied skin '{skinName}' to {applier.gameObject.name} (active={applier.gameObject.activeInHierarchy})");
             }
         }
     }

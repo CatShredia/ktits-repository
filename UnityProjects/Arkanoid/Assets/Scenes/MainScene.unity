@@ -6372,6 +6372,19 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.27, y: 0.27}
   m_EdgeRadius: 0
+--- !u!114 &1143630395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143630381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00e297f0d31d8dc4d96bea0de1f022a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkinApplier
+  SkinType: Ball
 --- !u!1 &1148958502
 GameObject:
   m_ObjectHideFlags: 0
@@ -10342,6 +10355,7 @@ MonoBehaviour:
     sprite: {fileID: -6703213334057972612, guid: 6551b13935b8c234ea09ff5e357c4307, type: 3}
   - spriteName: BasicArkanoidPack_10
     sprite: {fileID: 3345604596107148701, guid: ac60de040a2aa2840b00b8dc2dab4da1, type: 3}
+  skinNameAliases: []
 --- !u!1 &1832471129
 GameObject:
   m_ObjectHideFlags: 0
@@ -12826,6 +12840,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5357291768563538972, guid: 6b6ff040679b92741bea5d709af40929, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1143630390}
+    - targetCorrespondingSourceObject: {fileID: 5357291768563538972, guid: 6b6ff040679b92741bea5d709af40929, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1143630395}
   m_SourcePrefab: {fileID: 100100000, guid: 6b6ff040679b92741bea5d709af40929, type: 3}
 --- !u!1001 &2513967570368115809
 PrefabInstance:
@@ -13103,6 +13120,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8150623482628355015, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5191726466286821707}
+    - targetCorrespondingSourceObject: {fileID: 8150623482628355015, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5191726466286821716}
   m_SourcePrefab: {fileID: 100100000, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
 --- !u!1 &5191726466286821700 stripped
 GameObject:
@@ -13158,6 +13178,19 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 655715710582761135, guid: fa364cb21858e7f4b8443416dbe0b3d7, type: 3}
   m_PrefabInstance: {fileID: 5191726466286821699}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5191726466286821716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5191726466286821700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00e297f0d31d8dc4d96bea0de1f022a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkinApplier
+  SkinType: Platform
 --- !u!1001 &5897516910424524130
 PrefabInstance:
   m_ObjectHideFlags: 0
