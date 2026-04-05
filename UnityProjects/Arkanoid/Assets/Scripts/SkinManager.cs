@@ -29,6 +29,8 @@ public class SkinManager : MonoBehaviour
     private const string PLATFORM_SKIN_KEY = "EquippedPlatformSkin";
     private const string BALL_SKIN_KEY = "EquippedBallSkin";
 
+    // ! Инициализация singleton, загрузка скинов и маппингов из PlayerPrefs
+    // Вызывается автоматически Unity при создании объекта
     void Awake()
     {
         if (Instance == null)
@@ -76,15 +78,15 @@ public class SkinManager : MonoBehaviour
         Debug.Log($"[SkinManager] Loaded {_skinSpriteLookup.Count} skin sprites, {_nameToKeyMapping.Count} name aliases");
     }
 
+    // ! Лог готовности менеджера скинов
+    // Вызывается автоматически Unity после Awake()
     void Start()
     {
         Debug.Log("[SkinManager] Start — ready for skin application");
     }
 
-    /// <summary>
-    /// Экипировать скин для указанного типа (Platform / Ball).
-    /// skinName — имя скина, совпадающее с ключом в skinSprites (из БД).
-    /// </summary>
+    // ! Экипировать скин для указанного типа (Platform / Ball)
+    // Вызывается из ShopController.EquipSkin, ApplySkinToAll
     public void EquipSkin(string skinType, string skinName)
     {
         if (string.IsNullOrEmpty(skinName))
@@ -117,11 +119,8 @@ public class SkinManager : MonoBehaviour
         ApplySkinToAll(skinType, skinName);
     }
 
-    /// <summary>
-    /// Применить скин ко всем SkinApplier в сцене указанного типа.
-    /// Включает неактивные GameObject (например, когда платформа/мяч скрыты магазином).
-    /// Вызывается при загрузке уровня или после экипировки.
-    /// </summary>
+    // ! Применить скин ко всем SkinApplier в сцене указанного типа
+    // Вызывается из EquipSkin, ApplyAllEquippedSkins
     public void ApplySkinToAll(string skinType, string skinName)
     {
         Sprite sprite = GetSpriteForSkin(skinName);
@@ -143,10 +142,8 @@ public class SkinManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Применить все сохранённые скины при старте игры.
-    /// Вызывать при загрузке основной сцены.
-    /// </summary>
+    // ! Применить все сохранённые скины при старте игры
+    // Вызывается из LevelController при загрузке сцены
     public void ApplyAllEquippedSkins()
     {
         if (!string.IsNullOrEmpty(_equippedPlatformSkin))
@@ -159,9 +156,8 @@ public class SkinManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Получить текущий экипированный скин для типа.
-    /// </summary>
+    // ! Получить текущий экипированный скин для типа
+    // Вызывается из SkinApplier.ApplyEquippedSkin
     public string GetEquippedSkin(string skinType)
     {
         return skinType switch
@@ -172,11 +168,8 @@ public class SkinManager : MonoBehaviour
         };
     }
 
-    /// <summary>
-    /// Зарегистрировать маппинг DB Name → Sprite Key.
-    /// Вызывается из ShopController при загрузке скинов из API.
-    /// Позволяет разрешать старые записи в PlayerPrefs (по DB Name).
-    /// </summary>
+    // ! Зарегистрировать маппинг DB Name → Sprite Key
+    // Вызывается из ShopController.LoadShopData
     public void RegisterSkinNameMapping(string dbSkinName, string spriteKey)
     {
         if (!string.IsNullOrEmpty(dbSkinName) && !string.IsNullOrEmpty(spriteKey))
@@ -185,9 +178,8 @@ public class SkinManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Получить Sprite для указанного имени скина.
-    /// </summary>
+    // ! Получить Sprite для указанного имени скина
+    // Вызывается из SkinApplier.ApplyEquippedSkin, ShopController.ShowCurrentSkin
     public Sprite GetSpriteForSkin(string skinName)
     {
         if (string.IsNullOrEmpty(skinName)) return null;
@@ -213,9 +205,8 @@ public class SkinManager : MonoBehaviour
         return null;
     }
 
-    /// <summary>
-    /// Сбросить скин к дефолтному (убрать экипировку).
-    /// </summary>
+    // ! Сбросить скин к дефолтному (убрать экипировку)
+    // Вызывается из LevelController при смене уровня
     public void ResetSkin(string skinType)
     {
         if (skinType == "Platform")

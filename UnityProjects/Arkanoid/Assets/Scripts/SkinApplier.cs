@@ -42,13 +42,8 @@ public class SkinApplier : MonoBehaviour
         ApplyEquippedSkin();
     }
 
-    /// <summary>
-    /// Применить спрайт к объекту.
-    /// Масштабирует объект так, чтобы новый спрайт визуально совпадал
-    /// с размером дефолтного спрайта. Коллайдер сохраняет мировой размер.
-    ///
-    /// Идемпотентен: повторный вызов с тем же спрайтом ничего не меняет.
-    /// </summary>
+    // ! Применить спрайт к объекту
+    // Вызывается из SkinManager.ApplySkinToAll
     public void ApplySprite(Sprite sprite)
     {
         if (sprite == null || _spriteRenderer == null)
@@ -103,9 +98,8 @@ public class SkinApplier : MonoBehaviour
                   $"sf={scaleFactor:F3}, scale=({newScaleX:F2},{newScaleY:F2},{newScaleZ:F2})");
     }
 
-    /// <summary>
-    /// Запросить и применить текущий экипированный скин из SkinManager.
-    /// </summary>
+    // ! Запросить и применить текущий экипированный скин из SkinManager
+    // Вызывается из SkinApplier.Start
     public void ApplyEquippedSkin()
     {
         if (SkinManager.Instance == null)

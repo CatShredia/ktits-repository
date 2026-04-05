@@ -1,6 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
+using System.Threading.Tasks;
+using Arkanoid.Network;
+using Debug = UnityEngine.Debug;
 
 public class SkinItemUI : MonoBehaviour
 {
@@ -18,6 +22,7 @@ public class SkinItemUI : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI typeText;
     [SerializeField] private TextMeshProUGUI priceText;
+    [SerializeField] private TextMeshProUGUI skinStatusText;
 
     [Header("=== Indicators ===")]
     [SerializeField]
@@ -39,7 +44,6 @@ public class SkinItemUI : MonoBehaviour
     private ShopController.SkinDto _skinData;
     private bool _isOwned;
     private bool _isEquipped;
-    private System.Action<int> _onActionClicked;
 
     void Awake()
     {
@@ -53,13 +57,11 @@ public class SkinItemUI : MonoBehaviour
             equipButton.onClick.AddListener(OnEquipClicked);
     }
 
-    public void Initialize(ShopController.SkinDto skin, bool isOwned, bool isEquipped,
-        System.Action<int> onActionClicked, Sprite sprite)
+    public void Initialize(ShopController.SkinDto skin, bool isOwned, bool isEquipped, Sprite sprite)
     {
         _skinData = skin;
         _isOwned = isOwned;
         _isEquipped = isEquipped;
-        _onActionClicked = onActionClicked;
 
         UpdateVisuals();
         SetSkinSprite(sprite);
@@ -84,20 +86,27 @@ public class SkinItemUI : MonoBehaviour
 
         if (priceText != null)
         {
+            priceText.text = $"{_skinData.Price}";
+            priceText.color = Color.yellow;
+        }
+
+        if (skinStatusText != null)
+        {
             if (_isEquipped)
             {
-                priceText.text = "ЭКИПИРОВАНО";
-                priceText.color = Color.green;
+                skinStatusText.text = "ЭКИПИРОВАНО";
+                skinStatusText.color = Color.green;
+                skinStatusText.gameObject.SetActive(true);
             }
             else if (_isOwned)
             {
-                priceText.text = "КУПЛЕНО";
-                priceText.color = Color.green;
+                skinStatusText.text = "КУПЛЕНО";
+                skinStatusText.color = Color.green;
+                skinStatusText.gameObject.SetActive(true);
             }
             else
             {
-                priceText.text = $"{_skinData.Price}";
-                priceText.color = Color.yellow;
+                skinStatusText.gameObject.SetActive(false);
             }
         }
 
@@ -181,13 +190,155 @@ public class SkinItemUI : MonoBehaviour
 
     private void OnClicked()
     {
-        _onActionClicked?.Invoke(_skinData.Id);
+        if (_isOwned)
+            EquipSkin();
+        else
+            PurchaseSkin();
     }
 
     private void OnEquipClicked()
     {
-        // EquipButton вызывает ту же логику, что и OnClicked для owned скина
-        _onActionClicked?.Invoke(_skinData.Id);
+        EquipSkin();
+    }
+
+    // ! Купить скин через API
+    // Вызывается из OnClicked когда скин не принадлежит пользователю
+    public async void PurchaseSkin()
+    {
+        if (_skinData == null) return;
+
+        try
+        {
+            var response = await ShopAPIClient.Instance.PurchaseSkin(_skinData.Id);
+
+            if (response != null && response.Success)
+            {
+                Debug.Log($"[SkinItemUI] Skin purchased: {_skinData.Name}");
+
+                if (ShopController.Instance != null)
+                {
+                    ShopController.Instance.UpdateCoins(response.RemainingCoins);
+
+                    if (response.PurchasedSkin != null)
+                    {
+                        ShopController.Instance.AddOwnedSkin(new ShopController.UserSkinDto
+                        {
+                            Id = response.PurchasedSkin.Id,
+                            SkinId = _skinData.Id,
+                            SkinName = _skinData.Name,
+                            IsEquipped = false
+                        });
+                    }
+
+                    ShopController.Instance.RefreshShopUI();
+                }
+
+                _isOwned = true;
+                UpdateVisuals();
+            }
+            else
+            {
+                var errorCode = (PurchaseErrorCode)(response?.ErrorCode ?? 0);
+
+                if (SkinsError.Instance != null)
+                {
+                    SkinsError.Instance.ShowPurchaseError(errorCode, response?.Message);
+                }
+                else
+                {
+                    Debug.LogError($"[SkinItemUI] Purchase failed: {response?.Message ?? GetPurchaseErrorMessage(errorCode)}");
+                }
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[SkinItemUI] Purchase error: {e.Message}");
+        }
+    }
+
+    // ! Экипировать скин через API
+    // Вызывается из OnClicked, OnEquipClicked когда скин принадлежит пользователю
+    public async void EquipSkin()
+    {
+        if (_skinData == null) return;
+
+        var userSkin = ShopController.Instance?.GetOwnedSkin(_skinData.Id);
+        if (userSkin == null)
+        {
+            Debug.LogError($"[SkinItemUI] Skin not owned: {_skinData.Id}");
+            return;
+        }
+
+        try
+        {
+            var response = await ShopAPIClient.Instance.EquipSkin(userSkin.Id);
+
+            if (response != null && response.Success)
+            {
+                Debug.Log($"[SkinItemUI] Skin equipped: {userSkin.SkinName}");
+
+                var skin = ShopController.Instance?.GetSkinById(_skinData.Id);
+
+                if (skin != null)
+                {
+                    ShopController.Instance.UnequipAllOfType(skin.SkinType, _skinData.Id);
+                    ShopController.Instance.SetSkinEquipped(_skinData.Id, true);
+                }
+
+                if (skin != null && SkinManager.Instance != null)
+                {
+                    string spriteKey = skin.PrefabPath;
+                    SkinManager.Instance.EquipSkin(skin.SkinType, spriteKey);
+                    Debug.Log($"[SkinItemUI] Applied skin '{skin.Name}' ({skin.SkinType}), spriteKey='{spriteKey}' via SkinManager");
+                }
+
+                _isEquipped = true;
+                UpdateVisuals();
+                ShopController.Instance.RefreshShopUI();
+            }
+            else
+            {
+                var errorCode = (EquipErrorCode)(response?.ErrorCode ?? 0);
+
+                if (SkinsError.Instance != null)
+                {
+                    SkinsError.Instance.ShowEquipError(errorCode, response?.Message);
+                }
+                else
+                {
+                    Debug.LogError($"[SkinItemUI] Equip failed: {response?.Message ?? GetEquipErrorMessage(errorCode)}");
+                }
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[SkinItemUI] Equip error: {e.Message}");
+        }
+    }
+
+    private string GetPurchaseErrorMessage(PurchaseErrorCode code)
+    {
+        return code switch
+        {
+            PurchaseErrorCode.AlreadyOwned => "Этот скин уже есть у вас",
+            PurchaseErrorCode.InsufficientCoins => "Недостаточно монет",
+            PurchaseErrorCode.SkinNotFound => "Скин не найден",
+            PurchaseErrorCode.SkinNotAvailable => "Скин недоступен для покупки",
+            PurchaseErrorCode.UserNotFound => "Пользователь не найден",
+            _ => "Ошибка покупки"
+        };
+    }
+
+    private string GetEquipErrorMessage(EquipErrorCode code)
+    {
+        return code switch
+        {
+            EquipErrorCode.AlreadyEquipped => "Этот скин уже экипирован",
+            EquipErrorCode.SkinNotFound => "Скин не найден или не принадлежит вам",
+            EquipErrorCode.SkinNotOwned => "Скин не принадлежит вам",
+            EquipErrorCode.SkinDataNotFound => "Данные скина не найдены",
+            _ => "Ошибка экипировки"
+        };
     }
 
     public void UpdateState(bool isOwned, bool isEquipped)

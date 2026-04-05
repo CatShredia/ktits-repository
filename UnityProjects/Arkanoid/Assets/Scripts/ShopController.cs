@@ -175,23 +175,19 @@ public class ShopController : MonoBehaviour
         Debug.Log($"[ShopController] Ball tab selected, showing {filteredSkins.Count} ball skins");
     }
 
-    /// <summary>
-    /// Вызывается после изменения состояния авторизации (вход/выход)
-    /// </summary>
+    // ! Вызывается после изменения состояния авторизации (вход/выход)
+    // Вызывается из AuthUIController
     public void RefreshAuthState()
     {
         UpdateShopHeaderVisibility();
         UpdateCoinsDisplay();
     }
 
-    /// <summary>
-    /// Возвращает, открыт ли сейчас магазин
-    /// </summary>
+    // ! Возвращает, открыт ли сейчас магазин
     public bool IsShopOpen => isShopOpen;
 
-    /// <summary>
-    /// Перезагружает данные магазина (инвентарь и скины) без перезапуска анимации
-    /// </summary>
+    // ! Перезагружает данные магазина (инвентарь и скины) без перезапуска анимации
+    // Вызывается из AuthUIController после входа пользователя
     public void ReloadShopData()
     {
         _ = LoadShopData();
@@ -210,10 +206,10 @@ public class ShopController : MonoBehaviour
         StartCoroutine(OpenShopSequence(false));
     }
 
-    public void CloseShop()
+    public void CloseShop(bool showMainMenu = true)
     {
         if (!isShopOpen || isAnimating) return;
-        StartCoroutine(HideShopSequence());
+        StartCoroutine(HideShopSequence(showMainMenu));
     }
 
     private IEnumerator OpenShopSequence(bool fromMainMenu)
@@ -235,7 +231,7 @@ public class ShopController : MonoBehaviour
         Debug.Log("[ShopController] Shop opened");
     }
 
-    private IEnumerator HideShopSequence()
+    private IEnumerator HideShopSequence(bool showMainMenu)
     {
         isAnimating = true;
 
@@ -244,7 +240,7 @@ public class ShopController : MonoBehaviour
         yield return new WaitForSecondsRealtime(hideAnimationDuration);
 
         if (shopPanel != null) shopPanel.SetActive(false);
-        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
+        if (showMainMenu && mainMenuPanel != null) mainMenuPanel.SetActive(true);
         if (playerPlatform != null) playerPlatform.SetActive(true);
         if (ball != null) ball.SetActive(true);
 
@@ -457,7 +453,7 @@ public class ShopController : MonoBehaviour
         var skinItemUI = item.GetComponent<SkinItemUI>();
         if (skinItemUI != null)
         {
-            skinItemUI.Initialize(currentSkin, isCurrentSkinOwned, isCurrentSkinEquipped, OnSkinActionClicked, sprite);
+            skinItemUI.Initialize(currentSkin, isCurrentSkinOwned, isCurrentSkinEquipped, sprite);
         }
         else
         {
@@ -465,15 +461,6 @@ public class ShopController : MonoBehaviour
         }
 
         UpdateCarouselButtons();
-    }
-
-    private void OnSkinActionClicked(int skinId)
-    {
-        if (skinId != currentSkin?.Id) return;
-        if (isCurrentSkinOwned)
-            EquipSkin(skinId);
-        else
-            PurchaseSkin(skinId);
     }
 
     public void OnPrevButtonClicked()
@@ -533,139 +520,70 @@ public class ShopController : MonoBehaviour
 
     private void OnBackButtonClicked() => CloseShop();
 
-    private async void PurchaseSkin(int skinId)
+    // ! Обновить монеты в инвентаре
+    // Вызывается из SkinItemUI после покупки
+    public void UpdateCoins(int coins)
     {
-        var skin = allSkins.Find(s => s.Id == skinId);
-        if (skin == null) return;
-
-        try
+        if (userInventory != null)
         {
-            var response = await ShopAPIClient.Instance.PurchaseSkin(skinId);
-
-            if (response != null && response.Success)
-            {
-                Debug.Log($"[ShopController] Skin purchased: {skin.Name}");
-                userInventory.Coins = response.RemainingCoins;
-
-                if (response.PurchasedSkin != null)
-                {
-                    userInventory.Skins.Add(new UserSkinDto
-                    {
-                        Id = response.PurchasedSkin.Id,
-                        SkinId = skinId,
-                        SkinName = skin.Name,
-                        IsEquipped = false
-                    });
-                }
-
-                UpdateCoinsDisplay();
-                UpdateShopHeaderVisibility();
-                ShowCurrentSkin();
-            }
-            else
-            {
-                var errorCode = (PurchaseErrorCode)(response?.ErrorCode ?? 0);
-
-                if (SkinsError.Instance != null)
-                {
-                    SkinsError.Instance.ShowPurchaseError(errorCode, response?.Message);
-                }
-                else
-                {
-                    Debug.LogError($"[ShopController] Purchase failed: {response?.Message ?? GetPurchaseErrorMessage(errorCode)}");
-                }
-            }
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"[ShopController] Purchase error: {e.Message}");
+            userInventory.Coins = coins;
         }
     }
 
-    private string GetPurchaseErrorMessage(PurchaseErrorCode code)
+    // ! Добавить купленный скин в инвентарь
+    // Вызывается из SkinItemUI после покупки
+    public void AddOwnedSkin(UserSkinDto skin)
     {
-        return code switch
+        if (userInventory != null)
         {
-            PurchaseErrorCode.AlreadyOwned => "Этот скин уже есть у вас",
-            PurchaseErrorCode.InsufficientCoins => "Недостаточно монет",
-            PurchaseErrorCode.SkinNotFound => "Скин не найден",
-            PurchaseErrorCode.SkinNotAvailable => "Скин недоступен для покупки",
-            PurchaseErrorCode.UserNotFound => "Пользователь не найден",
-            _ => "Ошибка покупки"
-        };
+            userInventory.Skins.Add(skin);
+        }
     }
 
-    private async void EquipSkin(int skinId)
+    // ! Получить скин из инвентаря по skinId
+    // Вызывается из SkinItemUI.EquipSkin
+    public UserSkinDto? GetOwnedSkin(int skinId)
+    {
+        return userInventory?.Skins?.FirstOrDefault(s => s.SkinId == skinId);
+    }
+
+    // ! Получить все данные скина по ID
+    // Вызывается из SkinItemUI.EquipSkin
+    public SkinDto GetSkinById(int skinId)
+    {
+        return allSkins.Find(s => s.Id == skinId);
+    }
+
+    // ! Снять экипировку со всех скинов указанного типа, кроме указанного
+    // Вызывается из SkinItemUI.EquipSkin
+    public void UnequipAllOfType(string skinType, int exceptSkinId)
+    {
+        if (userInventory?.Skins == null) return;
+
+        foreach (var us in userInventory.Skins)
+        {
+            var s = allSkins.Find(sk => sk.Id == us.SkinId);
+            if (s?.SkinType == skinType && us.SkinId != exceptSkinId)
+                us.IsEquipped = false;
+        }
+    }
+
+    // ! Установить флаг экипировки для скина
+    // Вызывается из SkinItemUI.EquipSkin
+    public void SetSkinEquipped(int skinId, bool equipped)
     {
         var userSkin = userInventory?.Skins?.FirstOrDefault(s => s.SkinId == skinId);
-        if (userSkin == null)
-        {
-            Debug.LogError($"[ShopController] Skin not owned: {skinId}");
-            return;
-        }
-
-        try
-        {
-            var response = await ShopAPIClient.Instance.EquipSkin(userSkin.Id);
-
-            if (response != null && response.Success)
-            {
-                Debug.Log($"[ShopController] Skin equipped: {userSkin.SkinName}");
-
-                var skin = allSkins.Find(s => s.Id == skinId);
-
-                if (userInventory?.Skins != null && skin != null)
-                {
-                    foreach (var us in userInventory.Skins)
-                    {
-                        var s = allSkins.Find(sk => sk.Id == us.SkinId);
-                        if (s?.SkinType == skin.SkinType)
-                            us.IsEquipped = false;
-                    }
-                    userSkin.IsEquipped = true;
-                }
-
-                // Применить скин в игре через SkinManager
-                if (skin != null && SkinManager.Instance != null)
-                {
-                    // Используем PrefabPath как ключ для поиска спрайта (это имя спрайта в Unity)
-                    string spriteKey = skin.PrefabPath;
-                    SkinManager.Instance.EquipSkin(skin.SkinType, spriteKey);
-                    Debug.Log($"[ShopController] Applied skin '{skin.Name}' ({skin.SkinType}), spriteKey='{spriteKey}' via SkinManager");
-                }
-
-                ShowCurrentSkin();
-            }
-            else
-            {
-                var errorCode = (EquipErrorCode)(response?.ErrorCode ?? 0);
-
-                if (SkinsError.Instance != null)
-                {
-                    SkinsError.Instance.ShowEquipError(errorCode, response?.Message);
-                }
-                else
-                {
-                    Debug.LogError($"[ShopController] Equip failed: {response?.Message ?? GetEquipErrorMessage(errorCode)}");
-                }
-            }
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"[ShopController] Equip error: {e.Message}");
-        }
+        if (userSkin != null)
+            userSkin.IsEquipped = equipped;
     }
 
-    private string GetEquipErrorMessage(EquipErrorCode code)
+    // ! Обновить UI магазина после изменения инвентаря
+    // Вызывается из SkinItemUI после покупки/экипировки
+    public void RefreshShopUI()
     {
-        return code switch
-        {
-            EquipErrorCode.AlreadyEquipped => "Этот скин уже экипирован",
-            EquipErrorCode.SkinNotFound => "Скин не найден или не принадлежит вам",
-            EquipErrorCode.SkinNotOwned => "Скин не принадлежит вам",
-            EquipErrorCode.SkinDataNotFound => "Данные скина не найдены",
-            _ => "Ошибка экипировки"
-        };
+        UpdateCoinsDisplay();
+        UpdateShopHeaderVisibility();
+        ShowCurrentSkin();
     }
 
     [System.Serializable]

@@ -38,27 +38,24 @@ public class SkinsError : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Показать ошибку покупки
-    /// </summary>
+    // ! Показать ошибку покупки
+    // Вызывается из ShopController.PurchaseSkin
     public void ShowPurchaseError(PurchaseErrorCode errorCode, string customMessage = null)
     {
         string message = customMessage ?? GetPurchaseErrorMessage(errorCode);
         ShowError(message);
     }
 
-    /// <summary>
-    /// Показать ошибку экипировки
-    /// </summary>
+    // ! Показать ошибку экипировки
+    // Вызывается из ShopController.EquipSkin
     public void ShowEquipError(EquipErrorCode errorCode, string customMessage = null)
     {
         string message = customMessage ?? GetEquipErrorMessage(errorCode);
         ShowError(message);
     }
 
-    /// <summary>
-    /// Показать общее сообщение об ошибке
-    /// </summary>
+    // ! Показать общее сообщение об ошибке
+    // Вызывается из ShowPurchaseError, ShowEquipError
     public void ShowError(string message, Color? color = null)
     {
         if (errorText == null)

@@ -9,7 +9,7 @@ public class PlatformController : MonoBehaviour
 
     private Vector3 playerPosition;
     private Vector3 originalScale;
-    private float currentScaleMultiplier = 1f; // текущий множитель от бонусов (1 = нет эффекта)
+    private float currentScaleMultiplier = 1f;
 
     void Start()
     {
@@ -58,18 +58,16 @@ public class PlatformController : MonoBehaviour
         playerPosition = transform.position;
     }
 
-    /// <summary>
-    /// Умножить ширину платформы (мультипликативно к текущему масштабу скина).
-    /// </summary>
+    // ! Умножить ширину платформы (мультипликативно к текущему масштабу скина)
+    // Вызывается из BonusController при получении бонуса
     public void ExpandPlatform(float amount)
     {
         currentScaleMultiplier += amount;
         ApplyPlatformScale();
     }
 
-    /// <summary>
-    /// Уменьшить ширину платформы (мультипликативно к текущему масштабу скина).
-    /// </summary>
+    // ! Уменьшить ширину платформы (мультипликативно к текущему масштабу скина)
+    // Вызывается из BonusController при получении бонуса
     public void ShrinkPlatform(float amount)
     {
         currentScaleMultiplier += amount; // amount отрицательный
@@ -83,9 +81,8 @@ public class PlatformController : MonoBehaviour
         Debug.Log($"[Platform] ResetPlatform() - scale: {transform.localScale}");
     }
 
-    /// <summary>
-    /// Применить масштаб: originalScale (вкл. скин) × currentScaleMultiplier.
-    /// </summary>
+    // ! Применить масштаб: originalScale (вкл. скин) × currentScaleMultiplier
+    // Вызывается из ExpandPlatform, ShrinkPlatform, ResetPlatform
     private void ApplyPlatformScale()
     {
         transform.localScale = new Vector3(

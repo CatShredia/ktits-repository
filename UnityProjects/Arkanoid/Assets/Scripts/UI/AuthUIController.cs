@@ -21,8 +21,11 @@ public class AuthUIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI userNameText;
 
     [Header("=== Panels ===")]
-    [SerializeField] private GameObject authPanel;
+    [SerializeField] private GameObject startMenuPanel;
     [SerializeField] private GameObject shopPanel;
+    [SerializeField] private GameObject gameoverPanel;
+    [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject authPanel;
 
     [Header("=== Toggles ===")]
     [SerializeField] private Toggle isRememberedToggle;
@@ -72,6 +75,11 @@ public class AuthUIController : MonoBehaviour
 
     public void ShowAuthPanel()
     {
+        ShopController.Instance?.CloseShop(showMainMenu: false);
+        if (startMenuPanel != null) startMenuPanel.SetActive(false);
+        if (shopPanel != null) shopPanel.SetActive(false);
+        if (gameoverPanel != null) gameoverPanel.SetActive(false);
+        if (pausePanel != null) pausePanel.SetActive(false);
         if (authPanel != null) authPanel.SetActive(true);
         ClearError();
         UpdateTitle();
@@ -132,7 +140,11 @@ public class AuthUIController : MonoBehaviour
 
     private void ShowAuthButton() { if (authButton != null) authButton.gameObject.SetActive(true); }
     private void HideAuthButton() { if (authButton != null) authButton.gameObject.SetActive(false); }
-    private void HideAuthPanel() { if (authPanel != null) authPanel.SetActive(false); }
+    private void HideAuthPanel()
+    {
+        if (authPanel != null) authPanel.SetActive(false);
+        if (startMenuPanel != null) startMenuPanel.SetActive(true);
+    }
     private void HideShopPanel() { if (shopPanel != null) shopPanel.SetActive(false); }
 
     private void OnRememberedToggleChanged(bool value)

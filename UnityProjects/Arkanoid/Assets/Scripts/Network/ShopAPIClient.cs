@@ -97,7 +97,6 @@ namespace Arkanoid.Network
                 Debug.LogWarning($"[ShopAPIClient] GET HTTP Status: {request.responseCode}");
             }
 
-            // Возвращаем текст ответа даже при ошибке (может содержать JSON с сообщением об ошибке)
             var errorText = request.downloadHandler?.text;
             if (!string.IsNullOrEmpty(errorText))
             {
@@ -127,7 +126,6 @@ namespace Arkanoid.Network
             Debug.Log($"[ShopAPIClient] Sending POST {url}");
             await request.SendWebRequest();
 
-            // Читаем ответ даже при ошибке (например, 400 Bad Request)
             if (request.result == UnityWebRequest.Result.Success ||
                 request.result == UnityWebRequest.Result.ProtocolError ||
                 request.result == UnityWebRequest.Result.ConnectionError)
