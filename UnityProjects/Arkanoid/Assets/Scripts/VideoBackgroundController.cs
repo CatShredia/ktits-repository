@@ -29,21 +29,18 @@ public class VideoBackgroundController : MonoBehaviour
         if (backgroundRawImage == null)
             backgroundRawImage = GetComponent<UnityEngine.UI.RawImage>();
 
-        videoPlayer.enabled = true;
-        videoPlayer.gameObject.SetActive(true);
-
         videoPlayer.playOnAwake = false;
         videoPlayer.isLooping = true;
         videoPlayer.skipOnDrop = true;
         videoPlayer.waitForFirstFrame = false;
+
+        // Скрыть видео по умолчанию, показывается только при открытии AuthPanel/ShopPanel
+        HideVideo();
     }
 
     void Start()
     {
-        if (autoPlayOnStart)
-        {
-            Invoke(nameof(PlayFirstVideo), 0.5f);
-        }
+        // Видео запускается только через ShowVideo()
     }
 
     void PlayFirstVideo()
@@ -130,6 +127,31 @@ public class VideoBackgroundController : MonoBehaviour
         if (videoPlayer != null && !videoPlayer.isPlaying && currentLevelIndex >= 0)
         {
             videoPlayer.Play();
+        }
+    }
+
+    // ! Показать видео-фон
+    // Вызывается из AuthUIController, ShopController при открытии панелей
+    public void ShowVideo()
+    {
+        if (videoPlayer != null)
+        {
+            videoPlayer.enabled = true;
+            videoPlayer.gameObject.SetActive(true);
+            if (!videoPlayer.isPlaying && currentLevelIndex >= 0) videoPlayer.Play();
+        }
+        if (backgroundRawImage != null && videoPlayer?.targetTexture != null)
+            backgroundRawImage.texture = videoPlayer.targetTexture;
+    }
+
+    // ! Скрыть видео-фон
+    // Вызывается из AuthUIController, ShopController при закрытии панелей
+    public void HideVideo()
+    {
+        if (videoPlayer != null)
+        {
+            videoPlayer.enabled = false;
+            videoPlayer.gameObject.SetActive(false);
         }
     }
 

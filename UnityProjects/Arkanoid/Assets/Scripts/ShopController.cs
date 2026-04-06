@@ -27,6 +27,7 @@ public class ShopController : MonoBehaviour
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject gameplayUI;
+    [SerializeField] private GameObject authPanel;
 
     [Header("=== Game Objects ===")]
     [SerializeField] private GameObject playerPlatform;
@@ -228,7 +229,7 @@ public class ShopController : MonoBehaviour
         isShopOpen = true;
         isAnimating = false;
         _ = LoadShopData();
-        Debug.Log("[ShopController] Shop opened");
+        VideoBackgroundController.Instance?.ShowVideo();
     }
 
     private IEnumerator HideShopSequence(bool showMainMenu)
@@ -246,7 +247,8 @@ public class ShopController : MonoBehaviour
 
         isShopOpen = false;
         isAnimating = false;
-        Debug.Log("[ShopController] Shop closed");
+        if (authPanel == null || !authPanel.activeSelf)
+            VideoBackgroundController.Instance?.HideVideo();
     }
 
     private void HandleEscapeKey()
