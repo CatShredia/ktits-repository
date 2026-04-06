@@ -11,7 +11,7 @@ namespace TMPro.Examples
     {
         // Since this script is used for debugging, we exclude it from builds.
         // TODO: Rework this script to make it into an editor utility.
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         public bool ShowCharacters;
         public bool ShowWords;
         public bool ShowLinks;
@@ -93,9 +93,9 @@ namespace TMPro.Examples
         }
 
 
-        /// <summary>
+        // !
         /// Method to draw a rectangle around each character.
-        /// </summary>
+        
         /// <param name="text"></param>
         void DrawCharactersBounds()
         {
@@ -257,9 +257,9 @@ namespace TMPro.Examples
         }
 
 
-        /// <summary>
+        // !
         /// Method to draw rectangles around each word of the text.
-        /// </summary>
+        
         /// <param name="text"></param>
         void DrawWordBounds()
         {
@@ -361,9 +361,9 @@ namespace TMPro.Examples
         }
 
 
-        /// <summary>
+        // !
         /// Draw rectangle around each of the links contained in the text.
-        /// </summary>
+        
         /// <param name="text"></param>
         void DrawLinkBounds()
         {
@@ -465,9 +465,9 @@ namespace TMPro.Examples
         }
 
 
-        /// <summary>
+        // !
         /// Draw Rectangles around each lines of the text.
-        /// </summary>
+        
         /// <param name="text"></param>
         void DrawLineBounds()
         {
@@ -546,9 +546,9 @@ namespace TMPro.Examples
         }
 
 
-        /// <summary>
+        // !
         /// Draw Rectangle around the bounds of the text object.
-        /// </summary>
+        
         void DrawBounds()
         {
             Bounds meshBounds = m_TextComponent.bounds;
@@ -646,7 +646,7 @@ namespace TMPro.Examples
             UnityEditor.Handles.DrawDottedLine(tr, br, dotSpacing);
             UnityEditor.Handles.DrawDottedLine(br, bl, dotSpacing);
         }
-        #endif
+#endif
     }
 }
 

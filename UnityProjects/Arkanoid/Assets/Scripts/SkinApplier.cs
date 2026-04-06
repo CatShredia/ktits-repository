@@ -1,10 +1,10 @@
 using UnityEngine;
 
-/// <summary>
+// !
 /// Компонент для применения скинов к объекту (Platform / Ball).
 /// Вешается на префаб. При старте запрашивает скин у SkinManager
 /// и применяет его к SpriteRenderer.
-/// </summary>
+
 [RequireComponent(typeof(SpriteRenderer))]
 public class SkinApplier : MonoBehaviour
 {

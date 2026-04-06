@@ -1,11 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-/// <summary>
+// !
 /// Центральный менеджер скинов. Хранит текущие экипированные скины
 /// и применяет их к объектам в игре (Platform, Ball).
 /// Данные скинов сохраняются в PlayerPrefs между сессиями.
-/// </summary>
+
 public class SkinManager : MonoBehaviour
 {
     public static SkinManager Instance { get; private set; }

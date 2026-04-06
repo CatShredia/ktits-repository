@@ -15,9 +15,9 @@ namespace TMPro.Examples
         private TMP_Text m_TextComponent;
         private bool hasTextChanged;
 
-        /// <summary>
+        // !
         /// Structure to hold pre-computed animation data.
-        /// </summary>
+
         private struct VertexAnim
         {
             public float angleRange;
@@ -54,9 +54,9 @@ namespace TMPro.Examples
                 hasTextChanged = true;
         }
 
-        /// <summary>
+        // !
         /// Method to animate vertex colors of a TMP Text object.
-        /// </summary>
+
         /// <returns></returns>
         IEnumerator AnimateVertexColors()
         {
