@@ -19,6 +19,14 @@ public enum EquipErrorCode
     SkinDataNotFound = 4
 }
 
+public enum BonusErrorCode
+{
+    None = 0,
+    UserNotFound = 1,
+    InvalidAmount = 2,
+    TooManyRequests = 3
+}
+
 public class SkinDto
 {
     public int Id { get; set; }
@@ -106,4 +114,22 @@ public class UserInventoryDto
     public UserSkinDto? EquippedPlatformSkin { get; set; }
 
     public UserSkinDto? EquippedBallSkin { get; set; }
+}
+
+public class BonusCoinsRequest
+{
+    public int Amount { get; set; }
+}
+
+public class BonusCoinsResponse
+{
+    public bool Success { get; set; }
+
+    public string Message { get; set; } = string.Empty;
+
+    public int RemainingCoins { get; set; }
+
+    public int BonusAmount { get; set; }
+
+    public BonusErrorCode? ErrorCode { get; set; }
 }

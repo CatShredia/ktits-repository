@@ -63,10 +63,32 @@ public class BallController : MonoBehaviour
         if (playerObject == null)
             playerObject = GameObject.FindWithTag("Player");
 
-        if (playerObject != null)
+        if (playerObject != null && rb != null)
         {
-            ballPosition = transform.position;
-            ballPosition.x = playerObject.transform.position.x;
+            rb.linearVelocity = Vector2.zero;
+            rb.Sleep();
+
+            var platformPos = playerObject.transform.position;
+            ballPosition = new Vector3(platformPos.x, platformPos.y + 0.5f, transform.position.z);
+            transform.position = ballPosition;
+        }
+    }
+
+    // ! Вернуть мяч на платформу после падения
+    // Вызывается при столкновении с нижней стеной
+    private void ResetBallToPlatform()
+    {
+        if (playerObject == null)
+            playerObject = GameObject.FindWithTag("Player");
+
+        if (playerObject != null && rb != null)
+        {
+            isActiveBalls = false;
+            rb.linearVelocity = Vector2.zero;
+            rb.Sleep();
+
+            var platformPos = playerObject.transform.position;
+            ballPosition = new Vector3(platformPos.x, platformPos.y + 0.5f, transform.position.z);
             transform.position = ballPosition;
         }
     }
@@ -104,7 +126,7 @@ public class BallController : MonoBehaviour
             else
             {
                 GameController.Instance.DescreaseHeart();
-                GameController.Instance.DestroyAllBalls();
+                ResetBallToPlatform();
             }
         }
     }

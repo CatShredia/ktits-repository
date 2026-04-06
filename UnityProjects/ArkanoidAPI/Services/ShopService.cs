@@ -23,6 +23,8 @@ public interface IShopService
     Task<EquipSkinResponse> UnequipSkinAsync(int userId, int userSkinId);
 
     Task<Dictionary<string, UserSkinDto>> GetEquippedSkinsAsync(int userId);
+
+    Task<BonusCoinsResponse> AwardBonusCoinsAsync(int userId, int amount);
 }
 
 public class ShopService : IShopService
@@ -367,5 +369,40 @@ public class ShopService : IShopService
         }
 
         return result;
+    }
+
+    public async Task<BonusCoinsResponse> AwardBonusCoinsAsync(int userId, int amount)
+    {
+        if (amount <= 0 || amount > 1000)
+        {
+            return new BonusCoinsResponse
+            {
+                Success = false,
+                Message = "Некорректная сумма бонуса",
+                ErrorCode = BonusErrorCode.InvalidAmount
+            };
+        }
+
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+        {
+            return new BonusCoinsResponse
+            {
+                Success = false,
+                Message = "Пользователь не найден",
+                ErrorCode = BonusErrorCode.UserNotFound
+            };
+        }
+
+        user.Coins += amount;
+        await _context.SaveChangesAsync();
+
+        return new BonusCoinsResponse
+        {
+            Success = true,
+            Message = $"Начислено {amount} монет",
+            RemainingCoins = user.Coins,
+            BonusAmount = amount
+        };
     }
 }

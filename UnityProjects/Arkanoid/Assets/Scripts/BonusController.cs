@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Threading.Tasks;
 
 // Bonus prefabs
 // Collider2D, Rigidbody2D
@@ -10,7 +11,8 @@ public class BonusController : MonoBehaviour
         BallSpeedDown,
         PlatformExpand,
         PlatformShrink,
-        BallClone
+        BallClone,
+        BallCoin
     }
 
     [SerializeField] private BonusType bonusType;
@@ -79,6 +81,22 @@ public class BonusController : MonoBehaviour
                 GameController.Instance?.SpawnExtraBall(platformPos);
                 BonusUIManager.Instance?.ShowEffect("Клон мяча", 0f);
                 break;
+
+            case BonusType.BallCoin:
+                AwardBonusCoins();
+                BonusUIManager.Instance?.ShowEffect("+10 монет", 2f);
+                break;
         }
+    }
+
+    // ! Начислить +10 монет авторизированному пользователю
+    private async void AwardBonusCoins()
+    {
+        if (!Arkanoid.Auth.AuthService.Instance?.IsAuthenticated() ?? true) return;
+        if (Arkanoid.Network.ShopAPIClient.Instance == null) return;
+
+        var response = await Arkanoid.Network.ShopAPIClient.Instance.AddBonusCoins(10);
+        if (response != null && response.Success)
+            Debug.Log($"[BonusController] +10 coins awarded. Remaining: {response.RemainingCoins}");
     }
 }

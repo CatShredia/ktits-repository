@@ -67,6 +67,13 @@ namespace Arkanoid.Network
             return string.IsNullOrEmpty(responseJson) ? null : JsonConvert.DeserializeObject<ShopEquipResponse>(responseJson);
         }
 
+        public async Task<ShopPurchaseResponse> AddBonusCoins(int amount)
+        {
+            var json = JsonConvert.SerializeObject(new { amount });
+            var responseJson = await PostRequest($"{BASE_URL}/bonus", json, true);
+            return string.IsNullOrEmpty(responseJson) ? null : JsonConvert.DeserializeObject<ShopPurchaseResponse>(responseJson);
+        }
+
         private async Task<string> GetRequest(string url, bool auth = false)
         {
             using var request = new UnityWebRequest(url, "GET");

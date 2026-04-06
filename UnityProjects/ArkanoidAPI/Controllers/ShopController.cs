@@ -18,9 +18,6 @@ public class ShopController : ControllerBase
         _shopService = shopService;
     }
 
-    /// <summary>
-    /// Получить все доступные скины в магазине (публично)
-    /// </summary>
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(typeof(IEnumerable<SkinDto>), StatusCodes.Status200OK)]
@@ -30,9 +27,6 @@ public class ShopController : ControllerBase
         return Ok(skins);
     }
 
-    /// <summary>
-    /// Получить скин по ID (публично)
-    /// </summary>
     [HttpGet("{id}")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(SkinDto), StatusCodes.Status200OK)]
@@ -47,10 +41,7 @@ public class ShopController : ControllerBase
 
         return Ok(skin);
     }
-
-    /// <summary>
-    /// Получить инвентарь скинов текущего пользователя
-    /// </summary>
+    
     [HttpGet("inventory")]
     [Authorize]
     [ProducesResponseType(typeof(UserInventoryDto), StatusCodes.Status200OK)]
@@ -66,10 +57,7 @@ public class ShopController : ControllerBase
         var inventory = await _shopService.GetInventoryAsync(userId);
         return Ok(inventory);
     }
-
-    /// <summary>
-    /// Получить все скины текущего пользователя
-    /// </summary>
+    
     [HttpGet("inventory/skins")]
     [Authorize]
     [ProducesResponseType(typeof(IEnumerable<UserSkinDto>), StatusCodes.Status200OK)]
@@ -85,9 +73,6 @@ public class ShopController : ControllerBase
         return Ok(skins);
     }
 
-    /// <summary>
-    /// Купить скин
-    /// </summary>
     [HttpPost("purchase")]
     [Authorize]
     [ProducesResponseType(typeof(PurchaseResponse), StatusCodes.Status200OK)]
@@ -110,9 +95,6 @@ public class ShopController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Надеть скин
-    /// </summary>
     [HttpPost("equip")]
     [Authorize]
     [ProducesResponseType(typeof(EquipSkinResponse), StatusCodes.Status200OK)]
@@ -135,9 +117,6 @@ public class ShopController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Снять скин (экипировать скин по умолчанию)
-    /// </summary>
     [HttpPost("unequip")]
     [Authorize]
     [ProducesResponseType(typeof(EquipSkinResponse), StatusCodes.Status200OK)]
@@ -160,9 +139,6 @@ public class ShopController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Получить экипированные скины текущего пользователя
-    /// </summary>
     [HttpGet("equipped")]
     [Authorize]
     [ProducesResponseType(typeof(Dictionary<string, UserSkinDto>), StatusCodes.Status200OK)]
@@ -176,5 +152,27 @@ public class ShopController : ControllerBase
 
         var equipped = await _shopService.GetEquippedSkinsAsync(userId);
         return Ok(equipped);
+    }
+
+    [HttpPost("bonus")]
+    [Authorize]
+    [ProducesResponseType(typeof(BonusCoinsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<BonusCoinsResponse>> AwardBonusCoins([FromBody] BonusCoinsRequest request)
+    {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+        {
+            return Unauthorized(new { message = "Пользователь не авторизован" });
+        }
+
+        var result = await _shopService.AwardBonusCoinsAsync(userId, request.Amount);
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
     }
 }
