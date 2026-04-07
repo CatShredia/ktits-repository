@@ -5,9 +5,10 @@
 @inject ChatHubService ChatHub
 @inject IAuthService AuthService
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 @implements IDisposable
 
-<div class="container-fluid mt-4">
+<div class="container-fluid mt-4" @onclick="() => _openMenuConversationId = null">
     <h2><i class="bi bi-chat-dots"></i> Чат</h2>
 
     @if (!_isAuthenticated)
@@ -54,12 +55,35 @@
 
                                 <div class="conversation-item p-2 border-bottom @GetActiveClass(isActive)"
                                      @onclick="() => SelectConversation(conv)" style="cursor:pointer;">
-                                    <div class="d-flex justify-content-between">
-                                        <div class="fw-bold text-truncate">@chatName</div>
-                                        @if (conv.LastMessage != null)
-                                        {
-                                            <small class="text-muted">@FormatTime(conv.LastMessage.CreatedAt)</small>
-                                        }
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="flex-grow-1 me-2">
+                                            <div class="fw-bold text-truncate">@chatName</div>
+                                            @if (conv.LastMessage != null)
+                                            {
+                                                <small class="text-muted">@FormatTime(conv.LastMessage.CreatedAt)</small>
+                                            }
+                                        </div>
+                                        <div class="dropdown dropdown-toggle-btn" @onclick:stopPropagation="true">
+                                            <button class="btn btn-sm btn-link text-muted p-0" type="button"
+                                                    @onclick="() => _openMenuConversationId = conv.Id"
+                                                    style="font-size: 1.2rem; line-height: 1;">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            @if (_openMenuConversationId == conv.Id)
+                                            {
+                                                <div class="dropdown-menu show dropdown-menu-end" style="position: absolute;">
+                                                    @if (conv.Type == ConversationType.Group)
+                                                    {
+                                                        <button class="dropdown-item" @onclick="() => OpenGroupSettings(conv)">
+                                                            <i class="bi bi-gear me-2"></i>Настройка группы
+                                                        </button>
+                                                    }
+                                                    <button class="dropdown-item text-danger" @onclick="() => ShowDeleteConfirm(conv)">
+                                                        <i class="bi bi-trash me-2"></i>Удалить чат
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
                                     @if (conv.LastMessage != null)
                                     {
@@ -204,6 +228,101 @@
     </div>
 }
 
+<!-- Модальное окно: настройка группы -->
+@if (_showGroupSettingsModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Настройка группы</h5>
+                    <button type="button" class="btn-close" @onclick="() => _showGroupSettingsModal = false"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Название группы</label>
+                        <input type="text" class="form-control" @bind="_groupSettingsName" />
+                    </div>
+
+                    <h6>Участники</h6>
+                    @if (_groupSettingsParticipants != null)
+                    {
+                        @foreach (var participant in _groupSettingsParticipants)
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                                <span>@participant.FullName (@participant.Login)</span>
+                                @if (participant.Id != _currentUser?.Id)
+                                {
+                                    <button class="btn btn-sm btn-danger" @onclick="() => RemoveParticipant(participant.Id)">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <small class="text-muted">(Вы)</small>
+                                }
+                            </div>
+                        }
+                    }
+
+                    <hr />
+                    <h6>Добавить участника</h6>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Поиск по логину..."
+                               @bind="_addParticipantLogin" />
+                        <button class="btn btn-outline-secondary" @onclick="SearchUserForGroup">Найти</button>
+                    </div>
+
+                    @if (_addSearchResult != null)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>@_addSearchResult.FullName (@_addSearchResult.Login)</span>
+                                    <button class="btn btn-sm btn-primary"
+                                            @onclick="() => AddParticipantToGroup(_addSearchResult.Id)">
+                                        <i class="bi bi-plus-lg"></i> Добавить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            @onclick="() => _showGroupSettingsModal = false">Закрыть</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveGroupSettings">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Модальное окно: подтверждение удаления -->
+@if (_showDeleteConfirmModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Удалить чат</h5>
+                    <button type="button" class="btn-close btn-close-white"
+                            @onclick="() => _showDeleteConfirmModal = false"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить этот чат?</p>
+                    <p class="text-muted small">Все сообщения будут удалены без возможности восстановления.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            @onclick="() => _showDeleteConfirmModal = false">Отмена</button>
+                    <button type="button" class="btn btn-danger" @onclick="DeleteConversation">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 <style>
     .conversation-item:hover {
         background-color: #f8f9fa;
@@ -211,6 +330,20 @@
 
     .conversation-item.active {
         background-color: #e7f1ff;
+    }
+
+    .conversation-item .dropdown-menu {
+        z-index: 1050;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    .conversation-item .dropdown-toggle-btn {
+        opacity: 0;
+        transition: opacity 0.15s ease-in-out;
+    }
+
+    .conversation-item:hover .dropdown-toggle-btn {
+        opacity: 1;
     }
 </style>
 
@@ -228,6 +361,21 @@
     private HashSet<int> _selectedUserIds = new();
     private HashSet<int> _typingUserIds = new();
     private string? _typingUsers;
+
+    // Для меню чатов
+    private int? _openMenuConversationId;
+
+    // Для настройки группы
+    private bool _showGroupSettingsModal;
+    private ConversationDto? _groupSettingsConversation;
+    private string? _groupSettingsName;
+    private List<UserChatDto>? _groupSettingsParticipants;
+    private string _addParticipantLogin = "";
+    private UserChatDto? _addSearchResult;
+
+    // Для удаления чата
+    private bool _showDeleteConfirmModal;
+    private ConversationDto? _deleteConversation;
 
     protected override async Task OnInitializedAsync()
     {
@@ -468,6 +616,103 @@
         if (localTime.Date == DateTime.Today.AddDays(-1))
             return "Вчера";
         return localTime.ToString("dd.MM.yyyy");
+    }
+
+    // Методы для меню чатов
+    private void OpenGroupSettings(ConversationDto conv)
+    {
+        _openMenuConversationId = null;
+        _groupSettingsConversation = conv;
+        _groupSettingsName = conv.Type == ConversationType.Group ? $"Группа ({conv.Participants.Count} уч.)" : "";
+        _groupSettingsParticipants = conv.Participants.ToList();
+        _showGroupSettingsModal = true;
+        _addParticipantLogin = "";
+        _addSearchResult = null;
+    }
+
+    private void ShowDeleteConfirm(ConversationDto conv)
+    {
+        _openMenuConversationId = null;
+        _deleteConversation = conv;
+        _showDeleteConfirmModal = true;
+    }
+
+    private async Task SearchUserForGroup()
+    {
+        if (string.IsNullOrWhiteSpace(_addParticipantLogin))
+        {
+            return;
+        }
+
+        _addSearchResult = await ChatService.SearchUserAsync(_addParticipantLogin.Trim());
+        if (_addSearchResult == null)
+        {
+            // Не показываем ошибку, просто ничего не найдено
+        }
+    }
+
+    private void AddParticipantToGroup(int userId)
+    {
+        if (_groupSettingsParticipants != null && !_groupSettingsParticipants.Any(p => p.Id == userId))
+        {
+            _groupSettingsParticipants.Add(_addSearchResult!);
+            _addParticipantLogin = "";
+            _addSearchResult = null;
+        }
+    }
+
+    private void RemoveParticipant(int userId)
+    {
+        if (_groupSettingsParticipants != null)
+        {
+            // Не даем удалить самого себя
+            if (userId == _currentUser?.Id)
+            {
+                return;
+            }
+            _groupSettingsParticipants.RemoveAll(p => p.Id == userId);
+        }
+    }
+
+    private async Task SaveGroupSettings()
+    {
+        if (_groupSettingsConversation == null)
+            return;
+
+        // TODO: Реализовать сохранение изменений через API
+        // Пока просто закрываем модалку и обновляем список
+        _showGroupSettingsModal = false;
+        await LoadConversationsAsync();
+    }
+
+    private async Task DeleteConversation()
+    {
+        if (_deleteConversation == null)
+            return;
+
+        // Вызываем API для удаления
+        var success = await ChatService.DeleteConversationAsync(_deleteConversation.Id);
+
+        if (success)
+        {
+            // Удаляем из локального списка
+            _conversations.RemoveAll(c => c.Id == _deleteConversation.Id);
+
+            // Если удалённый чат был выбран — сбрасываем
+            if (_selectedConversation?.Id == _deleteConversation.Id)
+            {
+                _selectedConversation = null;
+                _messages.Clear();
+            }
+        }
+        else
+        {
+            // Можно показать ошибку
+            Console.WriteLine("Failed to delete conversation");
+        }
+
+        _showDeleteConfirmModal = false;
+        StateHasChanged();
     }
 
     public void Dispose()

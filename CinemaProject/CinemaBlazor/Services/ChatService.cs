@@ -12,6 +12,7 @@ public interface IChatService
     Task<ConversationDto?> CreateConversationAsync(CreateConversationDto dto);
     Task<List<MessageDto>> GetMessagesAsync(int conversationId);
     Task<MessageDto?> SendMessageAsync(int conversationId, string content);
+    Task<bool> DeleteConversationAsync(int conversationId);
     Task<string?> GetTokenAsync();
 }
 
@@ -82,7 +83,7 @@ public class ChatService : IChatService
     }
 
     // ! SendMessageAsync - sends message to conversation via API
-    // вызывается из Chat.razor страницы (отправка сообщения)
+    // откуда вызывается: вызывается из Chat.razor страницы (отправка сообщения)
     public async Task<MessageDto?> SendMessageAsync(int conversationId, string content)
     {
         await SetAuthHeaderAsync();
@@ -91,6 +92,15 @@ public class ChatService : IChatService
         if (response.IsSuccessStatusCode)
             return await response.Content.ReadFromJsonAsync<MessageDto>();
         return null;
+    }
+
+    // ! DeleteConversationAsync - deletes conversation via API
+    // откуда вызывается: вызывается из Chat.razor страницы (удаление чата)
+    public async Task<bool> DeleteConversationAsync(int conversationId)
+    {
+        await SetAuthHeaderAsync();
+        var response = await _http.DeleteAsync($"api/Chat/conversations/{conversationId}");
+        return response.IsSuccessStatusCode;
     }
 
     // ! GetTokenAsync - gets auth token from AuthService

@@ -352,6 +352,53 @@ public class ChatController : ControllerBase
         return messageDto;
     }
 
+    // ! DeleteConversation - deletes conversation and its messages (participant only)
+    // откуда вызывается: DELETE /api/Chat/conversations/{id} (из CinemaBlazor через ChatService.DeleteConversationAsync)
+    [HttpDelete("conversations/{conversationId}")]
+    public async Task<IActionResult> DeleteConversation(int conversationId)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var conversation = await _context.Conversations.FindAsync(conversationId);
+        if (conversation == null)
+        {
+            return NotFound("Conversation not found");
+        }
+
+        // Проверка, что пользователь является участником
+        var isParticipant = await _context.ConversationParticipants
+            .AnyAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+
+        if (!isParticipant)
+        {
+            return Forbid("You are not a participant of this conversation");
+        }
+
+        // Удаление сообщений чата
+        var messages = await _context.Messages
+            .Where(m => m.ConversationId == conversationId)
+            .ToListAsync();
+        _context.Messages.RemoveRange(messages);
+
+        // Удаление участников
+        var participants = await _context.ConversationParticipants
+            .Where(p => p.ConversationId == conversationId)
+            .ToListAsync();
+        _context.ConversationParticipants.RemoveRange(participants);
+
+        // Удаление самого чата
+        _context.Conversations.Remove(conversation);
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("User {UserId} deleted conversation {ConversationId}", userId, conversationId);
+
+        return NoContent();
+    }
+
     #region Helper Methods
 
     // ! Get userId from JWT token - extracts user ID from claims
@@ -395,7 +442,7 @@ public class ChatController : ControllerBase
     }
 
     // ! MapConversationToDto - converts Conversation entity to ConversationDto
-    // вызывается внутри CreateOrGetPersonalChat метода этого контроллера
+    // откуда вызывается: вызывается внутри CreateOrGetPersonalChat метода этого контроллера
     private async Task<ConversationDto> MapConversationToDto(Conversation conversation)
     {
         var lastMessage = await _context.Messages
@@ -404,12 +451,19 @@ public class ChatController : ControllerBase
             .OrderByDescending(m => m.CreatedAt)
             .FirstOrDefaultAsync();
 
+        // Загружаем участников с Users явно, чтобы избежать проблем с tracking
+        var participantsWithUsers = await _context.ConversationParticipants
+            .Where(p => p.ConversationId == conversation.Id)
+            .Include(p => p.User)
+                .ThenInclude(u => u.Login)
+            .ToListAsync();
+
         return new ConversationDto
         {
             Id = conversation.Id,
             Type = conversation.Type,
             CreatedAt = conversation.CreatedAt,
-            Participants = conversation.Participants.Select(p => new UserChatDto
+            Participants = participantsWithUsers.Select(p => new UserChatDto
             {
                 Id = p.User.Id,
                 Login = p.User.Login?.LoginValue ?? string.Empty,
