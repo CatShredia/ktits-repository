@@ -19,7 +19,8 @@ public class RolesController : ControllerBase
         _context = context;
     }
 
-    // ! get roles 
+    // ! GetRoles - returns all roles list
+    // GET /api/Roles (из CinemaBlazor при загрузке списка ролей)
     [HttpGet]
     public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
     {
@@ -33,7 +34,8 @@ public class RolesController : ControllerBase
             .ToListAsync();
     }
 
-    // ! get roles by id
+    // ! GetRole - returns single role by ID
+    // GET /api/Roles/{id} (из CinemaBlazor при загрузке детали роли)
     [HttpGet("{id}")]
     public async Task<ActionResult<RoleDto>> GetRole(int id)
     {
@@ -51,7 +53,8 @@ public class RolesController : ControllerBase
         };
     }
 
-    // ! create new role
+    // ! CreateRole - creates new role (admin only)
+    // POST /api/Roles (из CinemaBlazor при создании роли)
     [HttpPost]
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<RoleDto>> CreateRole(RoleDto dto)
@@ -68,7 +71,8 @@ public class RolesController : ControllerBase
         return CreatedAtAction(nameof(GetRole), new { id = role.Id }, dto);
     }
 
-    // ! create roles when server db starts
+    // ! InitializeDefaultRoles - creates default roles (admin, client) when DB starts
+    // POST /api/Roles/initialize (вызывается при инициализации БД)
     [HttpPost("initialize")]
     [AllowAnonymous]
     public async Task<IActionResult> InitializeDefaultRoles()

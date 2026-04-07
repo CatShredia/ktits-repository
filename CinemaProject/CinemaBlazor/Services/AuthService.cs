@@ -33,6 +33,8 @@ public class AuthService : IAuthService
         _authenticationStateProvider = authenticationStateProvider;
     }
 
+    // ! LoginAsync - sends login request to API and sets authenticated user state
+    // вызывается из Login.razor страницы
     public async Task<AuthResponseDto?> LoginAsync(UserLoginDto dto)
     {
         var response = await _http.PostAsJsonAsync("api/Auth/login", dto);
@@ -48,6 +50,8 @@ public class AuthService : IAuthService
         return null;
     }
 
+    // ! RegisterAsync - sends registration request to API and sets authenticated user state
+    // вызывается из Register.razor страницы
     public async Task<AuthResponseDto?> RegisterAsync(UserRegisterDto dto)
     {
         var response = await _http.PostAsJsonAsync("api/Auth/register", dto);
@@ -63,11 +67,15 @@ public class AuthService : IAuthService
         return null;
     }
 
+    // ! LogoutAsync - clears auth token and user state, redirects to login
+    // вызывается из Logout.razor страницы и NavMenu.razor
     public async Task LogoutAsync()
     {
         await ((CustomAuthStateProvider)_authenticationStateProvider).SetLogout();
     }
 
+    // ! GetCurrentUserAsync - fetches current user profile from API
+    // вызывается из Profile.razor и MainLayout.razor
     public async Task<UserResponseDto?> GetCurrentUserAsync()
     {
         try
@@ -84,6 +92,8 @@ public class AuthService : IAuthService
         return null;
     }
 
+    // ! UpdateProfileAsync - updates current user's profile data via API
+    // вызывается из ProfileEdit.razor страницы
     public async Task<bool> UpdateProfileAsync(UserResponseDto dto)
     {
         try
@@ -97,17 +107,23 @@ public class AuthService : IAuthService
         }
     }
 
+    // ! IsAuthenticatedAsync - checks if user is authenticated and token is valid
+    // вызывается из ProtectedRoute.razor и компонентов с защитой маршрутов
     public async Task<bool> IsAuthenticatedAsync()
     {
         var token = await GetTokenAsync();
         return !string.IsNullOrEmpty(token) && !IsTokenExpired(token);
     }
 
+    // ! IsAuthenticated - synchronous version of IsAuthenticatedAsync (for sync contexts)
+    // вызывается синхронно в компонентах, где async недоступен
     public bool IsAuthenticated()
     {
         return IsAuthenticatedAsync().Result;
     }
 
+    // ! IsInRoleAsync - checks if current user has specified role from JWT token
+    // вызывается из компонентов с ролевой проверкой (AuthorizeView)
     public async Task<bool> IsInRoleAsync(string role)
     {
         var token = await GetTokenAsync();
@@ -131,6 +147,8 @@ public class AuthService : IAuthService
         }
     }
 
+    // ! IsInRole - synchronous version of IsInRoleAsync
+    // вызывается синхронно в компонентах
     public bool IsInRole(string role)
     {
         try
@@ -143,16 +161,22 @@ public class AuthService : IAuthService
         }
     }
 
+    // ! GetTokenAsync - retrieves JWT token from local storage
+    // вызывается из всех сервисов для установки auth заголовка
     public async Task<string?> GetTokenAsync()
     {
         return await ((CustomAuthStateProvider)_authenticationStateProvider).GetTokenAsync();
     }
 
+    // ! GetToken - synchronous version of GetTokenAsync
+    // вызывается синхронно в компонентах
     public string? GetToken()
     {
         return GetTokenAsync().Result;
     }
 
+    // ! IsTokenExpired - checks if JWT token has expired (currently always returns false - TODO)
+    // вызывается внутри IsAuthenticatedAsync метода
     private bool IsTokenExpired(string token)
     {
         // TODO: по истечении определенного времени --> токен не валиден

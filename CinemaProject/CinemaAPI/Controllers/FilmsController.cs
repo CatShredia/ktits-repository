@@ -23,8 +23,8 @@ public class FilmsController : ControllerBase
         _imageService = imageService;
     }
 
-    // ! Films get
-    // Film search, sort, filter by query
+    // ! GetFilms - returns film list with search, sort, and filter by genre
+    // GET /api/Films (из CinemaBlazor через FilmService.GetAllFilmsAsync)
     [HttpGet]
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<FilmDto>>> GetFilms(
@@ -87,7 +87,8 @@ public class FilmsController : ControllerBase
         }).ToList();
     }
 
-    // ! Film one get
+    // ! GetFilm - returns single film by ID with full details
+    // GET /api/Films/{id} (из CinemaBlazor через FilmService.GetFilmByIdAsync)
     [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<ActionResult<FilmDto>> GetFilm(int id)
@@ -129,7 +130,8 @@ public class FilmsController : ControllerBase
         };
     }
 
-    // ! Average film rating get
+    // ! GetAverageRating - returns average rating for a film
+    // GET /api/Films/{id}/average-rating (из CinemaBlazor через FilmService.GetAverageRatingAsync)
     [HttpGet("{id}/average-rating")]
     [AllowAnonymous]
     public async Task<ActionResult<double>> GetAverageRating(int id)
@@ -152,7 +154,8 @@ public class FilmsController : ControllerBase
         return ratings.Average(r => r.Value);
     }
 
-    // ! Create New Film, only admins
+    // ! PostFilm - creates new film (admin only), supports image upload
+    // POST /api/Films (из CinemaBlazor через FilmService.CreateFilmAsync)
     [HttpPost]
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<FilmDto>> PostFilm(
@@ -191,7 +194,8 @@ public class FilmsController : ControllerBase
         return CreatedAtAction(nameof(GetFilm), new { id = film.Id }, await GetFilmDtoAsync(film.Id));
     }
 
-    // ! upload image
+    // ! ProcessImageAsync - handles image upload (file or external URL)
+    // вызывается внутри PostFilm и PutFilm методов этого контроллера
     private async Task<string?> ProcessImageAsync(IFormFile? imageFile, string? externalImageUrl)
     {
         Console.WriteLine($"[API] ProcessImageAsync: imageFile={(imageFile != null ? $"{imageFile.FileName}, {imageFile.Length} bytes" : "null")}, externalImageUrl={externalImageUrl ?? "null"}");
@@ -227,7 +231,8 @@ public class FilmsController : ControllerBase
         return null;
     }
 
-    // ! Update Film, only admins
+    // ! PutFilm - updates film by ID (admin only), supports image update
+    // PUT /api/Films/{id} (из CinemaBlazor через FilmService.UpdateFilmAsync)
     [HttpPut("{id}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> PutFilm(
@@ -333,7 +338,8 @@ public class FilmsController : ControllerBase
         return NoContent();
     }
 
-    // ! Film one get without endpoint
+    // ! GetFilmDtoAsync - helper to convert Film entity to FilmDto
+    // вызывается внутри PostFilm метода этого контроллера
     private async Task<FilmDto?> GetFilmDtoAsync(int id)
     {
         var film = await _context.Films
@@ -370,7 +376,8 @@ public class FilmsController : ControllerBase
         };
     }
 
-    // ! Delete Film 
+    // ! DeleteFilm - deletes film by ID (admin only), also deletes associated image
+    // DELETE /api/Films/{id} (из CinemaBlazor через FilmService.DeleteFilmAsync)
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> DeleteFilm(int id)
@@ -392,7 +399,8 @@ public class FilmsController : ControllerBase
         return NoContent();
     }
 
-    // MyFilms get
+    // ! GetMyFilms - returns films created by current user (admin only)
+    // GET /api/Films/my-films (из CinemaBlazor через FilmService.GetMyFilmsAsync)
     [HttpGet("my-films")]
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<IEnumerable<FilmDto>>> GetMyFilms()
@@ -436,6 +444,8 @@ public class FilmsController : ControllerBase
         }).ToList();
     }
 
+    // ! GetCurrentUserId - extracts user ID from JWT token claims
+    // вызывается внутри всех методов этого контроллера
     private int? GetCurrentUserId()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);

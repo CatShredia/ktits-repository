@@ -27,6 +27,7 @@ public class AuthController : ControllerBase
     }
 
     // ! Register a new user
+    // POST /api/Auth/register (из CinemaBlazor через AuthService.RegisterAsync)
     [HttpPost("register")]
     [AllowAnonymous]
     public async Task<ActionResult<AuthResponseDto>> Register(UserRegisterDto dto)
@@ -95,6 +96,7 @@ public class AuthController : ControllerBase
     }
 
     // ! Login user
+    // POST /api/Auth/login (из CinemaBlazor через AuthService.LoginAsync)
     [HttpPost("login")]
     [AllowAnonymous]
     public async Task<ActionResult<AuthResponseDto>> Login(UserLoginDto dto)
@@ -131,7 +133,8 @@ public class AuthController : ControllerBase
         };
     }
 
-    // ! Get profile
+    // ! Get profile - returns current authenticated user data
+    // GET /api/Auth/me (из CinemaBlazor через AuthService.GetCurrentUserAsync)
     [HttpGet("me")]
     [Authorize]
     public async Task<ActionResult<UserResponseDto>> GetCurrentUser()
@@ -164,7 +167,8 @@ public class AuthController : ControllerBase
         };
     }
 
-    // !Update profile
+    // !Update profile - updates current user's profile data
+    // PUT /api/Auth/me (из CinemaBlazor через AuthService.UpdateProfileAsync)
     [HttpPut("me")]
     [Authorize]
     public async Task<IActionResult> UpdateCurrentUser(UserResponseDto dto)
@@ -192,7 +196,8 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
-    // ! GenerateJWT (JWT includes userId, roleName, name, surname, email)
+    // ! GenerateJWT - creates JWT token with userId, roleName, name, surname, email claims
+    // вызывается внутри Register и Login методов этого контроллера
     private string GenerateJwtToken(int userId, string role, User? user = null, Role? userRole = null)
     {
         var jwtSettings = _configuration.GetSection("Jwt");
@@ -224,7 +229,8 @@ public class AuthController : ControllerBase
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    // ! Get userId from JWT token
+    // ! Get userId from JWT token - extracts user ID from claims
+    // вызывается внутри всех методов этого контроллера
     private int? GetCurrentUserId()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -235,7 +241,8 @@ public class AuthController : ControllerBase
         return null;
     }
 
-    // ! Passwords
+    // ! Hash password using SHA256 algorithm
+    // вызывается внутри Register и Login методов этого контроллера
     private string HashPassword(string password)
     {
         using var sha256 = SHA256.Create();
@@ -243,6 +250,8 @@ public class AuthController : ControllerBase
         return Convert.ToBase64String(hashedBytes);
     }
 
+    // ! Verify password by hashing input and comparing with stored hash
+    // вызывается внутри Login метода этого контроллера
     private bool VerifyPassword(string password, string hash)
     {
         var hashedPassword = HashPassword(password);

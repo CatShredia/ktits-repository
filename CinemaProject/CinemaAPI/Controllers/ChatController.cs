@@ -30,8 +30,8 @@ public class ChatController : ControllerBase
         _logger = logger;
     }
 
-    // ! GetCurrentUser
-    // Возвращает данные авторизованного пользователя (UserChatDto)
+    // ! GetCurrentUser - returns authenticated user data for chat (UserChatDto)
+    // GET /api/Chat/me (из CinemaBlazor через ChatService.GetCurrentUserAsync)
     [HttpGet("me")]
     public async Task<ActionResult<UserChatDto>> GetCurrentUser()
     {
@@ -60,8 +60,8 @@ public class ChatController : ControllerBase
         };
     }
 
-    // ! SearchUser
-    // Возвращает найденного пользователя по логину (UserChatDto) или 404
+    // ! SearchUser - finds user by login and returns UserChatDto or 404
+    // GET /api/Chat/search?login=... (из CinemaBlazor через ChatService.SearchUserAsync)
     [HttpGet("search")]
     public async Task<ActionResult<UserChatDto>> SearchUser([FromQuery] string login)
     {
@@ -89,8 +89,8 @@ public class ChatController : ControllerBase
         };
     }
 
-    // ! GetUserConversation
-    // Возвращает список чатов пользователя с последними сообщениями (List<ConversationDto>)
+    // ! GetUserConversation - returns user's conversations with last messages (List<ConversationDto>)
+    // GET /api/Chat/conversations (из CinemaBlazor через ChatService.GetConversationsAsync)
     [HttpGet("conversations")]
     public async Task<ActionResult<List<ConversationDto>>> GetUserConversation()
     {
@@ -145,8 +145,8 @@ public class ChatController : ControllerBase
         return result;
     }
 
-    // ! CreateOrGetPersonalChat
-    // Создаёт или возвращает существующий чат (Direct/Group) (ConversationDto)
+    // ! CreateOrGetPersonalChat - creates or returns existing chat (Direct/Group) as ConversationDto
+    // POST /api/Chat/conversations/create (из CinemaBlazor через ChatService.CreateConversationAsync)
     [HttpPost("conversations/create")]
     public async Task<ActionResult<ConversationDto>> CreateOrGetPersonalChat([FromBody] CreateConversationDto dto)
     {
@@ -235,8 +235,8 @@ public class ChatController : ControllerBase
         return await MapConversationToDto(createdConversation);
     }
 
-    // ! GetConversationMessages
-    // Возвращает все сообщения чата отсортированные по дате (List<MessageDto>)
+    // ! GetConversationMessages - returns all messages for a conversation sorted by date (List<MessageDto>)
+    // GET /api/Chat/conversations/{id}/messages (из CinemaBlazor через ChatService.GetMessagesAsync)
     [HttpGet("conversations/{conversationId}/messages")]
     public async Task<ActionResult<List<MessageDto>>> GetConversationMessages(int conversationId)
     {
@@ -273,8 +273,8 @@ public class ChatController : ControllerBase
         }).ToList();
     }
 
-    // ! SendConversationMessage
-    // Создаёт сообщение в чате и возвращает его (MessageDto), отправляет через SignalR
+    // ! SendConversationMessage - creates message in chat and sends via SignalR (MessageDto)
+    // POST /api/Chat/conversations/{id}/messages (из CinemaBlazor через ChatService.SendMessageAsync)
     [HttpPost("conversations/{conversationId}/messages")]
     public async Task<ActionResult<MessageDto>> SendConversationMessage(int conversationId, [FromBody] SendMessageDto dto)
     {
@@ -354,7 +354,8 @@ public class ChatController : ControllerBase
 
     #region Helper Methods
 
-    // ! Get userId from JWT token
+    // ! Get userId from JWT token - extracts user ID from claims
+    // вызывается внутри всех методов этого контроллера
     private int? GetCurrentUserId()
     {
         var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
@@ -365,13 +366,15 @@ public class ChatController : ControllerBase
         return null;
     }
 
-    // ! Получение имени группы SignalR для чата
+    // ! GetConversationGroupName - returns SignalR group name for conversation
+    // вызывается внутри методов SendConversationMessage и helper-методов этого контроллера
     private string GetConversationGroupName(int conversationId)
     {
         return $"conversation_{conversationId}";
     }
 
-    // ! Поиск существующего Direct чата между двумя пользователями
+    // ! FindExistingDirectChat - searches for existing Direct chat between two users
+    // вызывается внутри CreateOrGetPersonalChat метода этого контроллера
     private async Task<Conversation?> FindExistingDirectChat(int userId1, int userId2)
     {
         var conversations = await _context.Conversations
@@ -391,7 +394,8 @@ public class ChatController : ControllerBase
         return null;
     }
 
-    // ! Маппинг Conversation в ConversationDto
+    // ! MapConversationToDto - converts Conversation entity to ConversationDto
+    // вызывается внутри CreateOrGetPersonalChat метода этого контроллера
     private async Task<ConversationDto> MapConversationToDto(Conversation conversation)
     {
         var lastMessage = await _context.Messages

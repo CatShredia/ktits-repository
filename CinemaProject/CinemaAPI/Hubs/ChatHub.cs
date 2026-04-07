@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 namespace CinemaAPI.Hubs;
 
 
-// SignalR хаб для управления чатами в реальном времени
 [Authorize]
 public class ChatHub : Hub<IChatClient>
 {
@@ -21,7 +20,8 @@ public class ChatHub : Hub<IChatClient>
     }
 
 
-    // Подключение пользователя к группе чата
+    // ! JoinConversation - adds user to SignalR conversation group
+    // вызывается из CinemaBlazor через ChatHubService.JoinConversationAsync
     public async Task JoinConversation(int conversationId)
     {
         var userId = GetCurrentUserId();
@@ -31,7 +31,6 @@ public class ChatHub : Hub<IChatClient>
             return;
         }
 
-        // Проверка, что пользователь является участником чата
         var isParticipant = await _context.ConversationParticipants
             .AnyAsync(p => p.ConversationId == conversationId && p.UserId == userId);
 
@@ -44,7 +43,6 @@ public class ChatHub : Hub<IChatClient>
 
         await Groups.AddToGroupAsync(Context.ConnectionId, GetConversationGroupName(conversationId));
 
-        // Уведомление других участников о подключении
         var user = await _context.Users.FindAsync(userId.Value);
         if (user != null)
         {
@@ -56,7 +54,8 @@ public class ChatHub : Hub<IChatClient>
     }
 
 
-    // Отключение пользователя от группы чата
+    // ! LeaveConversation - removes user from SignalR conversation group
+    // вызывается из CinemaBlazor через ChatHubService.LeaveConversationAsync
     public async Task LeaveConversation(int conversationId)
     {
         var userId = GetCurrentUserId();
@@ -67,7 +66,6 @@ public class ChatHub : Hub<IChatClient>
 
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, GetConversationGroupName(conversationId));
 
-        // Уведомление других участников об отключении
         var user = await _context.Users.FindAsync(userId.Value);
         if (user != null)
         {
@@ -79,7 +77,8 @@ public class ChatHub : Hub<IChatClient>
     }
 
 
-    // Отправка сообщения в чат
+    // ! SendMessageToConversation - sends message to all users in conversation via SignalR
+    // вызывается из CinemaBlazor через ChatHubService.SendMessageAsync
     public async Task SendMessageToConversation(int conversationId, string content)
     {
         var userId = GetCurrentUserId();
@@ -88,7 +87,6 @@ public class ChatHub : Hub<IChatClient>
             return;
         }
 
-        // Проверка, что пользователь является участником чата
         var isParticipant = await _context.ConversationParticipants
             .AnyAsync(p => p.ConversationId == conversationId && p.UserId == userId);
 
@@ -99,13 +97,11 @@ public class ChatHub : Hub<IChatClient>
             return;
         }
 
-        // Валидация контента
         if (string.IsNullOrWhiteSpace(content) || content.Length > 1000)
         {
             return;
         }
 
-        // Создание сообщения
         var message = new Message
         {
             ConversationId = conversationId,
@@ -117,7 +113,6 @@ public class ChatHub : Hub<IChatClient>
         _context.Messages.Add(message);
         await _context.SaveChangesAsync();
 
-        // Получение данных отправителя
         var sender = await _context.Users.FindAsync(userId.Value);
         if (sender == null)
         {
@@ -135,7 +130,6 @@ public class ChatHub : Hub<IChatClient>
             UpdatedAt = message.UpdatedAt
         };
 
-        // Отправка сообщения всем участникам чата
         await Clients.Group(GetConversationGroupName(conversationId))
             .ReceiveMessage(messageResponse);
 
@@ -143,7 +137,8 @@ public class ChatHub : Hub<IChatClient>
     }
 
 
-    // Уведомление о том, что пользователь печатает
+    // ! UserIsTyping - notifies other users that current user is typing
+    // вызывается из CinemaBlazor через ChatHubService.SendTypingAsync
     public async Task UserIsTyping(int conversationId)
     {
         var userId = GetCurrentUserId();
@@ -152,7 +147,6 @@ public class ChatHub : Hub<IChatClient>
             return;
         }
 
-        // Проверка, что пользователь является участником чата
         var isParticipant = await _context.ConversationParticipants
             .AnyAsync(p => p.ConversationId == conversationId && p.UserId == userId);
 
@@ -170,7 +164,8 @@ public class ChatHub : Hub<IChatClient>
     }
 
 
-    // Удаление сообщения (только автор может удалить своё сообщение)
+    // ! DeleteMessage - deletes message from conversation (owner only)
+    // вызывается из CinemaBlazor через ChatHubService.DeleteMessageAsync
     public async Task DeleteMessage(int messageId, int conversationId)
     {
         var userId = GetCurrentUserId();
@@ -185,7 +180,6 @@ public class ChatHub : Hub<IChatClient>
             return;
         }
 
-        // Проверка, что пользователь является автором сообщения
         if (message.SenderId != userId.Value)
         {
             _logger.LogWarning("User {UserId} tried to delete message {MessageId} without permission",
@@ -196,7 +190,6 @@ public class ChatHub : Hub<IChatClient>
         _context.Messages.Remove(message);
         await _context.SaveChangesAsync();
 
-        // Уведомление всех участников об удалении
         await Clients.Group(GetConversationGroupName(conversationId))
             .MessageDeleted(messageId, conversationId);
 
@@ -204,12 +197,13 @@ public class ChatHub : Hub<IChatClient>
             userId.Value, messageId, conversationId);
     }
 
+    // ! OnConnectedAsync - called when client connects to SignalR hub
+    // вызывается автоматически при подключении клиента к SignalR
     public override async Task OnConnectedAsync()
     {
         var userId = GetCurrentUserId();
         if (userId.HasValue)
         {
-            // Добавляем подключение к группе пользователя для личных уведомлений
             await Groups.AddToGroupAsync(Context.ConnectionId, GetUserGroupName(userId.Value));
             _logger.LogInformation("User {UserId} connected. ConnectionId: {ConnectionId}",
                 userId.Value, Context.ConnectionId);
@@ -218,6 +212,8 @@ public class ChatHub : Hub<IChatClient>
         await base.OnConnectedAsync();
     }
 
+    // ! OnDisconnectedAsync - called when client disconnects from SignalR hub
+    // вызывается автоматически при отключении клиента от SignalR
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var userId = GetCurrentUserId();
@@ -230,8 +226,8 @@ public class ChatHub : Hub<IChatClient>
         await base.OnDisconnectedAsync(exception);
     }
 
-    #region Helper Methods
-
+    // ! GetCurrentUserId - extracts user ID from JWT token in SignalR context
+    // вызывается внутри всех методов этого хаба
     private int? GetCurrentUserId()
     {
         var userIdClaim = Context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
@@ -242,15 +238,17 @@ public class ChatHub : Hub<IChatClient>
         return null;
     }
 
+    // ! GetConversationGroupName - returns SignalR group name for conversation ID
+    // вызывается внутри всех методов отправки сообщений этого хаба
     private string GetConversationGroupName(int conversationId)
     {
         return $"conversation_{conversationId}";
     }
 
+    // ! GetUserGroupName - returns SignalR group name for user ID
+    // вызывается внутри OnConnectedAsync метода этого хаба
     private string GetUserGroupName(int userId)
     {
         return $"user_{userId}";
     }
-
-    #endregion
 }

@@ -29,6 +29,8 @@ public class UserService : IUserService
         _http = http;
     }
 
+    // ! GetAllUsersAsync - gets all users with search, filter, and sorting
+    // вызывается из UsersList.razor страницы
     public async Task<List<UserListDto>> GetAllUsersAsync(
         string? search = null,
         string? searchEmail = null,
@@ -60,6 +62,8 @@ public class UserService : IUserService
         return new List<UserListDto>();
     }
 
+    // ! GetUserByIdAsync - gets user by ID with full details
+    // вызывается из UserDetails.razor и UserEdit.razor страниц
     public async Task<UserDetailDto?> GetUserByIdAsync(int id)
     {
         var response = await _http.GetAsync($"api/Users/{id}");
@@ -70,6 +74,8 @@ public class UserService : IUserService
         return null;
     }
 
+    // ! CreateUserAsync - creates new user with login
+    // вызывается из UserCreate.razor страницы
     public async Task<UserDetailDto?> CreateUserAsync(UserCreateDto dto)
     {
         var response = await _http.PostAsJsonAsync("api/Users", dto);
@@ -80,30 +86,40 @@ public class UserService : IUserService
         return null;
     }
 
+    // ! UpdateUserAsync - updates user by ID
+    // вызывается из UserEdit.razor страницы
     public async Task<bool> UpdateUserAsync(int id, UserUpdateDto dto)
     {
         var response = await _http.PutAsJsonAsync($"api/Users/{id}", dto);
         return response.IsSuccessStatusCode;
     }
 
+    // ! UpdateUserLoginAsync - updates user's login/password
+    // вызывается из UserEdit.razor страницы
     public async Task<bool> UpdateUserLoginAsync(int id, LoginUpdateSimpleDto dto)
     {
         var response = await _http.PutAsJsonAsync($"api/Users/{id}/login", dto);
         return response.IsSuccessStatusCode;
     }
 
+    // ! CreateLoginAsync - creates login for user (if user has no login)
+    // вызывается из UserEdit.razor страницы
     public async Task<bool> CreateLoginAsync(int userId, LoginCreateSimpleDto dto)
     {
         var response = await _http.PostAsJsonAsync($"api/Users/{userId}/login", dto);
         return response.IsSuccessStatusCode;
     }
 
+    // ! DeleteUserLoginAsync - deletes user's login
+    // вызывается из UsersList.razor и UserEdit.razor страниц
     public async Task<bool> DeleteUserLoginAsync(int userId)
     {
         var response = await _http.DeleteAsync($"api/Users/{userId}/login");
         return response.IsSuccessStatusCode;
     }
 
+    // ! DeleteUserAsync - deletes user by ID
+    // вызывается из UsersList.razor страницы
     public async Task<bool> DeleteUserAsync(int id)
     {
         var response = await _http.DeleteAsync($"api/Users/{id}");

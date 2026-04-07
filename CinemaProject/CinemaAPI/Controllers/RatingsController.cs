@@ -20,7 +20,8 @@ public class RatingsController : ControllerBase
         _context = context;
     }
 
-    // ! get all rating 
+    // ! GetRatings - returns all ratings with film and author info
+    // GET /api/Ratings (из CinemaBlazor через RatingService.GetAllRatingsAsync)
     [HttpGet]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<IEnumerable<RatingResponseDto>>> GetRatings()
@@ -41,7 +42,8 @@ public class RatingsController : ControllerBase
         }).ToList();
     }
 
-    // ! get rating by userID
+    // ! GetRating - returns single rating by ID
+    // GET /api/Ratings/{id} (из CinemaBlazor через RatingService.GetRatingByIdAsync)
     [HttpGet("{id}")]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<RatingResponseDto>> GetRating(int id)
@@ -67,7 +69,8 @@ public class RatingsController : ControllerBase
         };
     }
 
-    // ! create new rating
+    // ! PostRating - creates new rating for film (prevents duplicate ratings)
+    // POST /api/Ratings (из CinemaBlazor через RatingService.CreateRatingAsync)
     [HttpPost]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<Rating>> PostRating(RatingCreateDto dto)
@@ -99,7 +102,8 @@ public class RatingsController : ControllerBase
         return CreatedAtAction(nameof(GetRating), new { id = rating.Id }, rating);
     }
 
-    // ! update rating (admin or owner)
+    // ! PutRating - updates rating by ID (admin or owner only)
+    // PUT /api/Ratings/{id} (из CinemaBlazor через RatingService.UpdateRatingAsync)
     [HttpPut("{id}")]
     [Authorize(Roles = "admin,client")]
     public async Task<IActionResult> PutRating(int id, RatingUpdateDto dto)
@@ -113,7 +117,7 @@ public class RatingsController : ControllerBase
         // Check if user is owner or admin
         var userId = GetCurrentUserId();
         var isAdmin = User.IsInRole("admin");
-        
+
         if (rating.AuthorId != userId && !isAdmin)
         {
             return Forbid();
@@ -125,7 +129,8 @@ public class RatingsController : ControllerBase
         return NoContent();
     }
 
-    // ! delete rating (admin or owner)
+    // ! DeleteRating - deletes rating by ID (admin or owner only)
+    // DELETE /api/Ratings/{id} (из CinemaBlazor через RatingService.DeleteRatingAsync)
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin,client")]
     public async Task<IActionResult> DeleteRating(int id)
@@ -139,7 +144,7 @@ public class RatingsController : ControllerBase
         // Check if user is owner or admin
         var userId = GetCurrentUserId();
         var isAdmin = User.IsInRole("admin");
-        
+
         if (rating.AuthorId != userId && !isAdmin)
         {
             return Forbid();
@@ -151,7 +156,8 @@ public class RatingsController : ControllerBase
         return NoContent();
     }
 
-    // ! get ratings by userId
+    // ! GetMyRatingForFilm - returns current user's rating for specific film
+    // GET /api/Ratings/film/{filmId}/my-rating (из CinemaBlazor через RatingService.GetMyRatingForFilmAsync)
     [HttpGet("film/{filmId}/my-rating")]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<Rating>> GetMyRatingForFilm(int filmId)
@@ -173,7 +179,8 @@ public class RatingsController : ControllerBase
         return rating;
     }
 
-    // ! get my ratings (current user's ratings)
+    // ! GetMyRatings - returns all ratings created by current user
+    // GET /api/Ratings/my-ratings (из CinemaBlazor через RatingService.GetMyRatingsAsync)
     [HttpGet("my-ratings")]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<IEnumerable<RatingResponseDto>>> GetMyRatings()
@@ -200,6 +207,8 @@ public class RatingsController : ControllerBase
         }).ToList();
     }
 
+    // ! GetCurrentUserId - extracts user ID from JWT token claims
+    // вызывается внутри всех методов этого контроллера
     private int? GetCurrentUserId()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);

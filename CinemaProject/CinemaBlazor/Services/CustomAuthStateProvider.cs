@@ -17,6 +17,8 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
         _http = http;
     }
 
+    // ! GetAuthenticationStateAsync - returns current authentication state (called by framework)
+    // вызывается автоматически Blazor AuthenticationStateProvider
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         var token = await _localStorage.GetItemAsync<string>("authToken");
@@ -32,6 +34,8 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
         return new AuthenticationState(user);
     }
 
+    // ! SetAuthenticatedUser - saves auth token and notifies auth state change
+    // вызывается из AuthService после успешного login/register
     public async Task SetAuthenticatedUser(AuthResponseDto authResponse)
     {
         await _localStorage.SetItemAsync("authToken", authResponse.Token);
@@ -45,6 +49,8 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
     }
 
+    // ! SetLogout - clears auth token and notifies auth state change to anonymous
+    // вызывается из AuthService.LogoutAsync
     public async Task SetLogout()
     {
         await _localStorage.RemoveItemAsync("authToken");
@@ -55,16 +61,22 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(anonymousUser)));
     }
 
+    // ! GetTokenAsync - retrieves JWT token from localStorage
+    // вызывается из AuthService и других сервисов
     public async Task<string?> GetTokenAsync()
     {
         return await _localStorage.GetItemAsync<string>("authToken");
     }
 
+    // ! GetToken - synchronous version of GetTokenAsync
+    // вызывается синхронно в компонентах
     public string? GetToken()
     {
         return GetTokenAsync().Result;
     }
 
+    // ! ParseClaimsFromJwt - parses JWT token and extracts claims
+    // вызывается внутри SetAuthenticatedUser и GetAuthenticationStateAsync
     private static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
     {
         var claims = new List<Claim>();

@@ -21,6 +21,8 @@ public class GenreService : IGenreService
         _http = http;
     }
 
+    // ! GetAllGenresAsync - gets all genres from API
+    // вызывается из GenresList.razor и FilmsList.razor страниц
     public async Task<List<Genre>> GetAllGenresAsync()
     {
         var response = await _http.GetAsync("api/Genres");
@@ -31,6 +33,8 @@ public class GenreService : IGenreService
         return new List<Genre>();
     }
 
+    // ! GetGenreByIdAsync - gets single genre by ID
+    // вызывается из GenreEdit.razor страницы
     public async Task<Genre?> GetGenreByIdAsync(int id)
     {
         var response = await _http.GetAsync($"api/Genres/{id}");
@@ -41,6 +45,8 @@ public class GenreService : IGenreService
         return null;
     }
 
+    // ! CreateGenreAsync - creates new genre
+    // вызывается из GenreCreate.razor страницы
     public async Task<Genre?> CreateGenreAsync(Genre genre)
     {
         var response = await _http.PostAsJsonAsync("api/Genres", genre);
@@ -51,12 +57,16 @@ public class GenreService : IGenreService
         return null;
     }
 
+    // ! UpdateGenreAsync - updates genre by ID
+    // вызывается из GenreEdit.razor страницы
     public async Task<bool> UpdateGenreAsync(int id, Genre genre)
     {
         var response = await _http.PutAsJsonAsync($"api/Genres/{id}", genre);
         return response.IsSuccessStatusCode;
     }
 
+    // ! DeleteGenreAsync - deletes genre by ID
+    // вызывается из GenresList.razor страницы
     public async Task<bool> DeleteGenreAsync(int id)
     {
         var response = await _http.DeleteAsync($"api/Genres/{id}");

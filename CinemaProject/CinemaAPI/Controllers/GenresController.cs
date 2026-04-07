@@ -18,7 +18,8 @@ public class GenresController : ControllerBase
         _context = context;
     }
 
-    // ! Genres get
+    // ! GetGenres - returns all genres list
+    // GET /api/Genres (из CinemaBlazor через GenreService.GetAllGenresAsync)
     [HttpGet]
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<Genre>>> GetGenres()
@@ -26,7 +27,8 @@ public class GenresController : ControllerBase
         return await _context.Genres.ToListAsync();
     }
 
-    // ! Genres one
+    // ! GetGenre - returns single genre by ID
+    // GET /api/Genres/{id} (из CinemaBlazor через GenreService.GetGenreByIdAsync)
     [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<ActionResult<Genre>> GetGenre(int id)
@@ -41,7 +43,8 @@ public class GenresController : ControllerBase
         return genre;
     }
 
-    // ! Genre creare new
+    // ! PostGenre - creates new genre (admin only)
+    // POST /api/Genres (из CinemaBlazor через GenreService.CreateGenreAsync)
     [HttpPost]
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<Genre>> PostGenre(Genre genre)
@@ -52,7 +55,8 @@ public class GenresController : ControllerBase
         return CreatedAtAction(nameof(GetGenre), new { id = genre.Id }, genre);
     }
 
-    // ! Genre update
+    // ! PutGenre - updates genre by ID (admin only)
+    // PUT /api/Genres/{id} (из CinemaBlazor через GenreService.UpdateGenreAsync)
     [HttpPut("{id}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> PutGenre(int id, Genre genre)
@@ -80,7 +84,8 @@ public class GenresController : ControllerBase
         return NoContent();
     }
 
-    // ! Genre delete
+    // ! DeleteGenre - deletes genre by ID (admin only)
+    // DELETE /api/Genres/{id} (из CinemaBlazor через GenreService.DeleteGenreAsync)
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> DeleteGenre(int id)

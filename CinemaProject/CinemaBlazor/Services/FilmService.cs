@@ -25,6 +25,8 @@ public class FilmService : IFilmService
         _http = http;
     }
 
+    // ! GetAllFilmsAsync - gets all films with optional sorting, genre filter, and search
+    // вызывается из FilmsList.razor и Home.razor страниц
     public async Task<List<Film>> GetAllFilmsAsync(string? sortBy = null, int? genreId = null, string? search = null)
     {
         var queryParams = new List<string>();
@@ -50,6 +52,8 @@ public class FilmService : IFilmService
         return new List<Film>();
     }
 
+    // ! GetFilmByIdAsync - gets single film by ID
+    // вызывается из FilmDetails.razor страницы
     public async Task<Film?> GetFilmByIdAsync(int id)
     {
         var response = await _http.GetAsync($"api/Films/{id}");
@@ -60,6 +64,8 @@ public class FilmService : IFilmService
         return null;
     }
 
+    // ! GetAverageRatingAsync - gets average rating for a film
+    // вызывается из FilmDetails.razor страницы
     public async Task<double> GetAverageRatingAsync(int id)
     {
         var response = await _http.GetAsync($"api/Films/{id}/average-rating");
@@ -70,6 +76,8 @@ public class FilmService : IFilmService
         return 0.0;
     }
 
+    // ! CreateFilmAsync - creates new film with optional image upload
+    // вызывается из FilmCreate.razor страницы
     public async Task<Film?> CreateFilmAsync(Film film, IBrowserFile? imageFile = null, string? externalImageUrl = null)
     {
         using var content = new MultipartFormDataContent();
@@ -102,6 +110,8 @@ public class FilmService : IFilmService
         return null;
     }
 
+    // ! UpdateFilmAsync - updates film by ID with optional image change
+    // вызывается из FilmEdit.razor страницы
     public async Task<bool> UpdateFilmAsync(int id, Film film, IBrowserFile? imageFile = null, string? externalImageUrl = null, bool removeImage = false)
     {
         using var content = new MultipartFormDataContent();
@@ -133,12 +143,16 @@ public class FilmService : IFilmService
         return response.IsSuccessStatusCode;
     }
 
+    // ! DeleteFilmAsync - deletes film by ID
+    // вызывается из FilmsList.razor и MyFilms.razor страниц
     public async Task<bool> DeleteFilmAsync(int id)
     {
         var response = await _http.DeleteAsync($"api/Films/{id}");
         return response.IsSuccessStatusCode;
     }
 
+    // ! GetMyFilmsAsync - gets films created by current user
+    // вызывается из MyFilms.razor страницы
     public async Task<List<Film>> GetMyFilmsAsync()
     {
         var response = await _http.GetAsync("api/Films/my-films");

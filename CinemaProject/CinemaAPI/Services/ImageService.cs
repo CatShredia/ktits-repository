@@ -30,6 +30,8 @@ public class ImageService : IImageService
         _environment = environment;
     }
 
+    // ! IsValidImage - validates image file type and size (JPEG, PNG, WebP, GIF, max 5MB)
+    // вызывается внутри SaveImageAsync метода этого сервиса
     public bool IsValidImage(IFormFile file)
     {
         if (file == null || file.Length == 0)
@@ -49,6 +51,8 @@ public class ImageService : IImageService
         return true;
     }
 
+    // ! SaveImageAsync - saves image file to wwwroot/images/films folder with GUID name
+    // вызывается из FilmsController через _imageService.SaveImageAsync
     public async Task<string> SaveImageAsync(IFormFile file)
     {
         if (!IsValidImage(file))
@@ -61,7 +65,7 @@ public class ImageService : IImageService
 
         // Если WebRootPath null, используем текущую директорию
         var webRootPath = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-        
+
         var uploadsFolder = Path.Combine(webRootPath, _filmsFolder);
         Directory.CreateDirectory(uploadsFolder);
 
@@ -73,6 +77,8 @@ public class ImageService : IImageService
         return $"/{_filmsFolder}/{fileName}";
     }
 
+    // ! DeleteImage - deletes image file from filesystem by URL
+    // вызывается из FilmsController через _imageService.DeleteImage
     public void DeleteImage(string imageUrl)
     {
         if (string.IsNullOrEmpty(imageUrl))

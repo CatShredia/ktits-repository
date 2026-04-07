@@ -24,7 +24,8 @@ public class UsersController : ControllerBase
         _context = context;
     }
 
-    // ! Get all users with search, filtering, and sorting
+    // ! GetUsers - returns all users with search, filter by role, and sorting
+    // GET /api/Users (из CinemaBlazor через UserService.GetAllUsersAsync)
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserListDto>>> GetUsers(
         [FromQuery] string? search = null,
@@ -85,7 +86,8 @@ public class UsersController : ControllerBase
         }).ToList();
     }
 
-    // ! Get user by ID with full details
+    // ! GetUser - returns user by ID with full details including login info
+    // GET /api/Users/{id} (из CinemaBlazor через UserService.GetUserByIdAsync)
     [HttpGet("{id}")]
     public async Task<ActionResult<UserDetailDto>> GetUser(int id)
     {
@@ -117,7 +119,8 @@ public class UsersController : ControllerBase
         };
     }
 
-    // ! Create new user with login
+    // ! PostUser - creates new user with login (admin only)
+    // POST /api/Users (из CinemaBlazor через UserService.CreateUserAsync)
     [HttpPost]
     public async Task<ActionResult<UserDetailDto>> PostUser(UserCreateDto dto)
     {
@@ -186,7 +189,8 @@ public class UsersController : ControllerBase
         });
     }
 
-    // ! Update user
+    // ! PutUser - updates user by ID
+    // PUT /api/Users/{id} (из CinemaBlazor через UserService.UpdateUserAsync)
     [HttpPut("{id}")]
     public async Task<IActionResult> PutUser(int id, UserUpdateDto dto)
     {
@@ -230,7 +234,8 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
-    // ! Update user login (change login value or password)
+    // ! PutUserLogin - updates user's login value or password
+    // PUT /api/Users/{id}/login (из CinemaBlazor через UserService.UpdateUserLoginAsync)
     [HttpPut("{id}/login")]
     public async Task<IActionResult> PutUserLogin(int id, LoginUpdateSimpleDto dto)
     {
@@ -280,7 +285,8 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
-    // ! Create login for user
+    // ! PostUserLogin - creates login for user (if user has no login yet)
+    // POST /api/Users/{id}/login (из CinemaBlazor через UserService.CreateLoginAsync)
     [HttpPost("{id}/login")]
     public async Task<IActionResult> PostUserLogin(int id, LoginCreateSimpleDto dto)
     {
@@ -313,7 +319,8 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
-    // ! Delete user (cascade deletes login)
+    // ! DeleteUser - deletes user by ID (cascades to login)
+    // DELETE /api/Users/{id} (из CinemaBlazor через UserService.DeleteUserAsync)
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
@@ -329,7 +336,8 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
-    // ! Delete user login
+    // ! DeleteUserLogin - deletes user's login (user keeps account but loses login)
+    // DELETE /api/Users/{id}/login (из CinemaBlazor через UserService.DeleteUserLoginAsync)
     [HttpDelete("{id}/login")]
     public async Task<IActionResult> DeleteUserLogin(int id)
     {
@@ -353,6 +361,8 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
+    // ! HashPassword - hashes password using SHA256 algorithm
+    // вызывается внутри PostUser и PostUserLogin методов этого контроллера
     private string HashPassword(string password)
     {
         using var sha256 = SHA256.Create();

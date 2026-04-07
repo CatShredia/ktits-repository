@@ -18,6 +18,8 @@ public class LocalStorageService : ILocalStorageService
         _js = js;
     }
 
+    // ! GetItemAsync - retrieves item from browser localStorage by key
+    // вызывается из CustomAuthStateProvider для получения токена
     public async Task<T?> GetItemAsync<T>(string key)
     {
         try
@@ -33,12 +35,16 @@ public class LocalStorageService : ILocalStorageService
         }
     }
 
+    // ! SetItemAsync - saves item to browser localStorage
+    // вызывается из CustomAuthStateProvider для сохранения токена
     public async Task SetItemAsync<T>(string key, T value)
     {
         var json = System.Text.Json.JsonSerializer.Serialize(value);
         await _js.InvokeVoidAsync("localStorage.setItem", key, json);
     }
 
+    // ! RemoveItemAsync - removes item from browser localStorage
+    // вызывается из CustomAuthStateProvider при logout
     public async Task RemoveItemAsync(string key)
     {
         await _js.InvokeVoidAsync("localStorage.removeItem", key);
