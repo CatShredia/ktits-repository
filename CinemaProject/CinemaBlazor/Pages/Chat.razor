@@ -245,6 +245,17 @@
             ChatHub.OnUserTyping += OnUserTypingEvent;
             ChatHub.OnMessageDeleted += OnMessageDeletedEvent;
             await ChatHub.StartAsync(token);
+
+            // Тест связи с сервером
+            try
+            {
+                var result = await ChatHub.TestPingAsync();
+                Console.WriteLine($"[TEST PING] Server responded: {result}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[TEST PING] Failed: {ex.Message}");
+            }
         }
     }
 

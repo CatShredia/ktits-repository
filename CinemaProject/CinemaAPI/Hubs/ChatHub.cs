@@ -78,9 +78,12 @@ public class ChatHub : Hub<IChatClient>
 
 
     // ! SendMessageToConversation - sends message to all users in conversation via SignalR
-    // вызывается из CinemaBlazor через ChatHubService.SendMessageAsync
+    // откуда вызывается: вызывается из CinemaBlazor через ChatHubService.SendMessageAsync
+    [Microsoft.AspNetCore.SignalR.HubMethodName("sendMessageToConversation")]
     public async Task SendMessageToConversation(int conversationId, string content)
     {
+        Console.WriteLine($"[SIGNALR] SendMessageToConversation called! conversationId={conversationId}, content={content}");
+        _logger.LogWarning("[HUB] SendMessageToConversation called! conversationId={ConversationId}, content={Content}", conversationId, content);
         var userId = GetCurrentUserId();
         if (userId == null)
         {
@@ -246,9 +249,17 @@ public class ChatHub : Hub<IChatClient>
     }
 
     // ! GetUserGroupName - returns SignalR group name for user ID
-    // вызывается внутри OnConnectedAsync метода этого хаба
+    // откуда вызывается: вызывается внутри OnConnectedAsync метода этого хаба
     private string GetUserGroupName(int userId)
     {
         return $"user_{userId}";
+    }
+
+    // Тестовый метод для проверки связи
+    [Microsoft.AspNetCore.SignalR.HubMethodName("testPing")]
+    public async Task<string> TestPing()
+    {
+        Console.WriteLine("[SIGNALR] TestPing called successfully!");
+        return $"Pong from server at {DateTime.Now:HH:mm:ss}";
     }
 }

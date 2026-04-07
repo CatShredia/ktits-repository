@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -120,8 +121,11 @@ builder.Services.AddSwaggerGen(c =>
 // Регистрация сервиса для работы с изображениями
 builder.Services.AddScoped<IImageService, ImageService>();
 
-// Регистрация SignalR
-builder.Services.AddSignalR();
+// Регистрация SignalR с фильтром логирования
+builder.Services.AddSignalR(options =>
+{
+    options.AddFilter<CinemaAPI.Hubs.HubLoggingFilter>();
+});
 
 var app = builder.Build();
 

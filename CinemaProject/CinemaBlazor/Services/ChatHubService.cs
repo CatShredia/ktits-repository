@@ -24,7 +24,7 @@ public class ChatHubService : IDisposable
     }
 
     // ! StartAsync - establishes SignalR connection with auth token
-    // вызывается из Chat.razor страницы при инициализации
+    // откуда вызывается: вызывается из Chat.razor страницы при инициализации
     public async Task StartAsync(string token)
     {
         if (IsConnected)
@@ -38,14 +38,25 @@ public class ChatHubService : IDisposable
         }
 
         var hubUrl = $"{_serverUrl}/chathub?access_token={Uri.EscapeDataString(token)}";
+
         _hubConnection = new HubConnectionBuilder()
             .WithUrl(hubUrl)
             .WithAutomaticReconnect()
             .Build();
 
         RegisterHandlers();
-        await _hubConnection.StartAsync();
-        _logger.LogInformation("SignalR connection started");
+
+        try
+        {
+            await _hubConnection.StartAsync();
+            _logger.LogInformation("SignalR connection started. State: {State}, ConnectionId: {ConnectionId}",
+                _hubConnection.State, _hubConnection.ConnectionId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to start SignalR connection. URL: {Url}", hubUrl);
+            throw;
+        }
     }
 
     // ! RegisterHandlers - registers SignalR event handlers for receiving messages
@@ -96,7 +107,7 @@ public class ChatHubService : IDisposable
     public async Task JoinConversationAsync(int conversationId)
     {
         if (_hubConnection == null) return;
-        await _hubConnection.SendAsync("JoinConversation", conversationId);
+        await _hubConnection.SendAsync("joinConversation", conversationId);
     }
 
     // ! LeaveConversationAsync - sends leave request to SignalR hub
@@ -104,15 +115,37 @@ public class ChatHubService : IDisposable
     public async Task LeaveConversationAsync(int conversationId)
     {
         if (_hubConnection == null) return;
-        await _hubConnection.SendAsync("LeaveConversation", conversationId);
+        await _hubConnection.SendAsync("leaveConversation", conversationId);
     }
 
-    // ! SendMessageAsync - sends message to conversation via SignalR
-    // вызывается из Chat.razor при отправке сообщения
+    // ! SendMessageAsync - sends message to conversation via SignalR with logging
+    // откуда вызывается: вызывается из Chat.razor при отправке сообщения
     public async Task SendMessageAsync(int conversationId, string content)
     {
-        if (_hubConnection == null) return;
-        await _hubConnection.SendAsync("SendMessageToConversation", conversationId, content);
+        if (_hubConnection == null)
+        {
+            _logger.LogWarning("Cannot send message: HubConnection is null");
+            return;
+        }
+
+        if (!IsConnected)
+        {
+            _logger.LogWarning("Cannot send message: SignalR is not connected. State: {State}", _hubConnection.State);
+            return;
+        }
+
+        try
+        {
+            _logger.LogInformation("Sending message to conversation {ConversationId}: {Content}", conversationId, content);
+            // camelCase
+            await _hubConnection.SendAsync("sendMessageToConversation", conversationId, content);
+            _logger.LogInformation("Message sent successfully to conversation {ConversationId}", conversationId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending message to conversation {ConversationId}", conversationId);
+            throw;
+        }
     }
 
     // ! SendTypingAsync - sends typing notification to conversation via SignalR
@@ -120,7 +153,7 @@ public class ChatHubService : IDisposable
     public async Task SendTypingAsync(int conversationId)
     {
         if (_hubConnection == null) return;
-        await _hubConnection.SendAsync("UserIsTyping", conversationId);
+        await _hubConnection.SendAsync("userIsTyping", conversationId);
     }
 
     // ! DeleteMessageAsync - sends delete message request via SignalR
@@ -128,11 +161,21 @@ public class ChatHubService : IDisposable
     public async Task DeleteMessageAsync(int messageId, int conversationId)
     {
         if (_hubConnection == null) return;
-        await _hubConnection.SendAsync("DeleteMessage", messageId, conversationId);
+        await _hubConnection.SendAsync("deleteMessage", messageId, conversationId);
+    }
+
+    // ! TestPingAsync - tests connection to server
+    // откуда вызывается: вызывается из Chat.razor для диагностики
+    public async Task<string> TestPingAsync()
+    {
+        if (_hubConnection == null || !IsConnected)
+            throw new InvalidOperationException("Not connected");
+
+        return await _hubConnection.InvokeAsync<string>("testPing");
     }
 
     // ! Dispose - disposes SignalR connection (called by DI container)
-    // вызывается автоматически при уничтожении сервиса
+    // откуда вызывается: вызывается автоматически при уничтожении сервиса
     public void Dispose()
     {
         if (_hubConnection != null)
