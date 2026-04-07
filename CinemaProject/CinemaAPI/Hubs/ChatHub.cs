@@ -78,9 +78,11 @@ public class ChatHub : Hub<IChatClient>
 
 
     // ! SendMessageToConversation - sends message to all users in conversation via SignalR
-    // вызывается из CinemaBlazor через ChatHubService.SendMessageAsync
+    // откуда вызывается: вызывается из CinemaBlazor через ChatHubService.SendMessageAsync
+    [Microsoft.AspNetCore.SignalR.HubMethodName("sendMessageToConversation")]
     public async Task SendMessageToConversation(int conversationId, string content)
     {
+        Console.WriteLine($"[HUB] sendMessageToConversation called! convId={conversationId}, content={content}");
         var userId = GetCurrentUserId();
         if (userId == null)
         {

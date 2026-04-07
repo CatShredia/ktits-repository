@@ -96,7 +96,7 @@ public class ChatHubService : IDisposable
     public async Task JoinConversationAsync(int conversationId)
     {
         if (_hubConnection == null) return;
-        await _hubConnection.SendAsync("JoinConversation", conversationId);
+        await _hubConnection.SendAsync("joinConversation", conversationId);
     }
 
     // ! LeaveConversationAsync - sends leave request to SignalR hub
@@ -104,7 +104,7 @@ public class ChatHubService : IDisposable
     public async Task LeaveConversationAsync(int conversationId)
     {
         if (_hubConnection == null) return;
-        await _hubConnection.SendAsync("LeaveConversation", conversationId);
+        await _hubConnection.SendAsync("leaveConversation", conversationId);
     }
 
     // ! SendMessageAsync - sends message to conversation via SignalR
@@ -112,7 +112,7 @@ public class ChatHubService : IDisposable
     public async Task SendMessageAsync(int conversationId, string content)
     {
         if (_hubConnection == null) return;
-        await _hubConnection.SendAsync("SendMessageToConversation", conversationId, content);
+        await _hubConnection.SendAsync("sendMessageToConversation", conversationId, content);
     }
 
     // ! SendTypingAsync - sends typing notification to conversation via SignalR
@@ -120,7 +120,7 @@ public class ChatHubService : IDisposable
     public async Task SendTypingAsync(int conversationId)
     {
         if (_hubConnection == null) return;
-        await _hubConnection.SendAsync("UserIsTyping", conversationId);
+        await _hubConnection.SendAsync("userIsTyping", conversationId);
     }
 
     // ! DeleteMessageAsync - sends delete message request via SignalR
@@ -128,7 +128,7 @@ public class ChatHubService : IDisposable
     public async Task DeleteMessageAsync(int messageId, int conversationId)
     {
         if (_hubConnection == null) return;
-        await _hubConnection.SendAsync("DeleteMessage", messageId, conversationId);
+        await _hubConnection.SendAsync("deleteMessage", messageId, conversationId);
     }
 
     // ! Dispose - disposes SignalR connection (called by DI container)
