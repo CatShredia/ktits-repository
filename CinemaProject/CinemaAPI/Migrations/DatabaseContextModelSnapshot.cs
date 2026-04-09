@@ -51,11 +51,58 @@ namespace CinemaAPI.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer");
+
                     b.HasKey("ConversationId", "UserId");
+
+                    b.HasIndex("RoleId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("ConversationParticipants");
+                });
+
+            modelBuilder.Entity("CinemaAPI.Models.ConversationRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("ConversationRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Owner"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Moderator"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Member"
+                        });
                 });
 
             modelBuilder.Entity("CinemaAPI.Models.ConversationType", b =>
@@ -321,6 +368,12 @@ namespace CinemaAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CinemaAPI.Models.ConversationRole", "Role")
+                        .WithMany("Participants")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("CinemaAPI.Models.User", "User")
                         .WithMany("ConversationParticipants")
                         .HasForeignKey("UserId")
@@ -328,6 +381,8 @@ namespace CinemaAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Conversation");
+
+                    b.Navigation("Role");
 
                     b.Navigation("User");
                 });
@@ -411,6 +466,11 @@ namespace CinemaAPI.Migrations
                 {
                     b.Navigation("Messages");
 
+                    b.Navigation("Participants");
+                });
+
+            modelBuilder.Entity("CinemaAPI.Models.ConversationRole", b =>
+                {
                     b.Navigation("Participants");
                 });
 

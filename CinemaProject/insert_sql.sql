@@ -10,7 +10,8 @@ public."Roles",
 public."Messages",
 public."ConversationParticipants",
 public."Conversations",
-public."ConversationTypes" RESTART IDENTITY CASCADE;
+public."ConversationTypes",
+public."ConversationRoles" RESTART IDENTITY CASCADE;
 
 -- 2. Вставка тестовых данных
 -- Таблица: Roles (Роли)
@@ -34,6 +35,15 @@ VALUES
     (2, 'Group'),
     (3, 'Channel'),
     (4, 'Comments');
+
+-- Таблица: ConversationRoles (Роли участников чатов)
+INSERT INTO
+    public."ConversationRoles" ("Id", "Name")
+VALUES
+    (1, 'Owner'),
+    (2, 'Admin'),
+    (3, 'Moderator'),
+    (4, 'Member');
 
 -- Таблица: Genres (Жанры)
 INSERT INTO
@@ -453,28 +463,28 @@ VALUES
 
 -- 5: Любители экшена (Сидоров, Кузнецов, Иванов)
 -- Таблица: ConversationParticipants (Участники чатов)
--- Связываем ConversationId с UserId
+-- Связываем ConversationId с UserId и RoleId (1=Owner, 2=Admin, 3=Moderator, 4=Member)
 INSERT INTO
-    public."ConversationParticipants" ("ConversationId", "UserId")
+    public."ConversationParticipants" ("ConversationId", "UserId", "RoleId")
 VALUES
     -- Чат 1 (Direct): Admin (1) <-> Иванов (2)
-    (1, 1),
-    (1, 2),
+    (1, 1, 1),
+    (1, 2, 4),
     -- Чат 2 (Direct): Петрова (3) <-> Сидоров (4)
-    (2, 3),
-    (2, 4),
+    (2, 3, 1),
+    (2, 4, 4),
     -- Чат 3 (Direct): Admin (1) <-> Петрова (3)
-    (3, 1),
-    (3, 3),
+    (3, 1, 1),
+    (3, 3, 4),
     -- Чат 4 (Group): Киноклуб - Admin (1), Иванов (2), Петрова (3), Смирнова (5)
-    (4, 1),
-    (4, 2),
-    (4, 3),
-    (4, 5),
+    (4, 1, 1),
+    (4, 2, 4),
+    (4, 3, 2),
+    (4, 5, 4),
     -- Чат 5 (Group): Любители экшена - Сидоров (4), Кузнецов (6), Иванов (2)
-    (5, 4),
-    (5, 6),
-    (5, 2);
+    (5, 4, 1),
+    (5, 6, 4),
+    (5, 2, 3);
 
 -- Таблица: Messages (Сообщения)
 -- Связываем с ConversationId и SenderId (User)

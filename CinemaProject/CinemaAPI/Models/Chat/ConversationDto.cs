@@ -5,6 +5,6 @@ public class ConversationDto
     public int Id { get; set; }
     public string ConversationTypeName { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
-    public List<UserChatDto> Participants { get; set; } = new();
+    public List<ParticipantDto> Participants { get; set; } = new();
     public MessageDto? LastMessage { get; set; }
 }

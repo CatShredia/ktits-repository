@@ -110,6 +110,8 @@ public class ChatController : ControllerBase
             .Include(c => c.ConversationType)
             .Include(c => c.Participants)
                 .ThenInclude(p => p.User)
+            .Include(c => c.Participants)
+                .ThenInclude(p => p.Role)
             .Include(c => c.Messages)
                 .OrderByDescending(m => m.CreatedAt)
             .ToListAsync();
@@ -122,13 +124,14 @@ public class ChatController : ControllerBase
                 Id = c.Id,
                 ConversationTypeName = c.ConversationType.Name,
                 CreatedAt = c.CreatedAt,
-                Participants = c.Participants.Select(p => new UserChatDto
+                Participants = c.Participants.Select(p => new ParticipantDto
                 {
-                    Id = p.User.Id,
+                    UserId = p.User.Id,
                     Login = p.User.Login?.LoginValue ?? string.Empty,
                     Name = p.User.Name,
                     Surname = p.User.Surname,
-                    FullName = $"{p.User.Surname} {p.User.Name}"
+                    FullName = $"{p.User.Surname} {p.User.Name}",
+                    RoleName = p.Role.Name
                 }).ToList(),
                 LastMessage = lastMessage != null ? new MessageDto
                 {
@@ -238,19 +241,28 @@ public class ChatController : ControllerBase
         _context.Conversations.Add(conversation);
         await _context.SaveChangesAsync();
 
-        // Добавление участников
+        // Получаем роли по умолчанию
+        var ownerRole = await _context.ConversationRoles.FirstAsync(r => r.Name == "Owner");
+        var memberRole = await _context.ConversationRoles.FirstAsync(r => r.Name == "Member");
+
+        // Добавление участников: создатель = Owner, остальные = Member
         var participants = allParticipantIds.Select(id => new ConversationParticipant
         {
             ConversationId = conversation.Id,
-            UserId = id
+            UserId = id,
+            RoleId = id == currentUserId ? ownerRole.Id : memberRole.Id
         }).ToList();
 
         _context.ConversationParticipants.AddRange(participants);
         await _context.SaveChangesAsync();
 
         var createdConversation = await _context.Conversations
+            .Include(c => c.ConversationType)
             .Include(c => c.Participants)
                 .ThenInclude(p => p.User)
+                    .ThenInclude(u => u.Login)
+            .Include(c => c.Participants)
+                .ThenInclude(p => p.Role)
             .FirstOrDefaultAsync(c => c.Id == conversation.Id);
 
         if (createdConversation == null)
@@ -268,9 +280,10 @@ public class ChatController : ControllerBase
             CreatedAt = result.CreatedAt,
             Participants = result.Participants.Select(p => new ConversationParticipantResponse
             {
-                Id = p.Id,
+                UserId = p.UserId,
                 FullName = p.FullName,
-                Login = p.Login
+                Login = p.Login,
+                RoleName = p.RoleName
             }).ToList()
         };
 
@@ -503,17 +516,20 @@ public class ChatController : ControllerBase
             .Select(p => p.UserId)
             .ToListAsync();
 
-        // Добавляем только новых
+        // Добавляем только новых (с ролью Member по умолчанию)
         var newParticipantIds = userIds.Except(existingParticipantIds).ToList();
         if (newParticipantIds.Count == 0)
         {
             return BadRequest("All users are already participants");
         }
 
+        var memberRole = await _context.ConversationRoles.FirstAsync(r => r.Name == "Member");
+
         var newParticipants = newParticipantIds.Select(id => new ConversationParticipant
         {
             ConversationId = conversationId,
-            UserId = id
+            UserId = id,
+            RoleId = memberRole.Id
         }).ToList();
 
         _context.ConversationParticipants.AddRange(newParticipants);
@@ -524,6 +540,8 @@ public class ChatController : ControllerBase
             .Include(c => c.Participants)
                 .ThenInclude(p => p.User)
                     .ThenInclude(u => u.Login)
+            .Include(c => c.Participants)
+                .ThenInclude(p => p.Role)
             .FirstOrDefaultAsync(c => c.Id == conversationId);
 
         if (updatedConversation == null)
@@ -541,9 +559,10 @@ public class ChatController : ControllerBase
             CreatedAt = result.CreatedAt,
             Participants = result.Participants.Select(p => new ConversationParticipantResponse
             {
-                Id = p.Id,
+                UserId = p.UserId,
                 FullName = p.FullName,
-                Login = p.Login
+                Login = p.Login,
+                RoleName = p.RoleName
             }).ToList()
         };
 
@@ -675,11 +694,12 @@ public class ChatController : ControllerBase
             .OrderByDescending(m => m.CreatedAt)
             .FirstOrDefaultAsync();
 
-        // Загружаем участников с Users явно, чтобы избежать проблем с tracking
+        // Загружаем участников с Users и Roles явно, чтобы избежать проблем с tracking
         var participantsWithUsers = await _context.ConversationParticipants
             .Where(p => p.ConversationId == conversation.Id)
             .Include(p => p.User)
                 .ThenInclude(u => u.Login)
+            .Include(p => p.Role)
             .ToListAsync();
 
         // Загружаем тип чата
@@ -691,13 +711,14 @@ public class ChatController : ControllerBase
             Id = conversation.Id,
             ConversationTypeName = conversationType?.Name ?? string.Empty,
             CreatedAt = conversation.CreatedAt,
-            Participants = participantsWithUsers.Select(p => new UserChatDto
+            Participants = participantsWithUsers.Select(p => new ParticipantDto
             {
-                Id = p.User.Id,
+                UserId = p.User.Id,
                 Login = p.User.Login?.LoginValue ?? string.Empty,
                 Name = p.User.Name,
                 Surname = p.User.Surname,
-                FullName = $"{p.User.Surname} {p.User.Name}"
+                FullName = $"{p.User.Surname} {p.User.Name}",
+                RoleName = p.Role?.Name ?? "Member"
             }).ToList(),
             LastMessage = lastMessage != null ? new MessageDto
             {

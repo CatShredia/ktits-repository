@@ -54,7 +54,8 @@ public class ConversationCreatedResponse
 
 public class ConversationParticipantResponse
 {
-    public int Id { get; set; }
+    public int UserId { get; set; }
     public string FullName { get; set; } = string.Empty;
     public string Login { get; set; } = string.Empty;
+    public string RoleName { get; set; } = string.Empty;
 }

@@ -10,3 +10,11 @@ public class CreateConversationDto
     [Required]
     public string ConversationTypeName { get; set; } = "Direct";
 }
+
+public class AddParticipantDto
+{
+    [Required]
+    public int UserId { get; set; }
+
+    public string? RoleName { get; set; }
+}

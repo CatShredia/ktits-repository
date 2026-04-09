@@ -25,7 +25,7 @@ public class ConversationDto
     public int Id { get; set; }
     public string ConversationTypeName { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
-    public List<UserChatDto> Participants { get; set; } = new();
+    public List<ParticipantDto> Participants { get; set; } = new();
     public MessageDto? LastMessage { get; set; }
 }
 
@@ -61,7 +61,8 @@ public class ConversationCreatedDto
 
 public class ParticipantDto
 {
-    public int Id { get; set; }
+    public int UserId { get; set; }
     public string FullName { get; set; } = string.Empty;
     public string Login { get; set; } = string.Empty;
+    public string RoleName { get; set; } = string.Empty;
 }

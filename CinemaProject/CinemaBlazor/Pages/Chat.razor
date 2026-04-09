@@ -47,7 +47,7 @@
                             {
                                 var isActive = _selectedConversation?.Id == conv.Id;
                                 var otherParticipants = conv.Participants
-                                    .Where(p => p.Id != _currentUser?.Id)
+                                    .Where(p => p.UserId != _currentUser?.Id)
                                     .ToList();
                                 var chatName = GetConversationDisplayName(conv);
 
@@ -110,7 +110,7 @@
                 else
                 {
                     var otherParticipants = _selectedConversation.Participants
-                        .Where(p => p.Id != _currentUser?.Id)
+                        .Where(p => p.UserId != _currentUser?.Id)
                         .ToList();
                     var chatName = GetConversationDisplayName(_selectedConversation);
 
@@ -148,21 +148,23 @@
                                         {
                                             <div class="list-group-item px-2 py-1 d-flex justify-content-between align-items-center">
                                                 <span>
-                                                    @if (participant.Id == _currentUser?.Id)
+                                                    @if (participant.UserId == _currentUser?.Id)
                                                     {
                                                         <i class="bi bi-person-badge text-primary me-1"></i>
                                                     }
                                                     @participant.FullName
                                                 </span>
-                                                <div>
-                                                    @if (participant.Id == _currentUser?.Id)
+                                                <div class="d-flex align-items-center">
+                                                    <span
+                                                    class="badge @(GetRoleBadgeClass(participant.RoleName)) me-2">@participant.RoleName</span>
+                                                    @if (participant.UserId == _currentUser?.Id)
                                                     {
                                                         <span class="badge bg-secondary">Вы</span>
                                                     }
                                                     else if (_selectedConversation.ConversationTypeName != "Direct")
                                                     {
                                                         <button class="btn btn-sm btn-link text-danger p-0 ms-2"
-                                                                @onclick="() => RemoveParticipantAsync(participant.Id)"
+                                                                @onclick="() => RemoveParticipantAsync(participant.UserId)"
                                                                 title="Удалить участника" style="font-size: 0.8rem;">
                                                             <i class="bi bi-x-lg"></i>
                                                         </button>
@@ -319,10 +321,13 @@
                         @foreach (var participant in _groupSettingsParticipants)
                         {
                             <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
-                                <span>@participant.FullName (@participant.Login)</span>
-                                @if (participant.Id != _currentUser?.Id)
+                                <span>
+                                    @participant.FullName (@participant.Login)
+                                    <span class="badge @(GetRoleBadgeClass(participant.RoleName)) ms-2">@participant.RoleName</span>
+                                </span>
+                                @if (participant.UserId != _currentUser?.Id)
                                 {
-                                    <button class="btn btn-sm btn-danger" @onclick="() => RemoveParticipant(participant.Id)">
+                                    <button class="btn btn-sm btn-danger" @onclick="() => RemoveParticipant(participant.UserId)">
                                         <i class="bi bi-x-lg"></i>
                                     </button>
                                 }
@@ -484,7 +489,7 @@
     private bool _showGroupSettingsModal;
     private ConversationDto? _groupSettingsConversation;
     private string? _groupSettingsName;
-    private List<UserChatDto>? _groupSettingsParticipants;
+    private List<ParticipantDto>? _groupSettingsParticipants;
     private string _addParticipantLogin = "";
     private UserChatDto? _addSearchResult;
 
@@ -659,7 +664,7 @@
                 _typingUsers = _typingUserIds.Count > 0
                     ? _conversations
                         .SelectMany(c => c.Participants)
-                        .FirstOrDefault(p => p.Id == _typingUserIds.FirstOrDefault())?.FullName
+                        .FirstOrDefault(p => p.UserId == _typingUserIds.FirstOrDefault())?.FullName
                     : null;
                 InvokeAsync(StateHasChanged);
             });
@@ -808,7 +813,7 @@
         else
         {
             // Проверяем, что пользователь ещё не участник
-            if (_selectedConversation != null && _selectedConversation.Participants.Any(p => p.Id == user.Id))
+            if (_selectedConversation != null && _selectedConversation.Participants.Any(p => p.UserId == user.Id))
             {
                 _addParticipantError = "Пользователь уже является участником";
                 _addParticipantSearchResult = null;
@@ -884,9 +889,15 @@
 
     private void AddParticipantToGroup(int userId)
     {
-        if (_groupSettingsParticipants != null && !_groupSettingsParticipants.Any(p => p.Id == userId))
+        if (_groupSettingsParticipants != null && !_groupSettingsParticipants.Any(p => p.UserId == userId))
         {
-            _groupSettingsParticipants.Add(_addSearchResult!);
+            _groupSettingsParticipants.Add(new ParticipantDto
+            {
+                UserId = _addSearchResult!.Id,
+                FullName = _addSearchResult.FullName,
+                Login = _addSearchResult.Login,
+                RoleName = "Member"
+            });
             _addParticipantLogin = "";
             _addSearchResult = null;
         }
@@ -901,7 +912,7 @@
             {
                 return;
             }
-            _groupSettingsParticipants.RemoveAll(p => p.Id == userId);
+            _groupSettingsParticipants.RemoveAll(p => p.UserId == userId);
         }
     }
 
@@ -960,7 +971,7 @@
         return conv.ConversationTypeName switch
         {
             "Direct" => string.Join(", ", conv.Participants
-                .Where(p => p.Id != _currentUser?.Id)
+                .Where(p => p.UserId != _currentUser?.Id)
                 .Select(p => p.FullName)),
             "Group" => $"Группа ({conv.Participants.Count} уч.)",
             "Channel" => $"Канал: {string.Join(", ", conv.Participants.Take(1).Select(p => p.FullName))}",
@@ -979,6 +990,19 @@
             "Channel" => "<i class=\"bi bi-megaphone-fill text-warning me-1\"></i>",
             "Comments" => "<i class=\"bi bi-chat-quote-fill text-info me-1\"></i>",
             _ => "<i class=\"bi bi-chat-fill me-1\"></i>"
+        };
+    }
+
+    // ! GetRoleBadgeClass - returns Bootstrap badge class based on role
+    private string GetRoleBadgeClass(string roleName)
+    {
+        return roleName switch
+        {
+            "Owner" => "bg-danger",
+            "Admin" => "bg-warning text-dark",
+            "Moderator" => "bg-info",
+            "Member" => "bg-secondary",
+            _ => "bg-secondary"
         };
     }
 }
