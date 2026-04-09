@@ -89,13 +89,28 @@ public class ChatHub : Hub<IChatClient>
             return;
         }
 
-        var isParticipant = await _context.ConversationParticipants
-            .AnyAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+        // Получаем участника с ролью и тип чата
+        var participant = await _context.ConversationParticipants
+            .Include(p => p.Role)
+            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
 
-        if (!isParticipant)
+        if (participant == null)
         {
             _logger.LogWarning("User {UserId} tried to send message to conversation {ConversationId} without permission",
                 userId, conversationId);
+            return;
+        }
+
+        var conversation = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
+        if (conversation == null) return;
+
+        // Проверка прав на отправку сообщений
+        if (!RolePermissions.CanSendMessage(participant.Role.Name, conversation.ConversationType.Name))
+        {
+            _logger.LogWarning("User {UserId} tried to send message to conversation {ConversationId} without permission (role: {Role})",
+                userId, conversationId, participant.Role.Name);
             return;
         }
 
@@ -166,7 +181,7 @@ public class ChatHub : Hub<IChatClient>
     }
 
 
-    // ! DeleteMessage - deletes message from conversation (owner only)
+    // ! DeleteMessage - deletes message from conversation based on role permissions
     // вызывается из CinemaBlazor через ChatHubService.DeleteMessageAsync
     public async Task DeleteMessage(int messageId, int conversationId)
     {
@@ -182,10 +197,35 @@ public class ChatHub : Hub<IChatClient>
             return;
         }
 
-        if (message.SenderId != userId.Value)
+        // Получаем участника с ролью
+        var participant = await _context.ConversationParticipants
+            .Include(p => p.Role)
+            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+
+        if (participant == null) return;
+
+        var conversation = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
+        if (conversation == null) return;
+
+        // Проверка прав на удаление
+        var isOwnMessage = message.SenderId == userId.Value;
+        bool canDelete;
+
+        if (isOwnMessage)
         {
-            _logger.LogWarning("User {UserId} tried to delete message {MessageId} without permission",
-                userId.Value, messageId);
+            canDelete = RolePermissions.CanDeleteOwnMessage(participant.Role.Name, conversation.ConversationType.Name);
+        }
+        else
+        {
+            canDelete = RolePermissions.CanDeleteOtherMessage(participant.Role.Name);
+        }
+
+        if (!canDelete)
+        {
+            _logger.LogWarning("User {UserId} tried to delete message {MessageId} without permission (role: {Role}, own: {isOwn})",
+                userId.Value, messageId, participant.Role.Name, isOwnMessage);
             return;
         }
 

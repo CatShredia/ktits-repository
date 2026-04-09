@@ -357,13 +357,20 @@ public class ChatController : ControllerBase
             return NotFound("Conversation not found");
         }
 
-        // Проверка, что пользователь является участником чата
-        var isParticipant = await _context.ConversationParticipants
-            .AnyAsync(p => p.ConversationId == conversationId && p.UserId == currentUserId);
+        // Проверка, что пользователь является участником чата и получение его роли
+        var participant = await _context.ConversationParticipants
+            .Include(p => p.Role)
+            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == currentUserId);
 
-        if (!isParticipant)
+        if (participant == null)
         {
             return Forbid("You are not a participant of this conversation");
+        }
+
+        // Проверка прав на отправку сообщений
+        if (!RolePermissions.CanSendMessage(participant.Role.Name, conversation.ConversationType.Name))
+        {
+            return Forbid("You don't have permission to send messages in this conversation");
         }
 
         var message = new Message
@@ -489,13 +496,20 @@ public class ChatController : ControllerBase
             return BadRequest("Cannot add participants to a Direct chat");
         }
 
-        // Проверка, что пользователь является участником
-        var isParticipant = await _context.ConversationParticipants
-            .AnyAsync(p => p.ConversationId == conversationId && p.UserId == currentUserId);
+        // Получаем участника с ролью
+        var currentParticipant = await _context.ConversationParticipants
+            .Include(p => p.Role)
+            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == currentUserId);
 
-        if (!isParticipant)
+        if (currentParticipant == null)
         {
             return Forbid("You are not a participant of this conversation");
+        }
+
+        // Проверка прав на добавление участников
+        if (!RolePermissions.CanAddParticipant(currentParticipant.Role.Name))
+        {
+            return Forbid("You don't have permission to add participants");
         }
 
         // Проверка существования пользователей
@@ -601,34 +615,173 @@ public class ChatController : ControllerBase
             return BadRequest("Cannot remove participants from a Direct chat");
         }
 
-        // Проверка, что пользователь является участником
-        var isParticipant = await _context.ConversationParticipants
-            .AnyAsync(p => p.ConversationId == conversationId && p.UserId == currentUserId);
+        // Получаем текущего участника с ролью
+        var currentParticipant = await _context.ConversationParticipants
+            .Include(p => p.Role)
+            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == currentUserId);
 
-        if (!isParticipant)
+        if (currentParticipant == null)
         {
             return Forbid("You are not a participant of this conversation");
         }
 
-        // Нельзя удалить самого себя через этот метод (для этого есть удаление чата)
+        // Получаем целевого участника с ролью
+        var targetParticipant = await _context.ConversationParticipants
+            .Include(p => p.Role)
+            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+
+        if (targetParticipant == null)
+        {
+            return NotFound("Participant not found");
+        }
+
+        // Нельзя удалить самого себя через этот метод
         if (userId == currentUserId)
         {
             return BadRequest("Cannot remove yourself. Delete the entire conversation instead.");
         }
 
-        var participant = await _context.ConversationParticipants
-            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
-
-        if (participant == null)
+        // Проверка прав на удаление участника
+        if (!RolePermissions.CanRemoveParticipant(currentParticipant.Role.Name, targetParticipant.Role.Name))
         {
-            return NotFound("Participant not found");
+            return Forbid("You don't have permission to remove this participant");
         }
 
-        _context.ConversationParticipants.Remove(participant);
+        _context.ConversationParticipants.Remove(targetParticipant);
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("User {CurrentUserId} removed user {UserId} from conversation {ConversationId}",
             currentUserId, userId, conversationId);
+
+        return NoContent();
+    }
+
+    // ! TransferOwnership - transfers Owner role to another participant
+    // POST /api/Chat/conversations/{id}/transfer-ownership
+    [HttpPost("conversations/{conversationId}/transfer-ownership")]
+    public async Task<IActionResult> TransferOwnership(int conversationId, [FromBody] int newOwnerId)
+    {
+        var currentUserId = GetCurrentUserId();
+        if (currentUserId == null)
+        {
+            return Unauthorized();
+        }
+
+        var conversation = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
+
+        if (conversation == null)
+        {
+            return NotFound("Conversation not found");
+        }
+
+        // Transfer только для не-Direct чатов
+        if (conversation.ConversationType.Name == "Direct")
+        {
+            return BadRequest("Cannot transfer ownership in a Direct chat");
+        }
+
+        // Получаем текущего участника с ролью
+        var currentParticipant = await _context.ConversationParticipants
+            .Include(p => p.Role)
+            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == currentUserId);
+
+        if (currentParticipant == null || currentParticipant.Role.Name != "Owner")
+        {
+            return Forbid("Only the Owner can transfer ownership");
+        }
+
+        // Получаем нового владельца
+        var newOwnerParticipant = await _context.ConversationParticipants
+            .Include(p => p.Role)
+            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == newOwnerId);
+
+        if (newOwnerParticipant == null)
+        {
+            return NotFound("Target user is not a participant of this conversation");
+        }
+
+        // Находим роли Owner и Member
+        var ownerRole = await _context.ConversationRoles.FirstAsync(r => r.Name == "Owner");
+        var memberRole = await _context.ConversationRoles.FirstAsync(r => r.Name == "Member");
+
+        // Передаём права
+        currentParticipant.RoleId = memberRole.Id;
+        newOwnerParticipant.RoleId = ownerRole.Id;
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("User {CurrentUserId} transferred ownership to user {NewOwnerId} in conversation {ConversationId}",
+            currentUserId, newOwnerId, conversationId);
+
+        return NoContent();
+    }
+
+    // ! ChangeRole - changes a participant's role (Owner only)
+    // PUT /api/Chat/conversations/{id}/participants/{userId}/role
+    [HttpPut("conversations/{conversationId}/participants/{userId}/role")]
+    public async Task<IActionResult> ChangeRole(int conversationId, int userId, [FromBody] string newRoleName)
+    {
+        var currentUserId = GetCurrentUserId();
+        if (currentUserId == null)
+        {
+            return Unauthorized();
+        }
+
+        var conversation = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
+
+        if (conversation == null)
+        {
+            return NotFound("Conversation not found");
+        }
+
+        // Только для не-Direct чатов
+        if (conversation.ConversationType.Name == "Direct")
+        {
+            return BadRequest("Cannot change roles in a Direct chat");
+        }
+
+        // Получаем текущего участника
+        var currentParticipant = await _context.ConversationParticipants
+            .Include(p => p.Role)
+            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == currentUserId);
+
+        if (currentParticipant == null || currentParticipant.Role.Name != "Owner")
+        {
+            return Forbid("Only the Owner can change roles");
+        }
+
+        // Получаем целевого участника
+        var targetParticipant = await _context.ConversationParticipants
+            .Include(p => p.Role)
+            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+
+        if (targetParticipant == null)
+        {
+            return NotFound("Participant not found");
+        }
+
+        // Нельзя менять роль Owner
+        if (targetParticipant.Role.Name == "Owner")
+        {
+            return BadRequest("Cannot change the Owner role. Use transfer-ownership instead.");
+        }
+
+        // Находим новую роль
+        var newRole = await _context.ConversationRoles.FirstOrDefaultAsync(r => r.Name == newRoleName);
+        if (newRole == null)
+        {
+            return BadRequest($"Invalid role: {newRoleName}. Valid roles: Admin, Moderator, Member");
+        }
+
+        targetParticipant.RoleId = newRole.Id;
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("User {CurrentUserId} changed role of user {UserId} to {NewRole} in conversation {ConversationId}",
+            currentUserId, userId, newRoleName, conversationId);
 
         return NoContent();
     }

@@ -75,6 +75,43 @@ public class AuthController : ControllerBase
         await _context.SaveChangesAsync();
 
         var roleName = role?.Name ?? "client";
+
+        // Автоматическое добавление в общие чаты (Group и Channel)
+        var commonGroup = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.ConversationType.Name == "Group" && c.Id == 6);
+        var commonChannel = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.ConversationType.Name == "Channel" && c.Id == 7);
+
+        var memberRole = await _context.ConversationRoles.FirstOrDefaultAsync(r => r.Name == "Member");
+        var moderatorRole = await _context.ConversationRoles.FirstOrDefaultAsync(r => r.Name == "Moderator");
+
+        // Определяем роль в чате: admin → Moderator, остальные → Member
+        var chatRole = roleName == "admin" ? moderatorRole : memberRole;
+
+        if (commonGroup != null && chatRole != null)
+        {
+            _context.ConversationParticipants.Add(new ConversationParticipant
+            {
+                ConversationId = commonGroup.Id,
+                UserId = user.Id,
+                RoleId = chatRole.Id
+            });
+        }
+
+        if (commonChannel != null && memberRole != null)
+        {
+            _context.ConversationParticipants.Add(new ConversationParticipant
+            {
+                ConversationId = commonChannel.Id,
+                UserId = user.Id,
+                RoleId = memberRole.Id
+            });
+        }
+
+        await _context.SaveChangesAsync();
+
         var token = GenerateJwtToken(user.Id, roleName, user, role);
 
         return new AuthResponseDto

@@ -9,7 +9,7 @@
 @implements IDisposable
 
 <div class="container-fluid mt-4" @onclick="() => _openMenuConversationId = null">
-    <h2><i class="bi bi-chat-dots"></i> Чат</h2>
+    <h2>Чат</h2>
 
     @if (!_isAuthenticated)
     {
@@ -125,56 +125,79 @@
                             }
 
                             <!-- Участники чата -->
-                            <div class="mt-2">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <button class="btn btn-sm btn-link p-0 text-muted"
-                                            @onclick="() => _showParticipants = !_showParticipants" style="font-size: 0.85rem;">
-                                        <i class="bi @(_showParticipants ? "bi-chevron-down" : "bi-chevron-right")"></i>
-                                        Участники (@_selectedConversation.Participants.Count)
-                                    </button>
-                                    @if (_selectedConversation.ConversationTypeName != "Direct" && _showParticipants)
-                                    {
-                                        <button class="btn btn-sm btn-link p-0 text-primary"
-                                                @onclick="() => OpenAddParticipantModal()" style="font-size: 0.85rem;"
-                                                title="Добавить участника">
-                                            <i class="bi bi-person-plus"></i>
+                            @if (_selectedConversation.ConversationTypeName != "Direct")
+                            {
+                                <div class="mt-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <button class="btn btn-sm btn-link p-0 text-muted"
+                                                @onclick="() => _showParticipants = !_showParticipants" style="font-size: 0.85rem;">
+                                            <i class="bi @(_showParticipants ? "bi-chevron-down" : "bi-chevron-right")"></i>
+                                            Участники (@_selectedConversation.Participants.Count)
                                         </button>
-                                    }
-                                </div>
-                                @if (_showParticipants)
-                                {
-                                    <div class="list-group list-group-flush mt-1" style="font-size: 0.85rem;">
-                                        @foreach (var participant in _selectedConversation.Participants)
+                                        @if (_showParticipants && CanManageParticipants())
                                         {
-                                            <div class="list-group-item px-2 py-1 d-flex justify-content-between align-items-center">
-                                                <span>
-                                                    @if (participant.UserId == _currentUser?.Id)
-                                                    {
-                                                        <i class="bi bi-person-badge text-primary me-1"></i>
-                                                    }
-                                                    @participant.FullName
-                                                </span>
-                                                <div class="d-flex align-items-center">
-                                                    <span
-                                                    class="badge @(GetRoleBadgeClass(participant.RoleName)) me-2">@participant.RoleName</span>
-                                                    @if (participant.UserId == _currentUser?.Id)
-                                                    {
-                                                        <span class="badge bg-secondary">Вы</span>
-                                                    }
-                                                    else if (_selectedConversation.ConversationTypeName != "Direct")
-                                                    {
-                                                        <button class="btn btn-sm btn-link text-danger p-0 ms-2"
-                                                                @onclick="() => RemoveParticipantAsync(participant.UserId)"
-                                                                title="Удалить участника" style="font-size: 0.8rem;">
-                                                            <i class="bi bi-x-lg"></i>
-                                                        </button>
-                                                    }
-                                                </div>
-                                            </div>
+                                            <button class="btn btn-sm btn-link p-0 text-primary"
+                                                    @onclick="() => OpenAddParticipantModal()" style="font-size: 0.85rem;"
+                                                    title="Добавить участника">
+                                                <i class="bi bi-person-plus"></i>
+                                            </button>
                                         }
                                     </div>
-                                }
-                            </div>
+                                    @if (CanTransferOwnership())
+                                    {
+                                        <button class="btn btn-sm btn-link p-0 text-warning me-2"
+                                                @onclick="() => _showTransferOwnershipModal = true" style="font-size: 0.85rem;"
+                                                title="Передать права владельца">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </button>
+                                    }
+                                    @if (_showParticipants)
+                                    {
+                                        <div class="list-group list-group-flush mt-1" style="font-size: 0.85rem;">
+                                            @foreach (var participant in _selectedConversation.Participants)
+                                            {
+                                                <div class="list-group-item px-2 py-1 d-flex justify-content-between align-items-center">
+                                                    <span>
+                                                        @if (participant.UserId == _currentUser?.Id)
+                                                        {
+                                                            <i class="bi bi-person-badge text-primary me-1"></i>
+                                                        }
+                                                        @participant.FullName
+                                                    </span>
+                                                    <div class="d-flex align-items-center">
+                                                        <span
+                                                        class="badge @(GetRoleBadgeClass(participant.RoleName)) me-2">@participant.RoleName</span>
+                                                        @if (participant.UserId == _currentUser?.Id)
+                                                        {
+                                                            <span class="badge bg-secondary">Вы</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            @if (IsOwner() && _selectedConversation.ConversationTypeName != "Direct")
+                                                            {
+                                                                <button class="btn btn-sm btn-link p-0 text-warning ms-1"
+                                                                        @onclick="() => OpenChangeRoleModal(participant)" style="font-size: 0.8rem;"
+                                                                        title="Сменить роль">
+                                                                    <i class="bi bi-person-gear"></i>
+                                                                </button>
+                                                            }
+
+                                                            @if (CanManageParticipants())
+                                                            {
+                                                                <button class="btn btn-sm btn-link text-danger p-0 ms-2"
+                                                                        @onclick="() => RemoveParticipantAsync(participant.UserId)"
+                                                                        title="Удалить участника" style="font-size: 0.8rem;">
+                                                                    <i class="bi bi-x-lg"></i>
+                                                                </button>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
                         </div>
                         <div class="card-body" id="messages-container" style="height: 400px; overflow-y: auto;">
                             @if (_messages.Count == 0)
@@ -197,10 +220,15 @@
                                             <small class="@(isMine ? "text-white-50" : "text-muted")" style="font-size: 0.75rem;">
                                                 @FormatTime(msg.CreatedAt)
                                             </small>
-                                            @if (isMine)
+                                            @{
+                                                var canDeleteOwn = CanDeleteOwnMessage();
+                                                var canDeleteOther = CanDeleteOtherMessage();
+                                                var canDeleteThisMessage = (isMine && canDeleteOwn) || (!isMine && canDeleteOther);
+                                            }
+                                            @if (canDeleteThisMessage)
                                             {
-                                                <button class="btn btn-sm btn-link text-white-50 p-0 ms-2" style="font-size: 0.75rem;"
-                                                        @onclick="() => DeleteMessage(msg.Id)" title="Удалить">
+                                                <button class="btn btn-sm btn-link @(isMine ? "text-white-50" : "text-danger") p-0 ms-2"
+                                                        style="font-size: 0.75rem;" @onclick="() => DeleteMessage(msg.Id)" title="Удалить">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             }
@@ -210,14 +238,21 @@
                             }
                         </div>
                         <div class="card-footer">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Введите сообщение..."
-                                       @bind="_newMessagesText" @onkeydown="HandleKeyDown" @onkeyup="OnTyping" />
-                                <button class="btn btn-primary" @onclick="SendMessageAsync"
-                                        disabled="@(string.IsNullOrWhiteSpace(_newMessagesText))">
-                                    <i class="bi bi-send"></i> Отправить
-                                </button>
-                            </div>
+                            @if (CanSendMessage())
+                            {
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Введите сообщение..."
+                                           @bind="_newMessagesText" @onkeydown="HandleKeyDown" @onkeyup="OnTyping" />
+                                    <button class="btn btn-primary" @onclick="SendMessageAsync"
+                                            disabled="@(string.IsNullOrWhiteSpace(_newMessagesText))">
+                                        <i class="bi bi-send"></i> Отправить
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-muted text-center fst-italic">Только чтение</div>
+                            }
                         </div>
                     </div>
                 }
@@ -285,14 +320,16 @@
                     }
                     else
                     {
-                        <div class="alert alert-info">Канал будет создан без участников. Вы сможете добавить их позже.</div>
+                        <div class="alert alert-info">Канал будет создан без участников. Вы сможете добавить их позже.
+                        </div>
                     }
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            @onclick="() => _showNewChatModal = false">Отмена</button>
+                    <button type="button" class="btn btn-secondary" @onclick="() => _showNewChatModal = false">Отмена
+                    </button>
                     <button type="button" class="btn btn-primary" @onclick="CreateConversation"
-                            disabled="@IsCreateDisabled">Создать</button>
+                            disabled="@IsCreateDisabled">Создать
+                    </button>
                 </div>
             </div>
         </div>
@@ -363,8 +400,8 @@
                     }
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            @onclick="() => _showGroupSettingsModal = false">Закрыть</button>
+                    <button type="button" class="btn btn-secondary" @onclick="() => _showGroupSettingsModal = false">Закрыть
+                    </button>
                     <button type="button" class="btn btn-primary" @onclick="SaveGroupSettings">Сохранить</button>
                 </div>
             </div>
@@ -388,8 +425,8 @@
                     <p class="text-muted small">Все сообщения будут удалены без возможности восстановления.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            @onclick="() => _showDeleteConfirmModal = false">Отмена</button>
+                    <button type="button" class="btn btn-secondary" @onclick="() => _showDeleteConfirmModal = false">Отмена
+                    </button>
                     <button type="button" class="btn btn-danger" @onclick="DeleteConversation">Удалить</button>
                 </div>
             </div>
@@ -436,7 +473,82 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary"
-                            @onclick="() => _showAddParticipantModal = false">Закрыть</button>
+                            @onclick="() => _showAddParticipantModal = false">Закрыть
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (_showTransferOwnershipModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title">Передать права владельца</h5>
+                    <button type="button" class="btn-close" @onclick="() => _showTransferOwnershipModal = false"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Выберите пользователя:</p>
+                    @if (_selectedConversation != null)
+                    {
+                        @foreach (var participant in _selectedConversation.Participants.Where(p => p.UserId !=
+                                                                                                                           _currentUser?.Id))
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                                <span>
+                                    @participant.FullName
+                                    <span class="badge @(GetRoleBadgeClass(participant.RoleName)) ms-2">@participant.RoleName</span>
+                                </span>
+                                <button class="btn btn-sm btn-warning" @onclick="() => TransferOwnership(participant.UserId)">
+                                    <i class="bi bi-arrow-repeat"></i> Передать
+                                </button>
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            @onclick="() => _showTransferOwnershipModal = false">Отмена
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (_showChangeRoleModal && _changeRoleParticipant != null)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title">Сменить роль: @_changeRoleParticipant.FullName</h5>
+                    <button type="button" class="btn-close" @onclick="() => CloseChangeRoleModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Текущая роль: <span
+                        class="badge @(GetRoleBadgeClass(_changeRoleParticipant.RoleName))">@_changeRoleParticipant.RoleName</span>
+                    </p>
+                    <p>Выберите новую роль:</p>
+                    <div class="list-group">
+                        @foreach (var role in new[] { "Moderator", "Member" }.Where(r => r !=
+                                                                                                                 _changeRoleParticipant.RoleName))
+                        {
+                            <button
+                                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                                @onclick="() => ChangeRole(role)">
+                                <span>@GetRoleDisplayName(role)</span>
+                                <span class="badge @(GetRoleBadgeClass(role))">@role</span>
+                            </button>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="() => CloseChangeRoleModal()">Отмена
+                    </button>
                 </div>
             </div>
         </div>
@@ -502,9 +614,9 @@
 
     private bool IsCreateDisabled => _newConversationType switch
     {
-        "Channel" => false, // Channel можно создать без участников
-        "Direct" => _selectedUserIds.Count != 1, // Direct — ровно 1 пользователь
-        _ => _selectedUserIds.Count == 0 // Group, Comments — минимум 1
+        "Channel" => false,
+        "Direct" => _selectedUserIds.Count != 1,
+        _ => _selectedUserIds.Count == 0
     };
 
     // Для отображения участников
@@ -515,6 +627,13 @@
     private string _addParticipantLoginNew = "";
     private UserChatDto? _addParticipantSearchResult;
     private string? _addParticipantError;
+
+    // Для передачи прав владельца
+    private bool _showTransferOwnershipModal;
+
+    // Для смены роли
+    private bool _showChangeRoleModal;
+    private ParticipantDto? _changeRoleParticipant;
 
     protected override async Task OnInitializedAsync()
     {
@@ -912,6 +1031,7 @@
             {
                 return;
             }
+
             _groupSettingsParticipants.RemoveAll(p => p.UserId == userId);
         }
     }
@@ -1005,4 +1125,105 @@
             _ => "bg-secondary"
         };
     }
+
+    private bool CanSendMessage()
+    {
+        if (_selectedConversation == null || _currentUser == null) return false;
+        var myRole = _selectedConversation.Participants.FirstOrDefault(p => p.UserId == _currentUser.Id)?.RoleName;
+        if (myRole == null) return false;
+        if (myRole == "Member" && _selectedConversation.ConversationTypeName == "Channel") return false;
+        return true;
+    }
+
+    private bool CanDeleteOwnMessage()
+    {
+        if (_selectedConversation == null || _currentUser == null) return false;
+        var myRole = _selectedConversation.Participants.FirstOrDefault(p => p.UserId == _currentUser.Id)?.RoleName;
+        if (myRole == null) return false;
+        if (myRole == "Member" && _selectedConversation.ConversationTypeName == "Channel") return false;
+        return true;
+    }
+
+    private bool CanDeleteOtherMessage()
+    {
+        if (_selectedConversation == null || _currentUser == null) return false;
+        var myRole = _selectedConversation.Participants.FirstOrDefault(p => p.UserId == _currentUser.Id)?.RoleName;
+        return myRole is "Owner" or "Moderator";
+    }
+
+    private bool IsOwner()
+    {
+        if (_selectedConversation == null || _currentUser == null) return false;
+        var myRole = _selectedConversation.Participants.FirstOrDefault(p => p.UserId == _currentUser.Id)?.RoleName;
+        return myRole == "Owner";
+    }
+
+    private bool CanManageParticipants()
+    {
+        if (_selectedConversation == null || _currentUser == null) return false;
+        var myRole = _selectedConversation.Participants.FirstOrDefault(p => p.UserId == _currentUser.Id)?.RoleName;
+        return myRole is "Owner" or "Moderator";
+    }
+
+    private bool CanTransferOwnership()
+    {
+        if (_selectedConversation == null || _currentUser == null) return false;
+        if (_selectedConversation.ConversationTypeName == "Direct") return false;
+        return IsOwner();
+    }
+
+    private async Task TransferOwnership(int newOwnerId)
+    {
+        if (_selectedConversation == null) return;
+        var success = await ChatService.TransferOwnershipAsync(_selectedConversation.Id, newOwnerId);
+        if (success)
+        {
+            _showTransferOwnershipModal = false;
+            await LoadConversationsAsync();
+            if (_selectedConversation != null)
+            {
+                _selectedConversation = _conversations.FirstOrDefault(c => c.Id == _selectedConversation.Id);
+            }
+        }
+    }
+
+    private void OpenChangeRoleModal(ParticipantDto participant)
+    {
+        _changeRoleParticipant = participant;
+        _showChangeRoleModal = true;
+    }
+
+    private void CloseChangeRoleModal()
+    {
+        _showChangeRoleModal = false;
+        _changeRoleParticipant = null;
+    }
+
+    private async Task ChangeRole(string newRole)
+    {
+        if (_selectedConversation == null || _changeRoleParticipant == null) return;
+
+        var success = await ChatService.ChangeRoleAsync(_selectedConversation.Id, _changeRoleParticipant.UserId, newRole);
+        if (success)
+        {
+            CloseChangeRoleModal();
+            await LoadConversationsAsync();
+            if (_selectedConversation != null)
+            {
+                _selectedConversation = _conversations.FirstOrDefault(c => c.Id == _selectedConversation.Id);
+            }
+        }
+    }
+
+    private string GetRoleDisplayName(string roleName)
+    {
+        return roleName switch
+        {
+            "Owner" => "Владелец",
+            "Moderator" => "Модератор",
+            "Member" => "Участник",
+            _ => roleName
+        };
+    }
+
 }

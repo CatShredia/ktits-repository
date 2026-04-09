@@ -15,6 +15,8 @@ public interface IChatService
     Task<bool> DeleteConversationAsync(int conversationId);
     Task<ConversationDto?> AddParticipantsAsync(int conversationId, List<int> userIds);
     Task<bool> RemoveParticipantAsync(int conversationId, int userId);
+    Task<bool> TransferOwnershipAsync(int conversationId, int newOwnerId);
+    Task<bool> ChangeRoleAsync(int conversationId, int userId, string newRoleName);
     Task<string?> GetTokenAsync();
 }
 
@@ -120,6 +122,22 @@ public class ChatService : IChatService
     {
         await SetAuthHeaderAsync();
         var response = await _http.DeleteAsync($"api/Chat/conversations/{conversationId}/participants/{userId}");
+        return response.IsSuccessStatusCode;
+    }
+
+    // ! TransferOwnershipAsync - transfers Owner role to another participant
+    public async Task<bool> TransferOwnershipAsync(int conversationId, int newOwnerId)
+    {
+        await SetAuthHeaderAsync();
+        var response = await _http.PostAsJsonAsync($"api/Chat/conversations/{conversationId}/transfer-ownership", newOwnerId);
+        return response.IsSuccessStatusCode;
+    }
+
+    // ! ChangeRoleAsync - changes a participant's role
+    public async Task<bool> ChangeRoleAsync(int conversationId, int userId, string newRoleName)
+    {
+        await SetAuthHeaderAsync();
+        var response = await _http.PutAsJsonAsync($"api/Chat/conversations/{conversationId}/participants/{userId}/role", newRoleName);
         return response.IsSuccessStatusCode;
     }
 
