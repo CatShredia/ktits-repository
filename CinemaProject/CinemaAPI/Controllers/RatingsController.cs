@@ -1,221 +1,147 @@
-using CinemaAPI.Data;
 using CinemaAPI.Models;
 using CinemaAPI.Models.DTOs;
+using CinemaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace CinemaAPI.Controllers;
 
-// rating CRUD and one
 [ApiController]
 [Route("api/[controller]")]
 public class RatingsController : ControllerBase
 {
-    private readonly DatabaseContext _context;
+    private readonly IRatingService _ratingService;
+    private readonly IAccountService _accountService;
 
-    public RatingsController(DatabaseContext context)
+    public RatingsController(IRatingService ratingService, IAccountService accountService)
     {
-        _context = context;
+        _ratingService = ratingService;
+        _accountService = accountService;
     }
 
-    // ! GetRatings - returns all ratings with film and author info
-    // GET /api/Ratings (из CinemaBlazor через RatingService.GetAllRatingsAsync)
+    // GET /api/Ratings
     [HttpGet]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<IEnumerable<RatingResponseDto>>> GetRatings()
     {
-        var ratings = await _context.Ratings
-            .Include(r => r.Film)
-            .Include(r => r.Author)
-            .ToListAsync();
-
-        return ratings.Select(r => new RatingResponseDto
-        {
-            Id = r.Id,
-            Value = r.Value,
-            FilmId = r.FilmId,
-            FilmName = r.Film?.Name,
-            AuthorId = r.AuthorId,
-            AuthorName = r.Author != null ? $"{r.Author.Name} {r.Author.Surname}" : null
-        }).ToList();
+        var ratings = await _ratingService.GetAllRatingsAsync();
+        return Ok(ratings);
     }
 
-    // ! GetRating - returns single rating by ID
-    // GET /api/Ratings/{id} (из CinemaBlazor через RatingService.GetRatingByIdAsync)
+    // GET /api/Ratings/{id}
     [HttpGet("{id}")]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<RatingResponseDto>> GetRating(int id)
     {
-        var rating = await _context.Ratings
-            .Include(r => r.Film)
-            .Include(r => r.Author)
-            .FirstOrDefaultAsync(r => r.Id == id);
-
+        var rating = await _ratingService.GetRatingByIdAsync(id);
         if (rating == null)
-        {
             return NotFound();
-        }
 
-        return new RatingResponseDto
-        {
-            Id = rating.Id,
-            Value = rating.Value,
-            FilmId = rating.FilmId,
-            FilmName = rating.Film?.Name,
-            AuthorId = rating.AuthorId,
-            AuthorName = rating.Author != null ? $"{rating.Author.Name} {rating.Author.Surname}" : null
-        };
+        return Ok(rating);
     }
 
-    // ! PostRating - creates new rating for film (prevents duplicate ratings)
-    // POST /api/Ratings (из CinemaBlazor через RatingService.CreateRatingAsync)
+    // POST /api/Ratings
     [HttpPost]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<Rating>> PostRating(RatingCreateDto dto)
     {
-        var userId = GetCurrentUserId();
+        var userId = _accountService.GetCurrentUserIdFromClaims(User);
         if (userId == null)
-        {
             return Unauthorized();
-        }
 
-        var existingRating = await _context.Ratings
-            .FirstOrDefaultAsync(r => r.FilmId == dto.FilmId && r.AuthorId == userId);
-
-        if (existingRating != null)
+        try
         {
-            return BadRequest("You have already rated this film");
+            var rating = await _ratingService.CreateRatingAsync(dto, userId.Value);
+            return CreatedAtAction(nameof(GetRating), new { id = rating.Id }, rating);
         }
-
-        var rating = new Rating
+        catch (InvalidOperationException ex)
         {
-            Value = dto.Value,
-            FilmId = dto.FilmId,
-            AuthorId = userId
-        };
-
-        _context.Ratings.Add(rating);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetRating), new { id = rating.Id }, rating);
+            return BadRequest(ex.Message);
+        }
     }
 
-    // ! PutRating - updates rating by ID (admin or owner only)
-    // PUT /api/Ratings/{id} (из CinemaBlazor через RatingService.UpdateRatingAsync)
+    // PUT /api/Ratings/{id}
     [HttpPut("{id}")]
     [Authorize(Roles = "admin,client")]
     public async Task<IActionResult> PutRating(int id, RatingUpdateDto dto)
     {
-        var rating = await _context.Ratings.FindAsync(id);
-        if (rating == null)
+        var userId = _accountService.GetCurrentUserIdFromClaims(User);
+        if (userId == null)
+            return Unauthorized();
+
+        var isAdmin = User.IsInRole("admin");
+
+        try
+        {
+            await _ratingService.UpdateRatingAsync(id, dto, userId.Value, isAdmin);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
         {
             return NotFound();
         }
-
-        // Check if user is owner or admin
-        var userId = GetCurrentUserId();
-        var isAdmin = User.IsInRole("admin");
-
-        if (rating.AuthorId != userId && !isAdmin)
+        catch (UnauthorizedAccessException)
         {
             return Forbid();
         }
-
-        rating.Value = dto.Value;
-        await _context.SaveChangesAsync();
-
-        return NoContent();
     }
 
-    // ! DeleteRating - deletes rating by ID (admin or owner only)
-    // DELETE /api/Ratings/{id} (из CinemaBlazor через RatingService.DeleteRatingAsync)
+    // DELETE /api/Ratings/{id}
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin,client")]
     public async Task<IActionResult> DeleteRating(int id)
     {
-        var rating = await _context.Ratings.FindAsync(id);
-        if (rating == null)
+        var userId = _accountService.GetCurrentUserIdFromClaims(User);
+        if (userId == null)
+            return Unauthorized();
+
+        var isAdmin = User.IsInRole("admin");
+
+        try
+        {
+            await _ratingService.DeleteRatingAsync(id, userId.Value, isAdmin);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
         {
             return NotFound();
         }
-
-        // Check if user is owner or admin
-        var userId = GetCurrentUserId();
-        var isAdmin = User.IsInRole("admin");
-
-        if (rating.AuthorId != userId && !isAdmin)
+        catch (UnauthorizedAccessException)
         {
             return Forbid();
         }
-
-        _context.Ratings.Remove(rating);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
     }
 
-    // ! GetMyRatingForFilm - returns current user's rating for specific film
-    // GET /api/Ratings/film/{filmId}/my-rating (из CinemaBlazor через RatingService.GetMyRatingForFilmAsync)
+    // GET /api/Ratings/film/{filmId}/my-rating
     [HttpGet("film/{filmId}/my-rating")]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<Rating>> GetMyRatingForFilm(int filmId)
     {
-        var userId = GetCurrentUserId();
+        var userId = _accountService.GetCurrentUserIdFromClaims(User);
         if (userId == null)
-        {
             return Unauthorized();
+
+        try
+        {
+            var rating = await _ratingService.GetMyRatingForFilmAsync(filmId, userId.Value);
+            return Ok(rating);
         }
-
-        var rating = await _context.Ratings
-            .FirstOrDefaultAsync(r => r.FilmId == filmId && r.AuthorId == userId);
-
-        if (rating == null)
+        catch (KeyNotFoundException)
         {
             return NotFound("No rating found for this film");
         }
-
-        return rating;
     }
 
-    // ! GetMyRatings - returns all ratings created by current user
-    // GET /api/Ratings/my-ratings (из CinemaBlazor через RatingService.GetMyRatingsAsync)
+    // GET /api/Ratings/my-ratings
     [HttpGet("my-ratings")]
     [Authorize(Roles = "admin,client")]
     public async Task<ActionResult<IEnumerable<RatingResponseDto>>> GetMyRatings()
     {
-        var userId = GetCurrentUserId();
+        var userId = _accountService.GetCurrentUserIdFromClaims(User);
         if (userId == null)
-        {
             return Unauthorized();
-        }
 
-        var ratings = await _context.Ratings
-            .Where(r => r.AuthorId == userId)
-            .Include(r => r.Film)
-            .ToListAsync();
-
-        return ratings.Select(r => new RatingResponseDto
-        {
-            Id = r.Id,
-            Value = r.Value,
-            FilmId = r.FilmId,
-            FilmName = r.Film?.Name,
-            AuthorId = r.AuthorId,
-            AuthorName = null // Not needed for own ratings
-        }).ToList();
-    }
-
-    // ! GetCurrentUserId - extracts user ID from JWT token claims
-    // вызывается внутри всех методов этого контроллера
-    private int? GetCurrentUserId()
-    {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
-        {
-            return userId;
-        }
-        return null;
+        var ratings = await _ratingService.GetMyRatingsAsync(userId.Value);
+        return Ok(ratings);
     }
 }

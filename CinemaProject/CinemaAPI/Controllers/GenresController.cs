@@ -1,104 +1,84 @@
-using CinemaAPI.Data;
 using CinemaAPI.Models;
+using CinemaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CinemaAPI.Controllers;
 
-// genre CRUD and get one
 [ApiController]
 [Route("api/[controller]")]
 public class GenresController : ControllerBase
 {
-    private readonly DatabaseContext _context;
+    private readonly IGenreService _genreService;
 
-    public GenresController(DatabaseContext context)
+    public GenresController(IGenreService genreService)
     {
-        _context = context;
+        _genreService = genreService;
     }
 
-    // ! GetGenres - returns all genres list
-    // GET /api/Genres (из CinemaBlazor через GenreService.GetAllGenresAsync)
+    // GET /api/Genres
     [HttpGet]
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<Genre>>> GetGenres()
     {
-        return await _context.Genres.ToListAsync();
+        var genres = await _genreService.GetAllGenresAsync();
+        return Ok(genres);
     }
 
-    // ! GetGenre - returns single genre by ID
-    // GET /api/Genres/{id} (из CinemaBlazor через GenreService.GetGenreByIdAsync)
+    // GET /api/Genres/{id}
     [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<ActionResult<Genre>> GetGenre(int id)
     {
-        var genre = await _context.Genres.FindAsync(id);
-
+        var genre = await _genreService.GetGenreByIdAsync(id);
         if (genre == null)
-        {
             return NotFound();
-        }
 
-        return genre;
+        return Ok(genre);
     }
 
-    // ! PostGenre - creates new genre (admin only)
-    // POST /api/Genres (из CinemaBlazor через GenreService.CreateGenreAsync)
+    // POST /api/Genres
     [HttpPost]
     [Authorize(Roles = "admin")]
     public async Task<ActionResult<Genre>> PostGenre(Genre genre)
     {
-        _context.Genres.Add(genre);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetGenre), new { id = genre.Id }, genre);
+        var created = await _genreService.CreateGenreAsync(genre);
+        return CreatedAtAction(nameof(GetGenre), new { id = created.Id }, created);
     }
 
-    // ! PutGenre - updates genre by ID (admin only)
-    // PUT /api/Genres/{id} (из CinemaBlazor через GenreService.UpdateGenreAsync)
+    // PUT /api/Genres/{id}
     [HttpPut("{id}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> PutGenre(int id, Genre genre)
     {
-        if (id != genre.Id)
+        try
+        {
+            await _genreService.UpdateGenreAsync(id, genre);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (ArgumentException)
         {
             return BadRequest();
         }
-
-        _context.Entry(genre).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!_context.Genres.Any(e => e.Id == id))
-            {
-                return NotFound();
-            }
-            throw;
-        }
-
-        return NoContent();
     }
 
-    // ! DeleteGenre - deletes genre by ID (admin only)
-    // DELETE /api/Genres/{id} (из CinemaBlazor через GenreService.DeleteGenreAsync)
+    // DELETE /api/Genres/{id}
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> DeleteGenre(int id)
     {
-        var genre = await _context.Genres.FindAsync(id);
-        if (genre == null)
+        try
+        {
+            await _genreService.DeleteGenreAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
         {
             return NotFound();
         }
-
-        _context.Genres.Remove(genre);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
     }
 }

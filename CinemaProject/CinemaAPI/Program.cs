@@ -118,8 +118,15 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Регистрация сервиса для работы с изображениями
+// Регистрация сервисов
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IFilmService, FilmService>();
+builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<IRatingService, RatingService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 
 // Регистрация SignalR с фильтром логирования
 builder.Services.AddSignalR(options =>
