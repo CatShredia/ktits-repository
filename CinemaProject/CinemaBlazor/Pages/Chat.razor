@@ -124,7 +124,6 @@
                                 <small class="text-muted fst-italic">@_typingUsers печатает...</small>
                             }
 
-                            <!-- Участники чата -->
                             @if (_selectedConversation.ConversationTypeName != "Direct")
                             {
                                 <div class="mt-2">
@@ -231,6 +230,47 @@
                                                         style="font-size: 0.75rem;" @onclick="() => DeleteMessage(msg.Id)" title="Удалить">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
+                                            }
+                                            @if (_selectedConversation.ConversationTypeName == "Channel")
+                                            {
+                                                <div class="mt-1">
+                                                    <button class="btn btn-sm btn-link text-muted p-0" style="font-size: 0.75rem;"
+                                                            @onclick="() => LoadCommentsPreview(msg.Id)">
+                                                        💬 @_commentsCounts.GetValueOrDefault(msg.Id, 0)
+                                                    </button>
+                                                    @if (_commentsPreviews.TryGetValue(msg.Id, out var previews) && previews.Count > 0)
+                                                    {
+                                                        <div class="mt-1 ms-3" style="border-left: 2px solid #dee2e6; padding-left: 8px;">
+                                                            @foreach (var preview in previews.Take(2))
+                                                            {
+                                                                <div class="text-muted" style="font-size: 0.75rem;">
+                                                                    <strong>@preview.SenderName:</strong> @preview.Content
+                                                                </div>
+                                                            }
+                                                            @if (previews.Count > 2)
+                                                            {
+                                                                <button class="btn btn-link btn-sm p-0" style="font-size: 0.75rem;"
+                                                                        @onclick="() => OpenCommentsModal(msg.Id)">
+                                                                    Показать все @_commentsCounts.GetValueOrDefault(msg.Id, 0) комментариев
+                                                                </button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button class="btn btn-link btn-sm p-0" style="font-size: 0.75rem;"
+                                                                        @onclick="() => OpenCommentsModal(msg.Id)">
+                                                                    Все комментарии
+                                                                </button>
+                                                            }
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="btn btn-link btn-sm p-0 text-primary" style="font-size: 0.75rem;"
+                                                                @onclick="() => OpenCommentsModal(msg.Id)">
+                                                            <i class="bi bi-plus-circle"></i> Обсудить
+                                                        </button>
+                                                    }
+                                                </div>
                                             }
                                         </div>
                                     </div>
@@ -495,7 +535,7 @@
                     @if (_selectedConversation != null)
                     {
                         @foreach (var participant in _selectedConversation.Participants.Where(p => p.UserId !=
-                                                                                                                           _currentUser?.Id))
+                                                                                                                                                                                                                                                                           _currentUser?.Id))
                         {
                             <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
                                 <span>
@@ -519,6 +559,47 @@
     </div>
 }
 
+@if (_showCommentsModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Комментарии</h5>
+                    <button type="button" class="btn-close" @onclick="() => _showCommentsModal = false"></button>
+                </div>
+                <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+                    @if (_commentsMessages.Count == 0)
+                    {
+                        <p class="text-muted text-center">Нет комментариев</p>
+                    }
+                    else
+                    {
+                        @foreach (var msg in _commentsMessages)
+                        {
+                            <div class="mb-2 p-2 @(msg.SenderId == _currentUser?.Id ? "bg-light" : "") rounded">
+                                <strong>@msg.SenderName</strong>
+                                <div>@msg.Content</div>
+                                <small class="text-muted">@msg.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</small>
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="modal-footer">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Написать комментарий..."
+                               @bind="_newCommentText" @onkeydown="HandleCommentKeyDown" />
+                        <button class="btn btn-primary" @onclick="SendComment"
+                                disabled="@(string.IsNullOrWhiteSpace(_newCommentText))">
+                            <i class="bi bi-send"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @if (_showChangeRoleModal && _changeRoleParticipant != null)
 {
     <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1">
@@ -535,7 +616,7 @@
                     <p>Выберите новую роль:</p>
                     <div class="list-group">
                         @foreach (var role in new[] { "Moderator", "Member" }.Where(r => r !=
-                                                                                                                 _changeRoleParticipant.RoleName))
+                                                                                                                                                                                                                                                                 _changeRoleParticipant.RoleName))
                         {
                             <button
                                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
@@ -635,6 +716,16 @@
     private bool _showChangeRoleModal;
     private ParticipantDto? _changeRoleParticipant;
 
+    // Для комментариев канала
+    private HashSet<int> _expandedCommentsMessages = new();
+    private Dictionary<int, List<CommentPreviewDto>> _commentsPreviews = new();
+    private Dictionary<int, int> _commentsCounts = new();
+    private bool _showCommentsModal;
+    private int _commentsModalMessageId;
+    private List<MessageDto> _commentsMessages = new();
+    private ConversationDto? _commentsConversation;
+    private string _newCommentText = "";
+
     protected override async Task OnInitializedAsync()
     {
         _isAuthenticated = await AuthService.IsAuthenticatedAsync();
@@ -642,6 +733,16 @@
             return;
 
         await LoadConversationsAsync();
+
+        // Load comment previews for Channel messages
+        foreach (var conv in _conversations.Where(c => c.ConversationTypeName == "Channel"))
+        {
+            var messages = await ChatService.GetMessagesAsync(conv.Id);
+            foreach (var msg in messages)
+            {
+                await LoadCommentsPreview(msg.Id);
+            }
+        }
 
         // Подключение к SignalR
         var token = await ChatService.GetTokenAsync();
@@ -1075,6 +1176,44 @@
 
         _showDeleteConfirmModal = false;
         StateHasChanged();
+    }
+
+    private async Task LoadCommentsPreview(int messageId)
+    {
+        var count = await ChatService.GetCommentsCountAsync(messageId);
+        _commentsCounts[messageId] = count;
+        _commentsPreviews[messageId] = await ChatService.GetCommentsPreviewAsync(messageId);
+    }
+
+    private async Task OpenCommentsModal(int messageId)
+    {
+        _commentsModalMessageId = messageId;
+        var conv = await ChatService.GetOrCreateCommentsAsync(messageId);
+        if (conv != null)
+        {
+            _commentsConversation = conv;
+            _commentsMessages = await ChatService.GetMessagesAsync(conv.Id);
+        }
+        _showCommentsModal = true;
+    }
+
+    private async Task SendComment()
+    {
+        if (_commentsConversation == null || string.IsNullOrWhiteSpace(_newCommentText)) return;
+        await ChatHub.SendMessageAsync(_commentsConversation.Id, _newCommentText.Trim());
+        _newCommentText = "";
+        // Refresh messages
+        _commentsMessages = await ChatService.GetMessagesAsync(_commentsConversation.Id);
+        await LoadCommentsPreview(_commentsModalMessageId);
+        StateHasChanged();
+    }
+
+    private void HandleCommentKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter" && !string.IsNullOrWhiteSpace(_newCommentText))
+        {
+            SendComment();
+        }
     }
 
     public void Dispose()

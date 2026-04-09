@@ -31,14 +31,24 @@ public class ChatHub : Hub<IChatClient>
             return;
         }
 
-        var isParticipant = await _context.ConversationParticipants
-            .AnyAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+        // Для Comments проверка участника не нужна — доступны всем авторизованным
+        var conversation = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
 
-        if (!isParticipant)
+        if (conversation == null) return;
+
+        if (conversation.ConversationType.Name != "Comments")
         {
-            _logger.LogWarning("User {UserId} tried to join conversation {ConversationId} without permission",
-                userId, conversationId);
-            return;
+            var isParticipant = await _context.ConversationParticipants
+                .AnyAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+
+            if (!isParticipant)
+            {
+                _logger.LogWarning("User {UserId} tried to join conversation {ConversationId} without permission",
+                    userId, conversationId);
+                return;
+            }
         }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, GetConversationGroupName(conversationId));
@@ -89,22 +99,33 @@ public class ChatHub : Hub<IChatClient>
             return;
         }
 
-        // Получаем участника с ролью и тип чата
-        var participant = await _context.ConversationParticipants
-            .Include(p => p.Role)
-            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
-
-        if (participant == null)
-        {
-            _logger.LogWarning("User {UserId} tried to send message to conversation {ConversationId} without permission",
-                userId, conversationId);
-            return;
-        }
-
+        // Получаем тип чата
         var conversation = await _context.Conversations
             .Include(c => c.ConversationType)
             .FirstOrDefaultAsync(c => c.Id == conversationId);
         if (conversation == null) return;
+
+        // Для Comments проверка участника не нужна — доступны всем авторизованным
+        ConversationParticipant? participant = null;
+        if (conversation.ConversationType.Name != "Comments")
+        {
+            participant = await _context.ConversationParticipants
+                .Include(p => p.Role)
+                .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+
+            if (participant == null)
+            {
+                _logger.LogWarning("User {UserId} tried to send message to conversation {ConversationId} without permission",
+                    userId, conversationId);
+                return;
+            }
+        }
+        else
+        {
+            // Для Comments — виртуальный участник с ролью Member
+            var memberRole = await _context.ConversationRoles.FirstAsync(r => r.Name == "Member");
+            participant = new ConversationParticipant { Role = memberRole };
+        }
 
         // Проверка прав на отправку сообщений
         if (!RolePermissions.CanSendMessage(participant.Role.Name, conversation.ConversationType.Name))
@@ -164,12 +185,22 @@ public class ChatHub : Hub<IChatClient>
             return;
         }
 
-        var isParticipant = await _context.ConversationParticipants
-            .AnyAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+        // Для Comments проверка участника не нужна
+        var conversation = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
 
-        if (!isParticipant)
+        if (conversation == null) return;
+
+        if (conversation.ConversationType.Name != "Comments")
         {
-            return;
+            var isParticipant = await _context.ConversationParticipants
+                .AnyAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+
+            if (!isParticipant)
+            {
+                return;
+            }
         }
 
         var user = await _context.Users.FindAsync(userId.Value);
@@ -197,17 +228,27 @@ public class ChatHub : Hub<IChatClient>
             return;
         }
 
-        // Получаем участника с ролью
-        var participant = await _context.ConversationParticipants
-            .Include(p => p.Role)
-            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
-
-        if (participant == null) return;
-
         var conversation = await _context.Conversations
             .Include(c => c.ConversationType)
             .FirstOrDefaultAsync(c => c.Id == conversationId);
         if (conversation == null) return;
+
+        // Для Comments проверка участника не нужна
+        ConversationParticipant? participant = null;
+        if (conversation.ConversationType.Name != "Comments")
+        {
+            participant = await _context.ConversationParticipants
+                .Include(p => p.Role)
+                .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+
+            if (participant == null) return;
+        }
+        else
+        {
+            // Для Comments — виртуальный участник
+            var memberRole = await _context.ConversationRoles.FirstAsync(r => r.Name == "Member");
+            participant = new ConversationParticipant { Role = memberRole };
+        }
 
         // Проверка прав на удаление
         var isOwnMessage = message.SenderId == userId.Value;

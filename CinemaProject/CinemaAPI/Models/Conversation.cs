@@ -14,6 +14,9 @@ public class Conversation
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    public int? ParentMessageId { get; set; }
+    public Message? ParentMessage { get; set; }
+
     public ICollection<ConversationParticipant> Participants { get; set; } = new List<ConversationParticipant>();
     public ICollection<Message> Messages { get; set; } = new List<Message>();
 }

@@ -95,6 +95,10 @@ public class DatabaseContext : DbContext
                 .WithOne(m => m.Conversation)
                 .HasForeignKey(m => m.ConversationId)
                 .OnDelete(DeleteBehavior.Cascade);
+      entity.HasOne(e => e.ParentMessage)
+                .WithMany()
+                .HasForeignKey(e => e.ParentMessageId)
+                .OnDelete(DeleteBehavior.SetNull);
     });
 
     modelBuilder.Entity<ConversationType>(entity =>

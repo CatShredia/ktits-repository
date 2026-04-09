@@ -123,6 +123,7 @@ public class ChatController : ControllerBase
             {
                 Id = c.Id,
                 ConversationTypeName = c.ConversationType.Name,
+                ParentMessageId = c.ParentMessageId,
                 CreatedAt = c.CreatedAt,
                 Participants = c.Participants.Select(p => new ParticipantDto
                 {
@@ -311,12 +312,25 @@ public class ChatController : ControllerBase
         }
 
         // Проверка, что пользователь является участником чата
-        var isParticipant = await _context.ConversationParticipants
-            .AnyAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+        // Для Comments проверка не нужна — доступны всем авторизованным
+        var conversation = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
 
-        if (!isParticipant)
+        if (conversation == null)
         {
-            return Forbid("You are not a participant of this conversation");
+            return NotFound("Conversation not found");
+        }
+
+        if (conversation.ConversationType.Name != "Comments")
+        {
+            var isParticipant = await _context.ConversationParticipants
+                .AnyAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+
+            if (!isParticipant)
+            {
+                return Forbid();
+            }
         }
 
         var messages = await _context.Messages
@@ -351,20 +365,32 @@ public class ChatController : ControllerBase
         var currentUserId = userId.Value;
 
         // Проверка существования чата
-        var conversation = await _context.Conversations.FindAsync(conversationId);
+        var conversation = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
         if (conversation == null)
         {
             return NotFound("Conversation not found");
         }
 
-        // Проверка, что пользователь является участником чата и получение его роли
-        var participant = await _context.ConversationParticipants
-            .Include(p => p.Role)
-            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == currentUserId);
-
-        if (participant == null)
+        // Для Comments проверка участника не нужна — доступны всем авторизованным
+        ConversationParticipant? participant = null;
+        if (conversation.ConversationType.Name != "Comments")
         {
-            return Forbid("You are not a participant of this conversation");
+            participant = await _context.ConversationParticipants
+                .Include(p => p.Role)
+                .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == currentUserId);
+
+            if (participant == null)
+            {
+                return Forbid();
+            }
+        }
+        else
+        {
+            // Для Comments создаём "виртуального" участника с ролью Member
+            var memberRole = await _context.ConversationRoles.FirstAsync(r => r.Name == "Member");
+            participant = new ConversationParticipant { Role = memberRole };
         }
 
         // Проверка прав на отправку сообщений
@@ -786,6 +812,167 @@ public class ChatController : ControllerBase
         return NoContent();
     }
 
+    // ! GetOrCreateCommentsConversation - gets or creates a Comments conversation for a Channel message
+    // GET /api/Chat/messages/{messageId}/comments
+    [HttpGet("messages/{messageId}/comments")]
+    public async Task<ActionResult<ConversationDto>> GetOrCreateCommentsConversation(int messageId)
+    {
+        var currentUserId = GetCurrentUserId();
+        if (currentUserId == null)
+        {
+            return Unauthorized();
+        }
+
+        // Находим сообщение
+        var message = await _context.Messages
+            .FirstOrDefaultAsync(m => m.Id == messageId);
+
+        if (message == null)
+        {
+            return NotFound("Message not found");
+        }
+
+        // Проверяем что сообщение из Channel
+        var channel = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.Id == message.ConversationId && c.ConversationType.Name == "Channel");
+
+        if (channel == null)
+        {
+            return BadRequest("Comments are only available for Channel messages");
+        }
+
+        // Проверяем что пользователь — участник Channel
+        var isChannelParticipant = await _context.ConversationParticipants
+            .AnyAsync(p => p.ConversationId == channel.Id && p.UserId == currentUserId);
+
+        if (!isChannelParticipant)
+        {
+            return Forbid("You are not a participant of this channel");
+        }
+
+        // Ищем существующую Comments-конверсацию
+        var existingComments = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .Include(c => c.Participants)
+                .ThenInclude(p => p.User)
+                    .ThenInclude(u => u.Login)
+            .Include(c => c.Participants)
+                .ThenInclude(p => p.Role)
+            .FirstOrDefaultAsync(c => c.ParentMessageId == messageId);
+
+        if (existingComments != null)
+        {
+            return Ok(await MapConversationToDto(existingComments));
+        }
+
+        // Создаём новую Comments-конверсацию с теми же участниками что и Channel
+        var commentsConversation = new Conversation
+        {
+            ConversationTypeId = 4, // Comments
+            ParentMessageId = messageId,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.Conversations.Add(commentsConversation);
+        await _context.SaveChangesAsync();
+
+        // Копируем участников из Channel
+        var channelParticipants = await _context.ConversationParticipants
+            .Where(p => p.ConversationId == channel.Id)
+            .ToListAsync();
+
+        var memberRole = await _context.ConversationRoles.FirstAsync(r => r.Name == "Member");
+
+        var newParticipants = channelParticipants.Select(p => new ConversationParticipant
+        {
+            ConversationId = commentsConversation.Id,
+            UserId = p.UserId,
+            RoleId = memberRole.Id
+        }).ToList();
+
+        _context.ConversationParticipants.AddRange(newParticipants);
+        await _context.SaveChangesAsync();
+
+        var created = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .Include(c => c.Participants)
+                .ThenInclude(p => p.User)
+                    .ThenInclude(u => u.Login)
+            .Include(c => c.Participants)
+                .ThenInclude(p => p.Role)
+            .FirstOrDefaultAsync(c => c.Id == commentsConversation.Id);
+
+        if (created == null)
+        {
+            return NotFound("Failed to create comments conversation");
+        }
+
+        return Ok(await MapConversationToDto(created));
+    }
+
+    // ! GetCommentsCount - returns comment count for a message
+    // GET /api/Chat/messages/{messageId}/comments/count
+    [HttpGet("messages/{messageId}/comments/count")]
+    public async Task<ActionResult<int>> GetCommentsCount(int messageId)
+    {
+        var currentUserId = GetCurrentUserId();
+        if (currentUserId == null)
+        {
+            return Unauthorized();
+        }
+
+        var commentsConversation = await _context.Conversations
+            .FirstOrDefaultAsync(c => c.ParentMessageId == messageId);
+
+        if (commentsConversation == null)
+        {
+            return Ok(0);
+        }
+
+        var count = await _context.Messages
+            .CountAsync(m => m.ConversationId == commentsConversation.Id);
+
+        return Ok(count);
+    }
+
+    // ! GetMessageCommentsPreview - returns last 3 comments for a message
+    // GET /api/Chat/messages/{messageId}/comments/preview
+    [HttpGet("messages/{messageId}/comments/preview")]
+    public async Task<ActionResult<List<CommentPreviewDto>>> GetMessageCommentsPreview(int messageId)
+    {
+        var currentUserId = GetCurrentUserId();
+        if (currentUserId == null)
+        {
+            return Unauthorized();
+        }
+
+        var commentsConversation = await _context.Conversations
+            .FirstOrDefaultAsync(c => c.ParentMessageId == messageId);
+
+        if (commentsConversation == null)
+        {
+            return Ok(new List<CommentPreviewDto>());
+        }
+
+        var comments = await _context.Messages
+            .Where(m => m.ConversationId == commentsConversation.Id)
+            .Include(m => m.Sender)
+            .OrderByDescending(m => m.CreatedAt)
+            .Take(3)
+            .ToListAsync();
+
+        var preview = comments.OrderBy(c => c.CreatedAt).Select(m => new CommentPreviewDto
+        {
+            Id = m.Id,
+            SenderName = $"{m.Sender.Surname} {m.Sender.Name}",
+            Content = m.Content,
+            CreatedAt = m.CreatedAt
+        }).ToList();
+
+        return Ok(preview);
+    }
+
     #region Helper Methods
 
     // ! Get userId from JWT token - extracts user ID from claims
@@ -863,6 +1050,7 @@ public class ChatController : ControllerBase
         {
             Id = conversation.Id,
             ConversationTypeName = conversationType?.Name ?? string.Empty,
+            ParentMessageId = conversation.ParentMessageId,
             CreatedAt = conversation.CreatedAt,
             Participants = participantsWithUsers.Select(p => new ParticipantDto
             {

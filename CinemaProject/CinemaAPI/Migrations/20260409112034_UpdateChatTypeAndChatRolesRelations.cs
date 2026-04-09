@@ -19,6 +19,12 @@ namespace CinemaAPI.Migrations
                 newName: "ConversationTypeId");
 
             migrationBuilder.AddColumn<int>(
+                name: "ParentMessageId",
+                table: "Conversations",
+                type: "integer",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
                 name: "RoleId",
                 table: "ConversationParticipants",
                 type: "integer",
@@ -79,6 +85,11 @@ namespace CinemaAPI.Migrations
                 column: "ConversationTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Conversations_ParentMessageId",
+                table: "Conversations",
+                column: "ParentMessageId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ConversationParticipants_RoleId",
                 table: "ConversationParticipants",
                 column: "RoleId");
@@ -110,6 +121,14 @@ namespace CinemaAPI.Migrations
                 principalTable: "ConversationTypes",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Conversations_Messages_ParentMessageId",
+                table: "Conversations",
+                column: "ParentMessageId",
+                principalTable: "Messages",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.SetNull);
         }
 
         /// <inheritdoc />
@@ -123,6 +142,10 @@ namespace CinemaAPI.Migrations
                 name: "FK_Conversations_ConversationTypes_ConversationTypeId",
                 table: "Conversations");
 
+            migrationBuilder.DropForeignKey(
+                name: "FK_Conversations_Messages_ParentMessageId",
+                table: "Conversations");
+
             migrationBuilder.DropTable(
                 name: "ConversationRoles");
 
@@ -134,8 +157,16 @@ namespace CinemaAPI.Migrations
                 table: "Conversations");
 
             migrationBuilder.DropIndex(
+                name: "IX_Conversations_ParentMessageId",
+                table: "Conversations");
+
+            migrationBuilder.DropIndex(
                 name: "IX_ConversationParticipants_RoleId",
                 table: "ConversationParticipants");
+
+            migrationBuilder.DropColumn(
+                name: "ParentMessageId",
+                table: "Conversations");
 
             migrationBuilder.DropColumn(
                 name: "RoleId",

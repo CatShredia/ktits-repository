@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CinemaAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20260409074909_UpdateChatTypeAndChatRolesRelations")]
+    [Migration("20260409112034_UpdateChatTypeAndChatRolesRelations")]
     partial class UpdateChatTypeAndChatRolesRelations
     {
         /// <inheritdoc />
@@ -39,9 +39,14 @@ namespace CinemaAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int?>("ParentMessageId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ConversationTypeId");
+
+                    b.HasIndex("ParentMessageId");
 
                     b.ToTable("Conversations");
                 });
@@ -360,7 +365,14 @@ namespace CinemaAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("CinemaAPI.Models.Message", "ParentMessage")
+                        .WithMany()
+                        .HasForeignKey("ParentMessageId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("ConversationType");
+
+                    b.Navigation("ParentMessage");
                 });
 
             modelBuilder.Entity("CinemaAPI.Models.ConversationParticipant", b =>

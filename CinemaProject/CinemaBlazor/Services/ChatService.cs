@@ -17,6 +17,9 @@ public interface IChatService
     Task<bool> RemoveParticipantAsync(int conversationId, int userId);
     Task<bool> TransferOwnershipAsync(int conversationId, int newOwnerId);
     Task<bool> ChangeRoleAsync(int conversationId, int userId, string newRoleName);
+    Task<ConversationDto?> GetOrCreateCommentsAsync(int messageId);
+    Task<int> GetCommentsCountAsync(int messageId);
+    Task<List<CommentPreviewDto>> GetCommentsPreviewAsync(int messageId);
     Task<string?> GetTokenAsync();
 }
 
@@ -139,6 +142,36 @@ public class ChatService : IChatService
         await SetAuthHeaderAsync();
         var response = await _http.PutAsJsonAsync($"api/Chat/conversations/{conversationId}/participants/{userId}/role", newRoleName);
         return response.IsSuccessStatusCode;
+    }
+
+    // ! GetOrCreateCommentsAsync - gets or creates a Comments conversation for a Channel message
+    public async Task<ConversationDto?> GetOrCreateCommentsAsync(int messageId)
+    {
+        await SetAuthHeaderAsync();
+        var response = await _http.GetAsync($"api/Chat/messages/{messageId}/comments");
+        if (response.IsSuccessStatusCode)
+            return await response.Content.ReadFromJsonAsync<ConversationDto>();
+        return null;
+    }
+
+    // ! GetCommentsCountAsync - returns comment count for a message
+    public async Task<int> GetCommentsCountAsync(int messageId)
+    {
+        await SetAuthHeaderAsync();
+        var response = await _http.GetAsync($"api/Chat/messages/{messageId}/comments/count");
+        if (response.IsSuccessStatusCode)
+            return await response.Content.ReadFromJsonAsync<int>();
+        return 0;
+    }
+
+    // ! GetCommentsPreviewAsync - returns last 3 comments for a message
+    public async Task<List<CommentPreviewDto>> GetCommentsPreviewAsync(int messageId)
+    {
+        await SetAuthHeaderAsync();
+        var response = await _http.GetAsync($"api/Chat/messages/{messageId}/comments/preview");
+        if (response.IsSuccessStatusCode)
+            return await response.Content.ReadFromJsonAsync<List<CommentPreviewDto>>() ?? new();
+        return new();
     }
 
     // ! GetTokenAsync - gets auth token from AuthService
