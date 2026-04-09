@@ -49,15 +49,15 @@
                                 var otherParticipants = conv.Participants
                                     .Where(p => p.Id != _currentUser?.Id)
                                     .ToList();
-                                var chatName = conv.Type == ConversationType.Direct
-                                    ? string.Join(", ", otherParticipants.Select(p => p.FullName))
-                                    : $"Группа ({conv.Participants.Count} уч.)";
+                                var chatName = GetConversationDisplayName(conv);
 
                                 <div class="conversation-item p-2 border-bottom @GetActiveClass(isActive)"
                                      @onclick="() => SelectConversation(conv)" style="cursor:pointer;">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="flex-grow-1 me-2">
-                                            <div class="fw-bold text-truncate">@chatName</div>
+                                            <div class="fw-bold text-truncate">
+                                                @((MarkupString)GetConversationIcon(conv.ConversationTypeName)) @chatName
+                                            </div>
                                             @if (conv.LastMessage != null)
                                             {
                                                 <small class="text-muted">@FormatTime(conv.LastMessage.CreatedAt)</small>
@@ -72,7 +72,7 @@
                                             @if (_openMenuConversationId == conv.Id)
                                             {
                                                 <div class="dropdown-menu show dropdown-menu-end" style="position: absolute;">
-                                                    @if (conv.Type == ConversationType.Group)
+                                                    @if (conv.ConversationTypeName == "Group")
                                                     {
                                                         <button class="dropdown-item" @onclick="() => OpenGroupSettings(conv)">
                                                             <i class="bi bi-gear me-2"></i>Настройка группы
@@ -112,17 +112,67 @@
                     var otherParticipants = _selectedConversation.Participants
                         .Where(p => p.Id != _currentUser?.Id)
                         .ToList();
-                    var chatName = _selectedConversation.Type == ConversationType.Direct
-                        ? string.Join(", ", otherParticipants.Select(p => p.FullName))
-                        : $"Группа ({_selectedConversation.Participants.Count} уч.)";
+                    var chatName = GetConversationDisplayName(_selectedConversation);
 
                     <div class="card">
                         <div class="card-header">
-                            <h6 class="mb-0">@chatName</h6>
+                            <h6 class="mb-0">
+                                @((MarkupString)GetConversationIcon(_selectedConversation.ConversationTypeName)) @chatName
+                            </h6>
                             @if (!string.IsNullOrEmpty(_typingUsers))
                             {
                                 <small class="text-muted fst-italic">@_typingUsers печатает...</small>
                             }
+
+                            <!-- Участники чата -->
+                            <div class="mt-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <button class="btn btn-sm btn-link p-0 text-muted"
+                                            @onclick="() => _showParticipants = !_showParticipants" style="font-size: 0.85rem;">
+                                        <i class="bi @(_showParticipants ? "bi-chevron-down" : "bi-chevron-right")"></i>
+                                        Участники (@_selectedConversation.Participants.Count)
+                                    </button>
+                                    @if (_selectedConversation.ConversationTypeName != "Direct" && _showParticipants)
+                                    {
+                                        <button class="btn btn-sm btn-link p-0 text-primary"
+                                                @onclick="() => OpenAddParticipantModal()" style="font-size: 0.85rem;"
+                                                title="Добавить участника">
+                                            <i class="bi bi-person-plus"></i>
+                                        </button>
+                                    }
+                                </div>
+                                @if (_showParticipants)
+                                {
+                                    <div class="list-group list-group-flush mt-1" style="font-size: 0.85rem;">
+                                        @foreach (var participant in _selectedConversation.Participants)
+                                        {
+                                            <div class="list-group-item px-2 py-1 d-flex justify-content-between align-items-center">
+                                                <span>
+                                                    @if (participant.Id == _currentUser?.Id)
+                                                    {
+                                                        <i class="bi bi-person-badge text-primary me-1"></i>
+                                                    }
+                                                    @participant.FullName
+                                                </span>
+                                                <div>
+                                                    @if (participant.Id == _currentUser?.Id)
+                                                    {
+                                                        <span class="badge bg-secondary">Вы</span>
+                                                    }
+                                                    else if (_selectedConversation.ConversationTypeName != "Direct")
+                                                    {
+                                                        <button class="btn btn-sm btn-link text-danger p-0 ms-2"
+                                                                @onclick="() => RemoveParticipantAsync(participant.Id)"
+                                                                title="Удалить участника" style="font-size: 0.8rem;">
+                                                            <i class="bi bi-x-lg"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
                         </div>
                         <div class="card-body" id="messages-container" style="height: 400px; overflow-y: auto;">
                             @if (_messages.Count == 0)
@@ -185,43 +235,62 @@
                     <button type="button" class="btn-close" @onclick="() => _showNewChatModal = false"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Поиск по логину..." @bind="_searchLogin"
-                               @onkeydown="HandleSearchKeyDown" />
-                        <button class="btn btn-outline-secondary" @onclick="SearchUser">Найти</button>
+                    <!-- Выбор типа чата -->
+                    <div class="mb-3">
+                        <label class="form-label">Тип чата</label>
+                        <select class="form-select" @bind="_newConversationType">
+                            <option value="Direct">Личный (Direct)</option>
+                            <option value="Group">Групповой (Group)</option>
+                            <option value="Channel">Канал (Channel)</option>
+                        </select>
                     </div>
 
-                    @if (_searchResult != null)
+                    @if (_newConversationType != "Channel")
                     {
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox"
-                                           @onchange="() => ToggleUserSelection(_searchResult.Id)"
-                                           checked="@_selectedUserIds.Contains(_searchResult.Id)" />
-                                    <label class="form-check-label">
-                                        @_searchResult.FullName (@_searchResult.Login)
-                                    </label>
-                                </div>
+                        <div>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Поиск по логину..." @bind="_searchLogin"
+                                       @onkeydown="HandleSearchKeyDown" />
+                                <button class="btn btn-outline-secondary" @onclick="SearchUser">Найти</button>
                             </div>
+
+                            @if (_searchResult != null)
+                            {
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox"
+                                                   @onchange="() => ToggleUserSelection(_searchResult.Id)"
+                                                   checked="@_selectedUserIds.Contains(_searchResult.Id)" />
+                                            <label class="form-check-label">
+                                                @_searchResult.FullName (@_searchResult.Login)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (_searchError != null)
+                            {
+                                <div class="alert alert-danger">@_searchError</div>
+                            }
+
+                            @if (_selectedUserIds.Count > 0)
+                            {
+                                <p class="text-muted">Выбрано пользователей: @_selectedUserIds.Count</p>
+                            }
                         </div>
                     }
-
-                    @if (_searchError != null)
+                    else
                     {
-                        <div class="alert alert-danger">@_searchError</div>
-                    }
-
-                    @if (_selectedUserIds.Count > 0)
-                    {
-                        <p class="text-muted">Выбрано пользователей: @_selectedUserIds.Count</p>
+                        <div class="alert alert-info">Канал будет создан без участников. Вы сможете добавить их позже.</div>
                     }
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary"
                             @onclick="() => _showNewChatModal = false">Отмена</button>
                     <button type="button" class="btn btn-primary" @onclick="CreateConversation"
-                            disabled="@(_selectedUserIds.Count == 0)">Создать</button>
+                            disabled="@IsCreateDisabled">Создать</button>
                 </div>
             </div>
         </div>
@@ -323,6 +392,52 @@
     </div>
 }
 
+<!-- Модальное окно: добавление участника -->
+@if (_showAddParticipantModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавить участника</h5>
+                    <button type="button" class="btn-close" @onclick="() => _showAddParticipantModal = false"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Поиск по логину..."
+                               @bind="_addParticipantLoginNew" @onkeydown="HandleAddParticipantKeyDown" />
+                        <button class="btn btn-outline-secondary" @onclick="SearchUserForAdd">Найти</button>
+                    </div>
+
+                    @if (_addParticipantSearchResult != null)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>@_addParticipantSearchResult.FullName (@_addParticipantSearchResult.Login)</span>
+                                    <button class="btn btn-sm btn-primary"
+                                            @onclick="() => AddParticipant(_addParticipantSearchResult.Id)">
+                                        <i class="bi bi-plus-lg"></i> Добавить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (_addParticipantError != null)
+                    {
+                        <div class="alert alert-danger">@_addParticipantError</div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            @onclick="() => _showAddParticipantModal = false">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 <style>
     .conversation-item:hover {
         background-color: #f8f9fa;
@@ -377,6 +492,25 @@
     private bool _showDeleteConfirmModal;
     private ConversationDto? _deleteConversation;
 
+    // Для создания нового чата
+    private string _newConversationType = "Direct";
+
+    private bool IsCreateDisabled => _newConversationType switch
+    {
+        "Channel" => false, // Channel можно создать без участников
+        "Direct" => _selectedUserIds.Count != 1, // Direct — ровно 1 пользователь
+        _ => _selectedUserIds.Count == 0 // Group, Comments — минимум 1
+    };
+
+    // Для отображения участников
+    private bool _showParticipants;
+
+    // Для добавления участника
+    private bool _showAddParticipantModal;
+    private string _addParticipantLoginNew = "";
+    private UserChatDto? _addParticipantSearchResult;
+    private string? _addParticipantError;
+
     protected override async Task OnInitializedAsync()
     {
         _isAuthenticated = await AuthService.IsAuthenticatedAsync();
@@ -392,6 +526,7 @@
             ChatHub.OnMessageReceived += OnMessageReceived;
             ChatHub.OnUserTyping += OnUserTypingEvent;
             ChatHub.OnMessageDeleted += OnMessageDeletedEvent;
+            ChatHub.OnConversationCreated += OnConversationCreatedEvent;
             await ChatHub.StartAsync(token);
         }
     }
@@ -427,9 +562,9 @@
         _messages = await ChatService.GetMessagesAsync(conv.Id);
         _typingUserIds.Clear();
         _typingUsers = null;
+        _showParticipants = false;
         StateHasChanged();
 
-        // Присоединиться к новому чату
         await ChatHub.JoinConversationAsync(conv.Id);
     }
 
@@ -540,6 +675,11 @@
         }
     }
 
+    private void OnConversationCreatedEvent(ConversationCreatedDto conv)
+    {
+        _ = LoadConversationsAsync();
+    }
+
     private void ShowNewChatModal()
     {
         _showNewChatModal = true;
@@ -547,6 +687,7 @@
         _searchResult = null;
         _searchError = null;
         _selectedUserIds.Clear();
+        _newConversationType = "Direct";
     }
 
     private async Task SearchUser()
@@ -586,12 +727,16 @@
 
     private async Task CreateConversation()
     {
-        if (_currentUser == null || _selectedUserIds.Count == 0)
+        if (_currentUser == null)
+            return;
+
+        if (_newConversationType != "Channel" && _selectedUserIds.Count == 0)
             return;
 
         var dto = new CreateConversationDto
         {
-            ParticipantIds = _selectedUserIds.ToList()
+            ParticipantIds = _selectedUserIds.ToList(),
+            ConversationTypeName = _newConversationType
         };
 
         var result = await ChatService.CreateConversationAsync(dto);
@@ -623,7 +768,7 @@
     {
         _openMenuConversationId = null;
         _groupSettingsConversation = conv;
-        _groupSettingsName = conv.Type == ConversationType.Group ? $"Группа ({conv.Participants.Count} уч.)" : "";
+        _groupSettingsName = conv.ConversationTypeName == "Group" ? $"Группа ({conv.Participants.Count} уч.)" : "";
         _groupSettingsParticipants = conv.Participants.ToList();
         _showGroupSettingsModal = true;
         _addParticipantLogin = "";
@@ -635,6 +780,92 @@
         _openMenuConversationId = null;
         _deleteConversation = conv;
         _showDeleteConfirmModal = true;
+    }
+
+    // Методы для добавления участника
+    private void OpenAddParticipantModal()
+    {
+        _showAddParticipantModal = true;
+        _addParticipantLoginNew = "";
+        _addParticipantSearchResult = null;
+        _addParticipantError = null;
+    }
+
+    private async Task SearchUserForAdd()
+    {
+        if (string.IsNullOrWhiteSpace(_addParticipantLoginNew))
+        {
+            _addParticipantError = "Введите логин";
+            return;
+        }
+
+        var user = await ChatService.SearchUserAsync(_addParticipantLoginNew.Trim());
+        if (user == null)
+        {
+            _addParticipantError = "Пользователь не найден";
+            _addParticipantSearchResult = null;
+        }
+        else
+        {
+            // Проверяем, что пользователь ещё не участник
+            if (_selectedConversation != null && _selectedConversation.Participants.Any(p => p.Id == user.Id))
+            {
+                _addParticipantError = "Пользователь уже является участником";
+                _addParticipantSearchResult = null;
+            }
+            else
+            {
+                _addParticipantError = null;
+                _addParticipantSearchResult = user;
+            }
+        }
+    }
+
+    private void HandleAddParticipantKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            SearchUserForAdd();
+        }
+    }
+
+    private async Task AddParticipant(int userId)
+    {
+        if (_selectedConversation == null)
+            return;
+
+        var result = await ChatService.AddParticipantsAsync(_selectedConversation.Id, new List<int> { userId });
+        if (result != null)
+        {
+            // Обновляем выбранный чат
+            _selectedConversation = result;
+            // Перезагружаем список чатов
+            await LoadConversationsAsync();
+            _showAddParticipantModal = false;
+        }
+        else
+        {
+            _addParticipantError = "Не удалось добавить участника";
+        }
+    }
+
+    private async Task RemoveParticipantAsync(int userId)
+    {
+        if (_selectedConversation == null)
+            return;
+
+        var success = await ChatService.RemoveParticipantAsync(_selectedConversation.Id, userId);
+        if (success)
+        {
+            // Обновляем список чатов и восстанавливаем выбранный
+            var convId = _selectedConversation.Id;
+            await LoadConversationsAsync();
+            _selectedConversation = _conversations.FirstOrDefault(c => c.Id == convId);
+            if (_selectedConversation != null)
+            {
+                _messages = await ChatService.GetMessagesAsync(_selectedConversation.Id);
+            }
+        }
     }
 
     private async Task SearchUserForGroup()
@@ -720,5 +951,34 @@
         ChatHub.OnMessageReceived -= OnMessageReceived;
         ChatHub.OnUserTyping -= OnUserTypingEvent;
         ChatHub.OnMessageDeleted -= OnMessageDeletedEvent;
+        ChatHub.OnConversationCreated -= OnConversationCreatedEvent;
+    }
+
+    // ! GetConversationDisplayName - returns display name based on conversation type
+    private string GetConversationDisplayName(ConversationDto conv)
+    {
+        return conv.ConversationTypeName switch
+        {
+            "Direct" => string.Join(", ", conv.Participants
+                .Where(p => p.Id != _currentUser?.Id)
+                .Select(p => p.FullName)),
+            "Group" => $"Группа ({conv.Participants.Count} уч.)",
+            "Channel" => $"Канал: {string.Join(", ", conv.Participants.Take(1).Select(p => p.FullName))}",
+            "Comments" => $"Комментарии ({conv.Participants.Count} уч.)",
+            _ => $"Чат ({conv.Participants.Count} уч.)"
+        };
+    }
+
+    // ! GetConversationIcon - returns Bootstrap icon based on conversation type
+    private string GetConversationIcon(string typeName)
+    {
+        return typeName switch
+        {
+            "Direct" => "<i class=\"bi bi-chat-dots-fill text-primary me-1\"></i>",
+            "Group" => "<i class=\"bi bi-people-fill text-success me-1\"></i>",
+            "Channel" => "<i class=\"bi bi-megaphone-fill text-warning me-1\"></i>",
+            "Comments" => "<i class=\"bi bi-chat-quote-fill text-info me-1\"></i>",
+            _ => "<i class=\"bi bi-chat-fill me-1\"></i>"
+        };
     }
 }

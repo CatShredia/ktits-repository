@@ -13,6 +13,8 @@ public interface IChatService
     Task<List<MessageDto>> GetMessagesAsync(int conversationId);
     Task<MessageDto?> SendMessageAsync(int conversationId, string content);
     Task<bool> DeleteConversationAsync(int conversationId);
+    Task<ConversationDto?> AddParticipantsAsync(int conversationId, List<int> userIds);
+    Task<bool> RemoveParticipantAsync(int conversationId, int userId);
     Task<string?> GetTokenAsync();
 }
 
@@ -100,6 +102,24 @@ public class ChatService : IChatService
     {
         await SetAuthHeaderAsync();
         var response = await _http.DeleteAsync($"api/Chat/conversations/{conversationId}");
+        return response.IsSuccessStatusCode;
+    }
+
+    // ! AddParticipantsAsync - adds users to an existing conversation
+    public async Task<ConversationDto?> AddParticipantsAsync(int conversationId, List<int> userIds)
+    {
+        await SetAuthHeaderAsync();
+        var response = await _http.PostAsJsonAsync($"api/Chat/conversations/{conversationId}/participants", userIds);
+        if (response.IsSuccessStatusCode)
+            return await response.Content.ReadFromJsonAsync<ConversationDto>();
+        return null;
+    }
+
+    // ! RemoveParticipantAsync - removes a user from a conversation
+    public async Task<bool> RemoveParticipantAsync(int conversationId, int userId)
+    {
+        await SetAuthHeaderAsync();
+        var response = await _http.DeleteAsync($"api/Chat/conversations/{conversationId}/participants/{userId}");
         return response.IsSuccessStatusCode;
     }
 

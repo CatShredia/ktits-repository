@@ -1,11 +1,5 @@
 namespace CinemaBlazor.Models.Chat;
 
-public enum ConversationType
-{
-    Direct,
-    Group
-}
-
 public class UserChatDto
 {
     public int Id { get; set; }
@@ -29,7 +23,7 @@ public class MessageDto
 public class ConversationDto
 {
     public int Id { get; set; }
-    public ConversationType Type { get; set; }
+    public string ConversationTypeName { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public List<UserChatDto> Participants { get; set; } = new();
     public MessageDto? LastMessage { get; set; }
@@ -38,6 +32,7 @@ public class ConversationDto
 public class CreateConversationDto
 {
     public List<int> ParticipantIds { get; set; } = new();
+    public string ConversationTypeName { get; set; } = "Direct";
 }
 
 public class SendMessageDto
@@ -54,4 +49,19 @@ public class MessageResponse
     public string Content { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+}
+
+public class ConversationCreatedDto
+{
+    public int Id { get; set; }
+    public string ConversationTypeName { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+    public List<ParticipantDto> Participants { get; set; } = new();
+}
+
+public class ParticipantDto
+{
+    public int Id { get; set; }
+    public string FullName { get; set; } = string.Empty;
+    public string Login { get; set; } = string.Empty;
 }

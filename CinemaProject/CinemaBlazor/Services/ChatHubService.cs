@@ -14,6 +14,7 @@ public class ChatHubService : IDisposable
     public event Action<int, int, string>? OnUserConnected;
     public event Action<int, int, string>? OnUserDisconnected;
     public event Action<int, int>? OnMessageDeleted;
+    public event Action<ConversationCreatedDto>? OnConversationCreated;
 
     public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
 
@@ -77,6 +78,11 @@ public class ChatHubService : IDisposable
         _hubConnection.On<int, int>("MessageDeleted", (messageId, conversationId) =>
         {
             OnMessageDeleted?.Invoke(messageId, conversationId);
+        });
+
+        _hubConnection.On<ConversationCreatedDto>("ConversationCreated", (conversation) =>
+        {
+            OnConversationCreated?.Invoke(conversation);
         });
     }
 

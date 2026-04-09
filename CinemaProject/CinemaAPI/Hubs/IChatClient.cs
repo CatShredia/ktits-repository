@@ -24,6 +24,10 @@ public interface IChatClient
 
     // Сообщение было удалено
     Task MessageDeleted(int messageId, int conversationId);
+
+
+    // Новый чат создан (для участников)
+    Task ConversationCreated(ConversationCreatedResponse conversation);
 }
 
 
@@ -38,4 +42,19 @@ public class MessageResponse
     public string Content { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+}
+
+public class ConversationCreatedResponse
+{
+    public int Id { get; set; }
+    public string ConversationTypeName { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+    public List<ConversationParticipantResponse> Participants { get; set; } = new();
+}
+
+public class ConversationParticipantResponse
+{
+    public int Id { get; set; }
+    public string FullName { get; set; } = string.Empty;
+    public string Login { get; set; } = string.Empty;
 }

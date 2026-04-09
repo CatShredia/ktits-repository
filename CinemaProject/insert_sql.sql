@@ -6,7 +6,11 @@ public."Logins",
 public."Films",
 public."Users",
 public."Genres",
-public."Roles" RESTART IDENTITY CASCADE;
+public."Roles",
+public."Messages",
+public."ConversationParticipants",
+public."Conversations",
+public."ConversationTypes" RESTART IDENTITY CASCADE;
 
 -- 2. Вставка тестовых данных
 -- Таблица: Roles (Роли)
@@ -21,6 +25,15 @@ VALUES
         'client',
         'Пользователь - ограниченный доступ, только просмотр и оценки'
     );
+
+-- Таблица: ConversationTypes (Типы чатов)
+INSERT INTO
+    public."ConversationTypes" ("Id", "Name")
+VALUES
+    (1, 'Direct'),
+    (2, 'Group'),
+    (3, 'Channel'),
+    (4, 'Comments');
 
 -- Таблица: Genres (Жанры)
 INSERT INTO
@@ -422,21 +435,21 @@ VALUES
     (8, 25, 5);
 
 -- Таблица: Conversations (Чаты/Диалоги)
--- Type: 0 = Direct (личный), 1 = Group (групповой)
+-- ConversationTypeId: 1 = Direct, 2 = Group, 3 = Channel, 4 = Comments
 INSERT INTO
-    public."Conversations" ("Type", "CreatedAt")
+    public."Conversations" ("ConversationTypeId", "CreatedAt")
 VALUES
     -- Direct чаты (личные диалоги)
-    (0, '2025-01-15 10:00:00+00'),
+    (1, '2025-01-15 10:00:00+00'),
     -- 1: Admin <-> Иванов
-    (0, '2025-01-20 14:30:00+00'),
+    (1, '2025-01-20 14:30:00+00'),
     -- 2: Петрова <-> Сидоров
-    (0, '2025-02-01 09:15:00+00'),
+    (1, '2025-02-01 09:15:00+00'),
     -- 3: Admin <-> Петрова
     -- Group чаты (групповые диалоги)
-    (1, '2025-02-10 18:00:00+00'),
+    (2, '2025-02-10 18:00:00+00'),
     -- 4: Киноклуб (Admin, Иванов, Петрова, Смирнова)
-    (1, '2025-03-01 12:00:00+00');
+    (2, '2025-03-01 12:00:00+00');
 
 -- 5: Любители экшена (Сидоров, Кузнецов, Иванов)
 -- Таблица: ConversationParticipants (Участники чатов)

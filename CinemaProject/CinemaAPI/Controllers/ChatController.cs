@@ -107,6 +107,7 @@ public class ChatController : ControllerBase
 
         var conversations = await _context.Conversations
             .Where(c => participantIds.Contains(c.Id))
+            .Include(c => c.ConversationType)
             .Include(c => c.Participants)
                 .ThenInclude(p => p.User)
             .Include(c => c.Messages)
@@ -119,7 +120,7 @@ public class ChatController : ControllerBase
             return new ConversationDto
             {
                 Id = c.Id,
-                Type = c.Type,
+                ConversationTypeName = c.ConversationType.Name,
                 CreatedAt = c.CreatedAt,
                 Participants = c.Participants.Select(p => new UserChatDto
                 {
@@ -145,7 +146,7 @@ public class ChatController : ControllerBase
         return result;
     }
 
-    // ! CreateOrGetPersonalChat - creates or returns existing chat (Direct/Group) as ConversationDto
+    // ! CreateOrGetPersonalChat - creates or returns existing chat (Direct/Group/Channel/Comments) as ConversationDto
     // POST /api/Chat/conversations/create (из CinemaBlazor через ChatService.CreateConversationAsync)
     [HttpPost("conversations/create")]
     public async Task<ActionResult<ConversationDto>> CreateOrGetPersonalChat([FromBody] CreateConversationDto dto)
@@ -158,16 +159,51 @@ public class ChatController : ControllerBase
 
         var currentUserId = userId.Value;
 
-        if (dto.ParticipantIds == null || dto.ParticipantIds.Count == 0)
+        // Сначала ищем тип чата, чтобы понять какие валидации нужны
+        var conversationType = await _context.ConversationTypes
+            .FirstOrDefaultAsync(ct => ct.Name == dto.ConversationTypeName);
+
+        if (conversationType == null)
         {
-            return BadRequest("ParticipantIds cannot be empty");
+            return BadRequest($"Invalid conversation type: {dto.ConversationTypeName}. Valid types: Direct, Group, Channel, Comments");
         }
 
-        // Проверка существования всех участников
+        // Проверка участников зависит от типа
+        if (conversationType.Name == "Channel")
+        {
+            // Channel: можно создавать без других участников (только владелец)
+            if (dto.ParticipantIds == null)
+                dto.ParticipantIds = new List<int>();
+        }
+        else if (conversationType.Name == "Direct")
+        {
+            // Direct: ровно 1 пользователь (итого 2 с автором)
+            if (dto.ParticipantIds == null || dto.ParticipantIds.Count != 1)
+            {
+                return BadRequest("Direct chat requires exactly 1 other participant (you + 1 user)");
+            }
+        }
+        else
+        {
+            // Group, Comments: минимум 1 участник (итого 2 с автором)
+            if (dto.ParticipantIds == null || dto.ParticipantIds.Count == 0)
+            {
+                return BadRequest("At least one participant is required");
+            }
+        }
+
+        // Формируем список всех участников (добавляем автора, если его нет)
         var allParticipantIds = dto.ParticipantIds.Distinct().ToList();
         if (!allParticipantIds.Contains(currentUserId))
         {
             allParticipantIds.Add(currentUserId);
+        }
+
+        // Для Channel без других участников — только автор
+        // Для Direct — ровно 2 (автор + 1)
+        if (conversationType.Name == "Direct" && allParticipantIds.Count != 2)
+        {
+            return BadRequest("Direct chat requires exactly 2 participants (you + 1 user)");
         }
 
         var existingUsers = await _context.Users
@@ -181,18 +217,8 @@ public class ChatController : ControllerBase
             return NotFound($"Users with IDs {string.Join(", ", missingUsers)} not found");
         }
 
-        // Минимальное количество участников - 2 (автор + хотя бы 1 пользователь)
-        if (allParticipantIds.Count < 2)
-        {
-            return BadRequest("At least one other participant is required");
-        }
-
-        // Если всего 2 участника (автор + 1 пользователь) = Direct чат, иначе Group
-        var isDirect = allParticipantIds.Count == 2;
-        var conversationType = isDirect ? ConversationType.Direct : ConversationType.Group;
-
         // Для Direct чата проверяем существующий чат между теми же пользователями
-        if (isDirect)
+        if (conversationType.Name == "Direct")
         {
             var otherUserId = allParticipantIds.First(id => id != currentUserId);
             var existingDirect = await FindExistingDirectChat(currentUserId, otherUserId);
@@ -205,7 +231,7 @@ public class ChatController : ControllerBase
         // Создание нового чата
         var conversation = new Conversation
         {
-            Type = conversationType,
+            ConversationTypeId = conversationType.Id,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -232,7 +258,32 @@ public class ChatController : ControllerBase
             return NotFound("Failed to create conversation");
         }
 
-        return await MapConversationToDto(createdConversation);
+        var result = await MapConversationToDto(createdConversation);
+
+        // Отправляем уведомление всем участникам (кроме создателя) через SignalR
+        var createdResponse = new ConversationCreatedResponse
+        {
+            Id = result.Id,
+            ConversationTypeName = result.ConversationTypeName,
+            CreatedAt = result.CreatedAt,
+            Participants = result.Participants.Select(p => new ConversationParticipantResponse
+            {
+                Id = p.Id,
+                FullName = p.FullName,
+                Login = p.Login
+            }).ToList()
+        };
+
+        foreach (var participantId in allParticipantIds)
+        {
+            if (participantId != currentUserId)
+            {
+                await _hubContext.Clients.Group(GetUserGroupName(participantId))
+                    .ConversationCreated(createdResponse);
+            }
+        }
+
+        return result;
     }
 
     // ! GetConversationMessages - returns all messages for a conversation sorted by date (List<MessageDto>)
@@ -399,6 +450,170 @@ public class ChatController : ControllerBase
         return NoContent();
     }
 
+    // ! AddParticipants - adds users to an existing conversation (except Direct)
+    // POST /api/Chat/conversations/{id}/participants
+    [HttpPost("conversations/{conversationId}/participants")]
+    public async Task<ActionResult<ConversationDto>> AddParticipants(int conversationId, [FromBody] List<int> userIds)
+    {
+        var currentUserId = GetCurrentUserId();
+        if (currentUserId == null)
+        {
+            return Unauthorized();
+        }
+
+        var conversation = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
+
+        if (conversation == null)
+        {
+            return NotFound("Conversation not found");
+        }
+
+        // Direct чат нельзя изменять
+        if (conversation.ConversationType.Name == "Direct")
+        {
+            return BadRequest("Cannot add participants to a Direct chat");
+        }
+
+        // Проверка, что пользователь является участником
+        var isParticipant = await _context.ConversationParticipants
+            .AnyAsync(p => p.ConversationId == conversationId && p.UserId == currentUserId);
+
+        if (!isParticipant)
+        {
+            return Forbid("You are not a participant of this conversation");
+        }
+
+        // Проверка существования пользователей
+        var existingUsers = await _context.Users
+            .Where(u => userIds.Contains(u.Id))
+            .Select(u => u.Id)
+            .ToListAsync();
+
+        var missingUsers = userIds.Except(existingUsers).ToList();
+        if (missingUsers.Count > 0)
+        {
+            return NotFound($"Users with IDs {string.Join(", ", missingUsers)} not found");
+        }
+
+        // Получаем текущих участников
+        var existingParticipantIds = await _context.ConversationParticipants
+            .Where(p => p.ConversationId == conversationId)
+            .Select(p => p.UserId)
+            .ToListAsync();
+
+        // Добавляем только новых
+        var newParticipantIds = userIds.Except(existingParticipantIds).ToList();
+        if (newParticipantIds.Count == 0)
+        {
+            return BadRequest("All users are already participants");
+        }
+
+        var newParticipants = newParticipantIds.Select(id => new ConversationParticipant
+        {
+            ConversationId = conversationId,
+            UserId = id
+        }).ToList();
+
+        _context.ConversationParticipants.AddRange(newParticipants);
+        await _context.SaveChangesAsync();
+
+        var updatedConversation = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .Include(c => c.Participants)
+                .ThenInclude(p => p.User)
+                    .ThenInclude(u => u.Login)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
+
+        if (updatedConversation == null)
+        {
+            return NotFound("Failed to update conversation");
+        }
+
+        var result = await MapConversationToDto(updatedConversation);
+
+        // Уведомляем новых участников через SignalR
+        var createdResponse = new ConversationCreatedResponse
+        {
+            Id = result.Id,
+            ConversationTypeName = result.ConversationTypeName,
+            CreatedAt = result.CreatedAt,
+            Participants = result.Participants.Select(p => new ConversationParticipantResponse
+            {
+                Id = p.Id,
+                FullName = p.FullName,
+                Login = p.Login
+            }).ToList()
+        };
+
+        foreach (var participantId in newParticipantIds)
+        {
+            await _hubContext.Clients.Group(GetUserGroupName(participantId))
+                .ConversationCreated(createdResponse);
+        }
+
+        return result;
+    }
+
+    // ! RemoveParticipant - removes a user from a conversation (except Direct)
+    // DELETE /api/Chat/conversations/{conversationId}/participants/{userId}
+    [HttpDelete("conversations/{conversationId}/participants/{userId}")]
+    public async Task<IActionResult> RemoveParticipant(int conversationId, int userId)
+    {
+        var currentUserId = GetCurrentUserId();
+        if (currentUserId == null)
+        {
+            return Unauthorized();
+        }
+
+        var conversation = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
+
+        if (conversation == null)
+        {
+            return NotFound("Conversation not found");
+        }
+
+        // Direct чат нельзя изменять
+        if (conversation.ConversationType.Name == "Direct")
+        {
+            return BadRequest("Cannot remove participants from a Direct chat");
+        }
+
+        // Проверка, что пользователь является участником
+        var isParticipant = await _context.ConversationParticipants
+            .AnyAsync(p => p.ConversationId == conversationId && p.UserId == currentUserId);
+
+        if (!isParticipant)
+        {
+            return Forbid("You are not a participant of this conversation");
+        }
+
+        // Нельзя удалить самого себя через этот метод (для этого есть удаление чата)
+        if (userId == currentUserId)
+        {
+            return BadRequest("Cannot remove yourself. Delete the entire conversation instead.");
+        }
+
+        var participant = await _context.ConversationParticipants
+            .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+
+        if (participant == null)
+        {
+            return NotFound("Participant not found");
+        }
+
+        _context.ConversationParticipants.Remove(participant);
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("User {CurrentUserId} removed user {UserId} from conversation {ConversationId}",
+            currentUserId, userId, conversationId);
+
+        return NoContent();
+    }
+
     #region Helper Methods
 
     // ! Get userId from JWT token - extracts user ID from claims
@@ -420,13 +635,22 @@ public class ChatController : ControllerBase
         return $"conversation_{conversationId}";
     }
 
+    // ! GetUserGroupName - returns SignalR group name for user ID
+    private string GetUserGroupName(int userId)
+    {
+        return $"user_{userId}";
+    }
+
     // ! FindExistingDirectChat - searches for existing Direct chat between two users
     // вызывается внутри CreateOrGetPersonalChat метода этого контроллера
     private async Task<Conversation?> FindExistingDirectChat(int userId1, int userId2)
     {
+        var directType = await _context.ConversationTypes.FirstOrDefaultAsync(ct => ct.Name == "Direct");
+        if (directType == null) return null;
+
         var conversations = await _context.Conversations
             .Include(c => c.Participants)
-            .Where(c => c.Type == ConversationType.Direct)
+            .Where(c => c.ConversationTypeId == directType.Id)
             .ToListAsync();
 
         foreach (var conversation in conversations)
@@ -458,10 +682,14 @@ public class ChatController : ControllerBase
                 .ThenInclude(u => u.Login)
             .ToListAsync();
 
+        // Загружаем тип чата
+        var conversationType = await _context.ConversationTypes
+            .FirstOrDefaultAsync(ct => ct.Id == conversation.ConversationTypeId);
+
         return new ConversationDto
         {
             Id = conversation.Id,
-            Type = conversation.Type,
+            ConversationTypeName = conversationType?.Name ?? string.Empty,
             CreatedAt = conversation.CreatedAt,
             Participants = participantsWithUsers.Select(p => new UserChatDto
             {
