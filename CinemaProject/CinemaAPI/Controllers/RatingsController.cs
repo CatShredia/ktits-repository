@@ -1,5 +1,5 @@
-using CinemaAPI.Models;
-using CinemaAPI.Models.DTOs;
+using CinemaAPI.Data.Models;
+using CinemaAPI.Data.Models.DTOs;
 using CinemaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

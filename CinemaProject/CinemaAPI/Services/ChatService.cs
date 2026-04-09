@@ -1,10 +1,10 @@
 using CinemaAPI.Data;
 using CinemaAPI.Hubs;
-using CinemaAPI.Models.Chat;
+using CinemaAPI.Data.Models.DTOs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using CinemaAPI.Models;
+using CinemaAPI.Data.Models;
 
 namespace CinemaAPI.Services;
 

@@ -1,5 +1,5 @@
 using CinemaAPI.Data;
-using CinemaAPI.Models;
+using CinemaAPI.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CinemaAPI.Services;

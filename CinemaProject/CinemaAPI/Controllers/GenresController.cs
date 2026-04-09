@@ -1,4 +1,4 @@
-using CinemaAPI.Models;
+using CinemaAPI.Data.Models;
 using CinemaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

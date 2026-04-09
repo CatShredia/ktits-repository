@@ -1,6 +1,6 @@
 using CinemaAPI.Data;
-using CinemaAPI.Models;
-using CinemaAPI.Models.DTOs;
+using CinemaAPI.Data.Models;
+using CinemaAPI.Data.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;

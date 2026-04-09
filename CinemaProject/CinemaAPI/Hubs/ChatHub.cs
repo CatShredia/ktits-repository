@@ -1,5 +1,5 @@
 using CinemaAPI.Data;
-using CinemaAPI.Models;
+using CinemaAPI.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
