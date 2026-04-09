@@ -12,7 +12,10 @@ public class Film
     public int? AuthorId { get; set; }
     public User? Author { get; set; }
     public ICollection<Rating>? Ratings { get; set; }
-    
+
+    public int? CommentsConversationId { get; set; }
+    public Conversation? CommentsConversation { get; set; }
+
     // Вычисляемое поле для среднего рейтинга (не мапится в БД)
     [System.ComponentModel.DataAnnotations.Schema.NotMapped]
     public double AverageRating => Ratings?.Any() == true ? Ratings.Average(r => r.Value) : 0;

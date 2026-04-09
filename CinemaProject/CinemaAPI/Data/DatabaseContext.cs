@@ -43,6 +43,10 @@ public class DatabaseContext : DbContext
                 .WithMany(u => u.Films)
                 .HasForeignKey(e => e.AuthorId)
                 .OnDelete(DeleteBehavior.SetNull);
+      entity.HasOne(e => e.CommentsConversation)
+                .WithOne()
+                .HasForeignKey<Film>(e => e.CommentsConversationId)
+                .OnDelete(DeleteBehavior.Cascade);
     });
 
     modelBuilder.Entity<Rating>(entity =>

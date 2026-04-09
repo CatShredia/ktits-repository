@@ -74,11 +74,13 @@ else
                 <div class="card h-100 shadow-sm">
                     @if (!string.IsNullOrEmpty(film.ImageUrl))
                     {
-                        <img src="@ApiUrlService.GetImageUrl(film.ImageUrl)" class="card-img-top" style="height: 200px; object-fit: cover;" alt="@film.Name" />
+                        <img src="@ApiUrlService.GetImageUrl(film.ImageUrl)" class="card-img-top"
+                             style="height: 200px; object-fit: cover;" alt="@film.Name" />
                     }
                     else
                     {
-                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center card-img-top" style="height: 200px;">
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center card-img-top"
+                             style="height: 200px;">
                             <span class="bi bi-film" style="font-size: 3rem;"></span>
                         </div>
                     }
@@ -99,9 +101,17 @@ else
                             @preview
                         </p>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge bg-warning text-dark">
-                                ⭐ @film.AverageRating.ToString("F1")
-                            </span>
+                            <div>
+                                <span class="badge bg-warning text-dark me-1">
+                                    ⭐ @film.AverageRating.ToString("F1")
+                                </span>
+                                @if (film.CommentsCount > 0)
+                                {
+                                    <span class="badge bg-info text-dark">
+                                        💬 @film.CommentsCount
+                                    </span>
+                                }
+                            </div>
                             <a href="films/@film.Id" class="btn btn-sm btn-outline-primary">Подробнее</a>
                         </div>
                     </div>

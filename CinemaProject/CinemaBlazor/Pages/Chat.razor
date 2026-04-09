@@ -43,7 +43,7 @@
                         }
                         else
                         {
-                            @foreach (var conv in _conversations)
+                            @foreach (var conv in _conversations.Where(c => c.ConversationTypeName != "Comments"))
                             {
                                 var isActive = _selectedConversation?.Id == conv.Id;
                                 var otherParticipants = conv.Participants
@@ -535,7 +535,7 @@
                     @if (_selectedConversation != null)
                     {
                         @foreach (var participant in _selectedConversation.Participants.Where(p => p.UserId !=
-                                                                                                                                                                                                                                                                           _currentUser?.Id))
+                                                                                                                                                                                                                                                                                                   _currentUser?.Id))
                         {
                             <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
                                 <span>
@@ -616,7 +616,7 @@
                     <p>Выберите новую роль:</p>
                     <div class="list-group">
                         @foreach (var role in new[] { "Moderator", "Member" }.Where(r => r !=
-                                                                                                                                                                                                                                                                 _changeRoleParticipant.RoleName))
+                                                                                                                                                                                                                                                                                         _changeRoleParticipant.RoleName))
                         {
                             <button
                                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"

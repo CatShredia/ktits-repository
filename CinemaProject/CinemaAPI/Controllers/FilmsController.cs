@@ -36,6 +36,7 @@ public class FilmsController : ControllerBase
             .Include(f => f.Genre)
             .Include(f => f.Author)
             .Include(f => f.Ratings)
+            .Include(f => f.CommentsConversation)
             .AsQueryable();
 
         if (genreId.HasValue)
@@ -83,7 +84,8 @@ public class FilmsController : ControllerBase
                 Surname = f.Author.Surname
             } : null,
             AverageRating = f.Ratings?.Any() == true ? f.Ratings.Average(r => r.Value) : 0,
-            RatingsCount = f.Ratings?.Count ?? 0
+            RatingsCount = f.Ratings?.Count ?? 0,
+            CommentsCount = f.CommentsConversation?.Messages?.Count ?? 0
         }).ToList();
     }
 
@@ -97,6 +99,7 @@ public class FilmsController : ControllerBase
             .Include(f => f.Genre)
             .Include(f => f.Author)
             .Include(f => f.Ratings)
+            .Include(f => f.CommentsConversation)
             .FirstOrDefaultAsync(f => f.Id == id);
 
         if (film == null)
@@ -126,7 +129,8 @@ public class FilmsController : ControllerBase
                 Surname = film.Author.Surname
             } : null,
             AverageRating = film.Ratings?.Any() == true ? film.Ratings.Average(r => r.Value) : 0,
-            RatingsCount = film.Ratings?.Count ?? 0
+            RatingsCount = film.Ratings?.Count ?? 0,
+            CommentsCount = film.CommentsConversation?.Messages?.Count ?? 0
         };
     }
 
@@ -346,6 +350,7 @@ public class FilmsController : ControllerBase
             .Include(f => f.Genre)
             .Include(f => f.Author)
             .Include(f => f.Ratings)
+            .Include(f => f.CommentsConversation)
             .FirstOrDefaultAsync(f => f.Id == id);
 
         if (film == null) return null;
@@ -372,7 +377,8 @@ public class FilmsController : ControllerBase
                 Surname = film.Author.Surname
             } : null,
             AverageRating = film.Ratings?.Any() == true ? film.Ratings.Average(r => r.Value) : 0,
-            RatingsCount = film.Ratings?.Count ?? 0
+            RatingsCount = film.Ratings?.Count ?? 0,
+            CommentsCount = film.CommentsConversation?.Messages?.Count ?? 0
         };
     }
 
@@ -415,6 +421,7 @@ public class FilmsController : ControllerBase
             .Include(f => f.Genre)
             .Include(f => f.Author)
             .Include(f => f.Ratings)
+            .Include(f => f.CommentsConversation)
             .Where(f => f.AuthorId == userId)
             .ToListAsync();
 
@@ -440,7 +447,8 @@ public class FilmsController : ControllerBase
                 Surname = f.Author.Surname
             } : null,
             AverageRating = f.Ratings?.Any() == true ? f.Ratings.Average(r => r.Value) : 0,
-            RatingsCount = f.Ratings?.Count ?? 0
+            RatingsCount = f.Ratings?.Count ?? 0,
+            CommentsCount = f.CommentsConversation?.Messages?.Count ?? 0
         }).ToList();
     }
 
@@ -454,5 +462,124 @@ public class FilmsController : ControllerBase
             return userId;
         }
         return null;
+    }
+
+    // ! GetComments - returns all comments for a film (public)
+    // GET /api/Films/{id}/comments
+    [HttpGet("{id}/comments")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<CommentDto>>> GetComments(int id)
+    {
+        var film = await _context.Films
+            .Include(f => f.CommentsConversation)
+            .FirstOrDefaultAsync(f => f.Id == id);
+
+        if (film == null)
+        {
+            return NotFound();
+        }
+
+        // Если чат комментариев ещё не создан — возвращаем пустой список
+        if (film.CommentsConversationId == null)
+        {
+            return Ok(new List<CommentDto>());
+        }
+
+        var messages = await _context.Messages
+            .Where(m => m.ConversationId == film.CommentsConversationId)
+            .OrderBy(m => m.CreatedAt)
+            .Include(m => m.Sender)
+            .ToListAsync();
+
+        return messages.Select(m => new CommentDto
+        {
+            Id = m.Id,
+            Content = m.Content,
+            CreatedAt = m.CreatedAt,
+            UpdatedAt = m.UpdatedAt,
+            SenderId = m.SenderId,
+            Sender = new UserBriefDto
+            {
+                Id = m.Sender.Id,
+                Name = m.Sender.Name,
+                Surname = m.Sender.Surname
+            }
+        }).ToList();
+    }
+
+    // ! PostComment - adds a comment to a film (authenticated users)
+    // POST /api/Films/{id}/comments
+    [HttpPost("{id}/comments")]
+    [Authorize]
+    public async Task<ActionResult<CommentDto>> PostComment(int id, [FromBody] CommentCreateDto dto)
+    {
+        var film = await _context.Films
+            .Include(f => f.CommentsConversation)
+            .FirstOrDefaultAsync(f => f.Id == id);
+
+        if (film == null)
+        {
+            return NotFound();
+        }
+
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        // Если у фильма ещё нет чата комментариев — создаём его
+        if (film.CommentsConversationId == null)
+        {
+            var conversation = new Conversation
+            {
+                ConversationTypeId = 4, // Comments
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Conversations.Add(conversation);
+            await _context.SaveChangesAsync();
+
+            film.CommentsConversationId = conversation.Id;
+            await _context.SaveChangesAsync();
+
+            // Добавляем автора как участника (Member)
+            _context.ConversationParticipants.Add(new ConversationParticipant
+            {
+                ConversationId = conversation.Id,
+                UserId = userId.Value,
+                RoleId = 4 // Member
+            });
+            await _context.SaveChangesAsync();
+        }
+
+        var message = new Message
+        {
+            ConversationId = film.CommentsConversationId.Value,
+            SenderId = userId.Value,
+            Content = dto.Content,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.Messages.Add(message);
+        await _context.SaveChangesAsync();
+
+        // Загружаем отправителя для DTO
+        var sender = await _context.Users.FindAsync(userId.Value);
+
+        return new CommentDto
+        {
+            Id = message.Id,
+            Content = message.Content,
+            CreatedAt = message.CreatedAt,
+            UpdatedAt = message.UpdatedAt,
+            SenderId = message.SenderId,
+            Sender = new UserBriefDto
+            {
+                Id = sender!.Id,
+                Name = sender.Name,
+                Surname = sender.Surname
+            }
+        };
     }
 }

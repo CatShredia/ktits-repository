@@ -28,6 +28,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IApiUrlService, ApiUrlService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddSingleton<ChatHubService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 
 builder.Services.AddAuthorizationCore();
 

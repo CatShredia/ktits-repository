@@ -13,6 +13,7 @@ public class FilmDto
     public UserBriefDto? Author { get; set; }
     public double AverageRating { get; set; }
     public int RatingsCount { get; set; }
+    public int CommentsCount { get; set; }
 }
 
 public class FilmCreateDto
