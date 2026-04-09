@@ -152,6 +152,7 @@ public class DatabaseContext : DbContext
     {
       entity.HasKey(e => e.Id);
       entity.Property(e => e.Content).IsRequired();
+      entity.Property(e => e.ImageUrl).HasMaxLength(2048);
       entity.HasOne(e => e.Conversation)
                 .WithMany(c => c.Messages)
                 .HasForeignKey(e => e.ConversationId)

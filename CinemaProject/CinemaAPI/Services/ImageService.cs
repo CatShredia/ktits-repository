@@ -3,9 +3,8 @@ namespace CinemaAPI.Services;
 public interface IImageService
 {
     Task<string> SaveImageAsync(IFormFile file);
-
+    Task<string> SaveImageToFolderAsync(IFormFile file, string folderName);
     void DeleteImage(string imageUrl);
-
     bool IsValidImage(IFormFile file);
 }
 
@@ -30,8 +29,6 @@ public class ImageService : IImageService
         _environment = environment;
     }
 
-    // ! IsValidImage - validates image file type and size (JPEG, PNG, WebP, GIF, max 5MB)
-    // вызывается внутри SaveImageAsync метода этого сервиса
     public bool IsValidImage(IFormFile file)
     {
         if (file == null || file.Length == 0)
@@ -51,9 +48,12 @@ public class ImageService : IImageService
         return true;
     }
 
-    // ! SaveImageAsync - saves image file to wwwroot/images/films folder with GUID name
-    // вызывается из FilmsController через _imageService.SaveImageAsync
     public async Task<string> SaveImageAsync(IFormFile file)
+    {
+        return await SaveImageToFolderAsync(file, _filmsFolder);
+    }
+
+    public async Task<string> SaveImageToFolderAsync(IFormFile file, string folderName)
     {
         if (!IsValidImage(file))
         {
@@ -63,10 +63,9 @@ public class ImageService : IImageService
         var extension = Path.GetExtension(file.FileName).ToLower();
         var fileName = $"{Guid.NewGuid()}{extension}";
 
-        // Если WebRootPath null, используем текущую директорию
         var webRootPath = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
-        var uploadsFolder = Path.Combine(webRootPath, _filmsFolder);
+        var uploadsFolder = Path.Combine(webRootPath, folderName);
         Directory.CreateDirectory(uploadsFolder);
 
         var filePath = Path.Combine(uploadsFolder, fileName);
@@ -74,11 +73,9 @@ public class ImageService : IImageService
         using var stream = new FileStream(filePath, FileMode.Create);
         await file.CopyToAsync(stream);
 
-        return $"/{_filmsFolder}/{fileName}";
+        return $"/{folderName}/{fileName}";
     }
 
-    // ! DeleteImage - deletes image file from filesystem by URL
-    // вызывается из FilmsController через _imageService.DeleteImage
     public void DeleteImage(string imageUrl)
     {
         if (string.IsNullOrEmpty(imageUrl))

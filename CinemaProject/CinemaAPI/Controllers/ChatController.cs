@@ -135,6 +135,61 @@ public class ChatController : ControllerBase
         }
     }
 
+    // POST /api/Chat/conversations/{id}/messages/with-image
+    [HttpPost("conversations/{conversationId}/messages/with-image")]
+    public async Task<ActionResult<MessageDto>> SendMessageWithImage(
+        int conversationId,
+        [FromForm] SendMessageWithImageDto dto,
+        IFormFile? imageFile)
+    {
+        var userId = _chatService.GetCurrentUserIdFromClaims(User);
+        if (userId == null)
+            return Unauthorized();
+
+        try
+        {
+            var result = await _chatService.SendMessageAsync(conversationId, userId.Value, dto.Content ?? string.Empty, imageFile);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    // DELETE /api/Chat/conversations/{conversationId}/messages/{messageId}
+    [HttpDelete("conversations/{conversationId}/messages/{messageId}")]
+    public async Task<IActionResult> DeleteMessage(int conversationId, int messageId)
+    {
+        var userId = _chatService.GetCurrentUserIdFromClaims(User);
+        if (userId == null)
+            return Unauthorized();
+
+        var isAdmin = User.IsInRole("admin");
+
+        try
+        {
+            await _chatService.DeleteMessageAsync(messageId, conversationId, userId.Value, isAdmin);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid(ex.Message);
+        }
+    }
+
     // DELETE /api/Chat/conversations/{id}
     [HttpDelete("conversations/{conversationId}")]
     public async Task<IActionResult> DeleteConversation(int conversationId)

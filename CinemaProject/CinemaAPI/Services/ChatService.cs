@@ -15,7 +15,8 @@ public interface IChatService
     Task<List<ConversationDto>> GetUserConversationsAsync(int userId);
     Task<ConversationDto> CreateConversationAsync(CreateConversationDto dto, int currentUserId);
     Task<List<MessageDto>> GetConversationMessagesAsync(int conversationId, int userId);
-    Task<MessageDto> SendMessageAsync(int conversationId, int userId, string content);
+    Task<MessageDto> SendMessageAsync(int conversationId, int userId, string content, IFormFile? imageFile = null);
+    Task DeleteMessageAsync(int messageId, int conversationId, int userId, bool isAdmin);
     Task DeleteConversationAsync(int conversationId, int userId);
     Task<ConversationDto> AddParticipantsAsync(int conversationId, List<int> userIds, int currentUserId);
     Task RemoveParticipantAsync(int conversationId, int userIdToRemove, int currentUserId);
@@ -32,15 +33,18 @@ public class ChatService : IChatService
     private readonly DatabaseContext _context;
     private readonly IHubContext<ChatHub, IChatClient> _hubContext;
     private readonly ILogger<ChatService> _logger;
+    private readonly IImageService _imageService;
 
     public ChatService(
         DatabaseContext context,
         IHubContext<ChatHub, IChatClient> hubContext,
-        ILogger<ChatService> logger)
+        ILogger<ChatService> logger,
+        IImageService imageService)
     {
         _context = context;
         _hubContext = hubContext;
         _logger = logger;
+        _imageService = imageService;
     }
 
     public async Task<UserChatDto> GetCurrentUserAsync(int userId)
@@ -125,6 +129,7 @@ public class ChatService : IChatService
                     SenderId = lastMessage.SenderId,
                     SenderName = $"{lastMessage.Sender.Surname} {lastMessage.Sender.Name}",
                     Content = lastMessage.Content,
+                    ImageUrl = lastMessage.ImageUrl,
                     CreatedAt = lastMessage.CreatedAt,
                     UpdatedAt = lastMessage.UpdatedAt
                 } : null
@@ -274,12 +279,13 @@ public class ChatService : IChatService
             SenderId = m.SenderId,
             SenderName = $"{m.Sender.Surname} {m.Sender.Name}",
             Content = m.Content,
+            ImageUrl = m.ImageUrl,
             CreatedAt = m.CreatedAt,
             UpdatedAt = m.UpdatedAt
         }).ToList();
     }
 
-    public async Task<MessageDto> SendMessageAsync(int conversationId, int userId, string content)
+    public async Task<MessageDto> SendMessageAsync(int conversationId, int userId, string content, IFormFile? imageFile = null)
     {
         var conversation = await _context.Conversations
             .Include(c => c.ConversationType)
@@ -307,11 +313,25 @@ public class ChatService : IChatService
         if (!RolePermissions.CanSendMessage(participant.Role.Name, conversation.ConversationType.Name))
             throw new UnauthorizedAccessException("You don't have permission to send messages in this conversation");
 
+        string? imageUrl = null;
+        if (imageFile != null && imageFile.Length > 0)
+        {
+            try
+            {
+                imageUrl = await _imageService.SaveImageToFolderAsync(imageFile, "images/chats");
+            }
+            catch (ArgumentException ex)
+            {
+                throw new ArgumentException(ex.Message, nameof(imageFile));
+            }
+        }
+
         var message = new Message
         {
             ConversationId = conversationId,
             SenderId = userId,
             Content = content,
+            ImageUrl = imageUrl,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -332,6 +352,7 @@ public class ChatService : IChatService
             SenderId = createdMessage.SenderId,
             SenderName = $"{createdMessage.Sender.Surname} {createdMessage.Sender.Name}",
             Content = createdMessage.Content,
+            ImageUrl = createdMessage.ImageUrl,
             CreatedAt = createdMessage.CreatedAt,
             UpdatedAt = createdMessage.UpdatedAt
         };
@@ -344,6 +365,7 @@ public class ChatService : IChatService
                 SenderId = messageDto.SenderId,
                 SenderName = messageDto.SenderName,
                 Content = messageDto.Content,
+                ImageUrl = messageDto.ImageUrl,
                 CreatedAt = messageDto.CreatedAt,
                 UpdatedAt = messageDto.UpdatedAt
             });
@@ -352,6 +374,30 @@ public class ChatService : IChatService
             userId, messageDto.Id, conversationId);
 
         return messageDto;
+    }
+
+    public async Task DeleteMessageAsync(int messageId, int conversationId, int userId, bool isAdmin)
+    {
+        var message = await _context.Messages.FindAsync(messageId);
+        if (message == null)
+            throw new KeyNotFoundException("Message not found");
+
+        if (message.SenderId != userId && !isAdmin)
+            throw new UnauthorizedAccessException("You can only delete your own messages");
+
+        // Delete image file if exists
+        if (!string.IsNullOrEmpty(message.ImageUrl))
+            _imageService.DeleteImage(message.ImageUrl);
+
+        _context.Messages.Remove(message);
+        await _context.SaveChangesAsync();
+
+        // Notify via SignalR
+        await _hubContext.Clients.Group(GetConversationGroupName(conversationId))
+            .MessageDeleted(messageId, conversationId);
+
+        _logger.LogInformation("User {UserId} deleted message {MessageId} from conversation {ConversationId}",
+            userId, messageId, conversationId);
     }
 
     public async Task DeleteConversationAsync(int conversationId, int userId)
@@ -369,6 +415,14 @@ public class ChatService : IChatService
         var messages = await _context.Messages
             .Where(m => m.ConversationId == conversationId)
             .ToListAsync();
+
+        // Delete image files for all messages
+        foreach (var msg in messages)
+        {
+            if (!string.IsNullOrEmpty(msg.ImageUrl))
+                _imageService.DeleteImage(msg.ImageUrl);
+        }
+
         _context.Messages.RemoveRange(messages);
 
         var participants = await _context.ConversationParticipants
@@ -782,6 +836,7 @@ public class ChatService : IChatService
                 SenderId = lastMessage.SenderId,
                 SenderName = $"{lastMessage.Sender.Surname} {lastMessage.Sender.Name}",
                 Content = lastMessage.Content,
+                ImageUrl = lastMessage.ImageUrl,
                 CreatedAt = lastMessage.CreatedAt,
                 UpdatedAt = lastMessage.UpdatedAt
             } : null

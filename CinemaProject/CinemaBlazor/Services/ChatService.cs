@@ -1,6 +1,8 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using CinemaBlazor.Models.Chat;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.JSInterop;
 
 namespace CinemaBlazor.Services;
 
@@ -12,6 +14,8 @@ public interface IChatService
     Task<ConversationDto?> CreateConversationAsync(CreateConversationDto dto);
     Task<List<MessageDto>> GetMessagesAsync(int conversationId);
     Task<MessageDto?> SendMessageAsync(int conversationId, string content);
+    Task<MessageDto?> SendMessageWithImageAsync(int conversationId, string? content, IBrowserFile? imageFile);
+    Task<bool> DeleteMessageAsync(int conversationId, int messageId);
     Task<bool> DeleteConversationAsync(int conversationId);
     Task<ConversationDto?> AddParticipantsAsync(int conversationId, List<int> userIds);
     Task<bool> RemoveParticipantAsync(int conversationId, int userId);
@@ -99,6 +103,43 @@ public class ChatService : IChatService
         if (response.IsSuccessStatusCode)
             return await response.Content.ReadFromJsonAsync<MessageDto>();
         return null;
+    }
+
+    // ! SendMessageWithImageAsync - sends message with optional image via multipart/form-data
+    // вызывается из Chat.razor при отправке сообщения с картинкой
+    public async Task<MessageDto?> SendMessageWithImageAsync(int conversationId, string? content, IBrowserFile? imageFile)
+    {
+        await SetAuthHeaderAsync();
+
+        var formContent = new MultipartFormDataContent();
+        if (!string.IsNullOrEmpty(content))
+            formContent.Add(new StringContent(content), "Content");
+
+        if (imageFile != null)
+        {
+            // Ограничение 5MB (совпадает с бэкендом)
+            var maxBytes = 5 * 1024 * 1024;
+            var streamContent = new StreamContent(imageFile.OpenReadStream(maxBytes));
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue(imageFile.ContentType);
+            formContent.Add(streamContent, "imageFile", imageFile.Name);
+        }
+
+        var response = await _http.PostAsync(
+            $"api/Chat/conversations/{conversationId}/messages/with-image", formContent);
+
+        if (response.IsSuccessStatusCode)
+            return await response.Content.ReadFromJsonAsync<MessageDto>();
+        return null;
+    }
+
+    // ! DeleteMessageAsync - deletes a message by ID
+    // вызывается из Chat.razor при удалении сообщения
+    public async Task<bool> DeleteMessageAsync(int conversationId, int messageId)
+    {
+        await SetAuthHeaderAsync();
+        var response = await _http.DeleteAsync(
+            $"api/Chat/conversations/{conversationId}/messages/{messageId}");
+        return response.IsSuccessStatusCode;
     }
 
     // ! DeleteConversationAsync - deletes conversation via API

@@ -7,6 +7,7 @@ public class MessageDto
     public int SenderId { get; set; }
     public string SenderName { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
+    public string? ImageUrl { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }
