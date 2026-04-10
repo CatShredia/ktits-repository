@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groudLayer;
 
     private Rigidbody2D rb;
-    private bool isGrounded;
+    public bool IsGrounded { get; private set; }
 
     void Start()
     {
@@ -26,12 +26,11 @@ public class PlayerMovement : MonoBehaviour
         if (move > 0) transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         if (move < 0) transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
 
-        isGrounded = Physics2D.OverlapCircle(transform.position, 0.4f, groudLayer);
+        IsGrounded = Physics2D.OverlapCircle(transform.position, 0.4f, groudLayer);
 
-        if (Input.GetKeyDown(KeyCode.W) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.W) && IsGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-            //-----------------------------
         }
     }
 }
