@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// GameManager — управление очками и состоянием игры.
+/// Для управления уровнями см. LevelManager и LevelTrigger.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
