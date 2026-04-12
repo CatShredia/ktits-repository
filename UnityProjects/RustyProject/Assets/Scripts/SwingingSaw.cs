@@ -59,5 +59,21 @@ public class SwingingSaw : MonoBehaviour
                 playerMovement.ApplyKnockback(knockbackDir, knockbackForce);
             }
         }
+
+        // Отталкивание блока
+        PushableBlock pushableBlock = other.GetComponent<PushableBlock>();
+        if (pushableBlock != null && Time.time > lastDamageTime + damageCooldown)
+        {
+            lastDamageTime = Time.time;
+
+            Rigidbody2D blockRb = other.GetComponent<Rigidbody2D>();
+            if (blockRb != null)
+            {
+                Vector2 knockbackDir = other.transform.position - transform.position;
+                knockbackDir.y = 0f;
+                knockbackDir.Normalize();
+                pushableBlock.ApplyKnockback(knockbackDir, knockbackForce);
+            }
+        }
     }
 }

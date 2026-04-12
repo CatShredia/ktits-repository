@@ -15,6 +15,10 @@ public class PlayerMovement : MonoBehaviour
     private bool isKnockedBack = false;
     private float knockbackEndTime;
 
+    // Pushing
+    private bool isPushing = false;
+    private PushableBlock currentPushBlock;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -27,6 +31,18 @@ public class PlayerMovement : MonoBehaviour
         if (isKnockedBack && Time.time < knockbackEndTime)
         {
             // Только проверяем землю и разворот, скорость не трогаем
+        }
+        else if (isPushing)
+        {
+            // При толкании двигаемся вместе с блоком, WASD заблокирован
+            if (!Input.GetKey(KeyCode.E))
+            {
+                // Отпустили E — перестаём толкать
+                if (currentPushBlock != null)
+                {
+                    currentPushBlock.StopPush();
+                }
+            }
         }
         else
         {
@@ -56,5 +72,17 @@ public class PlayerMovement : MonoBehaviour
         isKnockedBack = true;
         knockbackEndTime = Time.time + 0.3f; // 0.3 секунды без контроля игрока
         rb.linearVelocity = new Vector2(direction.x * force, 3f);
+    }
+
+    public void StartPushing(PushableBlock block)
+    {
+        isPushing = true;
+        currentPushBlock = block;
+    }
+
+    public void StopPushing()
+    {
+        isPushing = false;
+        currentPushBlock = null;
     }
 }
