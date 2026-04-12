@@ -24,7 +24,12 @@ public class SwingingSaw : MonoBehaviour
     [Tooltip("Сила отбрасывания")]
     public float knockbackForce = 8f;
 
+    [Header("Cooldown")]
+    [Tooltip("Задержка между срабатываниями (секунды)")]
+    public float damageCooldown = 1f;
+
     private float baseZRotation;
+    private float lastDamageTime = -999f;
 
     void Start()
     {
@@ -39,15 +44,19 @@ public class SwingingSaw : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && Time.time > lastDamageTime + damageCooldown)
         {
+            lastDamageTime = Time.time;
             GameManager.Instance.RemoveLife(damageAmount);
 
             Rigidbody2D playerRb = other.GetComponent<Rigidbody2D>();
-            if (playerRb != null)
+            PlayerMovement playerMovement = other.GetComponent<PlayerMovement>();
+            if (playerMovement != null)
             {
-                Vector2 knockbackDirection = (other.transform.position - transform.position).normalized;
-                playerRb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
+                Vector2 knockbackDir = other.transform.position - transform.position;
+                knockbackDir.y = 0f;
+                knockbackDir.Normalize();
+                playerMovement.ApplyKnockback(knockbackDir, knockbackForce);
             }
         }
     }

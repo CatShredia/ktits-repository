@@ -11,6 +11,10 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     public bool IsGrounded { get; private set; }
 
+    // Knockback
+    private bool isKnockedBack = false;
+    private float knockbackEndTime;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -19,12 +23,25 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        float move = Input.GetAxisRaw("Horizontal");
+        // Если активен откат — не управляем горизонтально
+        if (isKnockedBack && Time.time < knockbackEndTime)
+        {
+            // Только проверяем землю и разворот, скорость не трогаем
+        }
+        else
+        {
+            if (isKnockedBack)
+            {
+                isKnockedBack = false;
+            }
 
-        rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y);
+            float move = Input.GetAxisRaw("Horizontal");
+            rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y);
+        }
 
-        if (move > 0) transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-        if (move < 0) transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        float moveInput = Input.GetAxisRaw("Horizontal");
+        if (moveInput > 0) transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        if (moveInput < 0) transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
 
         IsGrounded = Physics2D.OverlapCircle(transform.position, 0.4f, groudLayer);
 
@@ -32,5 +49,12 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
+    }
+
+    public void ApplyKnockback(Vector2 direction, float force)
+    {
+        isKnockedBack = true;
+        knockbackEndTime = Time.time + 0.3f; // 0.3 секунды без контроля игрока
+        rb.linearVelocity = new Vector2(direction.x * force, 3f);
     }
 }
