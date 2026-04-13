@@ -13,14 +13,21 @@ public class PlayerScriptAnimations : MonoBehaviour
 
     void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        bool isJumping = !playerMovement.IsGrounded;
 
-        float speed = new Vector2(horizontal, vertical).magnitude;
-        animator.SetFloat("Speed", speed);
+        // Если прыгаем — не обновляем Speed (чтобы бег не перекрывал прыжок)
+        if (!isJumping)
+        {
+            float horizontal = Input.GetAxis("Horizontal");
+            float speed = Mathf.Abs(horizontal);
+            animator.SetFloat("Speed", speed);
+        }
+        else
+        {
+            animator.SetFloat("Speed", 0f);
+        }
 
         // Анимация прыжка
-        bool isJumping = !playerMovement.IsGrounded;
         animator.SetBool("IsJumping", isJumping);
     }
 }
