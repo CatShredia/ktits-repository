@@ -110,7 +110,7 @@ MonoBehaviour:
   swingSpeed: 2
   startAngle: 0
   damageAmount: 1
-  knockbackForce: 10
+  knockbackForce: 5
   damageCooldown: 1
 --- !u!61 &7844053121115117543
 BoxCollider2D:

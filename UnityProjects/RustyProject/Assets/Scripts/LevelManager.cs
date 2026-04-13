@@ -46,7 +46,7 @@ public class LevelManager : MonoBehaviour
         UnloadCurrentLevel();
         ResetStars();
 
-        Vector3 finalPosition = spawnPosition + levelData.spawnOffset;
+        Vector3 finalPosition = levelData.spawnOffset;
         currentLevelInstance = Instantiate(levelData.levelPrefab, finalPosition, Quaternion.identity);
         currentLevelData = levelData;
 
