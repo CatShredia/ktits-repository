@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,9 +9,89 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class MainMenuUI : MonoBehaviour
 {
+    [Header("Animation")]
+    [Tooltip("Аниматор меню")]
+    public Animator menuAnimator;
+
+    [Tooltip("Время задержки перед загрузкой сцены (секунды)")]
+    public float animationDelay = 1f;
+
+    [Header("Debug")]
+    [Tooltip("Пропускать начальную анимацию (не ставить IsGameStarted = false)")]
+    public bool skipInitialAnimation = false;
+
+    private bool isGameStarted = false;
+
     [Header("Scene Settings")]
     [Tooltip("Название игровой сцены для кнопки 'Старт'")]
     public string gameSceneName = "SampleScene";
+
+    void OnEnable()
+    {
+        Debug.Log("=== MainMenuUI: OnEnable вызван ===");
+    }
+
+    void OnDisable()
+    {
+        Debug.Log("=== MainMenuUI: OnDisable вызван ===");
+    }
+
+    void Awake()
+    {
+        Debug.Log("=== MainMenuUI: Awake вызван ===");
+        Debug.Log($"Активная сцена: {SceneManager.GetActiveScene().name}");
+        Debug.Log($"Объект активен в иерархии: {gameObject.activeInHierarchy}");
+        Debug.Log($"Объект активен локально: {gameObject.activeSelf}");
+    }
+
+    void Start()
+    {
+        Debug.Log("=== MainMenuUI: Start вызван ===");
+
+        if (menuAnimator == null)
+        {
+            Debug.LogWarning("WARNING: menuAnimator НЕ назначен!");
+        }
+        else
+        {
+            Debug.Log($"menuAnimator найден: {menuAnimator.name}");
+
+            if (!skipInitialAnimation)
+            {
+                Debug.Log("Устанавливаем IsGameStarted = false (начальная анимация)");
+                menuAnimator.SetBool("IsGameStarted", false);
+            }
+            else
+            {
+                Debug.Log("Начальная анимация пропущена (skipInitialAnimation = true)");
+            }
+
+            Debug.Log($"Текущее значение IsGameStarted в Animator: {menuAnimator.GetBool("IsGameStarted")}");
+            Debug.Log($"Количество параметров в Animator: {menuAnimator.parameterCount}");
+            for (int i = 0; i < menuAnimator.parameterCount; i++)
+            {
+                var param = menuAnimator.parameters[i];
+                Debug.Log($"  Параметр {i}: {param.name} ({param.type}) = {GetParameterValue(param)}");
+            }
+        }
+
+        Debug.Log("=== MainMenuUI: Start завершён ===");
+    }
+
+    private string GetParameterValue(AnimatorControllerParameter param)
+    {
+        switch (param.type)
+        {
+            case AnimatorControllerParameterType.Bool:
+                return menuAnimator.GetBool(param.name).ToString();
+            case AnimatorControllerParameterType.Float:
+                return menuAnimator.GetFloat(param.name).ToString();
+            case AnimatorControllerParameterType.Int:
+                return menuAnimator.GetInteger(param.name).ToString();
+            default:
+                return "N/A";
+        }
+    }
 
     /// <summary>
     /// Кнопка "Старт" — запускает игровую сцену.
@@ -18,6 +99,35 @@ public class MainMenuUI : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
+        if (isGameStarted)
+        {
+            Debug.LogWarning("WARNING: StartGame вызван повторно, игнорируем!");
+            return;
+        }
+
+        isGameStarted = true;
+        Debug.Log("Нажата кнопка START — запуск анимации");
+
+        if (menuAnimator != null)
+        {
+            Debug.Log($"Аниматор: установлен параметр IsGameStarted = true (задержка {animationDelay} сек)");
+            Debug.Log($"Предыдущее значение IsGameStarted: {menuAnimator.GetBool("IsGameStarted")}");
+            menuAnimator.SetBool("IsGameStarted", true);
+            Debug.Log($"Новое значение IsGameStarted: {menuAnimator.GetBool("IsGameStarted")}");
+        }
+        else
+        {
+            Debug.LogWarning("Аниматор не назначен — сразу загружаем сцену");
+        }
+
+        StartCoroutine(LoadSceneAfterDelay(animationDelay));
+    }
+
+    private IEnumerator LoadSceneAfterDelay(float delay)
+    {
+        Debug.Log($"Ожидание {delay} сек перед загрузкой сцены...");
+        yield return new WaitForSeconds(delay);
+        Debug.Log($"Загрузка сцены: {gameSceneName}");
         SceneManager.LoadScene(gameSceneName);
     }
 
