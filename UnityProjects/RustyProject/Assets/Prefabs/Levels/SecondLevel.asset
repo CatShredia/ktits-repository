@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6de59aba4d0b924295da2b4515bc729, type: 3}
-  m_Name: FirstLevelData
+  m_Name: SecondLevel
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
-  levelPrefab: {fileID: 2351660264675163466, guid: 9b4e1c113b686914991d9fc694b1fc8d, type: 3}
-  spawnOffset: {x: 11.94, y: 0.02414563, z: 0}
+  levelPrefab: {fileID: 6236634655636128774, guid: bed116b8ff1df6542874ac1a2233dcf6, type: 3}
+  spawnOffset: {x: 43.91, y: -6, z: 0}
   loadDistance: 10
   unloadDistance: 40

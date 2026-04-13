@@ -193,6 +193,7 @@ MonoBehaviour:
   health: 1
   damageToPlayer: 1
   damageCooldown: 1
+  knockbackForce: 5
   jumpBounceForce: 7
 --- !u!1 &8428162917341264244
 GameObject:

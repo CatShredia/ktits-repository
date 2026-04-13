@@ -28,6 +28,12 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Время после нажатия W, когда прыжок сработает при приземлении")]
     public float jumpBufferTime = 0.15f;
 
+    [Tooltip("Задержка после приземления перед возможностью прыжка (сек)")]
+    public float jumpDelay = 0.1f;
+
+    [Tooltip("Разрешить прыжок в воздухе (coyote/buffer)")]
+    public bool allowAirJump = false;
+
     [Header("Step Assist")]
     [Tooltip("Автоматический подброс на ступеньки (0 = выкл)")]
     public float stepAssistForce = 2f;
@@ -38,6 +44,7 @@ public class PlayerMovement : MonoBehaviour
     // Coyote time & jump buffer
     private float coyoteTimer;
     private float jumpBufferTimer;
+    private float jumpDelayTimer;
     private bool wasGroundedLastFrame;
 
     // Knockback
@@ -102,31 +109,47 @@ public class PlayerMovement : MonoBehaviour
             coyoteTimer -= Time.deltaTime;
         }
 
+        // Jump delay: после приземления ждём перед возможностью прыжка
+        if (IsGrounded && !previousGrounded)
+        {
+            jumpDelayTimer = jumpDelay;
+            Debug.Log($"[JumpDelay] Приземление — задержка {jumpDelay}с");
+        }
+        else if (jumpDelayTimer > 0)
+        {
+            jumpDelayTimer -= Time.deltaTime;
+        }
+
         // Jump buffer: запоминаем нажатие W
         if (Input.GetKeyDown(KeyCode.W))
         {
             jumpBufferTimer = jumpBufferTime;
-            Debug.Log($"[Jump] W нажат — буфер прыжка: {jumpBufferTimer:F2}с, grounded: {IsGrounded}, coyote: {coyoteTimer:F2}с");
+            Debug.Log($"[Jump] W нажат — буфер прыжка: {jumpBufferTimer:F2}с, grounded: {IsGrounded}, coyote: {coyoteTimer:F2}с, delay: {jumpDelayTimer:F2}с");
         }
         else if (jumpBufferTimer > 0)
         {
             jumpBufferTimer -= Time.deltaTime;
         }
 
-        // Прыжок: если есть coyote time ИЛИ jump buffer ИЛИ только что приземлились
-        bool canJump = coyoteTimer > 0 || jumpBufferTimer > 0 || (IsGrounded && !previousGrounded);
-        if (Input.GetKeyDown(KeyCode.W) || (jumpBufferTimer > 0 && IsGrounded))
+        // Прыжок: строгая проверка (только на земле) ИЛИ air jump
+        bool canJump = IsGrounded && jumpDelayTimer <= 0;
+        if (allowAirJump)
+        {
+            canJump = (coyoteTimer > 0 || jumpBufferTimer > 0 || (IsGrounded && jumpDelayTimer <= 0));
+        }
+
+        if (Input.GetKeyDown(KeyCode.W) || (jumpBufferTimer > 0 && (IsGrounded || allowAirJump)))
         {
             if (canJump)
             {
-                Debug.Log($"[Jump] ПРЫЖОК! grounded: {IsGrounded}, coyote: {coyoteTimer:F2}с, buffer: {jumpBufferTimer:F2}с");
+                Debug.Log($"[Jump] ПРЫЖОК! grounded: {IsGrounded}, coyote: {coyoteTimer:F2}с, buffer: {jumpBufferTimer:F2}с, delay: {jumpDelayTimer:F2}с");
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
                 jumpBufferTimer = 0f;
                 coyoteTimer = 0f;
             }
             else
             {
-                Debug.Log($"[Jump] НЕ МОГУ прыгнуть: grounded: {IsGrounded}, coyote: {coyoteTimer:F2}с, buffer: {jumpBufferTimer:F2}с");
+                Debug.Log($"[Jump] НЕ МОГУ прыгнуть: grounded: {IsGrounded}, coyote: {coyoteTimer:F2}с, buffer: {jumpBufferTimer:F2}с, delay: {jumpDelayTimer:F2}с");
             }
         }
 
@@ -182,25 +205,40 @@ public class PlayerMovement : MonoBehaviour
     // --- Step Assist ---
     private void TryStepAssist(float moveDir)
     {
-        // Проверяем, есть ли земля немного впереди и чуть ниже
+        // Сначала проверяем, является ли впереди полная стена
+        Vector3 wallCheckPos = transform.position + new Vector3(moveDir * (forwardCheckDistance + 0.2f), 0f, 0f);
+        bool wallAhead = Physics2D.OverlapCircle(wallCheckPos, groundCheckRadius * 0.5f, groudLayer);
+
+        bool isFullWall = false;
+        if (wallAhead)
+        {
+            Vector3 headCheckPos = transform.position + new Vector3(moveDir * (forwardCheckDistance + 0.2f), 0.8f, 0f);
+            bool wallAbove = Physics2D.OverlapCircle(headCheckPos, groundCheckRadius * 0.5f, groudLayer);
+
+            if (wallAbove)
+            {
+                isFullWall = true;
+                Debug.Log($"[StepAssist] Full wall detected — climb blocked");
+            }
+        }
+
+        // Если это полная стена — не помогаем совсем
+        if (isFullWall) return;
+
+        // Проверяем, есть ли земля немного впереди и чуть ниже (для небольших ступенек)
         Vector3 checkPos = transform.position + new Vector3(moveDir * forwardCheckDistance, groundCheckOffsetY * 0.5f, 0f);
         bool groundAhead = Physics2D.OverlapCircle(checkPos, groundCheckRadius, groudLayer);
 
-        // Если впереди есть земля и игрок чуть в воздухе — небольшой подброс
         if (groundAhead && rb.linearVelocity.y <= 0)
         {
             Debug.Log($"[StepAssist] Ground ahead — подброс velY: {rb.linearVelocity.y:F2}");
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 1.5f);
         }
 
-        // Проверяем стенку впереди — если есть, пробуем подняться
-        Vector3 wallCheckPos = transform.position + new Vector3(moveDir * (forwardCheckDistance + 0.2f), 0f, 0f);
-        bool wallAhead = Physics2D.OverlapCircle(wallCheckPos, groundCheckRadius * 0.5f, groudLayer);
-
-        // Если впереди стена и игрок на земле или почти на земле — подбрасываем вверх
+        // Подброс на низкую ступеньку
         if (wallAhead && rb.linearVelocity.y <= 0.5f)
         {
-            Debug.Log($"[StepAssist] Wall ahead — подброс на ступеньку");
+            Debug.Log($"[StepAssist] Wall ahead (low) — подброс на ступеньку");
             rb.linearVelocity = new Vector2(moveDir * speed * 0.5f, jumpForce * 0.6f);
         }
     }

@@ -38,6 +38,9 @@ public class Enemy : MonoBehaviour
     [Tooltip("Задержка между ударами (секунды)")]
     public float damageCooldown = 1f;
 
+    [Tooltip("Сила отталкивания игрока при ударе")]
+    public float knockbackForce = 5f;
+
     [Tooltip("Сила отскока при прыжке на врага")]
     public float jumpBounceForce = 7f;
 
@@ -151,6 +154,12 @@ public class Enemy : MonoBehaviour
             // Игрок получил урон от врага
             lastDamageTime = Time.time;
             GameManager.Instance.RemoveLife(damageToPlayer);
+
+            // Отталкивание игрока
+            Vector2 knockbackDir = other.transform.position - transform.position;
+            knockbackDir.y = 0f;
+            knockbackDir.Normalize();
+            player.ApplyKnockback(knockbackDir, knockbackForce);
         }
     }
 
