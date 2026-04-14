@@ -123542,3 +123542,63 @@ Memory consumption went from 138.6 MB to 137.2 MB.
 Total: 8.962000 ms (FindLiveObjects: 0.690200 ms CreateObjectMapping: 0.634700 ms MarkObjects: 6.250400 ms  DeleteObjects: 1.385600 ms)
 
 Prepare: number of updated asset objects reloaded= 0
+========================================================================
+Received Import Request.
+  Time since last request: 989.908837 seconds.
+  path: Assets/Prefabs/Levels/SecondLevel.prefab
+  artifactKey: Guid(bed116b8ff1df6542874ac1a2233dcf6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Prefabs/Levels/SecondLevel.prefab using Guid(bed116b8ff1df6542874ac1a2233dcf6) Importer(815301076,1909f56bfc062723c751e8b465ee728b) (PreviewImporter) -> (artifact id: '5f0018dd7b640038f528431fdd7c963f') in 0.0577064 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 223
+
+========================================================================
+Received Import Request.
+  Time since last request: 70.205760 seconds.
+  path: Assets/Scripts/Enemy.cs
+  artifactKey: Guid(18bc3392c0c7f9c4a86407134b0ae11a) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/Scripts/Enemy.cs using Guid(18bc3392c0c7f9c4a86407134b0ae11a) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: 'e078e673e08bffa7be1340635a24aa22') in 0.0858588 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 0
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000061 seconds.
+  path: Assets/Prefabs/Levels/FirstLevelData.asset
+  artifactKey: Guid(464d7666a1aefda4ebe4536d285e5e7f) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/Prefabs/Levels/FirstLevelData.asset using Guid(464d7666a1aefda4ebe4536d285e5e7f) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '7b2d157f084b065454cdbd1facda0829') in 0.0338542 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 445
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000018 seconds.
+  path: Assets/Scripts/LevelTrigger.cs
+  artifactKey: Guid(15acb109f7bdd944e8f095e769bf4c94) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/Scripts/LevelTrigger.cs using Guid(15acb109f7bdd944e8f095e769bf4c94) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: '667e75cb2e4a232b8b7a94cca7775ce2') in 0.003987 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 0
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000044 seconds.
+  path: Assets/Scenes/SystemUIs.unity
+  artifactKey: Guid(07295b207aeaf464ba39ef27033099fc) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/Scenes/SystemUIs.unity using Guid(07295b207aeaf464ba39ef27033099fc) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: 'cc92e53e70ebd71a88711f071d4f47b8') in 0.0056177 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 1
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000037 seconds.
+  path: Assets/Prefabs/Levels/SecondLevel.asset
+  artifactKey: Guid(1c738f3271c86ec48b2244b9a7da51e3) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/Prefabs/Levels/SecondLevel.asset using Guid(1c738f3271c86ec48b2244b9a7da51e3) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: 'c953bcb96e656da5aa93889de50d2299') in 0.0099091 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 152
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000024 seconds.
+  path: Assets/Prefabs/Ground_Pushable.prefab
+  artifactKey: Guid(b2744c1499fc84547942f93caf6d74c2) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d)
+Start importing Assets/Prefabs/Ground_Pushable.prefab using Guid(b2744c1499fc84547942f93caf6d74c2) Importer(2089858483,b0f066a214c2f5e87bad3c948f4d605d) (ScriptedImporter) -> (artifact id: 'c64780e366e8be8ed04e2e5a2aedf26b') in 0.0713878 seconds
+Number of updated asset objects reloaded before import = 0Number of asset objects unloaded after import = 11
+
+Editor requested this worker to shutdown with reason: Scaling down because of idle timeout
+AssetImportWorker is now disconnected from the server
+Process exiting
+Exiting without the bug reporter. Application will terminate with return code 0

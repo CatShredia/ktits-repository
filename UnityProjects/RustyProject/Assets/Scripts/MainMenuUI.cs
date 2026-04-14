@@ -26,6 +26,10 @@ public class MainMenuUI : MonoBehaviour
     [Tooltip("Название игровой сцены для кнопки 'Старт'")]
     public string gameSceneName = "SampleScene";
 
+    [Header("Level Select")]
+    [Tooltip("Название сцены выбора уровней")]
+    public string levelSelectSceneName = "SystemUIs 1";
+
     void OnEnable()
     {
         Debug.Log("=== MainMenuUI: OnEnable вызван ===");
@@ -173,5 +177,15 @@ public class MainMenuUI : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    /// <summary>
+    /// Кнопка "Выбор уровня" — открывает подменю выбора уровней.
+    /// Привяжите к кнопке через Inspector: On Click → MainMenuUI.OpenLevelSelect
+    /// </summary>
+    public void OpenLevelSelect()
+    {
+        Debug.Log($"Нажата кнопка 'Выбор уровня' — загрузка сцены: {levelSelectSceneName}");
+        SceneManager.LoadScene(levelSelectSceneName);
     }
 }
