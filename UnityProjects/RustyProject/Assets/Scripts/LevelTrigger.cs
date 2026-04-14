@@ -47,15 +47,13 @@ public class LevelTrigger : MonoBehaviour
         LevelManager.Instance.LoadLevel(levelData, transform.position);
         isLevelLoaded = true;
         isPlayerNear = true;
-        Debug.Log($"LevelTrigger: Уровень загружен на расстоянии от триггера");
     }
 
     private void UnloadLevel()
     {
-        LevelManager.Instance.UnloadCurrentLevel();
+        LevelManager.Instance.UnloadLevel(levelData);
         isLevelLoaded = false;
         isPlayerNear = false;
-        Debug.Log($"LevelTrigger: Уровень выгружен, игрок отошёл");
     }
 
     void OnDrawGizmosSelected()

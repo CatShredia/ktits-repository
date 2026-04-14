@@ -155,6 +155,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NewLevelCheck
       objectReference: {fileID: 0}
+    - target: {fileID: 4923409541457560128, guid: be7bec3196f3cd84198a11b328c90ce0, type: 3}
+      propertyPath: levelData
+      value: 
+      objectReference: {fileID: 11400000, guid: 1c738f3271c86ec48b2244b9a7da51e3, type: 2}
     - target: {fileID: 9178063708294590537, guid: be7bec3196f3cd84198a11b328c90ce0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 25.94

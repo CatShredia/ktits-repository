@@ -131,13 +131,7 @@ public class Enemy : MonoBehaviour
     {
         if (isDead) return;
         if (!other.CompareTag("Player")) return;
-        if (!gameObject.CompareTag("Enemy"))
-        {
-            Debug.Log($"[Enemy #{GetInstanceID()}] Враг не имеет тег 'Enemy' — контакт проигнорирован");
-            return;
-        }
-
-        Debug.Log($"[Enemy #{GetInstanceID()}] Игрок вошёл в триггер врага: {other.gameObject.name}");
+        if (!gameObject.CompareTag("Enemy")) return;
 
         PlayerMovement player = other.GetComponent<PlayerMovement>();
         Rigidbody2D playerRb = other.GetComponent<Rigidbody2D>();
@@ -151,11 +145,8 @@ public class Enemy : MonoBehaviour
         bool isAbove = other.transform.position.y > transform.position.y;
         bool isFalling = playerRb.linearVelocity.y < 0;
 
-        Debug.Log($"[Enemy #{GetInstanceID()}] Проверка прыжка — isAbove: {isAbove}, isFalling: {isFalling}, vel.y: {playerRb.linearVelocity.y:F2}, playerY: {other.transform.position.y:F2}, enemyY: {transform.position.y:F2}");
-
         if (isAbove && isFalling)
         {
-            Debug.Log($"[Enemy #{GetInstanceID()}] ПРЫЖОК СВЕРХУ! Урон врагу (здоровье: {health - 1}), отскок: {jumpBounceForce}");
             // Убили врага прыжком
             TakeDamage();
 
@@ -165,7 +156,6 @@ public class Enemy : MonoBehaviour
         else if (Time.time > lastDamageTime + damageCooldown)
         {
             // Игрок получил урон от врага
-            Debug.Log($"[Enemy #{GetInstanceID()}] ИГРОК ПОЛУЧИЛ УРОН! -{damageToPlayer} HP, отталкивание: {knockbackForce}");
             lastDamageTime = Time.time;
             GameManager.Instance.RemoveLife(damageToPlayer);
 
@@ -175,19 +165,13 @@ public class Enemy : MonoBehaviour
             knockbackDir.Normalize();
             player.ApplyKnockback(knockbackDir, knockbackForce);
         }
-        else
-        {
-            Debug.Log($"[Enemy #{GetInstanceID()}] Контакт проигнорирован (кулдаун урона: {lastDamageTime + damageCooldown - Time.time:F2}с)");
-        }
     }
 
     public void TakeDamage()
     {
         health--;
-        Debug.Log($"[Enemy #{GetInstanceID()}] TakeDamage вызван! Осталось здоровья: {health}");
         if (health <= 0)
         {
-            Debug.Log($"[Enemy #{GetInstanceID()}] Здоровье <= 0, вызываю Die()");
             Die();
         }
     }
@@ -195,7 +179,6 @@ public class Enemy : MonoBehaviour
     private void Die()
     {
         isDead = true;
-        Debug.Log($"[Enemy #{GetInstanceID()}] Die() — враг умирает, запуск анимации: {deathParamName}");
         if (animator != null)
         {
             animator.SetBool(deathParamName, true);
@@ -205,7 +188,6 @@ public class Enemy : MonoBehaviour
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;
 
-        Debug.Log($"[Enemy #{GetInstanceID()}] Уничтожаю GameObject врага");
         Destroy(gameObject);
     }
 }

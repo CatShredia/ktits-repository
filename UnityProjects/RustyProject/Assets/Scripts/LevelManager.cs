@@ -1,12 +1,18 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
 
-    private GameObject currentLevelInstance;
-    private LevelData currentLevelData;
+    private class LoadedLevel
+    {
+        public GameObject instance;
+        public LevelData data;
+    }
+
+    private List<LoadedLevel> loadedLevels = new List<LoadedLevel>();
 
     /// <summary> Состояние сбора звёзд: индекс → собран ли </summary>
     private bool[] collectedStars = new bool[3];
@@ -38,31 +44,41 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
-        if (currentLevelData == levelData && currentLevelInstance != null)
+        // Проверяем, загружен ли уже этот уровень
+        foreach (var lvl in loadedLevels)
         {
-            return;
+            if (lvl.data == levelData) return;
         }
 
-        UnloadCurrentLevel();
         ResetStars();
 
         Vector3 finalPosition = levelData.spawnOffset;
-        currentLevelInstance = Instantiate(levelData.levelPrefab, finalPosition, Quaternion.identity);
-        currentLevelData = levelData;
+        GameObject levelInstance = Instantiate(levelData.levelPrefab, finalPosition, Quaternion.identity);
+        loadedLevels.Add(new LoadedLevel { instance = levelInstance, data = levelData });
 
         OnLevelChanged?.Invoke();
-        Debug.Log($"LevelManager: Уровень '{levelData.name}' загружен на позицию {finalPosition}");
+    }
+
+    public void UnloadLevel(LevelData levelData)
+    {
+        for (int i = loadedLevels.Count - 1; i >= 0; i--)
+        {
+            if (loadedLevels[i].data == levelData)
+            {
+                Destroy(loadedLevels[i].instance);
+                loadedLevels.RemoveAt(i);
+                return;
+            }
+        }
     }
 
     public void UnloadCurrentLevel()
     {
-        if (currentLevelInstance != null)
+        for (int i = loadedLevels.Count - 1; i >= 0; i--)
         {
-            Destroy(currentLevelInstance);
-            Debug.Log($"LevelManager: Уровень '{currentLevelData?.name}' выгружен");
-            currentLevelInstance = null;
-            currentLevelData = null;
+            Destroy(loadedLevels[i].instance);
         }
+        loadedLevels.Clear();
     }
 
     public void CollectStar(int index)
@@ -72,7 +88,6 @@ public class LevelManager : MonoBehaviour
 
         collectedStars[index] = true;
         OnStarCollected?.Invoke(index);
-        Debug.Log($"LevelManager: Звезда {index} собрана!");
     }
 
     public bool IsStarCollected(int index)
@@ -87,9 +102,15 @@ public class LevelManager : MonoBehaviour
             collectedStars[i] = false;
     }
 
-    public bool IsLevelLoaded() => currentLevelInstance != null;
+    public bool IsLevelLoaded() => loadedLevels.Count > 0;
 
-    public LevelData GetCurrentLevelData() => currentLevelData;
+    public LevelData GetCurrentLevelData()
+    {
+        return loadedLevels.Count > 0 ? loadedLevels[0].data : null;
+    }
 
-    public GameObject GetCurrentLevelInstance() => currentLevelInstance;
+    public GameObject GetCurrentLevelInstance()
+    {
+        return loadedLevels.Count > 0 ? loadedLevels[0].instance : null;
+    }
 }
