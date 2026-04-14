@@ -1687,6 +1687,7 @@ GameObject:
   - component: {fileID: 1031321839}
   - component: {fileID: 1031321840}
   - component: {fileID: 1031321841}
+  - component: {fileID: 1031321842}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1736,6 +1737,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b60e24f5f1c5c374e81c00f0700e0242, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
+--- !u!114 &1031321842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031321838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f63c6d70e263b8346ac418b87637dda4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SelectedLevelLoader
+  levels:
+  - {fileID: 11400000, guid: 464d7666a1aefda4ebe4536d285e5e7f, type: 2}
+  - {fileID: 11400000, guid: 1c738f3271c86ec48b2244b9a7da51e3, type: 2}
 --- !u!4 &1060341025 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3542863443443739076, guid: 11389694586648a479c4ea4064a7d939, type: 3}
