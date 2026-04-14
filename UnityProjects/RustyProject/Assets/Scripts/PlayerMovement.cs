@@ -113,7 +113,6 @@ public class PlayerMovement : MonoBehaviour
         if (IsGrounded && !previousGrounded)
         {
             jumpDelayTimer = jumpDelay;
-            Debug.Log($"[JumpDelay] Приземление — задержка {jumpDelay}с");
         }
         else if (jumpDelayTimer > 0)
         {
@@ -124,7 +123,6 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W))
         {
             jumpBufferTimer = jumpBufferTime;
-            Debug.Log($"[Jump] W нажат — буфер прыжка: {jumpBufferTimer:F2}с, grounded: {IsGrounded}, coyote: {coyoteTimer:F2}с, delay: {jumpDelayTimer:F2}с");
         }
         else if (jumpBufferTimer > 0)
         {
@@ -142,14 +140,13 @@ public class PlayerMovement : MonoBehaviour
         {
             if (canJump)
             {
-                Debug.Log($"[Jump] ПРЫЖОК! grounded: {IsGrounded}, coyote: {coyoteTimer:F2}с, buffer: {jumpBufferTimer:F2}с, delay: {jumpDelayTimer:F2}с");
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
                 jumpBufferTimer = 0f;
                 coyoteTimer = 0f;
             }
             else
             {
-                Debug.Log($"[Jump] НЕ МОГУ прыгнуть: grounded: {IsGrounded}, coyote: {coyoteTimer:F2}с, buffer: {jumpBufferTimer:F2}с, delay: {jumpDelayTimer:F2}с");
+                // Не могу прыгнуть
             }
         }
 
@@ -161,8 +158,6 @@ public class PlayerMovement : MonoBehaviour
 
             Vector3 wallCheckPos = transform.position + new Vector3(moveInput * (forwardCheckDistance + 0.2f), 0f, 0f);
             bool wallAhead = Physics2D.OverlapCircle(wallCheckPos, groundCheckRadius * 0.5f, groudLayer);
-
-            Debug.Log($"[StepAssist] grounded: {IsGrounded}, groundAhead: {groundAhead}, wallAhead: {wallAhead}, velY: {rb.linearVelocity.y:F2}");
 
             TryStepAssist(moveInput);
         }
@@ -218,7 +213,6 @@ public class PlayerMovement : MonoBehaviour
             if (wallAbove)
             {
                 isFullWall = true;
-                Debug.Log($"[StepAssist] Full wall detected — climb blocked");
             }
         }
 
@@ -231,14 +225,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (groundAhead && rb.linearVelocity.y <= 0)
         {
-            Debug.Log($"[StepAssist] Ground ahead — подброс velY: {rb.linearVelocity.y:F2}");
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 1.5f);
         }
 
         // Подброс на низкую ступеньку
         if (wallAhead && rb.linearVelocity.y <= 0.5f)
         {
-            Debug.Log($"[StepAssist] Wall ahead (low) — подброс на ступеньку");
             rb.linearVelocity = new Vector2(moveDir * speed * 0.5f, jumpForce * 0.6f);
         }
     }
