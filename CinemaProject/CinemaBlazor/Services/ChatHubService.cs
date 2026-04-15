@@ -14,6 +14,7 @@ public class ChatHubService : IDisposable
     public event Action<int, int, string>? OnUserConnected;
     public event Action<int, int, string>? OnUserDisconnected;
     public event Action<int, int>? OnMessageDeleted;
+    public event Action<MessageResponse>? OnMessageEdited;
     public event Action<ConversationCreatedDto>? OnConversationCreated;
 
     public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
@@ -80,6 +81,11 @@ public class ChatHubService : IDisposable
             OnMessageDeleted?.Invoke(messageId, conversationId);
         });
 
+        _hubConnection.On<MessageResponse>("MessageEdited", (message) =>
+        {
+            OnMessageEdited?.Invoke(message);
+        });
+
         _hubConnection.On<ConversationCreatedDto>("ConversationCreated", (conversation) =>
         {
             OnConversationCreated?.Invoke(conversation);
@@ -135,6 +141,14 @@ public class ChatHubService : IDisposable
     {
         if (_hubConnection == null) return;
         await _hubConnection.SendAsync("deleteMessage", messageId, conversationId);
+    }
+
+    // ! EditMessageAsync - sends edit message request via SignalR
+    // вызывается из Chat.razor при редактировании сообщения
+    public async Task EditMessageAsync(int messageId, int conversationId, string newContent)
+    {
+        if (_hubConnection == null) return;
+        await _hubConnection.SendAsync("editMessage", messageId, conversationId, newContent);
     }
 
     // ! Dispose - disposes SignalR connection (called by DI container)

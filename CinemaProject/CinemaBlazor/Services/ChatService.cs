@@ -16,6 +16,7 @@ public interface IChatService
     Task<MessageDto?> SendMessageAsync(int conversationId, string content);
     Task<MessageDto?> SendMessageWithImageAsync(int conversationId, string? content, IBrowserFile? imageFile);
     Task<bool> DeleteMessageAsync(int conversationId, int messageId);
+    Task<MessageDto?> EditMessageAsync(int conversationId, int messageId, string newContent);
     Task<bool> DeleteConversationAsync(int conversationId);
     Task<ConversationDto?> AddParticipantsAsync(int conversationId, List<int> userIds);
     Task<bool> RemoveParticipantAsync(int conversationId, int userId);
@@ -140,6 +141,19 @@ public class ChatService : IChatService
         var response = await _http.DeleteAsync(
             $"api/Chat/conversations/{conversationId}/messages/{messageId}");
         return response.IsSuccessStatusCode;
+    }
+
+    // ! EditMessageAsync - edits a message content
+    // вызывается из Chat.razor при редактировании сообщения
+    public async Task<MessageDto?> EditMessageAsync(int conversationId, int messageId, string newContent)
+    {
+        await SetAuthHeaderAsync();
+        var dto = new { Content = newContent };
+        var response = await _http.PutAsJsonAsync(
+            $"api/Chat/conversations/{conversationId}/messages/{messageId}", dto);
+        if (response.IsSuccessStatusCode)
+            return await response.Content.ReadFromJsonAsync<MessageDto>();
+        return null;
     }
 
     // ! DeleteConversationAsync - deletes conversation via API

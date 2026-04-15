@@ -216,7 +216,16 @@
                                             {
                                                 <small class="fw-bold d-block">@msg.SenderName</small>
                                             }
-                                            <div>@msg.Content</div>
+                                            @if (_editingMessageId == msg.Id)
+                                            {
+                                                <input type="text" class="form-control form-control-sm" value="@_editMessageText"
+                                                       @oninput="OnEditMessageInput" @onkeydown="HandleEditKeyDown" @onblur="CommitEditMessage"
+                                                       @ref="_editMessageInput" style="font-size: 0.875rem;" />
+                                            }
+                                            else
+                                            {
+                                                <div>@msg.Content</div>
+                                            }
                                             @if (!string.IsNullOrEmpty(msg.ImageUrl))
                                             {
                                                 var imgUrl = ApiUrlService.GetImageUrl(msg.ImageUrl!);
@@ -231,6 +240,15 @@
                                                 var canDeleteOwn = CanDeleteOwnMessage();
                                                 var canDeleteOther = CanDeleteOtherMessage();
                                                 var canDeleteThisMessage = (isMine && canDeleteOwn) || (!isMine && canDeleteOther);
+                                                var canEditThisMessage = isMine && CanEditOwnMessage();
+                                            }
+                                            @if (canEditThisMessage)
+                                            {
+                                                <button class="btn btn-sm btn-link @(isMine ? "text-white-50" : "text-secondary") p-0 ms-2"
+                                                        style="font-size: 0.75rem;" @onclick="() => StartEditMessage(msg)"
+                                                        title="Редактировать">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
                                             }
                                             @if (canDeleteThisMessage)
                                             {
@@ -561,7 +579,7 @@
                     @if (_selectedConversation != null)
                     {
                         @foreach (var participant in _selectedConversation.Participants.Where(p => p.UserId !=
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           _currentUser?.Id))
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           _currentUser?.Id))
                         {
                             <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
                                 <span>
@@ -642,7 +660,7 @@
                     <p>Выберите новую роль:</p>
                     <div class="list-group">
                         @foreach (var role in new[] { "Moderator", "Member" }.Where(r => r !=
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 _changeRoleParticipant.RoleName))
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 _changeRoleParticipant.RoleName))
                         {
                             <button
                                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
@@ -722,6 +740,11 @@
     private HashSet<int> _selectedUserIds = new();
     private HashSet<int> _typingUserIds = new();
     private string? _typingUsers;
+
+    // Для редактирования сообщений
+    private int? _editingMessageId;
+    private string _editMessageText = "";
+    private ElementReference _editMessageInput;
 
     // Для меню чатов
     private int? _openMenuConversationId;
@@ -811,6 +834,7 @@
             ChatHub.OnMessageReceived += OnMessageReceived;
             ChatHub.OnUserTyping += OnUserTypingEvent;
             ChatHub.OnMessageDeleted += OnMessageDeletedEvent;
+            ChatHub.OnMessageEdited += OnMessageEditedEvent;
             ChatHub.OnConversationCreated += OnConversationCreatedEvent;
             await ChatHub.StartAsync(token);
         }
@@ -936,6 +960,111 @@
         await ChatHub.DeleteMessageAsync(messageId, _selectedConversation.Id);
     }
 
+    private void StartEditMessage(MessageDto message)
+    {
+        Console.WriteLine($"[Chat] StartEditMessage: messageId={message.Id}, convId={_selectedConversation?.Id}, content='{message.Content}'");
+        _editingMessageId = message.Id;
+        _editMessageText = message.Content;
+        StateHasChanged();
+
+        // Фокус на input после рендера
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(50);
+            await JS.InvokeVoidAsync("eval", $"document.querySelector('input[style*=\"font-size: 0.875rem\"]')?.focus();");
+        });
+    }
+
+    private void OnEditMessageInput(ChangeEventArgs e)
+    {
+        if (e.Value != null)
+            _editMessageText = e.Value.ToString() ?? "";
+        StateHasChanged();
+    }
+
+    private async Task HandleEditKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            Console.WriteLine($"[Chat] HandleEditKeyDown: Enter pressed, calling CommitEditMessage");
+            await CommitEditMessage();
+        }
+        else if (args.Key == "Escape")
+        {
+            Console.WriteLine($"[Chat] HandleEditKeyDown: Escape pressed, cancelling");
+            CancelEditMessage();
+        }
+    }
+
+    private async Task CommitEditMessage()
+    {
+        Console.WriteLine($"[Chat] CommitEditMessage: editingMessageId={_editingMessageId}, convId={_selectedConversation?.Id}, newText='{_editMessageText}'");
+
+        if (_editingMessageId == null || _selectedConversation == null)
+        {
+            Console.WriteLine($"[Chat] CommitEditMessage: ABORT — null check failed");
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(_editMessageText))
+        {
+            Console.WriteLine($"[Chat] CommitEditMessage: ABORT — empty text");
+            return;
+        }
+
+        var trimmedText = _editMessageText.Trim();
+        Console.WriteLine($"[Chat] CommitEditMessage: calling ChatHub.EditMessageAsync(convId={_selectedConversation.Id}, msgId={_editingMessageId.Value}, content='{trimmedText}')");
+
+        try
+        {
+            await ChatHub.EditMessageAsync(_editingMessageId.Value, _selectedConversation.Id, trimmedText);
+            Console.WriteLine($"[Chat] CommitEditMessage: EditMessageAsync SUCCESS");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[Chat] CommitEditMessage: EXCEPTION — {ex.Message}");
+        }
+
+        _editingMessageId = null;
+        _editMessageText = "";
+        StateHasChanged();
+        Console.WriteLine($"[Chat] CommitEditMessage: state cleared, DONE");
+    }
+
+    private void CancelEditMessage()
+    {
+        Console.WriteLine($"[Chat] CancelEditMessage: editingMessageId={_editingMessageId}");
+        _editingMessageId = null;
+        _editMessageText = "";
+        StateHasChanged();
+    }
+
+    private void OnMessageEditedEvent(MessageResponse message)
+    {
+        Console.WriteLine($"[Chat] OnMessageEditedEvent: messageId={message.Id}, convId={message.ConversationId}, newContent='{message.Content}'");
+
+        if (_selectedConversation?.Id == message.ConversationId)
+        {
+            var existingMsg = _messages.FirstOrDefault(m => m.Id == message.Id);
+            if (existingMsg != null)
+            {
+                existingMsg.Content = message.Content;
+                existingMsg.UpdatedAt = message.UpdatedAt;
+                Console.WriteLine($"[Chat] OnMessageEditedEvent: updated message in _messages");
+                StateHasChanged();
+            }
+        }
+
+        // Обновить в списке диалогов, если это последнее сообщение
+        var conv = _conversations.FirstOrDefault(c => c.Id == message.ConversationId);
+        if (conv != null && conv.LastMessage?.Id == message.Id)
+        {
+            conv.LastMessage.Content = message.Content;
+            conv.LastMessage.UpdatedAt = message.UpdatedAt;
+            Console.WriteLine($"[Chat] OnMessageEditedEvent: updated lastMessage in conversation list");
+            StateHasChanged();
+        }
+    }
+
     private void OnMessageReceived(MessageResponse message)
     {
         if (_selectedConversation != null && message.ConversationId == _selectedConversation.Id)
@@ -1007,6 +1136,12 @@
         {
             _messages.RemoveAll(m => m.Id == messageId);
             StateHasChanged();
+        }
+
+        // Если сообщение редактировалось, закрыть режим редактирования
+        if (_editingMessageId.HasValue && _editingMessageId == messageId)
+        {
+            CancelEditMessage();
         }
     }
 
@@ -1331,6 +1466,7 @@
         ChatHub.OnMessageReceived -= OnMessageReceived;
         ChatHub.OnUserTyping -= OnUserTypingEvent;
         ChatHub.OnMessageDeleted -= OnMessageDeletedEvent;
+        ChatHub.OnMessageEdited -= OnMessageEditedEvent;
         ChatHub.OnConversationCreated -= OnConversationCreatedEvent;
     }
 
@@ -1398,6 +1534,15 @@
         if (_selectedConversation == null || _currentUser == null) return false;
         var myRole = _selectedConversation.Participants.FirstOrDefault(p => p.UserId == _currentUser.Id)?.RoleName;
         return myRole is "Owner" or "Moderator";
+    }
+
+    private bool CanEditOwnMessage()
+    {
+        if (_selectedConversation == null || _currentUser == null) return false;
+        var myRole = _selectedConversation.Participants.FirstOrDefault(p => p.UserId == _currentUser.Id)?.RoleName;
+        if (myRole == null) return false;
+        if (myRole == "Member" && _selectedConversation.ConversationTypeName == "Channel") return false;
+        return true;
     }
 
     private bool IsOwner()
