@@ -559,6 +559,7 @@ MonoBehaviour:
   - {fileID: 632303796}
   - {fileID: 2144075226}
   heartSprite: {fileID: -205270267638800340, guid: 619a1be1dea6f26438f51214ed2823ea, type: 3}
+  autoCreateHearts: 1
 --- !u!1001 &433182844
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -617,7 +618,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6236634655636128774, guid: 4b215f39a514ce34ab97bbeeb2045f2e, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -1942,7 +1943,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   Score: 0
-  maxLives: 5
+  maxLives: 3
   Lives: 3
 --- !u!114 &1031321841
 MonoBehaviour:
@@ -2741,7 +2742,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2351660264675163466, guid: 9b4e1c113b686914991d9fc694b1fc8d, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2909481159230650220, guid: 9b4e1c113b686914991d9fc694b1fc8d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4095,7 +4096,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6236634655636128774, guid: bed116b8ff1df6542874ac1a2233dcf6, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

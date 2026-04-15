@@ -34,42 +34,51 @@ public class GameManager : MonoBehaviour
     public void AddScore(int amount)
     {
         Score += amount;
+        Debug.Log($"GameManager: Добавлено {amount} очков. Текущий счёт: {Score}");
         OnScoreChanged?.Invoke(Score);
     }
 
     public void ResetScore()
     {
+        Debug.Log("GameManager: Счёт сброшен");
         Score = 0;
         OnScoreChanged?.Invoke(Score);
     }
 
     public void AddLife(int amount = 1)
     {
+        int oldLives = Lives;
         Lives = Mathf.Min(Lives + amount, maxLives);
+        Debug.Log($"GameManager: Добавлено {amount} жизнь(и). Жизни: {oldLives} → {Lives}");
         OnLivesChanged?.Invoke(Lives);
     }
 
     public void RemoveLife(int amount = 1)
     {
+        int oldLives = Lives;
         Lives = Mathf.Max(Lives - amount, 0);
+        Debug.Log($"GameManager: Снято {amount} жизнь(и). Жизни: {oldLives} → {Lives}");
         OnLivesChanged?.Invoke(Lives);
 
         if (Lives <= 0)
         {
-            Debug.Log("Game Over! No lives left.");
+            Debug.Log("GameManager: Game Over! Все жизни потеряны.");
         }
     }
 
     public void ResetLives()
     {
+        Debug.Log($"GameManager: Жизни сброшены. {Lives} → {maxLives}");
         Lives = maxLives;
         OnLivesChanged?.Invoke(Lives);
     }
 
     public void SetMaxLives(int max)
     {
+        int oldMax = maxLives;
         maxLives = Mathf.Max(1, max);
         Lives = Mathf.Min(Lives, maxLives);
+        Debug.Log($"GameManager: Максимальное количество жизней изменено: {oldMax} → {maxLives}");
         OnLivesChanged?.Invoke(Lives);
     }
 

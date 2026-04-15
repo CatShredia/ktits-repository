@@ -41,15 +41,32 @@ public class HeartPickup : MonoBehaviour
         }
     }
 
+    void OnTriggerStay2D(Collider2D other)
+    {
+        // Блокируем повторный подбор при длительном контакте
+        if (other.CompareTag("Player") && !isPickedUp)
+        {
+            PickupHeart(other);
+        }
+    }
+
     private void PickupHeart(Collider2D playerCollider)
     {
+        // Блокируем повторный подбор сразу
+        if (isPickedUp) return;
         isPickedUp = true;
+
+        Debug.Log($"HeartPickup: Игрок подобрал сердце (+{lifeAmount} жизни)");
 
         // Добавляем жизни через GameManager
         if (GameManager.Instance != null)
         {
             GameManager.Instance.AddLife(lifeAmount);
             Debug.Log($"HeartPickup: Игрок получил {lifeAmount} жизнь(и)");
+        }
+        else
+        {
+            Debug.LogWarning("HeartPickup: GameManager не найден!");
         }
 
         // Визуальный эффект подбора
