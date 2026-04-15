@@ -579,7 +579,7 @@
                     @if (_selectedConversation != null)
                     {
                         @foreach (var participant in _selectedConversation.Participants.Where(p => p.UserId !=
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           _currentUser?.Id))
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           _currentUser?.Id))
                         {
                             <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
                                 <span>
@@ -660,7 +660,7 @@
                     <p>Выберите новую роль:</p>
                     <div class="list-group">
                         @foreach (var role in new[] { "Moderator", "Member" }.Where(r => r !=
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 _changeRoleParticipant.RoleName))
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 _changeRoleParticipant.RoleName))
                         {
                             <button
                                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
@@ -962,7 +962,6 @@
 
     private void StartEditMessage(MessageDto message)
     {
-        Console.WriteLine($"[Chat] StartEditMessage: messageId={message.Id}, convId={_selectedConversation?.Id}, content='{message.Content}'");
         _editingMessageId = message.Id;
         _editMessageText = message.Content;
         StateHasChanged();
@@ -986,53 +985,28 @@
     {
         if (args.Key == "Enter")
         {
-            Console.WriteLine($"[Chat] HandleEditKeyDown: Enter pressed, calling CommitEditMessage");
             await CommitEditMessage();
         }
         else if (args.Key == "Escape")
         {
-            Console.WriteLine($"[Chat] HandleEditKeyDown: Escape pressed, cancelling");
             CancelEditMessage();
         }
     }
 
     private async Task CommitEditMessage()
     {
-        Console.WriteLine($"[Chat] CommitEditMessage: editingMessageId={_editingMessageId}, convId={_selectedConversation?.Id}, newText='{_editMessageText}'");
+        if (_editingMessageId == null || _selectedConversation == null) return;
+        if (string.IsNullOrWhiteSpace(_editMessageText)) return;
 
-        if (_editingMessageId == null || _selectedConversation == null)
-        {
-            Console.WriteLine($"[Chat] CommitEditMessage: ABORT — null check failed");
-            return;
-        }
-        if (string.IsNullOrWhiteSpace(_editMessageText))
-        {
-            Console.WriteLine($"[Chat] CommitEditMessage: ABORT — empty text");
-            return;
-        }
-
-        var trimmedText = _editMessageText.Trim();
-        Console.WriteLine($"[Chat] CommitEditMessage: calling ChatHub.EditMessageAsync(convId={_selectedConversation.Id}, msgId={_editingMessageId.Value}, content='{trimmedText}')");
-
-        try
-        {
-            await ChatHub.EditMessageAsync(_editingMessageId.Value, _selectedConversation.Id, trimmedText);
-            Console.WriteLine($"[Chat] CommitEditMessage: EditMessageAsync SUCCESS");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[Chat] CommitEditMessage: EXCEPTION — {ex.Message}");
-        }
+        await ChatHub.EditMessageAsync(_editingMessageId.Value, _selectedConversation.Id, _editMessageText.Trim());
 
         _editingMessageId = null;
         _editMessageText = "";
         StateHasChanged();
-        Console.WriteLine($"[Chat] CommitEditMessage: state cleared, DONE");
     }
 
     private void CancelEditMessage()
     {
-        Console.WriteLine($"[Chat] CancelEditMessage: editingMessageId={_editingMessageId}");
         _editingMessageId = null;
         _editMessageText = "";
         StateHasChanged();
@@ -1040,8 +1014,6 @@
 
     private void OnMessageEditedEvent(MessageResponse message)
     {
-        Console.WriteLine($"[Chat] OnMessageEditedEvent: messageId={message.Id}, convId={message.ConversationId}, newContent='{message.Content}'");
-
         if (_selectedConversation?.Id == message.ConversationId)
         {
             var existingMsg = _messages.FirstOrDefault(m => m.Id == message.Id);
@@ -1049,7 +1021,6 @@
             {
                 existingMsg.Content = message.Content;
                 existingMsg.UpdatedAt = message.UpdatedAt;
-                Console.WriteLine($"[Chat] OnMessageEditedEvent: updated message in _messages");
                 StateHasChanged();
             }
         }
@@ -1060,7 +1031,6 @@
         {
             conv.LastMessage.Content = message.Content;
             conv.LastMessage.UpdatedAt = message.UpdatedAt;
-            Console.WriteLine($"[Chat] OnMessageEditedEvent: updated lastMessage in conversation list");
             StateHasChanged();
         }
     }
