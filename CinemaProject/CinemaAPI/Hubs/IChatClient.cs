@@ -26,6 +26,10 @@ public interface IChatClient
     Task MessageDeleted(int messageId, int conversationId);
 
 
+    // Сообщение было отредактировано
+    Task MessageEdited(MessageResponse message);
+
+
     // Новый чат создан (для участников)
     Task ConversationCreated(ConversationCreatedResponse conversation);
 }

@@ -190,6 +190,35 @@ public class ChatController : ControllerBase
         }
     }
 
+    // PUT /api/Chat/conversations/{conversationId}/messages/{messageId}
+    [HttpPut("conversations/{conversationId}/messages/{messageId}")]
+    public async Task<ActionResult<MessageDto>> EditMessage(int conversationId, int messageId, [FromBody] EditMessageDto dto)
+    {
+        var userId = _chatService.GetCurrentUserIdFromClaims(User);
+        if (userId == null)
+            return Unauthorized();
+
+        var isAdmin = User.IsInRole("admin");
+
+        try
+        {
+            var result = await _chatService.EditMessageAsync(messageId, conversationId, userId.Value, dto.Content, isAdmin);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(403, ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     // DELETE /api/Chat/conversations/{id}
     [HttpDelete("conversations/{conversationId}")]
     public async Task<IActionResult> DeleteConversation(int conversationId)

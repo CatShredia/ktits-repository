@@ -31,3 +31,10 @@ public class SendMessageWithImageDto
     [StringLength(1000, ErrorMessage = "Message content must not exceed 1000 characters")]
     public string? Content { get; set; }
 }
+
+public class EditMessageDto
+{
+    [Required]
+    [StringLength(1000, MinimumLength = 1, ErrorMessage = "Message content must be between 1 and 1000 characters")]
+    public string Content { get; set; } = string.Empty;
+}

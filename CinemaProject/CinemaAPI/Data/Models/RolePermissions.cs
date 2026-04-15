@@ -20,6 +20,15 @@ public static class RolePermissions
         };
     }
 
+    public static bool CanEditOwnMessage(string roleName, string conversationTypeName)
+    {
+        return (roleName, conversationTypeName) switch
+        {
+            ("Member", "Channel") => false, // Member в Channel только читает
+            _ => true
+        };
+    }
+
     public static bool CanDeleteOtherMessage(string roleName)
     {
         return roleName is "Owner" or "Moderator";

@@ -17,6 +17,7 @@ public interface IChatService
     Task<List<MessageDto>> GetConversationMessagesAsync(int conversationId, int userId);
     Task<MessageDto> SendMessageAsync(int conversationId, int userId, string content, IFormFile? imageFile = null);
     Task DeleteMessageAsync(int messageId, int conversationId, int userId, bool isAdmin);
+    Task<MessageDto> EditMessageAsync(int messageId, int conversationId, int userId, string newContent, bool isAdmin = false);
     Task DeleteConversationAsync(int conversationId, int userId);
     Task<ConversationDto> AddParticipantsAsync(int conversationId, List<int> userIds, int currentUserId);
     Task RemoveParticipantAsync(int conversationId, int userIdToRemove, int currentUserId);
@@ -398,6 +399,78 @@ public class ChatService : IChatService
 
         _logger.LogInformation("User {UserId} deleted message {MessageId} from conversation {ConversationId}",
             userId, messageId, conversationId);
+    }
+
+    public async Task<MessageDto> EditMessageAsync(int messageId, int conversationId, int userId, string newContent, bool isAdmin = false)
+    {
+        var message = await _context.Messages
+            .Include(m => m.Sender)
+            .FirstOrDefaultAsync(m => m.Id == messageId);
+
+        if (message == null)
+            throw new KeyNotFoundException("Message not found");
+
+        if (message.SenderId != userId && !isAdmin)
+            throw new UnauthorizedAccessException("You can only edit your own messages");
+
+        var conversation = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
+
+        if (conversation == null)
+            throw new KeyNotFoundException("Conversation not found");
+
+        // Для Comments проверка не нужна
+        if (conversation.ConversationType.Name != "Comments")
+        {
+            var participant = await _context.ConversationParticipants
+                .Include(p => p.Role)
+                .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+
+            if (participant == null)
+                throw new UnauthorizedAccessException("You are not a participant of this conversation");
+
+            if (!RolePermissions.CanEditOwnMessage(participant.Role.Name, conversation.ConversationType.Name))
+                throw new UnauthorizedAccessException("You don't have permission to edit messages in this conversation");
+        }
+
+        if (string.IsNullOrWhiteSpace(newContent) || newContent.Length > 1000)
+            throw new ArgumentException("Message content must be between 1 and 1000 characters");
+
+        message.Content = newContent;
+        message.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        var messageDto = new MessageDto
+        {
+            Id = message.Id,
+            ConversationId = message.ConversationId,
+            SenderId = message.SenderId,
+            SenderName = $"{message.Sender.Surname} {message.Sender.Name}",
+            Content = message.Content,
+            ImageUrl = message.ImageUrl,
+            CreatedAt = message.CreatedAt,
+            UpdatedAt = message.UpdatedAt
+        };
+
+        // Broadcast via SignalR
+        await _hubContext.Clients.Group(GetConversationGroupName(conversationId))
+            .MessageEdited(new MessageResponse
+            {
+                Id = messageDto.Id,
+                ConversationId = messageDto.ConversationId,
+                SenderId = messageDto.SenderId,
+                SenderName = messageDto.SenderName,
+                Content = messageDto.Content,
+                ImageUrl = messageDto.ImageUrl,
+                CreatedAt = messageDto.CreatedAt,
+                UpdatedAt = messageDto.UpdatedAt
+            });
+
+        _logger.LogInformation("User {UserId} edited message {MessageId} in conversation {ConversationId}",
+            userId, messageId, conversationId);
+
+        return messageDto;
     }
 
     public async Task DeleteConversationAsync(int conversationId, int userId)

@@ -280,6 +280,123 @@ public class ChatHub : Hub<IChatClient>
             userId.Value, messageId, conversationId);
     }
 
+    // ! EditMessage - edits message content based on role permissions
+    // вызывается из CinemaBlazor через ChatHubService.EditMessageAsync
+    public async Task EditMessage(int messageId, int conversationId, string newContent)
+    {
+        Console.WriteLine($"[HUB EditMessage] START: messageId={messageId}, conversationId={conversationId}, content='{newContent}'");
+
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            Console.WriteLine($"[HUB EditMessage] FAIL: userId is null");
+            return;
+        }
+        Console.WriteLine($"[HUB EditMessage] userId={userId.Value}");
+
+        var message = await _context.Messages.FindAsync(messageId);
+        if (message == null || message.ConversationId != conversationId)
+        {
+            Console.WriteLine($"[HUB EditMessage] FAIL: message not found or mismatch. message={message?.ToString() ?? "null"}, msg.ConvId={message?.ConversationId}, expected={conversationId}");
+            return;
+        }
+        Console.WriteLine($"[HUB EditMessage] message found: id={message.Id}, convId={message.ConversationId}, senderId={message.SenderId}, content='{message.Content}'");
+
+        var conversation = await _context.Conversations
+            .Include(c => c.ConversationType)
+            .FirstOrDefaultAsync(c => c.Id == conversationId);
+        if (conversation == null)
+        {
+            Console.WriteLine($"[HUB EditMessage] FAIL: conversation {conversationId} not found");
+            return;
+        }
+        Console.WriteLine($"[HUB EditMessage] conversation found: id={conversationId}, type={conversation.ConversationType.Name}");
+
+        // Для Comments проверка участника не нужна
+        ConversationParticipant? participant = null;
+        if (conversation.ConversationType.Name != "Comments")
+        {
+            participant = await _context.ConversationParticipants
+                .Include(p => p.Role)
+                .FirstOrDefaultAsync(p => p.ConversationId == conversationId && p.UserId == userId);
+
+            if (participant == null)
+            {
+                Console.WriteLine($"[HUB EditMessage] FAIL: participant not found (convId={conversationId}, userId={userId.Value})");
+                return;
+            }
+            Console.WriteLine($"[HUB EditMessage] participant found, role={participant.Role.Name}");
+        }
+        else
+        {
+            // Для Comments — виртуальный участник
+            var memberRole = await _context.ConversationRoles.FirstAsync(r => r.Name == "Member");
+            participant = new ConversationParticipant { Role = memberRole };
+            Console.WriteLine($"[HUB EditMessage] Comments type, virtual participant role=Member");
+        }
+
+        // Проверка прав на редактирование
+        var isOwnMessage = message.SenderId == userId.Value;
+        bool canEdit;
+
+        if (isOwnMessage)
+        {
+            canEdit = RolePermissions.CanEditOwnMessage(participant.Role.Name, conversation.ConversationType.Name);
+            Console.WriteLine($"[HUB EditMessage] own message, canEdit={canEdit}, role={participant.Role.Name}, convType={conversation.ConversationType.Name}");
+        }
+        else
+        {
+            canEdit = false; // Редактировать можно только свои сообщения
+            Console.WriteLine($"[HUB EditMessage] NOT own message, canEdit=false");
+        }
+
+        if (!canEdit)
+        {
+            Console.WriteLine($"[HUB EditMessage] FAIL: no permission to edit");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(newContent) || newContent.Length > 1000)
+        {
+            Console.WriteLine($"[HUB EditMessage] FAIL: content invalid (length={newContent?.Length})");
+            return;
+        }
+
+        message.Content = newContent;
+        message.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+        Console.WriteLine($"[HUB EditMessage] message updated in DB");
+
+        var sender = await _context.Users.FindAsync(userId.Value);
+        if (sender == null)
+        {
+            Console.WriteLine($"[HUB EditMessage] FAIL: sender not found");
+            return;
+        }
+        Console.WriteLine($"[HUB EditMessage] sender found: {sender.Surname} {sender.Name}");
+
+        var messageResponse = new MessageResponse
+        {
+            Id = message.Id,
+            ConversationId = message.ConversationId,
+            SenderId = message.SenderId,
+            SenderName = $"{sender.Surname} {sender.Name}",
+            Content = message.Content,
+            ImageUrl = message.ImageUrl,
+            CreatedAt = message.CreatedAt,
+            UpdatedAt = message.UpdatedAt
+        };
+
+        var groupName = GetConversationGroupName(conversationId);
+        Console.WriteLine($"[HUB EditMessage] broadcasting MessageEdited to group {groupName}");
+        await Clients.Group(groupName)
+            .MessageEdited(messageResponse);
+        Console.WriteLine($"[HUB EditMessage] broadcast done");
+
+        _logger.LogInformation("User {UserId} edited message {MessageId} in conversation {ConversationId}",
+            userId.Value, messageId, conversationId);
+    }
+
     // ! OnConnectedAsync - called when client connects to SignalR hub
     // вызывается автоматически при подключении клиента к SignalR
     public override async Task OnConnectedAsync()
