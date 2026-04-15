@@ -3,6 +3,7 @@ using UnityEngine;
 /// <summary>
 /// Движущаяся платформа: перемещается по заданным точкам.
 /// Вешается на платформу с Rigidbody2D (Kinematic) и Collider2D.
+/// Игрок, стоящий на платформе, перемещается вместе с ней.
 /// </summary>
 public class MovingPlatform : MonoBehaviour
 {
@@ -23,10 +24,23 @@ public class MovingPlatform : MonoBehaviour
     [Tooltip("Зацикленное движение")]
     public bool loop = true;
 
+    [Header("Player Settings")]
+    [Tooltip("Тег игрока для определения столкновения")]
+    public string playerTag = "Player";
+
     private int currentWaypointIndex = 0;
     private int direction = 1; // 1 = вперёд, -1 = назад
     private bool isWaiting = false;
     private float waitTimer;
+
+    // Список игроков, стоящих на платформе
+    private System.Collections.Generic.HashSet<Transform> playersOnPlatform = new System.Collections.Generic.HashSet<Transform>();
+    private Vector3 lastPlatformPosition;
+
+    void Start()
+    {
+        lastPlatformPosition = transform.position;
+    }
 
     void Update()
     {
@@ -43,6 +57,18 @@ public class MovingPlatform : MonoBehaviour
 
         Transform target = waypoints[currentWaypointIndex];
         transform.position = Vector3.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
+
+        // Перемещаем всех игроков, стоящих на платформе
+        foreach (var player in playersOnPlatform)
+        {
+            if (player != null)
+            {
+                Vector3 platformDelta = transform.position - lastPlatformPosition;
+                player.position += platformDelta;
+            }
+        }
+
+        lastPlatformPosition = transform.position;
 
         if (Vector3.Distance(transform.position, target.position) < 0.01f)
         {
@@ -73,6 +99,40 @@ public class MovingPlatform : MonoBehaviour
                 currentWaypointIndex = 0;
                 direction = 1;
             }
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag(playerTag))
+        {
+            playersOnPlatform.Add(collision.transform);
+            Debug.Log("MovingPlatform: Игрок встал на платформу");
+        }
+    }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag(playerTag))
+        {
+            // Проверяем, находится ли игрок сверху платформы
+            if (collision.transform.position.y >= transform.position.y - 0.1f)
+            {
+                if (!playersOnPlatform.Contains(collision.transform))
+                {
+                    playersOnPlatform.Add(collision.transform);
+                    Debug.Log("MovingPlatform: Игрок встал на платформу (через Stay)");
+                }
+            }
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag(playerTag))
+        {
+            playersOnPlatform.Remove(collision.transform);
+            Debug.Log("MovingPlatform: Игрок покинул платформу");
         }
     }
 

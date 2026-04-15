@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6de59aba4d0b924295da2b4515bc729, type: 3}
-  m_Name: FirstLevelData
+  m_Name: ThirdLevel
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
-  levelPrefab: {fileID: 2351660264675163466, guid: 9b4e1c113b686914991d9fc694b1fc8d, type: 3}
-  spawnOffset: {x: 11.94, y: 0.02414563, z: 0}
-  playerSpawnPosition: {x: 0, y: 0, z: 0}
-  spawnPlayerPoint: {x: 0, y: 0, z: 0}
+  levelPrefab: {fileID: 6236634655636128774, guid: 4b215f39a514ce34ab97bbeeb2045f2e, type: 3}
+  spawnOffset: {x: 85.46748, y: -3.24, z: 0}
+  playerSpawnPosition: {x: 78.93, y: -0.79, z: 0}
+  spawnPlayerPoint: {x: 78.93, y: -0.79, z: 0}
   useSpawnPlayerPoint: 0
-  loadDistance: 25
-  unloadDistance: 25
+  loadDistance: 40
+  unloadDistance: 40
