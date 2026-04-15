@@ -49,7 +49,18 @@ public class SelectedLevelLoader : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
-            Vector3 spawnPos = selectedLevel.spawnOffset;
+            Vector3 spawnPos;
+            if (selectedLevel.useSpawnPlayerPoint)
+            {
+                spawnPos = selectedLevel.spawnPlayerPoint;
+                Debug.Log($"SelectedLevelLoader: Используем spawnPlayerPoint для спавна игрока на {spawnPos}");
+            }
+            else
+            {
+                spawnPos = selectedLevel.playerSpawnPosition;
+                Debug.Log($"SelectedLevelLoader: Используем playerSpawnPosition для спавна игрока на {spawnPos}");
+            }
+
             player.transform.position = spawnPos;
             Debug.Log($"SelectedLevelLoader: Игрок перемещён на {spawnPos}");
         }

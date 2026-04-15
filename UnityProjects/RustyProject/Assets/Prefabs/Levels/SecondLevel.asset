@@ -14,5 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelPrefab: {fileID: 6236634655636128774, guid: bed116b8ff1df6542874ac1a2233dcf6, type: 3}
   spawnOffset: {x: 43.91, y: -6, z: 0}
+  playerSpawnPosition: {x: 37.66, y: -3.5, z: 0}
+  spawnPlayerPoint: {x: 37.66, y: -3.5, z: 0}
+  useSpawnPlayerPoint: 0
   loadDistance: 40
   unloadDistance: 40
