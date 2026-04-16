@@ -63,8 +63,11 @@ public class GameManager : MonoBehaviour
         if (Lives <= 0)
         {
             Debug.Log("GameManager: Game Over! Все жизни потеряны.");
+            OnGameOver?.Invoke();
         }
     }
+
+    public event System.Action OnGameOver;
 
     public void ResetLives()
     {
