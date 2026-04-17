@@ -68,7 +68,6 @@ public class HeartUI : MonoBehaviour
 
         if (maxHearts <= currentHearts) return;
 
-        Debug.Log($"HeartUI: Автоматическое создание {maxHearts - currentHearts} сердец");
 
         // Создаём недостающие сердца
         System.Array.Resize(ref heartImages, maxHearts);
@@ -98,7 +97,6 @@ public class HeartUI : MonoBehaviour
 
     private void UpdateHeartUI(int lives)
     {
-        Debug.Log($"HeartUI: Обновление отображения жизней: {lives}");
 
         for (int i = 0; i < heartImages.Length; i++)
         {
@@ -112,13 +110,11 @@ public class HeartUI : MonoBehaviour
                 {
                     heartImages[i].sprite = heartSprite;
                 }
-                Debug.Log($"HeartUI: Сердце {i + 1} активировано");
             }
             else
             {
                 // Скрываем сердце
                 heartImages[i].gameObject.SetActive(false);
-                Debug.Log($"HeartUI: Сердце {i + 1} скрыто");
             }
         }
     }

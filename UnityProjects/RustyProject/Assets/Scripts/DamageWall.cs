@@ -17,8 +17,15 @@ public class DamageWall : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            string levelName = LevelManager.Instance?.ActiveLevelData?.name ?? "StartZone";
+            Debug.Log($"[Damage] Уровень получения урона (DamageWall): '{levelName}'");
+
             GameManager.Instance.RemoveLife(damageAmount);
-            other.transform.position = respawnPosition;
+
+            if (LevelManager.Instance != null && LevelManager.Instance.ActiveLevelData != null)
+                LevelManager.Instance.RespawnPlayer();
+            else
+                other.transform.position = respawnPosition;
         }
     }
 }

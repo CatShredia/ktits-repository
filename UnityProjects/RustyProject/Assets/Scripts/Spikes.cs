@@ -73,12 +73,11 @@ public class Spikes : MonoBehaviour
 
         lastDamageTime = Time.time;
 
-        // Наносим урон через GameManager
+        string levelName = LevelManager.Instance?.ActiveLevelData?.name ?? "StartZone";
+        Debug.Log($"[Damage] Уровень получения урона (Spikes): '{levelName}'");
+
         if (GameManager.Instance != null)
-        {
             GameManager.Instance.RemoveLife(damage);
-            Debug.Log($"Spikes: Игрок получил {damage} урона от шипов (поведение: {behaviorType})");
-        }
 
         // Обработка поведения в зависимости от типа
         switch (behaviorType)
@@ -117,46 +116,10 @@ public class Spikes : MonoBehaviour
     /// </summary>
     private void ApplyTeleport(Collider2D playerCollider)
     {
-        Vector3 targetPosition = Vector3.zero;
-
-        // Получаем координаты спавна из LevelData текущего уровня
-        if (LevelManager.Instance != null)
-        {
-            LevelData currentLevel = LevelManager.Instance.GetCurrentLevelData();
-            if (currentLevel != null)
-            {
-                // Используем spawnPlayerPoint, если задан, иначе playerSpawnPosition
-                if (currentLevel.useSpawnPlayerPoint)
-                {
-                    targetPosition = currentLevel.spawnPlayerPoint;
-                }
-                else
-                {
-                    targetPosition = currentLevel.playerSpawnPosition;
-                }
-                Debug.Log($"Spikes: Телепортация на spawn point уровня '{currentLevel.name}': {targetPosition}");
-            }
-            else
-            {
-                Debug.LogWarning("Spikes: Текущий уровень не найден, телепортация невозможна");
-                return;
-            }
-        }
+        if (LevelManager.Instance != null && LevelManager.Instance.ActiveLevelData != null)
+            LevelManager.Instance.RespawnPlayer();
         else
-        {
-            Debug.LogWarning("Spikes: LevelManager не найден, телепортация невозможна");
-            return;
-        }
-
-        // Перемещаем игрока
-        playerCollider.transform.position = targetPosition;
-
-        // Сбрасываем скорость игрока
-        Rigidbody2D playerRb = playerCollider.GetComponent<Rigidbody2D>();
-        if (playerRb != null)
-        {
-            playerRb.linearVelocity = Vector2.zero;
-        }
+            Debug.LogWarning("Spikes: LevelManager или ActiveLevelData не найдены, телепортация невозможна");
     }
 
     private void FlashVisual()

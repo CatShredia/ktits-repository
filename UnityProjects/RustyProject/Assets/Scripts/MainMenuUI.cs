@@ -26,6 +26,10 @@ public class MainMenuUI : MonoBehaviour
     [Tooltip("Название игровой сцены для кнопки 'Старт'")]
     public string gameSceneName = "SampleScene";
 
+    [Header("Panels")]
+    [Tooltip("Панель выбора уровней")]
+    public GameObject levelSelectPanel;
+
     void OnEnable()
     {
         Debug.Log("=== MainMenuUI: OnEnable вызван ===");
@@ -47,6 +51,12 @@ public class MainMenuUI : MonoBehaviour
     void Start()
     {
         Debug.Log("=== MainMenuUI: Start вызван ===");
+
+        if (PlayerPrefs.GetInt("OpenLevelSelect", 0) == 1)
+        {
+            PlayerPrefs.DeleteKey("OpenLevelSelect");
+            OpenLevelSelect();
+        }
 
         if (menuAnimator == null)
         {
@@ -129,6 +139,17 @@ public class MainMenuUI : MonoBehaviour
         yield return new WaitForSeconds(delay);
         Debug.Log($"Загрузка сцены: {gameSceneName}");
         SceneManager.LoadScene(gameSceneName);
+    }
+
+    /// <summary>
+    /// Кнопка "Выбрать уровень" — открывает панель выбора уровней.
+    /// Привяжите к кнопке через Inspector: On Click → MainMenuUI.OpenLevelSelect
+    /// </summary>
+    public void OpenLevelSelect()
+    {
+        Debug.Log("Открыть выбор уровня");
+        if (levelSelectPanel != null)
+            levelSelectPanel.SetActive(true);
     }
 
     /// <summary>

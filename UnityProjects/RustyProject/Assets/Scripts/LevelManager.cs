@@ -23,6 +23,71 @@ public class LevelManager : MonoBehaviour
     /// <summary> Вызывается при смене уровня. Сбрасывает звёзды. </summary>
     public event Action OnLevelChanged;
 
+    /// <summary> Активный уровень, в котором сейчас находится игрок </summary>
+    public LevelData ActiveLevelData { get; private set; }
+
+    public void SetActiveLevel(LevelData levelData)
+    {
+        ActiveLevelData = levelData;
+    }
+
+    /// <summary>
+    /// Сохраняет индекс активного уровня в PlayerPrefs, чтобы SelectedLevelLoader мог его восстановить после перезагрузки сцены.
+    /// </summary>
+    public void SaveActiveLevelIndex(LevelData[] levels)
+    {
+        if (ActiveLevelData == null || levels == null) return;
+        for (int i = 0; i < levels.Length; i++)
+        {
+            if (levels[i] == ActiveLevelData)
+            {
+                PlayerPrefs.SetInt("SelectedLevelIndex", i);
+                PlayerPrefs.Save();
+                return;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Respawn игрока: перезагружает активный уровень (если выгружен) и телепортирует игрока на spawn point.
+    /// </summary>
+    public void RespawnPlayer()
+    {
+        if (ActiveLevelData == null)
+        {
+            Debug.LogWarning("LevelManager: ActiveLevelData не задан, respawn невозможен.");
+            return;
+        }
+
+        // Перезагружаем уровень если он был выгружен
+        bool isLoaded = false;
+        foreach (var lvl in loadedLevels)
+        {
+            if (lvl.data == ActiveLevelData) { isLoaded = true; break; }
+        }
+        if (!isLoaded)
+        {
+            ResetStars();
+            Vector3 finalPosition = ActiveLevelData.spawnOffset;
+            GameObject levelInstance = Instantiate(ActiveLevelData.levelPrefab, finalPosition, Quaternion.identity);
+            loadedLevels.Add(new LoadedLevel { instance = levelInstance, data = ActiveLevelData });
+            OnLevelChanged?.Invoke();
+        }
+
+        // Телепортируем игрока
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Vector3 spawnPos = ActiveLevelData.useSpawnPlayerPoint
+                ? ActiveLevelData.spawnPlayerPoint
+                : ActiveLevelData.playerSpawnPosition;
+            player.transform.position = spawnPos;
+            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+            if (rb != null) rb.linearVelocity = Vector2.zero;
+            Debug.Log($"[Respawn] Уровень смерти: '{ActiveLevelData.name}' → возрождение на {spawnPos}");
+        }
+    }
+
     void Awake()
     {
         if (Instance == null)
@@ -39,10 +104,7 @@ public class LevelManager : MonoBehaviour
     public void LoadLevel(LevelData levelData, Vector3 spawnPosition)
     {
         if (levelData == null || levelData.levelPrefab == null)
-        {
-            Debug.LogWarning("LevelManager: LevelData или префаб не указаны!");
             return;
-        }
 
         // Проверяем, загружен ли уже этот уровень
         foreach (var lvl in loadedLevels)

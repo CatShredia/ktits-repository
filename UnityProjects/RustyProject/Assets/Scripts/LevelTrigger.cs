@@ -49,6 +49,14 @@ public class LevelTrigger : MonoBehaviour
         isPlayerNear = true;
     }
 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player") && levelData != null)
+        {
+            LevelManager.Instance.SetActiveLevel(levelData);
+        }
+    }
+
     private void UnloadLevel()
     {
         LevelManager.Instance.UnloadLevel(levelData);

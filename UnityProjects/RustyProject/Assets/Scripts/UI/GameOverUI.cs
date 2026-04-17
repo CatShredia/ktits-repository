@@ -12,6 +12,7 @@ public class GameOverUI : MonoBehaviour
     [Header("Buttons")]
     public Button restartButton;
     public Button mainMenuButton;
+    public Button levelSelectButton;
 
     [Header("References")]
     [Tooltip("Ссылка на объект игрока")]
@@ -19,6 +20,9 @@ public class GameOverUI : MonoBehaviour
 
     [Tooltip("Скрипт движения игрока (будет отключен при Game Over)")]
     public PlayerMovement playerMovementScript;
+
+    [Tooltip("Ссылка на SelectedLevelLoader для сохранения индекса уровня перед рестартом")]
+    public SelectedLevelLoader selectedLevelLoader;
 
     [Header("Animation")]
     public float fadeInTime = 0.5f;
@@ -40,16 +44,18 @@ public class GameOverUI : MonoBehaviour
         if (mainMenuButton == null)
             mainMenuButton = transform.Find("MainMenuButton")?.GetComponent<Button>();
 
+        if (levelSelectButton == null)
+            levelSelectButton = transform.Find("LevelSelectButton")?.GetComponent<Button>();
+
         // Авто-поиск игрока, если не назначен
         if (playerObject == null)
-        {
             playerObject = GameObject.FindGameObjectWithTag("Player");
-        }
 
         if (playerMovementScript == null && playerObject != null)
-        {
             playerMovementScript = playerObject.GetComponent<PlayerMovement>();
-        }
+
+        if (selectedLevelLoader == null)
+            selectedLevelLoader = FindFirstObjectByType<SelectedLevelLoader>();
 
         canvasGroup = GetComponent<CanvasGroup>();
         if (canvasGroup == null)
@@ -80,6 +86,9 @@ public class GameOverUI : MonoBehaviour
 
         if (mainMenuButton != null)
             mainMenuButton.onClick.AddListener(GoToMainMenu);
+
+        if (levelSelectButton != null)
+            levelSelectButton.onClick.AddListener(GoToLevelSelect);
     }
 
     private void ShowMenu()
@@ -149,13 +158,15 @@ public class GameOverUI : MonoBehaviour
     {
         Debug.Log("GameOverUI: Restart");
 
+        if (LevelManager.Instance != null && selectedLevelLoader != null)
+            LevelManager.Instance.SaveActiveLevelIndex(selectedLevelLoader.levels);
+
         if (GameManager.Instance != null)
         {
             GameManager.Instance.ResetScore();
             GameManager.Instance.ResetLives();
         }
 
-        // Сцена перезагрузится, и скрипт движения включится автоматически в Start() нового объекта
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -169,6 +180,21 @@ public class GameOverUI : MonoBehaviour
             GameManager.Instance.ResetLives();
         }
 
+        SceneManager.LoadScene("SystemUIs");
+    }
+
+    private void GoToLevelSelect()
+    {
+        Debug.Log("GameOverUI: Level Select");
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ResetScore();
+            GameManager.Instance.ResetLives();
+        }
+
+        PlayerPrefs.SetInt("OpenLevelSelect", 1);
+        PlayerPrefs.Save();
         SceneManager.LoadScene("SystemUIs");
     }
 

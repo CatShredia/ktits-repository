@@ -57,10 +57,7 @@ public class Enemy : MonoBehaviour
     {
         animator = GetComponent<Animator>();
 
-        if (waypoints == null || waypoints.Length < 2)
-        {
-            Debug.LogWarning("Enemy: Нужно минимум 2 точки для движения!");
-        }
+        if (waypoints == null || waypoints.Length < 2) return;
     }
 
     void Update()
@@ -135,11 +132,7 @@ public class Enemy : MonoBehaviour
 
         PlayerMovement player = other.GetComponent<PlayerMovement>();
         Rigidbody2D playerRb = other.GetComponent<Rigidbody2D>();
-        if (player == null || playerRb == null)
-        {
-            Debug.LogWarning("[Enemy] Не удалось получить PlayerMovement или Rigidbody2D!");
-            return;
-        }
+        if (player == null || playerRb == null) return;
 
         // Проверяем, прыгнул ли игрок сверху
         bool isAbove = other.transform.position.y > transform.position.y;
@@ -155,11 +148,11 @@ public class Enemy : MonoBehaviour
         }
         else if (Time.time > lastDamageTime + damageCooldown)
         {
-            // Игрок получил урон от врага
             lastDamageTime = Time.time;
+            string levelName = LevelManager.Instance?.ActiveLevelData?.name ?? "StartZone";
+            Debug.Log($"[Damage] Уровень получения урона (Enemy): '{levelName}'");
             GameManager.Instance.RemoveLife(damageToPlayer);
 
-            // Отталкивание игрока
             Vector2 knockbackDir = other.transform.position - transform.position;
             knockbackDir.y = 0f;
             knockbackDir.Normalize();

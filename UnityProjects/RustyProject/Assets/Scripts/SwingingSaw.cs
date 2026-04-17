@@ -52,15 +52,15 @@ public class SwingingSaw : MonoBehaviour
         if (other.CompareTag("Player") && Time.time > lastDamageTime + damageCooldown)
         {
             lastDamageTime = Time.time;
+            string levelName = LevelManager.Instance?.ActiveLevelData?.name ?? "StartZone";
+            Debug.Log($"[Damage] Уровень получения урона (SwingingSaw): '{levelName}'");
             GameManager.Instance.RemoveLife(damageAmount);
 
-            // Обработка поведения в зависимости от типа
             switch (behaviorType)
             {
                 case SpikeBehavior.Knockback:
                     ApplyKnockbackToPlayer(other);
                     break;
-
                 case SpikeBehavior.Teleport:
                     ApplyTeleportToPlayer(other);
                     break;
@@ -105,45 +105,9 @@ public class SwingingSaw : MonoBehaviour
     /// </summary>
     private void ApplyTeleportToPlayer(Collider2D playerCollider)
     {
-        Vector3 targetPosition = Vector3.zero;
-
-        // Получаем координаты спавна из LevelData текущего уровня
-        if (LevelManager.Instance != null)
-        {
-            LevelData currentLevel = LevelManager.Instance.GetCurrentLevelData();
-            if (currentLevel != null)
-            {
-                // Используем spawnPlayerPoint, если задан, иначе playerSpawnPosition
-                if (currentLevel.useSpawnPlayerPoint)
-                {
-                    targetPosition = currentLevel.spawnPlayerPoint;
-                }
-                else
-                {
-                    targetPosition = currentLevel.playerSpawnPosition;
-                }
-                Debug.Log($"SwingingSaw: Телепортация на spawn point уровня '{currentLevel.name}': {targetPosition}");
-            }
-            else
-            {
-                Debug.LogWarning("SwingingSaw: Текущий уровень не найден, телепортация невозможна");
-                return;
-            }
-        }
+        if (LevelManager.Instance != null && LevelManager.Instance.ActiveLevelData != null)
+            LevelManager.Instance.RespawnPlayer();
         else
-        {
-            Debug.LogWarning("SwingingSaw: LevelManager не найден, телепортация невозможна");
-            return;
-        }
-
-        // Перемещаем игрока
-        playerCollider.transform.position = targetPosition;
-
-        // Сбрасываем скорость игрока
-        Rigidbody2D playerRb = playerCollider.GetComponent<Rigidbody2D>();
-        if (playerRb != null)
-        {
-            playerRb.linearVelocity = Vector2.zero;
-        }
+            Debug.LogWarning("SwingingSaw: LevelManager или ActiveLevelData не найдены, телепортация невозможна");
     }
 }
