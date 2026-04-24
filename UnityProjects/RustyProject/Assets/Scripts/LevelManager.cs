@@ -1,6 +1,9 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using RustyProject.Network;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
@@ -16,6 +19,10 @@ public class LevelManager : MonoBehaviour
     [Tooltip("Насколько выше верхней границы уровня автоматически ставить звезды")]
     public float autoStarHeightOffset = 0.5f;
 
+    [Header("Scene Settings")]
+    [Tooltip("Сцена главного меню, которая откроется после сбора последней звезды на последнем уровне")]
+    public string mainMenuSceneName = "SystemUIs";
+
     private class LoadedLevel
     {
         public GameObject instance;
@@ -25,6 +32,7 @@ public class LevelManager : MonoBehaviour
     private List<LoadedLevel> loadedLevels = new List<LoadedLevel>();
     private readonly Dictionary<LevelData, bool[]> levelStars = new Dictionary<LevelData, bool[]>();
     private readonly Dictionary<LevelData, int> levelOrder = new Dictionary<LevelData, int>();
+    private bool isTransitioningToMainMenu;
 
     /// <summary> Вызывается при сборе любой звезды. Аргумент — индекс (0, 1, 2) </summary>
     public event Action<int> OnStarCollected;
@@ -60,6 +68,7 @@ public class LevelManager : MonoBehaviour
     {
         levelStars.Clear();
         ActiveLevelData = null;
+        isTransitioningToMainMenu = false;
     }
 
     public bool CanLoadLevel(LevelData levelData)
@@ -141,6 +150,16 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if (!Input.GetKeyDown(KeyCode.Escape)) return;
+
+        string activeSceneName = SceneManager.GetActiveScene().name;
+        if (activeSceneName == mainMenuSceneName) return;
+
+        ReturnToMainMenu();
+    }
+
     public void LoadLevel(LevelData levelData, Vector3 spawnPosition)
     {
         if (levelData == null || levelData.levelPrefab == null)
@@ -170,6 +189,7 @@ public class LevelManager : MonoBehaviour
             {
                 Destroy(loadedLevels[i].instance);
                 loadedLevels.RemoveAt(i);
+                UpdateActiveLevelAfterUnload(levelData);
                 return;
             }
         }
@@ -198,6 +218,15 @@ public class LevelManager : MonoBehaviour
         if (levelData == ActiveLevelData)
         {
             OnStarCollected?.Invoke(index);
+        }
+
+        if (levelData == ActiveLevelData && GetCollectedStarCount(levelData) >= StarsPerLevel && IsLastLevel(levelData))
+        {
+            _ = CompleteFinalLevelAsync(levelData);
+        }
+        else if (levelData == ActiveLevelData)
+        {
+            _ = SyncProgressAsync(levelData);
         }
     }
 
@@ -433,5 +462,82 @@ public class LevelManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    private bool IsLastLevel(LevelData levelData)
+    {
+        if (levelData == null) return false;
+        if (!levelOrder.TryGetValue(levelData, out int levelIndex)) return false;
+
+        return levelIndex == levelOrder.Count - 1;
+    }
+
+    private int GetLevelIndex(LevelData levelData)
+    {
+        if (levelData == null) return 0;
+        return levelOrder.TryGetValue(levelData, out int levelIndex) ? levelIndex : 0;
+    }
+
+    private async Task SyncProgressAsync(LevelData levelData)
+    {
+        if (levelData == null || PlayerAccountManager.Instance == null || !PlayerAccountManager.Instance.IsAuthenticated)
+        {
+            return;
+        }
+
+        int levelIndex = GetLevelIndex(levelData);
+        int starsCollected = GetCollectedStarCount(levelData);
+        bool completed = starsCollected >= StarsPerLevel;
+        int completedIndex = PlayerAccountManager.Instance.GetKnownCompletedLevelIndex();
+        if (completed)
+        {
+            completedIndex = Mathf.Max(completedIndex, levelIndex + 1);
+        }
+
+        LevelProgressDto progress = new LevelProgressDto
+        {
+            levelKey = levelData.name,
+            levelIndex = levelIndex,
+            starsCollected = starsCollected,
+            completed = completed
+        };
+
+        await PlayerAccountManager.Instance.SaveProgressAsync(completedIndex, new[] { progress });
+    }
+
+    private async Task CompleteFinalLevelAsync(LevelData levelData)
+    {
+        await SyncProgressAsync(levelData);
+        ReturnToMainMenuAfterFinalLevel();
+    }
+
+    private void ReturnToMainMenuAfterFinalLevel()
+    {
+        if (isTransitioningToMainMenu) return;
+        isTransitioningToMainMenu = true;
+
+        ReturnToMainMenu();
+    }
+
+    private void ReturnToMainMenu()
+    {
+        ResetRuntimeLevelStates();
+        UnloadCurrentLevel();
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ResetScore();
+            GameManager.Instance.ResetLives();
+        }
+
+        SceneManager.LoadScene(mainMenuSceneName);
+    }
+
+    private void UpdateActiveLevelAfterUnload(LevelData unloadedLevelData)
+    {
+        if (ActiveLevelData != unloadedLevelData) return;
+
+        ActiveLevelData = loadedLevels.Count > 0 ? loadedLevels[loadedLevels.Count - 1].data : null;
+        OnLevelChanged?.Invoke();
     }
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using RustyProject.Network;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -36,6 +37,19 @@ public class LevelSelectUI : MonoBehaviour
         }
 
         RefreshButtons();
+
+        if (PlayerAccountManager.Instance != null)
+        {
+            PlayerAccountManager.Instance.OnProfileChanged += RefreshButtons;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (PlayerAccountManager.Instance != null)
+        {
+            PlayerAccountManager.Instance.OnProfileChanged -= RefreshButtons;
+        }
     }
 
     private void RefreshButtons()

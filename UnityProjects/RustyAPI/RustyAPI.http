@@ -1,0 +1,6 @@
+@RustyAPI_HostAddress = http://localhost:5243
+
+GET {{RustyAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

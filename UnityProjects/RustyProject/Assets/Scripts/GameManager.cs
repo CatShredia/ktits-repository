@@ -1,4 +1,5 @@
 using UnityEngine;
+using RustyProject.Network;
 
 /// <summary>
 /// GameManager — управление очками и состоянием игры.
@@ -35,6 +36,11 @@ public class GameManager : MonoBehaviour
     {
         Score += amount;
         OnScoreChanged?.Invoke(Score);
+
+        if (PlayerAccountManager.Instance != null && PlayerAccountManager.Instance.IsAuthenticated)
+        {
+            _ = PlayerAccountManager.Instance.AddCoinsAsync(amount);
+        }
     }
 
     public void ResetScore()

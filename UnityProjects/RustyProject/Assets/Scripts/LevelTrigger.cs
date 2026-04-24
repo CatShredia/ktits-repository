@@ -57,6 +57,14 @@ public class LevelTrigger : MonoBehaviour
         }
     }
 
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("Player") && levelData != null && isLevelLoaded && LevelManager.Instance != null)
+        {
+            LevelManager.Instance.SetActiveLevel(levelData);
+        }
+    }
+
     private void UnloadLevel()
     {
         LevelManager.Instance.UnloadLevel(levelData);

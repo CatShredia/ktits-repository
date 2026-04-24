@@ -1,4 +1,5 @@
 using System.Collections;
+using RustyProject.Network;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,6 +10,8 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class MainMenuUI : MonoBehaviour
 {
+    private MainMenuApiUI apiUi;
+
     [Header("Animation")]
     [Tooltip("Аниматор меню")]
     public Animator menuAnimator;
@@ -51,6 +54,7 @@ public class MainMenuUI : MonoBehaviour
     void Start()
     {
         Debug.Log("=== MainMenuUI: Start вызван ===");
+        EnsureApiUi();
 
         if (PlayerPrefs.GetInt("OpenLevelSelect", 0) == 1)
         {
@@ -147,9 +151,8 @@ public class MainMenuUI : MonoBehaviour
     /// </summary>
     public void OpenLevelSelect()
     {
-        Debug.Log("Открыть выбор уровня");
-        if (levelSelectPanel != null)
-            levelSelectPanel.SetActive(true);
+        Debug.Log("Открыть сцену выбора уровней");
+        SceneManager.LoadScene("SystemUIs 1");
     }
 
     /// <summary>
@@ -169,7 +172,8 @@ public class MainMenuUI : MonoBehaviour
     public void OpenLeaderboard()
     {
         Debug.Log("Открыть таблицу лидеров");
-        // TODO: реализовать таблицу лидеров
+        EnsureApiUi();
+        apiUi?.OpenLeaderboardPanel();
     }
 
     /// <summary>
@@ -179,7 +183,8 @@ public class MainMenuUI : MonoBehaviour
     public void OpenAccount()
     {
         Debug.Log("Открыть аккаунт");
-        // TODO: реализовать страницу аккаунта
+        EnsureApiUi();
+        apiUi?.OpenAccountPanel();
     }
 
     /// <summary>
@@ -194,5 +199,18 @@ public class MainMenuUI : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    private void EnsureApiUi()
+    {
+        if (apiUi == null)
+        {
+            apiUi = GetComponent<MainMenuApiUI>();
+        }
+
+        if (apiUi == null)
+        {
+            apiUi = gameObject.AddComponent<MainMenuApiUI>();
+        }
     }
 }
