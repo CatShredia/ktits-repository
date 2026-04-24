@@ -2448,6 +2448,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b60e24f5f1c5c374e81c00f0700e0242, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
+  starPrefab: {fileID: 6198678177669810705, guid: 4c3c88babb2437f4fa13270aa30f74c7, type: 3}
+  autoStarHeightOffset: -0.2
 --- !u!114 &1031321842
 MonoBehaviour:
   m_ObjectHideFlags: 0

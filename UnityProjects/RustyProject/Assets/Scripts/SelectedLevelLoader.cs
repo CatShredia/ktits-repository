@@ -16,12 +16,15 @@ public class SelectedLevelLoader : MonoBehaviour
 
         int selectedIndex = PlayerPrefs.GetInt("SelectedLevelIndex", 0);
         if (selectedIndex < 0 || selectedIndex >= levels.Length) selectedIndex = 0;
+        selectedIndex = GetFirstAllowedLevelIndex(selectedIndex);
 
         LevelData selectedLevel = levels[selectedIndex];
         if (selectedLevel == null || selectedLevel.levelPrefab == null) return;
 
         if (LevelManager.Instance == null) return;
 
+        LevelManager.Instance.ResetRuntimeLevelStates();
+        LevelManager.Instance.ConfigureLevelSequence(levels);
         LevelManager.Instance.LoadLevel(selectedLevel, selectedLevel.spawnOffset);
         LevelManager.Instance.SetActiveLevel(selectedLevel);
 
@@ -35,5 +38,24 @@ public class SelectedLevelLoader : MonoBehaviour
         }
 
         PlayerPrefs.DeleteKey("SelectedLevelIndex");
+    }
+
+    private int GetFirstAllowedLevelIndex(int requestedIndex)
+    {
+        int highestUnlockedIndex = 0;
+
+        for (int i = 1; i < levels.Length; i++)
+        {
+            if (LevelManager.HasCompletedLevel(levels[i - 1]))
+            {
+                highestUnlockedIndex = i;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return Mathf.Clamp(requestedIndex, 0, highestUnlockedIndex);
     }
 }

@@ -5,6 +5,16 @@ using System.Collections.Generic;
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
+    public const int StarsPerLevel = 3;
+
+    private const string LevelStarsPrefsPrefix = "LevelStars_";
+
+    [Header("Auto Star Spawning")]
+    [Tooltip("Префаб звезды, который автоматически создается на уровнях без расставленных звезд")]
+    public GameObject starPrefab;
+
+    [Tooltip("Насколько выше верхней границы уровня автоматически ставить звезды")]
+    public float autoStarHeightOffset = 0.5f;
 
     private class LoadedLevel
     {
@@ -13,9 +23,8 @@ public class LevelManager : MonoBehaviour
     }
 
     private List<LoadedLevel> loadedLevels = new List<LoadedLevel>();
-
-    /// <summary> Состояние сбора звёзд: индекс → собран ли </summary>
-    private bool[] collectedStars = new bool[3];
+    private readonly Dictionary<LevelData, bool[]> levelStars = new Dictionary<LevelData, bool[]>();
+    private readonly Dictionary<LevelData, int> levelOrder = new Dictionary<LevelData, int>();
 
     /// <summary> Вызывается при сборе любой звезды. Аргумент — индекс (0, 1, 2) </summary>
     public event Action<int> OnStarCollected;
@@ -28,7 +37,39 @@ public class LevelManager : MonoBehaviour
 
     public void SetActiveLevel(LevelData levelData)
     {
+        if (levelData == null) return;
+
+        EnsureRuntimeLevelStateExists(levelData);
         ActiveLevelData = levelData;
+        OnLevelChanged?.Invoke();
+    }
+
+    public void ConfigureLevelSequence(LevelData[] levels)
+    {
+        levelOrder.Clear();
+        if (levels == null) return;
+
+        for (int i = 0; i < levels.Length; i++)
+        {
+            if (levels[i] == null || levelOrder.ContainsKey(levels[i])) continue;
+            levelOrder.Add(levels[i], i);
+        }
+    }
+
+    public void ResetRuntimeLevelStates()
+    {
+        levelStars.Clear();
+        ActiveLevelData = null;
+    }
+
+    public bool CanLoadLevel(LevelData levelData)
+    {
+        if (levelData == null) return false;
+        if (!levelOrder.TryGetValue(levelData, out int levelIndex)) return true;
+        if (levelIndex <= 0) return true;
+
+        LevelData previousLevel = GetLevelByIndex(levelIndex - 1);
+        return previousLevel == null || HasCompletedLevel(previousLevel);
     }
 
     /// <summary>
@@ -67,11 +108,10 @@ public class LevelManager : MonoBehaviour
         }
         if (!isLoaded)
         {
-            ResetStars();
             Vector3 finalPosition = ActiveLevelData.spawnOffset;
             GameObject levelInstance = Instantiate(ActiveLevelData.levelPrefab, finalPosition, Quaternion.identity);
+            EnsureLevelHasStars(levelInstance, ActiveLevelData);
             loadedLevels.Add(new LoadedLevel { instance = levelInstance, data = ActiveLevelData });
-            OnLevelChanged?.Invoke();
         }
 
         // Телепортируем игрока
@@ -105,6 +145,8 @@ public class LevelManager : MonoBehaviour
     {
         if (levelData == null || levelData.levelPrefab == null)
             return;
+        if (!CanLoadLevel(levelData))
+            return;
 
         // Проверяем, загружен ли уже этот уровень
         foreach (var lvl in loadedLevels)
@@ -112,13 +154,12 @@ public class LevelManager : MonoBehaviour
             if (lvl.data == levelData) return;
         }
 
-        ResetStars();
+        EnsureRuntimeLevelStateExists(levelData);
 
         Vector3 finalPosition = levelData.spawnOffset;
         GameObject levelInstance = Instantiate(levelData.levelPrefab, finalPosition, Quaternion.identity);
+        EnsureLevelHasStars(levelInstance, levelData);
         loadedLevels.Add(new LoadedLevel { instance = levelInstance, data = levelData });
-
-        OnLevelChanged?.Invoke();
     }
 
     public void UnloadLevel(LevelData levelData)
@@ -143,25 +184,221 @@ public class LevelManager : MonoBehaviour
         loadedLevels.Clear();
     }
 
-    public void CollectStar(int index)
+    public void CollectStar(LevelData levelData, int index)
     {
-        if (index < 0 || index >= collectedStars.Length) return;
-        if (collectedStars[index]) return;
+        if (levelData == null) return;
 
-        collectedStars[index] = true;
-        OnStarCollected?.Invoke(index);
+        bool[] starState = EnsureRuntimeLevelStateExists(levelData);
+        if (index < 0 || index >= starState.Length) return;
+        if (starState[index]) return;
+
+        starState[index] = true;
+        SaveStarProgress(levelData);
+
+        if (levelData == ActiveLevelData)
+        {
+            OnStarCollected?.Invoke(index);
+        }
     }
 
     public bool IsStarCollected(int index)
     {
-        if (index < 0 || index >= collectedStars.Length) return false;
-        return collectedStars[index];
+        return IsStarCollected(ActiveLevelData, index);
     }
 
-    private void ResetStars()
+    public bool IsStarCollected(LevelData levelData, int index)
     {
-        for (int i = 0; i < collectedStars.Length; i++)
-            collectedStars[i] = false;
+        if (levelData == null) return false;
+
+        bool[] starState = EnsureRuntimeLevelStateExists(levelData);
+        if (index < 0 || index >= starState.Length) return false;
+        return starState[index];
+    }
+
+    public int GetCollectedStarCount()
+    {
+        return GetCollectedStarCount(ActiveLevelData);
+    }
+
+    public int GetCollectedStarCount(LevelData levelData)
+    {
+        if (levelData == null) return 0;
+
+        bool[] starState = EnsureRuntimeLevelStateExists(levelData);
+        int count = 0;
+        for (int i = 0; i < starState.Length; i++)
+        {
+            if (starState[i])
+                count++;
+        }
+
+        return count;
+    }
+
+    public static int GetSavedStarsForLevel(LevelData levelData)
+    {
+        if (levelData == null) return 0;
+
+        return Mathf.Clamp(PlayerPrefs.GetInt(GetLevelStarsKey(levelData), 0), 0, StarsPerLevel);
+    }
+
+    public static bool HasCompletedLevel(LevelData levelData)
+    {
+        return GetSavedStarsForLevel(levelData) >= StarsPerLevel;
+    }
+
+    private void SaveStarProgress(LevelData levelData)
+    {
+        if (levelData == null) return;
+
+        int savedStars = GetSavedStarsForLevel(levelData);
+        int currentStars = GetCollectedStarCount(levelData);
+        PlayerPrefs.SetInt(GetLevelStarsKey(levelData), Mathf.Max(savedStars, currentStars));
+        PlayerPrefs.Save();
+    }
+
+    private static string GetLevelStarsKey(LevelData levelData)
+    {
+        return $"{LevelStarsPrefsPrefix}{levelData.name}";
+    }
+
+    private void EnsureLevelHasStars(GameObject levelInstance, LevelData levelData)
+    {
+        if (levelInstance == null || levelData == null) return;
+
+        Star[] stars = levelInstance.GetComponentsInChildren<Star>(true);
+        if (stars.Length == 0)
+        {
+            AutoSpawnStars(levelInstance);
+            stars = levelInstance.GetComponentsInChildren<Star>(true);
+        }
+
+        NormalizeStarIndices(stars, levelData);
+    }
+
+    private void AutoSpawnStars(GameObject levelInstance)
+    {
+        if (starPrefab == null)
+        {
+            Debug.LogWarning("LevelManager: starPrefab не назначен, автоспавн звёзд пропущен.");
+            return;
+        }
+
+        Bounds bounds;
+        if (!TryGetLevelBounds(levelInstance, out bounds))
+        {
+            bounds = new Bounds(levelInstance.transform.position, new Vector3(12f, 6f, 0f));
+        }
+
+        GameObject starContainer = new GameObject("AutoSpawnedStars");
+        starContainer.transform.SetParent(levelInstance.transform, false);
+
+        float minX = bounds.min.x;
+        float maxX = bounds.max.x;
+        float spawnY = bounds.max.y + autoStarHeightOffset;
+
+        for (int i = 0; i < StarsPerLevel; i++)
+        {
+            float t = (i + 1f) / (StarsPerLevel + 1f);
+            Vector3 spawnPosition = new Vector3(Mathf.Lerp(minX, maxX, t), spawnY, 0f);
+            GameObject starInstance = Instantiate(starPrefab, spawnPosition, Quaternion.identity, starContainer.transform);
+            starInstance.name = $"AutoStar_{i}";
+        }
+    }
+
+    private void NormalizeStarIndices(Star[] stars, LevelData levelData)
+    {
+        Array.Sort(stars, CompareStarsByPosition);
+        HashSet<int> assignedIndices = new HashSet<int>();
+
+        for (int i = 0; i < stars.Length; i++)
+        {
+            if (stars[i] == null) continue;
+
+            int assignedIndex = stars[i].starIndex;
+            if (assignedIndex < 0 || assignedIndex >= StarsPerLevel || assignedIndices.Contains(assignedIndex))
+            {
+                assignedIndex = GetNextFreeStarIndex(assignedIndices);
+            }
+
+            if (assignedIndex >= 0 && assignedIndex < StarsPerLevel)
+            {
+                assignedIndices.Add(assignedIndex);
+                stars[i].starIndex = assignedIndex;
+                stars[i].AssignLevel(levelData);
+
+                if (IsStarCollected(levelData, assignedIndex))
+                {
+                    Destroy(stars[i].gameObject);
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"LevelManager: на уровне найдено больше {StarsPerLevel} звёзд, лишняя звезда отключена.");
+                stars[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private static int CompareStarsByPosition(Star left, Star right)
+    {
+        if (left == null && right == null) return 0;
+        if (left == null) return 1;
+        if (right == null) return -1;
+
+        int compareX = left.transform.position.x.CompareTo(right.transform.position.x);
+        if (compareX != 0) return compareX;
+
+        return left.transform.position.y.CompareTo(right.transform.position.y);
+    }
+
+    private static int GetNextFreeStarIndex(HashSet<int> assignedIndices)
+    {
+        for (int i = 0; i < StarsPerLevel; i++)
+        {
+            if (!assignedIndices.Contains(i))
+                return i;
+        }
+
+        return -1;
+    }
+
+    private bool TryGetLevelBounds(GameObject levelInstance, out Bounds bounds)
+    {
+        Renderer[] renderers = levelInstance.GetComponentsInChildren<Renderer>(true);
+        bool hasBounds = false;
+        bounds = default;
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (!hasBounds)
+            {
+                bounds = renderers[i].bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                bounds.Encapsulate(renderers[i].bounds);
+            }
+        }
+
+        if (hasBounds) return true;
+
+        Collider2D[] colliders = levelInstance.GetComponentsInChildren<Collider2D>(true);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            if (!hasBounds)
+            {
+                bounds = colliders[i].bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                bounds.Encapsulate(colliders[i].bounds);
+            }
+        }
+
+        return hasBounds;
     }
 
     public bool IsLevelLoaded() => loadedLevels.Count > 0;
@@ -174,5 +411,27 @@ public class LevelManager : MonoBehaviour
     public GameObject GetCurrentLevelInstance()
     {
         return loadedLevels.Count > 0 ? loadedLevels[0].instance : null;
+    }
+
+    private bool[] EnsureRuntimeLevelStateExists(LevelData levelData)
+    {
+        if (levelData == null) return null;
+        if (levelStars.TryGetValue(levelData, out bool[] existingState))
+            return existingState;
+
+        bool[] starState = new bool[StarsPerLevel];
+        levelStars[levelData] = starState;
+        return starState;
+    }
+
+    private LevelData GetLevelByIndex(int index)
+    {
+        foreach (var pair in levelOrder)
+        {
+            if (pair.Value == index)
+                return pair.Key;
+        }
+
+        return null;
     }
 }

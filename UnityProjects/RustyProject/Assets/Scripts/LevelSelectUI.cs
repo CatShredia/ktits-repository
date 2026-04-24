@@ -35,23 +35,32 @@ public class LevelSelectUI : MonoBehaviour
             return;
         }
 
+        RefreshButtons();
+    }
+
+    private void RefreshButtons()
+    {
         for (int i = 0; i < levelButtons.Length; i++)
         {
             var pair = levelButtons[i];
             if (pair.button == null || pair.levelData == null) continue;
 
+            bool isUnlocked = IsLevelUnlocked(i);
+            int savedStars = LevelManager.GetSavedStarsForLevel(pair.levelData);
+            string buttonLabel = BuildButtonLabel(pair.levelData.name, savedStars, isUnlocked);
+
             // Устанавливаем текст кнопки из названия уровня
             TMP_Text buttonText = pair.button.GetComponentInChildren<TMP_Text>();
             if (buttonText != null)
             {
-                buttonText.text = pair.levelData.name;
+                buttonText.text = buttonLabel;
             }
             else
             {
                 Text uiText = pair.button.GetComponentInChildren<Text>();
                 if (uiText != null)
                 {
-                    uiText.text = pair.levelData.name;
+                    uiText.text = buttonLabel;
                 }
             }
 
@@ -60,8 +69,12 @@ public class LevelSelectUI : MonoBehaviour
             if (btn != null)
             {
                 int index = i;
+                btn.interactable = isUnlocked;
                 btn.onClick.RemoveAllListeners();
-                btn.onClick.AddListener(() => OnLevelSelected(index));
+                if (isUnlocked)
+                {
+                    btn.onClick.AddListener(() => OnLevelSelected(index));
+                }
             }
         }
     }
@@ -69,6 +82,11 @@ public class LevelSelectUI : MonoBehaviour
     private void OnLevelSelected(int index)
     {
         if (index < 0 || index >= levelButtons.Length) return;
+        if (!IsLevelUnlocked(index))
+        {
+            Debug.LogWarning($"LevelSelectUI: Уровень с индексом {index} пока заблокирован.");
+            return;
+        }
 
         var pair = levelButtons[index];
         if (pair.levelData == null || pair.levelData.levelPrefab == null)
@@ -93,5 +111,21 @@ public class LevelSelectUI : MonoBehaviour
     {
         Debug.Log("LevelSelectUI: Возврат в главное меню");
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+    }
+
+    private bool IsLevelUnlocked(int index)
+    {
+        if (index <= 0) return true;
+
+        var previousLevel = levelButtons[index - 1].levelData;
+        return LevelManager.HasCompletedLevel(previousLevel);
+    }
+
+    private string BuildButtonLabel(string levelName, int savedStars, bool isUnlocked)
+    {
+        string progressText = $"{Mathf.Clamp(savedStars, 0, LevelManager.StarsPerLevel)}/{LevelManager.StarsPerLevel}";
+        return isUnlocked
+            ? $"{levelName} ({progressText})"
+            : $"{levelName} ({progressText}) [LOCKED]";
     }
 }

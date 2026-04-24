@@ -28,11 +28,11 @@ public class LevelTrigger : MonoBehaviour
 
     void Update()
     {
-        if (playerTransform == null || levelData == null) return;
+        if (playerTransform == null || levelData == null || LevelManager.Instance == null) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
 
-        if (distanceToPlayer <= levelData.loadDistance && !isLevelLoaded)
+        if (distanceToPlayer <= levelData.loadDistance && !isLevelLoaded && LevelManager.Instance.CanLoadLevel(levelData))
         {
             LoadLevel();
         }
@@ -51,7 +51,7 @@ public class LevelTrigger : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player") && levelData != null)
+        if (other.CompareTag("Player") && levelData != null && isLevelLoaded && LevelManager.Instance != null)
         {
             LevelManager.Instance.SetActiveLevel(levelData);
         }

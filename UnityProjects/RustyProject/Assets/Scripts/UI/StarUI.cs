@@ -24,11 +24,14 @@ public class StarUI : MonoBehaviour
     {
         ValidateReferences();
 
-        LevelManager.Instance.OnStarCollected += UpdateStarUI;
-        LevelManager.Instance.OnLevelChanged += ResetStarUI;
+        if (LevelManager.Instance != null)
+        {
+            LevelManager.Instance.OnStarCollected += UpdateStarUI;
+            LevelManager.Instance.OnLevelChanged += RefreshStarUI;
+        }
 
         // Инициализация при старте
-        ResetStarUI();
+        RefreshStarUI();
     }
 
     void OnDestroy()
@@ -36,7 +39,7 @@ public class StarUI : MonoBehaviour
         if (LevelManager.Instance != null)
         {
             LevelManager.Instance.OnStarCollected -= UpdateStarUI;
-            LevelManager.Instance.OnLevelChanged -= ResetStarUI;
+            LevelManager.Instance.OnLevelChanged -= RefreshStarUI;
         }
     }
 
@@ -55,11 +58,12 @@ public class StarUI : MonoBehaviour
         SetStarVisual(starIndex, true);
     }
 
-    private void ResetStarUI()
+    private void RefreshStarUI()
     {
         for (int i = 0; i < starImages.Length; i++)
         {
-            SetStarVisual(i, false);
+            bool isCollected = LevelManager.Instance != null && LevelManager.Instance.IsStarCollected(i);
+            SetStarVisual(i, isCollected);
         }
     }
 
