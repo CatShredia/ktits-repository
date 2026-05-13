@@ -1,0 +1,54 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ProductionSystem.Client.ViewModels"
+        x:Class="ProductionSystem.Client.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Width="1100"
+        Height="720"
+        WindowStartupLocation="CenterScreen"
+        Title="ИС производства конвейеров">
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Background="#4867AC" Padding="10">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Image Width="120" Height="40" Stretch="Uniform"
+                           Source="avares://ProductionSystem.Client/Assets/Logo_Color.png" />
+                    <TextBlock Text="ИС производства конвейеров"
+                               Foreground="White"
+                               VerticalAlignment="Center"
+                               FontSize="16"
+                               FontWeight="SemiBold" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="2"
+                            Orientation="Horizontal"
+                            Spacing="12"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="{Binding UserInfo}"
+                               Foreground="White"
+                               VerticalAlignment="Center" />
+                    <Button Content="Выход"
+                            Command="{Binding LogoutCommand}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid ColumnDefinitions="220,*">
+            <ListBox Grid.Column="0"
+                     ItemsSource="{Binding NavItems}"
+                     SelectedItem="{Binding SelectedNav}"
+                     Background="#F1F1F1">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:NavItem">
+                        <TextBlock Text="{Binding Title}" Margin="8,6" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <Border Grid.Column="1" Padding="12" Background="#FFFEF9DE">
+                <ContentControl Content="{Binding CurrentPage}" />
+            </Border>
+        </Grid>
+    </DockPanel>
+</Window>

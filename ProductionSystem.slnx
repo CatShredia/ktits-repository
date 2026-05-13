@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ProductionSystem.Api/ProductionSystem.Api.csproj" />
+    <Project Path="src/ProductionSystem.Client/ProductionSystem.Client.csproj" />
+    <Project Path="src/ProductionSystem.Data/ProductionSystem.Data.csproj" />
+    <Project Path="src/ProductionSystem.Import/ProductionSystem.Import.csproj" />
+  </Folder>
+</Solution>

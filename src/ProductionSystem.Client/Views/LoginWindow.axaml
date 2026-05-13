@@ -1,0 +1,34 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ProductionSystem.Client.ViewModels"
+        x:Class="ProductionSystem.Client.Views.LoginWindow"
+        x:DataType="vm:LoginViewModel"
+        Width="520"
+        Height="520"
+        WindowStartupLocation="CenterScreen"
+        Title="Вход — ИС производства конвейеров">
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Background="#4867AC" Padding="12">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <Image Width="140" Height="44" Stretch="Uniform"
+                       Source="avares://ProductionSystem.Client/Assets/Logo_Color.png" />
+                <TextBlock Text="ИС производства конвейеров"
+                           Foreground="White"
+                           VerticalAlignment="Center"
+                           FontSize="16"
+                           FontWeight="SemiBold" />
+            </StackPanel>
+        </Border>
+
+        <StackPanel Margin="24" Spacing="10" VerticalAlignment="Top">
+            <TextBlock Text="Авторизация" FontSize="18" />
+            <TextBox Watermark="Логин" Text="{Binding Login}" />
+            <TextBox Watermark="Пароль" PasswordChar="*" Text="{Binding Password}" />
+            <CheckBox Content="Запомнить меня" IsChecked="{Binding RememberMe}" />
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="#BB0C07" TextWrapping="Wrap" />
+            <Button Content="Войти" Command="{Binding SignInCommand}" HorizontalAlignment="Stretch" />
+            <Button Content="Регистрация заказчика" Command="{Binding GoRegisterCommand}" HorizontalAlignment="Stretch" />
+        </StackPanel>
+    </DockPanel>
+</Window>

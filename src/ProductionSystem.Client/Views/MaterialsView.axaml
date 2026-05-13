@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ProductionSystem.Client.ViewModels"
+             xmlns:dg="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.DataGrid"
+             x:Class="ProductionSystem.Client.Views.MaterialsView"
+             x:DataType="vm:MaterialsViewModel">
+    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
+            <TextBlock Text="Склад:" VerticalAlignment="Center" />
+            <ComboBox Width="220"
+                      ItemsSource="{Binding WarehouseFilters}"
+                      SelectedItem="{Binding SelectedWarehouseFilter}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button Content="Обновить" Command="{Binding RefreshCommand}" />
+        </StackPanel>
+
+        <TextBlock Grid.Row="1" Text="{Binding SummaryText}" TextWrapping="Wrap" Margin="0,0,0,10" />
+
+        <dg:DataGrid Grid.Row="2"
+                     ItemsSource="{Binding Items}"
+                     SelectedItem="{Binding SelectedItem}"
+                     IsReadOnly="True"
+                     AutoGenerateColumns="False"
+                     GridLinesVisibility="Horizontal">
+            <dg:DataGrid.Columns>
+                <dg:DataGridTextColumn Header="Артикул" Binding="{Binding Article}" Width="*" />
+                <dg:DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="2*" />
+                <dg:DataGridTextColumn Header="Тип" Binding="{Binding MaterialType}" Width="*" />
+                <dg:DataGridTextColumn Header="Ед." Binding="{Binding Unit}" Width="80" />
+                <dg:DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="100" />
+                <dg:DataGridTextColumn Header="Цена" Binding="{Binding PurchasePrice}" Width="100" />
+                <dg:DataGridTextColumn Header="Склад" Binding="{Binding WarehouseName}" Width="*" />
+                <dg:DataGridTextColumn Header="Поставщик" Binding="{Binding SupplierName}" Width="*" />
+            </dg:DataGrid.Columns>
+        </dg:DataGrid>
+
+        <Border Grid.Row="3" IsVisible="{Binding CanEdit}" Padding="8" Background="#F1F1F1" Margin="0,10,0,0">
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                <TextBox Grid.ColumnSpan="2" Watermark="Наименование" Text="{Binding Editor.Name}" Margin="0,0,0,6" />
+                <TextBox Grid.Row="1" Watermark="Ед. изм." Text="{Binding Editor.Unit}" Margin="0,0,4,6" />
+                <TextBox Grid.Row="1" Grid.Column="1" Watermark="Количество" Text="{Binding EditQuantityText}" Margin="4,0,0,6" />
+                <TextBox Grid.Row="2" Watermark="Тип материала" Text="{Binding Editor.MaterialType}" Margin="0,0,4,6" />
+                <TextBox Grid.Row="2" Grid.Column="1" Watermark="Цена закупки" Text="{Binding EditPurchasePriceText}" Margin="4,0,0,6" />
+                <TextBox Grid.Row="3" Watermark="ГОСТ" Text="{Binding Editor.Gost}" Margin="0,0,4,0" />
+                <TextBox Grid.Row="3" Grid.Column="1" Watermark="Id склада" Text="{Binding EditWarehouseIdText}" Margin="4,0,0,0" />
+            </Grid>
+        </Border>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="10" IsVisible="{Binding CanEdit}" Margin="0,10,0,0">
+            <Button Content="Сохранить" Command="{Binding SaveCommand}" />
+            <Button Content="Удалить (только при нулевом количестве)" Command="{Binding DeleteCommand}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,15 @@
+@ProductionSystem.Api_HostAddress = http://localhost:5036
+
+### Swagger UI
+# Откройте в браузере: {{ProductionSystem.Api_HostAddress}}/swagger
+
+### Пример: вход (получить JWT для поля Authorize в Swagger)
+POST {{ProductionSystem.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "login": "loginDEsar2018",
+  "password": "2M2IQH"
+}
+
+###
