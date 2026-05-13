@@ -122,7 +122,7 @@ public partial class ComponentsViewModel : ViewModelBase
         Editor.Weight = weight;
         Editor.WarehouseId = wid;
 
-        var (ok, err) = await _api.UpdateComponentAsync(SelectedItem.Article, Editor);
+        var (ok, err) = await _api.UpdateComponentAsync(SelectedItem.Id, Editor);
         if (!ok)
         {
             await ShowErrorAsync(err);
@@ -151,7 +151,7 @@ public partial class ComponentsViewModel : ViewModelBase
         if (!await DialogService.ConfirmAsync(owner, "Удалить выбранную позицию?"))
             return;
 
-        var (ok, err) = await _api.DeleteComponentAsync(SelectedItem.Article);
+        var (ok, err) = await _api.DeleteComponentAsync(SelectedItem.Id);
         if (!ok)
         {
             await ShowErrorAsync(err);

@@ -39,11 +39,11 @@ public class ComponentsController(AppDbContext db) : ControllerBase
         });
     }
 
-    [HttpPut("{article}")]
+    [HttpPut("{id:int}")]
     [Authorize(Roles = ManageRoles)]
-    public async Task<IActionResult> Update(string article, [FromBody] ComponentUpdateRequest req, CancellationToken ct)
+    public async Task<IActionResult> Update(int id, [FromBody] ComponentUpdateRequest req, CancellationToken ct)
     {
-        var entity = await db.Components.FirstOrDefaultAsync(c => c.Article == article, ct);
+        var entity = await db.Components.FirstOrDefaultAsync(c => c.Id == id, ct);
         if (entity is null)
             return NotFound();
 
@@ -62,11 +62,11 @@ public class ComponentsController(AppDbContext db) : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{article}")]
+    [HttpDelete("{id:int}")]
     [Authorize(Roles = ManageRoles)]
-    public async Task<IActionResult> Delete(string article, CancellationToken ct)
+    public async Task<IActionResult> Delete(int id, CancellationToken ct)
     {
-        var entity = await db.Components.FirstOrDefaultAsync(c => c.Article == article, ct);
+        var entity = await db.Components.FirstOrDefaultAsync(c => c.Id == id, ct);
         if (entity is null)
             return NotFound();
 
@@ -80,6 +80,7 @@ public class ComponentsController(AppDbContext db) : ControllerBase
 
     private static ComponentDto Map(StockComponent c, bool includeImage) => new()
     {
+        Id = c.Id,
         Article = c.Article,
         Name = c.Name,
         Unit = c.Unit,

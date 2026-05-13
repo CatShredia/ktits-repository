@@ -16,6 +16,7 @@ public class WarehouseDto
 
 public class MaterialDto
 {
+    public int Id { get; set; }
     public string Article { get; set; } = "";
     public string Name { get; set; } = "";
     public string Unit { get; set; } = "";
@@ -55,6 +56,7 @@ public class MaterialUpdateRequest
 
 public class ComponentDto
 {
+    public int Id { get; set; }
     public string Article { get; set; } = "";
     public string Name { get; set; } = "";
     public string Unit { get; set; } = "";

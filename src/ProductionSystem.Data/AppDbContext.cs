@@ -45,7 +45,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Material>(e =>
         {
             e.ToTable("materials");
-            e.HasKey(x => x.Article);
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => new { x.Article, x.WarehouseId }).IsUnique();
             e.Property(x => x.Article).HasMaxLength(64);
             e.Property(x => x.Name).HasMaxLength(1024);
             e.Property(x => x.Unit).HasMaxLength(64);
@@ -59,7 +60,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<StockComponent>(e =>
         {
             e.ToTable("components");
-            e.HasKey(x => x.Article);
+            e.HasKey(x => x.Id);
+            e.HasIndex(x => new { x.Article, x.WarehouseId });
             e.Property(x => x.Article).HasMaxLength(64);
             e.Property(x => x.Name).HasMaxLength(1024);
             e.Property(x => x.Unit).HasMaxLength(64);

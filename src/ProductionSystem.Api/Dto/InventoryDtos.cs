@@ -2,6 +2,7 @@ namespace ProductionSystem.Api.Dto;
 
 public class MaterialDto
 {
+    public int Id { get; set; }
     public string Article { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Unit { get; set; } = string.Empty;
@@ -42,6 +43,7 @@ public class MaterialUpdateRequest
 
 public class ComponentDto
 {
+    public int Id { get; set; }
     public string Article { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Unit { get; set; } = string.Empty;

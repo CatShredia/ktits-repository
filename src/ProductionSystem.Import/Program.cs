@@ -102,12 +102,13 @@ void ImportMaterials(string path, string imgDir, Warehouse a, Warehouse b)
     int colType = FindCol(headers, "тип");
     int colUnit = FindCol(headers, "едини");
     int colQty = FindCol(headers, "колич");
-    int colSupplier = FindCol(headers, "постав");
-    int colPrice = FindCol(headers, "закуп", "цен");
-    int colDelivery = FindCol(headers, "срок", "достав");
+    int? colSupplier = TryFindCol(headers, "постав", "поставщик");
+    int colPrice = FindCol(headers, "закуп", "стоим", "цен");
+    int? colDelivery = TryFindCol(headers, "срок", "достав");
     int colGost = FindCol(headers, "гост");
-    int colLen = FindCol(headers, "длин");
-    int colChar = FindCol(headers, "характ");
+    int? colLen = TryFindCol(headers, "длин");
+    int? colChar = TryFindCol(headers, "характ");
+    int? colMass = TryFindCol(headers, "масса");
 
     var last = ws.LastRowUsed()?.RowNumber() ?? 1;
     for (var r = 2; r <= last; r++)
@@ -117,11 +118,31 @@ void ImportMaterials(string path, string imgDir, Warehouse a, Warehouse b)
         if (string.IsNullOrEmpty(article))
             continue;
 
-        var supplierName = row.Cell(colSupplier).GetString().Trim();
-        var delivery = (int)Math.Round(row.Cell(colDelivery).GetDouble());
-        var supplier = GetOrCreateSupplier(supplierName, delivery);
+        Supplier? supplier = null;
+        if (colSupplier is int cs)
+        {
+            var supplierName = row.Cell(cs).GetString().Trim();
+            if (!string.IsNullOrEmpty(supplierName))
+            {
+                var delivery = colDelivery is int cd ? (int)Math.Round(row.Cell(cd).GetDouble()) : 0;
+                supplier = GetOrCreateSupplier(supplierName, delivery);
+            }
+        }
 
         var warehouse = r % 2 == 0 ? b : a;
+        string? characteristics = NullIfEmpty(colChar is int cch ? row.Cell(cch).GetString() : null);
+        if (colMass is int cm)
+        {
+            var mass = TryDecimal(row.Cell(cm));
+            if (mass.HasValue)
+            {
+                var massStr = $"Масса 1 м: {mass.Value} кг";
+                characteristics = string.IsNullOrEmpty(characteristics)
+                    ? massStr
+                    : $"{characteristics}; {massStr}";
+            }
+        }
+
         var mat = new Material
         {
             Article = article,
@@ -131,8 +152,8 @@ void ImportMaterials(string path, string imgDir, Warehouse a, Warehouse b)
             Quantity = ToDecimal(row.Cell(colQty)),
             PurchasePrice = ToDecimal(row.Cell(colPrice)),
             Gost = NullIfEmpty(row.Cell(colGost).GetString()),
-            Length = TryDecimal(row.Cell(colLen)),
-            Characteristics = NullIfEmpty(row.Cell(colChar).GetString()),
+            Length = colLen is int clen ? TryDecimal(row.Cell(clen)) : null,
+            Characteristics = NullIfEmpty(characteristics),
             Supplier = supplier,
             Warehouse = warehouse,
             Image = TryLoadImage(imgDir, article),
@@ -151,9 +172,9 @@ void ImportComponents(string path, string imgDir, Warehouse a, Warehouse b)
     int colType = FindCol(headers, "тип");
     int colUnit = FindCol(headers, "едини");
     int colQty = FindCol(headers, "колич");
-    int colSupplier = FindCol(headers, "постав");
-    int colPrice = FindCol(headers, "закуп", "цен");
-    int colDelivery = FindCol(headers, "срок", "достав");
+    int? colSupplier = TryFindCol(headers, "постав", "поставщик");
+    int colPrice = FindCol(headers, "закуп", "стоим", "цен");
+    int? colDelivery = TryFindCol(headers, "срок", "достав");
     int colWeight = FindCol(headers, "вес");
 
     var last = ws.LastRowUsed()?.RowNumber() ?? 1;
@@ -164,9 +185,16 @@ void ImportComponents(string path, string imgDir, Warehouse a, Warehouse b)
         if (string.IsNullOrEmpty(article))
             continue;
 
-        var supplierName = row.Cell(colSupplier).GetString().Trim();
-        var delivery = (int)Math.Round(row.Cell(colDelivery).GetDouble());
-        var supplier = GetOrCreateSupplier(supplierName, delivery);
+        Supplier? supplier = null;
+        if (colSupplier is int cs)
+        {
+            var supplierName = row.Cell(cs).GetString().Trim();
+            if (!string.IsNullOrEmpty(supplierName))
+            {
+                var delivery = colDelivery is int cd ? (int)Math.Round(row.Cell(cd).GetDouble()) : 0;
+                supplier = GetOrCreateSupplier(supplierName, delivery);
+            }
+        }
 
         var warehouse = r % 2 == 0 ? a : b;
         var comp = new StockComponent
@@ -245,6 +273,14 @@ static List<(int Col, string Header)> ReadHeaderCells(IXLRow headerRow)
 
 static int FindCol(List<(int Col, string Header)> headers, params string[] keys)
 {
+    var col = TryFindCol(headers, keys);
+    if (col is int c)
+        return c;
+    throw new InvalidOperationException($"Не найдена колонка: {string.Join(", ", keys)}");
+}
+
+static int? TryFindCol(List<(int Col, string Header)> headers, params string[] keys)
+{
     foreach (var key in keys)
     {
         foreach (var (col, h) in headers)
@@ -254,7 +290,7 @@ static int FindCol(List<(int Col, string Header)> headers, params string[] keys)
         }
     }
 
-    throw new InvalidOperationException($"Не найдена колонка: {string.Join(", ", keys)}");
+    return null;
 }
 
 static decimal ToDecimal(IXLCell cell)

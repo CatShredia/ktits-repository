@@ -84,15 +84,15 @@ public class BackendApi
         return await _http.GetFromJsonAsync<MaterialListResponse>($"api/materials{q}", _json, ct);
     }
 
-    public async Task<(bool Ok, string? Error)> UpdateMaterialAsync(string article, MaterialUpdateRequest body, CancellationToken ct = default)
+    public async Task<(bool Ok, string? Error)> UpdateMaterialAsync(int id, MaterialUpdateRequest body, CancellationToken ct = default)
     {
-        var res = await _http.PutAsJsonAsync($"api/materials/{Uri.EscapeDataString(article)}", body, _json, ct);
+        var res = await _http.PutAsJsonAsync($"api/materials/{id}", body, _json, ct);
         return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
     }
 
-    public async Task<(bool Ok, string? Error)> DeleteMaterialAsync(string article, CancellationToken ct = default)
+    public async Task<(bool Ok, string? Error)> DeleteMaterialAsync(int id, CancellationToken ct = default)
     {
-        var res = await _http.DeleteAsync($"api/materials/{Uri.EscapeDataString(article)}", ct);
+        var res = await _http.DeleteAsync($"api/materials/{id}", ct);
         return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
     }
 
@@ -102,15 +102,15 @@ public class BackendApi
         return await _http.GetFromJsonAsync<ComponentListResponse>($"api/components{q}", _json, ct);
     }
 
-    public async Task<(bool Ok, string? Error)> UpdateComponentAsync(string article, ComponentUpdateRequest body, CancellationToken ct = default)
+    public async Task<(bool Ok, string? Error)> UpdateComponentAsync(int id, ComponentUpdateRequest body, CancellationToken ct = default)
     {
-        var res = await _http.PutAsJsonAsync($"api/components/{Uri.EscapeDataString(article)}", body, _json, ct);
+        var res = await _http.PutAsJsonAsync($"api/components/{id}", body, _json, ct);
         return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
     }
 
-    public async Task<(bool Ok, string? Error)> DeleteComponentAsync(string article, CancellationToken ct = default)
+    public async Task<(bool Ok, string? Error)> DeleteComponentAsync(int id, CancellationToken ct = default)
     {
-        var res = await _http.DeleteAsync($"api/components/{Uri.EscapeDataString(article)}", ct);
+        var res = await _http.DeleteAsync($"api/components/{id}", ct);
         return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
     }
 

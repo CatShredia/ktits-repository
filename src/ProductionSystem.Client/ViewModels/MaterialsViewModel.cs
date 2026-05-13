@@ -115,7 +115,7 @@ public partial class MaterialsViewModel : ViewModelBase
         Editor.PurchasePrice = price;
         Editor.WarehouseId = wid;
 
-        var (ok, err) = await _api.UpdateMaterialAsync(SelectedItem.Article, Editor);
+        var (ok, err) = await _api.UpdateMaterialAsync(SelectedItem.Id, Editor);
         if (!ok)
         {
             await ShowErrorAsync(err);
@@ -144,7 +144,7 @@ public partial class MaterialsViewModel : ViewModelBase
         if (!await DialogService.ConfirmAsync(owner, "Удалить выбранную позицию?"))
             return;
 
-        var (ok, err) = await _api.DeleteMaterialAsync(SelectedItem.Article);
+        var (ok, err) = await _api.DeleteMaterialAsync(SelectedItem.Id);
         if (!ok)
         {
             await ShowErrorAsync(err);

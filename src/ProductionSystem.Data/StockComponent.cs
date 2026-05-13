@@ -3,6 +3,7 @@ namespace ProductionSystem.Data;
 /// <summary>Комплектующее на складе (имя сущности без конфликта с System.Component).</summary>
 public class StockComponent
 {
+    public int Id { get; set; }
     public string Article { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Unit { get; set; } = string.Empty;

@@ -39,11 +39,11 @@ public class MaterialsController(AppDbContext db) : ControllerBase
         });
     }
 
-    [HttpPut("{article}")]
+    [HttpPut("{id:int}")]
     [Authorize(Roles = ManageRoles)]
-    public async Task<IActionResult> Update(string article, [FromBody] MaterialUpdateRequest req, CancellationToken ct)
+    public async Task<IActionResult> Update(int id, [FromBody] MaterialUpdateRequest req, CancellationToken ct)
     {
-        var entity = await db.Materials.FirstOrDefaultAsync(m => m.Article == article, ct);
+        var entity = await db.Materials.FirstOrDefaultAsync(m => m.Id == id, ct);
         if (entity is null)
             return NotFound();
 
@@ -64,11 +64,11 @@ public class MaterialsController(AppDbContext db) : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{article}")]
+    [HttpDelete("{id:int}")]
     [Authorize(Roles = ManageRoles)]
-    public async Task<IActionResult> Delete(string article, CancellationToken ct)
+    public async Task<IActionResult> Delete(int id, CancellationToken ct)
     {
-        var entity = await db.Materials.FirstOrDefaultAsync(m => m.Article == article, ct);
+        var entity = await db.Materials.FirstOrDefaultAsync(m => m.Id == id, ct);
         if (entity is null)
             return NotFound();
 
@@ -82,6 +82,7 @@ public class MaterialsController(AppDbContext db) : ControllerBase
 
     private static MaterialDto Map(Material m, bool includeImage) => new()
     {
+        Id = m.Id,
         Article = m.Article,
         Name = m.Name,
         Unit = m.Unit,
