@@ -5,7 +5,8 @@
         x:DataType="vm:LoginViewModel"
         Width="520"
         Height="520"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
         Title="Вход — ИС производства конвейеров">
 
     <DockPanel>

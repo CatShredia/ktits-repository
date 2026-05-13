@@ -29,25 +29,41 @@
                                Foreground="White"
                                VerticalAlignment="Center" />
                     <Button Content="Выход"
-                            Command="{Binding LogoutCommand}" />
+                            Command="{Binding LogoutCommand}"
+                            IsEnabled="{Binding IsAuthenticated}" />
                 </StackPanel>
             </Grid>
         </Border>
 
-        <Grid ColumnDefinitions="220,*">
-            <ListBox Grid.Column="0"
-                     ItemsSource="{Binding NavItems}"
-                     SelectedItem="{Binding SelectedNav}"
-                     Background="#F1F1F1">
-                <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="vm:NavItem">
-                        <TextBlock Text="{Binding Title}" Margin="8,6" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+        <Grid>
+            <Grid ColumnDefinitions="220,*" IsEnabled="{Binding IsAuthenticated}">
+                <ListBox Grid.Column="0"
+                         ItemsSource="{Binding NavItems}"
+                         SelectedItem="{Binding SelectedNav}"
+                         Background="#F1F1F1">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:NavItem">
+                            <TextBlock Text="{Binding Title}" Margin="8,6" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
 
-            <Border Grid.Column="1" Padding="12" Background="#FFFEF9DE">
-                <ContentControl Content="{Binding CurrentPage}" />
+                <Border Grid.Column="1" Padding="12" Background="#FFFEF9DE">
+                    <ContentControl Content="{Binding CurrentPage}" />
+                </Border>
+            </Grid>
+
+            <Border Background="#E8E8E8"
+                    IsVisible="{Binding ShowLoginPrompt}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch">
+                <TextBlock Text="Для работы с системой войдите в учётную запись."
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="16"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           Margin="24" />
             </Border>
         </Grid>
     </DockPanel>

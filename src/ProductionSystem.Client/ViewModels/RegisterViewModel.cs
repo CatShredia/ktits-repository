@@ -1,3 +1,4 @@
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProductionSystem.Client.Services;
@@ -8,50 +9,57 @@ public partial class RegisterViewModel : ViewModelBase
 {
     private readonly BackendApi _api;
     private readonly Action _onSuccess;
-    private readonly Action _close;
+    private readonly Action _onCancel;
 
     [ObservableProperty] private string _login = "";
     [ObservableProperty] private string _password = "";
     [ObservableProperty] private string _fullName = "";
     [ObservableProperty] private string? _errorMessage;
 
-    public RegisterViewModel(BackendApi api, Action onSuccess, Action close)
+    public RegisterViewModel(BackendApi api, Action onSuccess, Action onCancel)
     {
         _api = api;
         _onSuccess = onSuccess;
-        _close = close;
+        _onCancel = onCancel;
     }
 
     [RelayCommand]
     public async Task RegisterAsync()
     {
-        ErrorMessage = null;
-        if (string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(Password))
+        try
         {
-            ErrorMessage = "Укажите логин и пароль.";
-            return;
-        }
+            ErrorMessage = null;
+            if (string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(Password))
+            {
+                ErrorMessage = "Укажите логин и пароль.";
+                return;
+            }
 
-        if (!ValidatePassword(Password, out var pwdError))
+            if (!ValidatePassword(Password, out var pwdError))
+            {
+                ErrorMessage = pwdError;
+                return;
+            }
+
+            var (ok, err) = await _api.RegisterAsync(Login.Trim(), Password, FullName.Trim());
+            if (!ok)
+            {
+                ErrorMessage = err ?? "Ошибка регистрации.";
+                return;
+            }
+
+            CredentialStore.Clear();
+            await Dispatcher.UIThread.InvokeAsync(_onSuccess);
+        }
+        catch (Exception ex)
         {
-            ErrorMessage = pwdError;
-            return;
+            CrashLog.Write("[RegisterAsync] " + ex);
+            ErrorMessage = "Внутренняя ошибка при регистрации.";
         }
-
-        var (ok, err) = await _api.RegisterAsync(Login.Trim(), Password, FullName.Trim());
-        if (!ok)
-        {
-            ErrorMessage = err ?? "Ошибка регистрации.";
-            return;
-        }
-
-        CredentialStore.Clear();
-        _close();
-        _onSuccess();
     }
 
     [RelayCommand]
-    private void Cancel() => _close();
+    private void Cancel() => _onCancel();
 
     private static bool ValidatePassword(string password, out string? error)
     {

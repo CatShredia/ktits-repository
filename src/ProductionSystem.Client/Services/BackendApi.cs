@@ -23,7 +23,9 @@ public class BackendApi
     public BackendApi(IConfiguration configuration)
     {
         var baseUrl = configuration["ApiBaseUrl"]?.TrimEnd('/') ?? "http://localhost:5036";
-        _http = new HttpClient { BaseAddress = new Uri(baseUrl + "/") };
+        var inner = new HttpClientHandler();
+        var logging = new ApiRequestLoggingHandler { InnerHandler = inner };
+        _http = new HttpClient(logging) { BaseAddress = new Uri(baseUrl + "/") };
     }
 
     public void ApplyAuth(string token, string role, string login, string? fullName)

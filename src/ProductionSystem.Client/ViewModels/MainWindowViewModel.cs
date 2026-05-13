@@ -9,28 +9,46 @@ namespace ProductionSystem.Client.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly BackendApi _api;
-    private readonly Action _logout;
+    private readonly Action _requestLogin;
 
     public ObservableCollection<NavItem> NavItems { get; } = new();
 
+    [ObservableProperty] private bool _isAuthenticated;
+    [ObservableProperty] private bool _showLoginPrompt = true;
+    [ObservableProperty] private string _userInfo = "Не авторизован";
     [ObservableProperty] private NavItem? _selectedNav;
     [ObservableProperty] private ViewModelBase? _currentPage;
 
-    public MainWindowViewModel(BackendApi api, Action logout)
+    public MainWindowViewModel(BackendApi api, Action requestLogin)
     {
         _api = api;
-        _logout = logout;
-        UserInfo = $"{api.FullName ?? api.Login} ({api.Role})";
+        _requestLogin = requestLogin;
+    }
+
+    public void ApplySession()
+    {
+        IsAuthenticated = true;
+        ShowLoginPrompt = false;
+        UserInfo = $"{_api.FullName ?? _api.Login} ({_api.Role})";
+        NavItems.Clear();
         foreach (var n in BuildNav())
             NavItems.Add(n);
         SelectedNav = NavItems.FirstOrDefault();
     }
 
-    public string UserInfo { get; }
+    public void ClearSession()
+    {
+        IsAuthenticated = false;
+        ShowLoginPrompt = true;
+        UserInfo = "Не авторизован";
+        NavItems.Clear();
+        SelectedNav = null;
+        CurrentPage = null;
+    }
 
     partial void OnSelectedNavChanged(NavItem? value)
     {
-        if (value != null)
+        if (value != null && IsAuthenticated)
             CurrentPage = value.Create();
     }
 
@@ -38,7 +56,8 @@ public partial class MainWindowViewModel : ViewModelBase
     private void Logout()
     {
         _api.ClearAuth();
-        _logout();
+        ClearSession();
+        _requestLogin();
     }
 
     private IEnumerable<NavItem> BuildNav()

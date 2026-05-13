@@ -1,18 +1,47 @@
-﻿using Avalonia;
 using System;
+using System.Threading.Tasks;
+using Avalonia;
 
 namespace ProductionSystem.Client;
 
 sealed class Program
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+    public static void Main(string[] args)
+    {
+        CrashLog.Write("Main: start");
+        try
+        {
+            Console.WriteLine($"Лог при ошибках: {CrashLog.LogPath}");
+        }
+        catch
+        {
+            /* ignore */
+        }
 
-    // Avalonia configuration, don't remove; also used by visual designer.
+        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+        {
+            CrashLog.Write("[AppDomain.UnhandledException] " + e.ExceptionObject);
+        };
+
+        TaskScheduler.UnobservedTaskException += (_, e) =>
+        {
+            CrashLog.Write("[UnobservedTask] " + e.Exception);
+            e.SetObserved();
+        };
+
+        try
+        {
+            BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args);
+        }
+        catch (Exception ex)
+        {
+            CrashLog.Write("[Main] " + ex);
+            Environment.ExitCode = 1;
+        }
+    }
+
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()

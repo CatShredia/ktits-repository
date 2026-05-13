@@ -1,7 +1,9 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProductionSystem.Client.Services;
@@ -23,6 +25,12 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            Dispatcher.UIThread.UnhandledException += (_, e) =>
+            {
+                CrashLog.Write("[Dispatcher.UIThread.UnhandledException] " + e.Exception);
+                e.Handled = true;
+            };
+
             BindingPlugins.DataValidators.RemoveAt(0);
 
             var configuration = new ConfigurationBuilder()
@@ -36,41 +44,85 @@ public partial class App : Application
             Services = services.BuildServiceProvider();
 
             var api = Services.GetRequiredService<BackendApi>();
+            var mainWindow = new MainWindow();
+            LoginWindow? loginWindow = null;
+            MainWindowViewModel? mainVm = null;
 
-            void OpenMain()
+            void OnAuthenticated()
             {
-                desktop.MainWindow = new MainWindow
-                {
-                    DataContext = new MainWindowViewModel(api, OpenLogin),
-                };
+                loginWindow?.Close();
+                loginWindow = null;
+                mainVm!.ApplySession();
             }
 
-            void OpenRegister(LoginWindow loginWindow)
+            async Task OpenRegisterFlowAsync(Window owner)
             {
+                var registered = false;
                 var reg = new RegisterWindow();
+                var registerFlowEnded = new TaskCompletionSource();
+
                 reg.DataContext = new RegisterViewModel(
                     api,
-                    () =>
+                    onSuccess: () =>
                     {
+                        registered = true;
                         reg.Close();
-                        loginWindow.Close();
-                        OpenMain();
                     },
-                    () => reg.Close());
+                    onCancel: () => reg.Close());
 
-                reg.ShowDialog(loginWindow);
+                void OnRegisterClosed(object? _, EventArgs __) =>
+                    registerFlowEnded.TrySetResult();
+
+                reg.Closed += OnRegisterClosed;
+                reg.Show(owner);
+                await registerFlowEnded.Task.ConfigureAwait(true);
+                reg.Closed -= OnRegisterClosed;
+
+                if (registered)
+                    OnAuthenticated();
             }
 
-            void OpenLogin()
+            void ShowLogin()
             {
                 api.ClearAuth();
+                mainVm!.ClearSession();
 
-                var loginWindow = new LoginWindow();
-                loginWindow.DataContext = new LoginViewModel(api, OpenMain, () => OpenRegister(loginWindow));
-                desktop.MainWindow = loginWindow;
+                if (loginWindow is { IsVisible: true })
+                {
+                    loginWindow.Activate();
+                    return;
+                }
+
+                var win = new LoginWindow();
+                loginWindow = win;
+                win.DataContext = new LoginViewModel(
+                    api,
+                    OnAuthenticated,
+                    () => OpenRegisterFlowAsync(win));
+
+                win.Closed += OnLoginClosed;
+                win.Show(mainWindow);
+                win.Activate();
             }
 
-            OpenLogin();
+            void OnLoginClosed(object? _, EventArgs __)
+            {
+                if (loginWindow is null)
+                    return;
+
+                loginWindow.Closed -= OnLoginClosed;
+                loginWindow = null;
+
+                if (!mainVm!.IsAuthenticated)
+                    ShowLogin();
+            }
+
+            mainVm = new MainWindowViewModel(api, ShowLogin);
+            mainWindow.DataContext = mainVm;
+            desktop.MainWindow = mainWindow;
+
+            mainWindow.Show();
+            ShowLogin();
         }
 
         base.OnFrameworkInitializationCompleted();

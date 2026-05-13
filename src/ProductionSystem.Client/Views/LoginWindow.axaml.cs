@@ -1,5 +1,6 @@
 using System;
 using Avalonia.Controls;
+using ProductionSystem.Client;
 using ProductionSystem.Client.ViewModels;
 
 namespace ProductionSystem.Client.Views;
@@ -14,7 +15,14 @@ public partial class LoginWindow : Window
 
     private async void LoginWindow_Opened(object? sender, EventArgs e)
     {
-        if (DataContext is LoginViewModel vm)
-            await vm.TryAutoLoginAsync();
+        try
+        {
+            if (DataContext is LoginViewModel vm)
+                await vm.TryAutoLoginAsync();
+        }
+        catch (Exception ex)
+        {
+            CrashLog.Write("[LoginWindow_Opened] " + ex);
+        }
     }
 }

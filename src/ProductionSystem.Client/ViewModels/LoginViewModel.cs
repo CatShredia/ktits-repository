@@ -1,3 +1,4 @@
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProductionSystem.Client.Services;
@@ -8,18 +9,18 @@ public partial class LoginViewModel : ViewModelBase
 {
     private readonly BackendApi _api;
     private readonly Action _onSuccess;
-    private readonly Action _openRegister;
+    private readonly Func<Task> _openRegisterFlow;
 
     [ObservableProperty] private string _login = "";
     [ObservableProperty] private string _password = "";
     [ObservableProperty] private bool _rememberMe;
     [ObservableProperty] private string? _errorMessage;
 
-    public LoginViewModel(BackendApi api, Action onSuccess, Action openRegister)
+    public LoginViewModel(BackendApi api, Action onSuccess, Func<Task> openRegisterFlow)
     {
         _api = api;
         _onSuccess = onSuccess;
-        _openRegister = openRegister;
+        _openRegisterFlow = openRegisterFlow;
     }
 
     public async Task TryAutoLoginAsync()
@@ -34,7 +35,7 @@ public partial class LoginViewModel : ViewModelBase
 
         var (ok, err, _) = await _api.LoginAsync(l, p);
         if (ok)
-            _onSuccess();
+            await Dispatcher.UIThread.InvokeAsync(_onSuccess);
         else
             ErrorMessage = err ?? "Не удалось выполнить автоматический вход.";
     }
@@ -65,9 +66,9 @@ public partial class LoginViewModel : ViewModelBase
             CredentialStore.Clear();
         }
 
-        _onSuccess();
+        await Dispatcher.UIThread.InvokeAsync(_onSuccess);
     }
 
     [RelayCommand]
-    private void GoRegister() => _openRegister();
+    private async Task GoRegisterAsync() => await _openRegisterFlow();
 }
