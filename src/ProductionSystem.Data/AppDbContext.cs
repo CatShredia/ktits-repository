@@ -14,6 +14,14 @@ public class AppDbContext : DbContext
     public DbSet<Worker> Workers => Set<Worker>();
     public DbSet<ProductionOperation> ProductionOperations => Set<ProductionOperation>();
     public DbSet<WorkerOperation> WorkerOperations => Set<WorkerOperation>();
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<CustomerOrder> CustomerOrders => Set<CustomerOrder>();
+    public DbSet<ProductMaterialSpec> ProductMaterialSpecs => Set<ProductMaterialSpec>();
+    public DbSet<ProductComponentSpec> ProductComponentSpecs => Set<ProductComponentSpec>();
+    public DbSet<ProductOperationSpec> ProductOperationSpecs => Set<ProductOperationSpec>();
+    public DbSet<ProductAssemblySpec> ProductAssemblySpecs => Set<ProductAssemblySpec>();
+    public DbSet<EquipmentType> EquipmentTypes => Set<EquipmentType>();
+    public DbSet<Equipment> Equipment => Set<Equipment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -95,6 +103,94 @@ public class AppDbContext : DbContext
             e.HasKey(x => new { x.WorkerId, x.OperationId });
             e.HasOne(x => x.Worker).WithMany(x => x.WorkerOperations).HasForeignKey(x => x.WorkerId).OnDelete(DeleteBehavior.Cascade);
             e.HasOne(x => x.Operation).WithMany(x => x.WorkerOperations).HasForeignKey(x => x.OperationId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Product>(e =>
+        {
+            e.ToTable("products");
+            e.HasKey(x => x.Name);
+            e.Property(x => x.Name).HasMaxLength(512);
+            e.Property(x => x.Dimensions).HasMaxLength(1024).IsRequired();
+        });
+
+        modelBuilder.Entity<CustomerOrder>(e =>
+        {
+            e.ToTable("customer_orders");
+            e.HasKey(x => x.Number);
+            e.Property(x => x.Number).HasMaxLength(64);
+            e.Property(x => x.OrderName).HasMaxLength(512).IsRequired();
+            e.Property(x => x.ProductName).HasMaxLength(512).IsRequired();
+            e.Property(x => x.CustomerLogin).HasMaxLength(64).IsRequired();
+            e.Property(x => x.ManagerLogin).HasMaxLength(64);
+            e.HasOne(x => x.Product).WithMany(p => p.CustomerOrders).HasForeignKey(x => x.ProductName)
+                .HasPrincipalKey(p => p.Name).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerLogin).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Manager).WithMany().HasForeignKey(x => x.ManagerLogin).IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<ProductMaterialSpec>(e =>
+        {
+            e.ToTable("product_material_specs");
+            e.HasKey(x => new { x.ProductName, x.MaterialId });
+            e.Property(x => x.ProductName).HasMaxLength(512);
+            e.HasOne(x => x.Product).WithMany(p => p.MaterialSpecs).HasForeignKey(x => x.ProductName)
+                .HasPrincipalKey(p => p.Name).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Material).WithMany().HasForeignKey(x => x.MaterialId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ProductComponentSpec>(e =>
+        {
+            e.ToTable("product_component_specs");
+            e.HasKey(x => new { x.ProductName, x.ComponentId });
+            e.Property(x => x.ProductName).HasMaxLength(512);
+            e.HasOne(x => x.Product).WithMany(p => p.ComponentSpecs).HasForeignKey(x => x.ProductName)
+                .HasPrincipalKey(p => p.Name).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Component).WithMany().HasForeignKey(x => x.ComponentId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ProductOperationSpec>(e =>
+        {
+            e.ToTable("product_operation_specs");
+            e.HasKey(x => new { x.ProductName, x.OperationId, x.SequenceNumber });
+            e.Property(x => x.ProductName).HasMaxLength(512);
+            e.Property(x => x.EquipmentTypeName).HasMaxLength(256);
+            e.HasOne(x => x.Product).WithMany(p => p.OperationSpecs).HasForeignKey(x => x.ProductName)
+                .HasPrincipalKey(p => p.Name).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Operation).WithMany(o => o.ProductOperationSpecs).HasForeignKey(x => x.OperationId)
+                .OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.EquipmentType).WithMany(t => t.OperationSpecs).HasForeignKey(x => x.EquipmentTypeName)
+                .HasPrincipalKey(t => t.Name).IsRequired(false).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<ProductAssemblySpec>(e =>
+        {
+            e.ToTable("product_assembly_specs");
+            e.HasKey(x => new { x.ParentProductName, x.ChildProductName });
+            e.Property(x => x.ParentProductName).HasMaxLength(512);
+            e.Property(x => x.ChildProductName).HasMaxLength(512);
+            e.HasOne(x => x.ParentProduct).WithMany(p => p.AssemblyChildren).HasForeignKey(x => x.ParentProductName)
+                .HasPrincipalKey(p => p.Name).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.ChildProduct).WithMany(p => p.AssemblyParents).HasForeignKey(x => x.ChildProductName)
+                .HasPrincipalKey(p => p.Name).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<EquipmentType>(e =>
+        {
+            e.ToTable("equipment_types");
+            e.HasKey(x => x.Name);
+            e.Property(x => x.Name).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<Equipment>(e =>
+        {
+            e.ToTable("equipment");
+            e.HasKey(x => x.Marking);
+            e.Property(x => x.Marking).HasMaxLength(256);
+            e.Property(x => x.EquipmentTypeName).HasMaxLength(256).IsRequired();
+            e.Property(x => x.Characteristics).HasMaxLength(4000);
+            e.HasOne(x => x.EquipmentType).WithMany(t => t.Equipment).HasForeignKey(x => x.EquipmentTypeName)
+                .HasPrincipalKey(t => t.Name).OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

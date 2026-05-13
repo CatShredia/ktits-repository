@@ -38,14 +38,24 @@ if (await db.Users.AnyAsync() && !force)
 await using var trx = await db.Database.BeginTransactionAsync();
 
 await db.Database.ExecuteSqlRawAsync("""
-    TRUNCATE TABLE worker_operations RESTART IDENTITY CASCADE;
-    TRUNCATE TABLE workers RESTART IDENTITY CASCADE;
-    TRUNCATE TABLE materials RESTART IDENTITY CASCADE;
-    TRUNCATE TABLE components RESTART IDENTITY CASCADE;
-    TRUNCATE TABLE users RESTART IDENTITY CASCADE;
-    TRUNCATE TABLE suppliers RESTART IDENTITY CASCADE;
-    TRUNCATE TABLE warehouses RESTART IDENTITY CASCADE;
-    TRUNCATE TABLE production_operations RESTART IDENTITY CASCADE;
+    TRUNCATE TABLE
+        product_material_specs,
+        product_component_specs,
+        product_operation_specs,
+        product_assembly_specs,
+        customer_orders,
+        worker_operations,
+        equipment,
+        materials,
+        components,
+        workers,
+        users,
+        suppliers,
+        warehouses,
+        products,
+        equipment_types,
+        production_operations
+    RESTART IDENTITY CASCADE;
     """);
 
 var whA = new Warehouse { Name = "Склад А" };

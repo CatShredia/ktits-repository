@@ -50,6 +50,87 @@ namespace ProductionSystem.Data.Migrations
                     b.ToTable("users", (string)null);
                 });
 
+            modelBuilder.Entity("ProductionSystem.Data.CustomerOrder", b =>
+                {
+                    b.Property<string>("Number")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<byte[]>("CustomerDrawings")
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("CustomerLogin")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<decimal?>("EstimatedCost")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("ManagerLogin")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateOnly>("OrderDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("OrderName")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<DateOnly?>("PlannedCompletionDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.HasKey("Number");
+
+                    b.HasIndex("CustomerLogin");
+
+                    b.HasIndex("ManagerLogin");
+
+                    b.HasIndex("ProductName");
+
+                    b.ToTable("customer_orders", (string)null);
+                });
+
+            modelBuilder.Entity("ProductionSystem.Data.Equipment", b =>
+                {
+                    b.Property<string>("Marking")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Characteristics")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<string>("EquipmentTypeName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Marking");
+
+                    b.HasIndex("EquipmentTypeName");
+
+                    b.ToTable("equipment", (string)null);
+                });
+
+            modelBuilder.Entity("ProductionSystem.Data.EquipmentType", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("equipment_types", (string)null);
+                });
+
             modelBuilder.Entity("ProductionSystem.Data.Material", b =>
                 {
                     b.Property<int>("Id")
@@ -114,6 +195,108 @@ namespace ProductionSystem.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("materials", (string)null);
+                });
+
+            modelBuilder.Entity("ProductionSystem.Data.Product", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("Dimensions")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("products", (string)null);
+                });
+
+            modelBuilder.Entity("ProductionSystem.Data.ProductAssemblySpec", b =>
+                {
+                    b.Property<string>("ParentProductName")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("ChildProductName")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("ParentProductName", "ChildProductName");
+
+                    b.HasIndex("ChildProductName");
+
+                    b.ToTable("product_assembly_specs", (string)null);
+                });
+
+            modelBuilder.Entity("ProductionSystem.Data.ProductComponentSpec", b =>
+                {
+                    b.Property<string>("ProductName")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<int>("ComponentId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("ProductName", "ComponentId");
+
+                    b.HasIndex("ComponentId");
+
+                    b.ToTable("product_component_specs", (string)null);
+                });
+
+            modelBuilder.Entity("ProductionSystem.Data.ProductMaterialSpec", b =>
+                {
+                    b.Property<string>("ProductName")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<int>("MaterialId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("ProductName", "MaterialId");
+
+                    b.HasIndex("MaterialId");
+
+                    b.ToTable("product_material_specs", (string)null);
+                });
+
+            modelBuilder.Entity("ProductionSystem.Data.ProductOperationSpec", b =>
+                {
+                    b.Property<string>("ProductName")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<int>("OperationId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SequenceNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("EquipmentTypeName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("ProductName", "OperationId", "SequenceNumber");
+
+                    b.HasIndex("EquipmentTypeName");
+
+                    b.HasIndex("OperationId");
+
+                    b.ToTable("product_operation_specs", (string)null);
                 });
 
             modelBuilder.Entity("ProductionSystem.Data.ProductionOperation", b =>
@@ -295,6 +478,43 @@ namespace ProductionSystem.Data.Migrations
                     b.ToTable("worker_operations", (string)null);
                 });
 
+            modelBuilder.Entity("ProductionSystem.Data.CustomerOrder", b =>
+                {
+                    b.HasOne("ProductionSystem.Data.AppUser", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerLogin")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ProductionSystem.Data.AppUser", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerLogin")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ProductionSystem.Data.Product", "Product")
+                        .WithMany("CustomerOrders")
+                        .HasForeignKey("ProductName")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Manager");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ProductionSystem.Data.Equipment", b =>
+                {
+                    b.HasOne("ProductionSystem.Data.EquipmentType", "EquipmentType")
+                        .WithMany("Equipment")
+                        .HasForeignKey("EquipmentTypeName")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("EquipmentType");
+                });
+
             modelBuilder.Entity("ProductionSystem.Data.Material", b =>
                 {
                     b.HasOne("ProductionSystem.Data.Supplier", "Supplier")
@@ -310,6 +530,89 @@ namespace ProductionSystem.Data.Migrations
                     b.Navigation("Supplier");
 
                     b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("ProductionSystem.Data.ProductAssemblySpec", b =>
+                {
+                    b.HasOne("ProductionSystem.Data.Product", "ChildProduct")
+                        .WithMany("AssemblyParents")
+                        .HasForeignKey("ChildProductName")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ProductionSystem.Data.Product", "ParentProduct")
+                        .WithMany("AssemblyChildren")
+                        .HasForeignKey("ParentProductName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChildProduct");
+
+                    b.Navigation("ParentProduct");
+                });
+
+            modelBuilder.Entity("ProductionSystem.Data.ProductComponentSpec", b =>
+                {
+                    b.HasOne("ProductionSystem.Data.StockComponent", "Component")
+                        .WithMany()
+                        .HasForeignKey("ComponentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProductionSystem.Data.Product", "Product")
+                        .WithMany("ComponentSpecs")
+                        .HasForeignKey("ProductName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Component");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ProductionSystem.Data.ProductMaterialSpec", b =>
+                {
+                    b.HasOne("ProductionSystem.Data.Material", "Material")
+                        .WithMany()
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProductionSystem.Data.Product", "Product")
+                        .WithMany("MaterialSpecs")
+                        .HasForeignKey("ProductName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Material");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ProductionSystem.Data.ProductOperationSpec", b =>
+                {
+                    b.HasOne("ProductionSystem.Data.EquipmentType", "EquipmentType")
+                        .WithMany("OperationSpecs")
+                        .HasForeignKey("EquipmentTypeName")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ProductionSystem.Data.ProductionOperation", "Operation")
+                        .WithMany("ProductOperationSpecs")
+                        .HasForeignKey("OperationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ProductionSystem.Data.Product", "Product")
+                        .WithMany("OperationSpecs")
+                        .HasForeignKey("ProductName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EquipmentType");
+
+                    b.Navigation("Operation");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ProductionSystem.Data.StockComponent", b =>
@@ -348,8 +651,32 @@ namespace ProductionSystem.Data.Migrations
                     b.Navigation("Worker");
                 });
 
+            modelBuilder.Entity("ProductionSystem.Data.EquipmentType", b =>
+                {
+                    b.Navigation("Equipment");
+
+                    b.Navigation("OperationSpecs");
+                });
+
+            modelBuilder.Entity("ProductionSystem.Data.Product", b =>
+                {
+                    b.Navigation("AssemblyChildren");
+
+                    b.Navigation("AssemblyParents");
+
+                    b.Navigation("ComponentSpecs");
+
+                    b.Navigation("CustomerOrders");
+
+                    b.Navigation("MaterialSpecs");
+
+                    b.Navigation("OperationSpecs");
+                });
+
             modelBuilder.Entity("ProductionSystem.Data.ProductionOperation", b =>
                 {
+                    b.Navigation("ProductOperationSpecs");
+
                     b.Navigation("WorkerOperations");
                 });
 
