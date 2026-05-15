@@ -18,7 +18,7 @@ public partial class LoginWindow : Window
         try
         {
             if (DataContext is LoginViewModel vm)
-                await vm.TryAutoLoginAsync();
+                await vm.OnOpenedAsync();
         }
         catch (Exception ex)
         {

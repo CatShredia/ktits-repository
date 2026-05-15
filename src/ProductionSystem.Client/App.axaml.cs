@@ -50,9 +50,16 @@ public partial class App : Application
 
             void OnAuthenticated()
             {
-                loginWindow?.Close();
-                loginWindow = null;
+                // Сначала сессия, затем закрытие окна входа. Иначе Closed вызывает OnLoginClosed
+                // до ApplySession, ShowLogin() сбрасывает токен (401 на всех запросах).
                 mainVm!.ApplySession();
+
+                if (loginWindow is not { } win)
+                    return;
+
+                win.Closed -= OnLoginClosed;
+                loginWindow = null;
+                win.Close();
             }
 
             async Task OpenRegisterFlowAsync(Window owner)
@@ -82,7 +89,7 @@ public partial class App : Application
                     OnAuthenticated();
             }
 
-            void ShowLogin()
+            void ShowLogin(bool autoLoginOnOpen = false)
             {
                 api.ClearAuth();
                 mainVm!.ClearSession();
@@ -98,7 +105,8 @@ public partial class App : Application
                 win.DataContext = new LoginViewModel(
                     api,
                     OnAuthenticated,
-                    () => OpenRegisterFlowAsync(win));
+                    () => OpenRegisterFlowAsync(win),
+                    autoLoginOnOpen);
 
                 win.Closed += OnLoginClosed;
                 win.Show(mainWindow);
@@ -117,12 +125,12 @@ public partial class App : Application
                     ShowLogin();
             }
 
-            mainVm = new MainWindowViewModel(api, ShowLogin);
+            mainVm = new MainWindowViewModel(api, () => ShowLogin());
             mainWindow.DataContext = mainVm;
             desktop.MainWindow = mainWindow;
 
             mainWindow.Show();
-            ShowLogin();
+            ShowLogin(autoLoginOnOpen: true);
         }
 
         base.OnFrameworkInitializationCompleted();

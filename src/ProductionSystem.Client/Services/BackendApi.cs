@@ -51,9 +51,9 @@ public class BackendApi
         var res = await _http.PostAsJsonAsync("api/auth/login", new { login, password }, _json, ct);
         if (res.IsSuccessStatusCode)
         {
-            var body = await res.Content.ReadFromJsonAsync<AuthResponse>(_json, ct);
-            if (body != null)
-                ApplyAuth(body.Token, body.Role, body.Login, body.FullName);
+            var body = await ReadAuthResponseAsync(res, ct);
+            if (body is null)
+                return (false, "Некорректный ответ сервера.", null);
             return (true, null, body);
         }
 
@@ -66,24 +66,21 @@ public class BackendApi
         var res = await _http.PostAsJsonAsync("api/auth/register", new { login, password, fullName }, _json, ct);
         if (res.IsSuccessStatusCode)
         {
-            var body = await res.Content.ReadFromJsonAsync<AuthResponse>(_json, ct);
-            if (body != null)
-                ApplyAuth(body.Token, body.Role, body.Login, body.FullName);
+            if (await ReadAuthResponseAsync(res, ct) is null)
+                return (false, "Некорректный ответ сервера.");
             return (true, null);
         }
 
         return (false, await TryReadError(res, ct));
     }
 
-    public async Task<List<WarehouseDto>?> GetWarehousesAsync(CancellationToken ct = default)
-    {
-        return await _http.GetFromJsonAsync<List<WarehouseDto>>("api/warehouses", _json, ct);
-    }
+    public async Task<List<WarehouseDto>?> GetWarehousesAsync(CancellationToken ct = default) =>
+        await GetJsonAsync<List<WarehouseDto>>("api/warehouses", ct);
 
     public async Task<MaterialListResponse?> GetMaterialsAsync(int? warehouseId, CancellationToken ct = default)
     {
         var q = warehouseId is int w ? $"?warehouseId={w}" : "";
-        return await _http.GetFromJsonAsync<MaterialListResponse>($"api/materials{q}", _json, ct);
+        return await GetJsonAsync<MaterialListResponse>($"api/materials{q}", ct);
     }
 
     public async Task<(bool Ok, string? Error)> UpdateMaterialAsync(int id, MaterialUpdateRequest body, CancellationToken ct = default)
@@ -101,7 +98,7 @@ public class BackendApi
     public async Task<ComponentListResponse?> GetComponentsAsync(int? warehouseId, CancellationToken ct = default)
     {
         var q = warehouseId is int w ? $"?warehouseId={w}" : "";
-        return await _http.GetFromJsonAsync<ComponentListResponse>($"api/components{q}", _json, ct);
+        return await GetJsonAsync<ComponentListResponse>($"api/components{q}", ct);
     }
 
     public async Task<(bool Ok, string? Error)> UpdateComponentAsync(int id, ComponentUpdateRequest body, CancellationToken ct = default)
@@ -117,10 +114,10 @@ public class BackendApi
     }
 
     public async Task<List<WorkerListItemDto>?> GetWorkersAsync(CancellationToken ct = default) =>
-        await _http.GetFromJsonAsync<List<WorkerListItemDto>>("api/workers", _json, ct);
+        await GetJsonAsync<List<WorkerListItemDto>>("api/workers", ct);
 
     public async Task<WorkerDetailDto?> GetWorkerAsync(int id, CancellationToken ct = default) =>
-        await _http.GetFromJsonAsync<WorkerDetailDto>($"api/workers/{id}", _json, ct);
+        await GetJsonAsync<WorkerDetailDto>($"api/workers/{id}", ct);
 
     public async Task<(bool Ok, string? Error)> CreateWorkerAsync(WorkerCreateUpdateRequest body, CancellationToken ct = default)
     {
@@ -141,12 +138,34 @@ public class BackendApi
     }
 
     public async Task<List<ProductionOperationDto>?> GetOperationsAsync(CancellationToken ct = default) =>
-        await _http.GetFromJsonAsync<List<ProductionOperationDto>>("api/production-operations", _json, ct);
+        await GetJsonAsync<List<ProductionOperationDto>>("api/production-operations", ct);
 
     public async Task<(bool Ok, string? Error)> CreateOperationAsync(string name, CancellationToken ct = default)
     {
         var res = await _http.PostAsJsonAsync("api/production-operations", new { name }, _json, ct);
         return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
+    }
+
+    private async Task<AuthResponse?> ReadAuthResponseAsync(HttpResponseMessage res, CancellationToken ct)
+    {
+        var body = await res.Content.ReadFromJsonAsync<AuthResponse>(_json, ct);
+        if (body is null || string.IsNullOrWhiteSpace(body.Token))
+            return null;
+
+        ApplyAuth(body.Token, body.Role, body.Login, body.FullName);
+        return body;
+    }
+
+    private async Task<T?> GetJsonAsync<T>(string url, CancellationToken ct)
+    {
+        if (string.IsNullOrEmpty(Token))
+            return default;
+
+        var res = await _http.GetAsync(url, ct);
+        if (!res.IsSuccessStatusCode)
+            return default;
+
+        return await res.Content.ReadFromJsonAsync<T>(_json, ct);
     }
 
     private static async Task<string?> TryReadError(HttpResponseMessage res, CancellationToken ct)

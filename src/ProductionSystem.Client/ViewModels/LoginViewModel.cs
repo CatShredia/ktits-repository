@@ -10,20 +10,30 @@ public partial class LoginViewModel : ViewModelBase
     private readonly BackendApi _api;
     private readonly Action _onSuccess;
     private readonly Func<Task> _openRegisterFlow;
+    private readonly bool _autoLoginOnOpen;
 
     [ObservableProperty] private string _login = "";
     [ObservableProperty] private string _password = "";
     [ObservableProperty] private bool _rememberMe;
     [ObservableProperty] private string? _errorMessage;
 
-    public LoginViewModel(BackendApi api, Action onSuccess, Func<Task> openRegisterFlow)
+    public LoginViewModel(BackendApi api, Action onSuccess, Func<Task> openRegisterFlow, bool autoLoginOnOpen = false)
     {
         _api = api;
         _onSuccess = onSuccess;
         _openRegisterFlow = openRegisterFlow;
+        _autoLoginOnOpen = autoLoginOnOpen;
     }
 
-    public async Task TryAutoLoginAsync()
+    public async Task OnOpenedAsync()
+    {
+        if (_autoLoginOnOpen)
+            await TryAutoLoginAsync();
+        else
+            PrefillFromStore();
+    }
+
+    public void PrefillFromStore()
     {
         var store = CredentialStore.Load();
         if (store is not { Remember: true, Login: { } l, Password: { } p })
@@ -32,8 +42,15 @@ public partial class LoginViewModel : ViewModelBase
         Login = l;
         Password = p;
         RememberMe = true;
+    }
 
-        var (ok, err, _) = await _api.LoginAsync(l, p);
+    public async Task TryAutoLoginAsync()
+    {
+        PrefillFromStore();
+        if (string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(Password))
+            return;
+
+        var (ok, err, _) = await _api.LoginAsync(Login.Trim(), Password);
         if (ok)
             await Dispatcher.UIThread.InvokeAsync(_onSuccess);
         else
