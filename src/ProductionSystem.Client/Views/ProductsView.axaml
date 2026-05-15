@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ProductionSystem.Client.ViewModels"
+             xmlns:dg="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.DataGrid"
+             x:Class="ProductionSystem.Client.Views.ProductsView"
+             x:DataType="vm:ProductsViewModel">
+    <Grid RowDefinitions="Auto,*,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+            <Button Content="Обновить" Command="{Binding RefreshCommand}" />
+            <Button Content="Спецификация" Command="{Binding OpenSpecificationCommand}" />
+        </StackPanel>
+        <dg:DataGrid Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedProduct}"
+                     AutoGenerateColumns="False" IsReadOnly="True">
+            <dg:DataGrid.Columns>
+                <dg:DataGridTextColumn Header="Изделие" Binding="{Binding Name}" Width="2*" />
+                <dg:DataGridTextColumn Header="Габариты" Binding="{Binding Dimensions}" Width="*" />
+                <dg:DataGridTextColumn Header="Материалы" Binding="{Binding MaterialCount}" Width="90" />
+                <dg:DataGridTextColumn Header="Комплект." Binding="{Binding ComponentCount}" Width="90" />
+                <dg:DataGridTextColumn Header="Сборка" Binding="{Binding AssemblyCount}" Width="80" />
+                <dg:DataGridTextColumn Header="Операции" Binding="{Binding OperationCount}" Width="90" />
+            </dg:DataGrid.Columns>
+        </dg:DataGrid>
+        <TextBlock Grid.Row="2" Text="{Binding StatusMessage}" Margin="0,8,0,0" />
+    </Grid>
+</UserControl>

@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProductionSystem.Client.Models;
 using ProductionSystem.Client.Services;
+using ProductionSystem.Client.Views;
 
 namespace ProductionSystem.Client.ViewModels;
 
@@ -22,6 +23,7 @@ public partial class OrdersViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(HasSelectedOrder))]
     [NotifyPropertyChangedFor(nameof(SelectedOrderSummary))]
     [NotifyPropertyChangedFor(nameof(ShowBottomPanel))]
+    [NotifyPropertyChangedFor(nameof(CanOpenPlanning))]
     private OrderListItemDto? _selectedOrder;
     [ObservableProperty] private string? _statusMessage;
     [ObservableProperty] private string _statusComment = "";
@@ -169,6 +171,23 @@ public partial class OrdersViewModel : ViewModelBase
         StatusMessage = ok ? "Заказ отменён." : err;
         if (ok)
             await RefreshAsync();
+    }
+
+    public bool CanOpenPlanning => Role == UserRoles.Manager && SelectedOrder is not null &&
+        SelectedOrder.Status is not "Новый" and not "Отменен" and not "Отклонен";
+
+    [RelayCommand]
+    private async Task OpenPlanningAsync()
+    {
+        if (SelectedOrder is null)
+            return;
+
+        var owner = DialogService.TryGetMainWindow();
+        if (owner is null)
+            return;
+
+        var dlg = new OrderPlanningWindow(_api, SelectedOrder.Number);
+        await dlg.ShowDialog(owner);
     }
 
     public bool CanCreateOrder => Role is UserRoles.Customer or UserRoles.Manager;

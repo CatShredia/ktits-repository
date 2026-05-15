@@ -260,6 +260,64 @@ public class BackendApi
         return body;
     }
 
+    public async Task<List<ProductListItemDto>?> GetProductsAsync(CancellationToken ct = default) =>
+        await GetJsonAsync<List<ProductListItemDto>>("api/products", ct);
+
+    public async Task<ProductDetailDto?> GetProductAsync(string name, CancellationToken ct = default) =>
+        await GetJsonAsync<ProductDetailDto>($"api/products/{Uri.EscapeDataString(name)}", ct);
+
+    public async Task<(bool Ok, string? Error, ProductDetailDto? Data)> UpdateProductAsync(
+        string name, ProductUpdateRequest body, CancellationToken ct = default)
+    {
+        var res = await _http.PutAsJsonAsync($"api/products/{Uri.EscapeDataString(name)}", body, _json, ct);
+        if (res.IsSuccessStatusCode)
+        {
+            var data = await res.Content.ReadFromJsonAsync<ProductDetailDto>(_json, ct);
+            return (true, null, data);
+        }
+
+        return (false, await TryReadError(res, ct), null);
+    }
+
+    public async Task<(bool Ok, string? Error)> AddProductDrawingAsync(
+        string name, string title, string source, string? contentBase64, CancellationToken ct = default)
+    {
+        var res = await _http.PostAsJsonAsync($"api/products/{Uri.EscapeDataString(name)}/drawings",
+            new { title, source, contentBase64 }, _json, ct);
+        return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
+    }
+
+    public async Task<(bool Ok, string? Error)> DeleteProductDrawingAsync(
+        string name, int id, CancellationToken ct = default)
+    {
+        var res = await _http.DeleteAsync($"api/products/{Uri.EscapeDataString(name)}/drawings/{id}", ct);
+        return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
+    }
+
+    public async Task<OperationsCatalogDto?> GetOperationsCatalogAsync(CancellationToken ct = default) =>
+        await GetJsonAsync<OperationsCatalogDto>("api/products/operations-catalog", ct);
+
+    public async Task<List<ProductMaterialLineDto>?> GetMaterialsCatalogAsync(CancellationToken ct = default) =>
+        await GetJsonAsync<List<ProductMaterialLineDto>>("api/products/materials-catalog", ct);
+
+    public async Task<List<ProductComponentLineDto>?> GetComponentsCatalogAsync(CancellationToken ct = default) =>
+        await GetJsonAsync<List<ProductComponentLineDto>>("api/products/components-catalog", ct);
+
+    public async Task<OrderPlanningDto?> GetOrderPlanningAsync(string orderNumber, CancellationToken ct = default) =>
+        await GetJsonAsync<OrderPlanningDto>($"api/orders/{Uri.EscapeDataString(orderNumber)}/planning", ct);
+
+    public async Task<InventoryReportResponse?> GetInventoryReportAsync(
+        string kind, string? type, CancellationToken ct = default)
+    {
+        var q = $"?kind={Uri.EscapeDataString(kind)}";
+        if (!string.IsNullOrWhiteSpace(type))
+            q += $"&type={Uri.EscapeDataString(type)}";
+        return await GetJsonAsync<InventoryReportResponse>($"api/reports/inventory{q}", ct);
+    }
+
+    public async Task<List<string>?> GetInventoryReportTypesAsync(string kind, CancellationToken ct = default) =>
+        await GetJsonAsync<List<string>>($"api/reports/inventory/types?kind={Uri.EscapeDataString(kind)}", ct);
+
     private async Task<T?> GetJsonAsync<T>(string url, CancellationToken ct)
     {
         if (string.IsNullOrEmpty(Token))

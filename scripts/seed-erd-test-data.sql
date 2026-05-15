@@ -285,6 +285,64 @@ LEFT JOIN LATERAL (
 ) et ON TRUE
 ON CONFLICT ("ProductName", "OperationId", "SequenceNumber") DO NOTHING;
 
+-- Сессия 3: замеры изделий, чертежи, описания операций
+INSERT INTO product_measurements ("ProductName", "Description", "Unit", "Value")
+SELECT p."Name", 'Масса изделия', 'кг', (800 + (abs(hashtext(p."Name")) % 500))::decimal
+FROM products p
+WHERE p."Name" LIKE 'Изделие С-%'
+AND NOT EXISTS (
+    SELECT 1 FROM product_measurements m
+    WHERE m."ProductName" = p."Name" AND m."Description" = 'Масса изделия'
+);
+
+INSERT INTO product_drawings ("ProductName", "Title", "Source", "Content")
+SELECT p."Name", 'Чертёж общего вида', 'Конструктор', NULL
+FROM products p
+WHERE p."Name" LIKE 'Изделие С-%'
+AND NOT EXISTS (
+    SELECT 1 FROM product_drawings d
+    WHERE d."ProductName" = p."Name" AND d."Title" = 'Чертёж общего вида'
+);
+
+UPDATE product_operation_specs pos
+SET "Description" = 'Выполнение операции «' || po."Name" || '» для ' || pos."ProductName",
+    "RequiresEquipment" = CASE
+        WHEN po."Name" ILIKE '%суш%' OR po."Name" ILIKE '%выдерж%' THEN false
+        ELSE true
+    END
+FROM production_operations po
+WHERE pos."OperationId" = po."Id"
+  AND (pos."Description" IS NULL OR pos."Description" = '');
+
+-- Пример иерархии «барабан» (WSR C3)
+INSERT INTO products ("Name", "Dimensions")
+VALUES ('Барабан сварной', '1200x800 мм')
+ON CONFLICT ("Name") DO NOTHING;
+
+INSERT INTO products ("Name", "Dimensions")
+SELECT 'Деталь барабана ' || i::text, '200x' || (100 + i * 10)::text || ' мм'
+FROM generate_series(1, 3) AS i
+ON CONFLICT ("Name") DO NOTHING;
+
+INSERT INTO product_assembly_specs ("ParentProductName", "ChildProductName", "Quantity")
+SELECT 'Барабан сварной', 'Деталь барабана ' || i::text, 1::decimal
+FROM generate_series(1, 3) AS i
+ON CONFLICT DO NOTHING;
+
+INSERT INTO product_operation_specs ("ProductName", "OperationId", "SequenceNumber", "EquipmentTypeName", "DurationMinutes", "Description", "RequiresEquipment")
+SELECT
+    'Барабан сварной',
+    po."Id",
+    ROW_NUMBER() OVER (ORDER BY po."Id"),
+    (SELECT e."Name" FROM equipment_types e ORDER BY e."Name" LIMIT 1),
+    120 + ROW_NUMBER() OVER (ORDER BY po."Id") * 30,
+    'Сборка барабана: ' || po."Name",
+    true
+FROM production_operations po
+WHERE EXISTS (SELECT 1 FROM products WHERE "Name" = 'Барабан сварной')
+AND (SELECT COUNT(*) FROM product_operation_specs WHERE "ProductName" = 'Барабан сварной') = 0
+LIMIT 3;
+
 -- Цеха (изображения планов подгружает API при первом запуске, если таблица пуста)
 INSERT INTO workshops ("Name", "FloorPlanImage")
 SELECT v, NULL

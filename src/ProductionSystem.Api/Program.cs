@@ -13,6 +13,9 @@ var conn = builder.Configuration.GetConnectionString("Default")
 
 builder.Services.AddDbContext<AppDbContext>(o => o.UseNpgsql(conn));
 builder.Services.AddSingleton<JwtTokenBuilder>();
+builder.Services.AddScoped<ProductRequirementsService>();
+builder.Services.AddScoped<ProcurementEstimationService>();
+builder.Services.AddScoped<ProductionSchedulingService>();
 builder.Services.AddScoped<MaterialWriteOffService>();
 builder.Services.AddScoped<OrderWorkflowService>();
 builder.Services.AddControllers();

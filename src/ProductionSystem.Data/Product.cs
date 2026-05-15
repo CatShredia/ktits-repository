@@ -14,4 +14,6 @@ public class Product
     public ICollection<ProductAssemblySpec> AssemblyChildren { get; set; } = new List<ProductAssemblySpec>();
     /// <summary>Строки спецификации, где это изделие входит в состав другого.</summary>
     public ICollection<ProductAssemblySpec> AssemblyParents { get; set; } = new List<ProductAssemblySpec>();
+    public ICollection<ProductDrawing> Drawings { get; set; } = new List<ProductDrawing>();
+    public ICollection<ProductMeasurement> Measurements { get; set; } = new List<ProductMeasurement>();
 }

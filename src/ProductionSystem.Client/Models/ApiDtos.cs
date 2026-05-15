@@ -232,3 +232,151 @@ public class EquipmentListItemDto
     public string EquipmentTypeName { get; set; } = "";
     public string? Characteristics { get; set; }
 }
+
+public class ProductListItemDto
+{
+    public string Name { get; set; } = "";
+    public string Dimensions { get; set; } = "";
+    public int MaterialCount { get; set; }
+    public int ComponentCount { get; set; }
+    public int AssemblyCount { get; set; }
+    public int OperationCount { get; set; }
+}
+
+public class ProductDetailDto
+{
+    public string Name { get; set; } = "";
+    public string Dimensions { get; set; } = "";
+    public List<ProductDrawingDto> Drawings { get; set; } = new();
+    public List<ProductMeasurementDto> Measurements { get; set; } = new();
+    public List<ProductMaterialLineDto> Materials { get; set; } = new();
+    public List<ProductComponentLineDto> Components { get; set; } = new();
+    public List<ProductAssemblyLineDto> Assemblies { get; set; } = new();
+    public List<ProductOperationLineDto> Operations { get; set; } = new();
+}
+
+public class ProductDrawingDto
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = "";
+    public string Source { get; set; } = "";
+    public bool HasContent { get; set; }
+}
+
+public class ProductMeasurementDto
+{
+    public int Id { get; set; }
+    public string Description { get; set; } = "";
+    public string Unit { get; set; } = "";
+    public decimal Value { get; set; }
+}
+
+public class ProductMaterialLineDto
+{
+    public int MaterialId { get; set; }
+    public string Article { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string Unit { get; set; } = "";
+    public decimal Quantity { get; set; }
+}
+
+public class ProductComponentLineDto
+{
+    public int ComponentId { get; set; }
+    public string Article { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string Unit { get; set; } = "";
+    public decimal Quantity { get; set; }
+}
+
+public class ProductAssemblyLineDto
+{
+    public string ChildProductName { get; set; } = "";
+    public decimal Quantity { get; set; }
+}
+
+public class ProductOperationLineDto
+{
+    public int OperationId { get; set; }
+    public string OperationName { get; set; } = "";
+    public int SequenceNumber { get; set; }
+    public string? EquipmentTypeName { get; set; }
+    public int DurationMinutes { get; set; }
+    public string? Description { get; set; }
+    public bool RequiresEquipment { get; set; } = true;
+}
+
+public class ProductUpdateRequest
+{
+    public string Dimensions { get; set; } = "";
+    public List<ProductMeasurementDto> Measurements { get; set; } = new();
+    public List<ProductMaterialLineDto> Materials { get; set; } = new();
+    public List<ProductComponentLineDto> Components { get; set; } = new();
+    public List<ProductAssemblyLineDto> Assemblies { get; set; } = new();
+    public List<ProductOperationLineDto> Operations { get; set; } = new();
+}
+
+public class OrderPlanningDto
+{
+    public string OrderNumber { get; set; } = "";
+    public string ProductName { get; set; } = "";
+    public List<ProcurementLineDto> ProcurementLines { get; set; } = new();
+    public decimal TotalProcurementCost { get; set; }
+    public int MinDeliveryDays { get; set; }
+    public int MinDeliveryDaysForShortage { get; set; }
+    public int ProductionMinutes { get; set; }
+    public int TotalMinutes { get; set; }
+    public List<GanttBarDto> GanttBars { get; set; } = new();
+    public List<string> EquipmentUsed { get; set; } = new();
+}
+
+public class ProcurementLineDto
+{
+    public string Kind { get; set; } = "";
+    public string Article { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string Unit { get; set; } = "";
+    public decimal RequiredQuantity { get; set; }
+    public decimal AvailableQuantity { get; set; }
+    public decimal ShortageQuantity { get; set; }
+    public decimal PurchasePrice { get; set; }
+    public decimal LineCost { get; set; }
+    public int? DeliveryDays { get; set; }
+}
+
+public class GanttBarDto
+{
+    public string ProductName { get; set; } = "";
+    public string OperationName { get; set; } = "";
+    public string? EquipmentTypeName { get; set; }
+    public string? EquipmentMarking { get; set; }
+    public int StartMinutes { get; set; }
+    public int EndMinutes { get; set; }
+    public bool IsBackground { get; set; }
+}
+
+public class InventoryReportResponse
+{
+    public string Kind { get; set; } = "";
+    public string? TypeFilter { get; set; }
+    public List<InventoryWarehouseGroupDto> Warehouses { get; set; } = new();
+    public decimal GrandTotalQuantity { get; set; }
+}
+
+public class InventoryWarehouseGroupDto
+{
+    public int WarehouseId { get; set; }
+    public string WarehouseName { get; set; } = "";
+    public List<InventoryReportLineDto> Lines { get; set; } = new();
+    public decimal WarehouseTotalQuantity { get; set; }
+}
+
+public class InventoryReportLineDto
+{
+    public string Article { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string Type { get; set; } = "";
+    public string Unit { get; set; } = "";
+    public decimal Quantity { get; set; }
+    public decimal PurchasePrice { get; set; }
+}

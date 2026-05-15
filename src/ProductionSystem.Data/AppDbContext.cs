@@ -28,6 +28,8 @@ public class AppDbContext : DbContext
     public DbSet<WorkshopLayoutItem> WorkshopLayoutItems => Set<WorkshopLayoutItem>();
     public DbSet<EquipmentFailure> EquipmentFailures => Set<EquipmentFailure>();
     public DbSet<OrderQualityCheck> OrderQualityChecks => Set<OrderQualityCheck>();
+    public DbSet<ProductDrawing> ProductDrawings => Set<ProductDrawing>();
+    public DbSet<ProductMeasurement> ProductMeasurements => Set<ProductMeasurement>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -224,12 +226,35 @@ public class AppDbContext : DbContext
             e.HasOne(x => x.Component).WithMany().HasForeignKey(x => x.ComponentId).OnDelete(DeleteBehavior.Cascade);
         });
 
+        modelBuilder.Entity<ProductDrawing>(e =>
+        {
+            e.ToTable("product_drawings");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.ProductName).HasMaxLength(512).IsRequired();
+            e.Property(x => x.Title).HasMaxLength(512).IsRequired();
+            e.Property(x => x.Source).HasMaxLength(64).IsRequired();
+            e.HasOne(x => x.Product).WithMany(p => p.Drawings).HasForeignKey(x => x.ProductName)
+                .HasPrincipalKey(p => p.Name).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ProductMeasurement>(e =>
+        {
+            e.ToTable("product_measurements");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.ProductName).HasMaxLength(512).IsRequired();
+            e.Property(x => x.Description).HasMaxLength(512).IsRequired();
+            e.Property(x => x.Unit).HasMaxLength(64).IsRequired();
+            e.HasOne(x => x.Product).WithMany(p => p.Measurements).HasForeignKey(x => x.ProductName)
+                .HasPrincipalKey(p => p.Name).OnDelete(DeleteBehavior.Cascade);
+        });
+
         modelBuilder.Entity<ProductOperationSpec>(e =>
         {
             e.ToTable("product_operation_specs");
             e.HasKey(x => new { x.ProductName, x.OperationId, x.SequenceNumber });
             e.Property(x => x.ProductName).HasMaxLength(512);
             e.Property(x => x.EquipmentTypeName).HasMaxLength(256);
+            e.Property(x => x.Description).HasMaxLength(4000);
             e.HasOne(x => x.Product).WithMany(p => p.OperationSpecs).HasForeignKey(x => x.ProductName)
                 .HasPrincipalKey(p => p.Name).OnDelete(DeleteBehavior.Cascade);
             e.HasOne(x => x.Operation).WithMany(o => o.ProductOperationSpecs).HasForeignKey(x => x.OperationId)

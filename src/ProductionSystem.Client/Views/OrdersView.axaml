@@ -13,6 +13,7 @@
             <Button Content="Изменить" Command="{Binding EditOrderCommand}" IsVisible="{Binding CanEditSelected}" />
             <Button Content="Удалить" Command="{Binding DeleteOrderCommand}" IsVisible="{Binding CanDeleteSelected}" />
             <Button Content="История" Command="{Binding ShowHistoryCommand}" />
+            <Button Content="Оценка и Ганта" Command="{Binding OpenPlanningCommand}" IsVisible="{Binding CanOpenPlanning}" />
         </StackPanel>
 
         <TextBlock Grid.Row="1" Text="{Binding StatusMessage}" Foreground="#BB0C07" TextWrapping="Wrap" Margin="0,0,0,8" />

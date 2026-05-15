@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ProductionSystem.Client.ViewModels"
+             xmlns:dg="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.DataGrid"
+             x:Class="ProductionSystem.Client.Views.InventoryReportView"
+             x:DataType="vm:InventoryReportViewModel">
+    <Grid RowDefinitions="Auto,Auto,*">
+        <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,8">
+            <TextBlock Text="Показать:" VerticalAlignment="Center" />
+            <ComboBox Width="160" ItemsSource="{Binding KindOptions}" SelectedItem="{Binding SelectedKind}" />
+            <TextBlock Text="Тип:" VerticalAlignment="Center" />
+            <ComboBox Width="200" ItemsSource="{Binding TypeOptions}" SelectedItem="{Binding SelectedType}" />
+            <Button Content="Обновить" Command="{Binding RefreshCommand}" />
+            <Button Content="Печать" Command="{Binding PrintCommand}" />
+        </StackPanel>
+
+        <TextBlock Grid.Row="1" Text="{Binding SummaryText}" TextWrapping="Wrap" Margin="0,0,0,8" />
+
+        <ItemsControl Grid.Row="2" ItemsSource="{Binding Warehouses}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,0,0,16">
+                        <TextBlock FontWeight="SemiBold"
+                                   Text="{Binding WarehouseName, StringFormat=Склад: {0}}" />
+                        <TextBlock Margin="0,2,0,6"
+                                   Text="{Binding WarehouseTotalQuantity, StringFormat=Итого по складу: {0}}" />
+                        <dg:DataGrid ItemsSource="{Binding Lines}" AutoGenerateColumns="False"
+                                     IsReadOnly="True" Height="160">
+                            <dg:DataGrid.Columns>
+                                <dg:DataGridTextColumn Header="Артикул" Binding="{Binding Article}" Width="*" />
+                                <dg:DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="2*" />
+                                <dg:DataGridTextColumn Header="Тип" Binding="{Binding Type}" Width="*" />
+                                <dg:DataGridTextColumn Header="Ед." Binding="{Binding Unit}" Width="70" />
+                                <dg:DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="90" />
+                                <dg:DataGridTextColumn Header="Цена" Binding="{Binding PurchasePrice}" Width="90" />
+                            </dg:DataGrid.Columns>
+                        </dg:DataGrid>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

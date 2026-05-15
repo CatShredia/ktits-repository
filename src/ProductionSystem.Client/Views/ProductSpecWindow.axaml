@@ -1,0 +1,104 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ProductionSystem.Client.ViewModels"
+        xmlns:dg="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.DataGrid"
+        x:Class="ProductionSystem.Client.Views.ProductSpecWindow"
+        x:DataType="vm:ProductSpecViewModel"
+        Title="{Binding Title}"
+        Width="1000" Height="720">
+    <ScrollViewer>
+        <StackPanel Margin="12" Spacing="10">
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="#BB0C07" TextWrapping="Wrap" />
+
+            <TextBox Watermark="Габариты изделия" Text="{Binding Dimensions}" IsReadOnly="{Binding !CanEdit}" />
+
+            <TextBlock Text="Замеры" FontWeight="SemiBold" />
+            <dg:DataGrid ItemsSource="{Binding Measurements}" AutoGenerateColumns="False" Height="120"
+                         IsReadOnly="{Binding !CanEdit}">
+                <dg:DataGrid.Columns>
+                    <dg:DataGridTextColumn Header="Наименование" Binding="{Binding Description}" Width="2*" />
+                    <dg:DataGridTextColumn Header="Ед." Binding="{Binding Unit}" Width="80" />
+                    <dg:DataGridTextColumn Header="Значение" Binding="{Binding Value}" Width="100" />
+                </dg:DataGrid.Columns>
+            </dg:DataGrid>
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding CanEdit}">
+                <Button Content="+ Замер" Command="{Binding AddMeasurementCommand}" />
+            </StackPanel>
+
+            <TextBlock Text="Чертежи" FontWeight="SemiBold" />
+            <dg:DataGrid x:Name="DrawGrid" ItemsSource="{Binding Drawings}" SelectedItem="{Binding SelectedDrawing}"
+                         AutoGenerateColumns="False" Height="90" IsReadOnly="True">
+                <dg:DataGrid.Columns>
+                    <dg:DataGridTextColumn Header="Название" Binding="{Binding Title}" Width="2*" />
+                    <dg:DataGridTextColumn Header="Источник" Binding="{Binding Source}" Width="*" />
+                </dg:DataGrid.Columns>
+            </dg:DataGrid>
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding CanEdit}">
+                <TextBox Width="200" Watermark="Название чертежа" Text="{Binding DrawingTitle}" />
+                <TextBox Width="140" Watermark="Источник" Text="{Binding DrawingSource}" />
+                <Button Content="Добавить чертёж" Command="{Binding AddDrawingCommand}" />
+                <Button Content="Удалить" Command="{Binding DeleteDrawingCommand}" />
+            </StackPanel>
+
+            <TextBlock Text="Материалы" FontWeight="SemiBold" />
+            <dg:DataGrid ItemsSource="{Binding Materials}" AutoGenerateColumns="False" Height="120"
+                         IsReadOnly="{Binding !CanEdit}">
+                <dg:DataGrid.Columns>
+                    <dg:DataGridTextColumn Header="Артикул" Binding="{Binding Article}" Width="*" />
+                    <dg:DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="2*" />
+                    <dg:DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="100" />
+                </dg:DataGrid.Columns>
+            </dg:DataGrid>
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding CanEdit}">
+                <Button Content="+ Материал" Command="{Binding AddMaterialCommand}" />
+            </StackPanel>
+
+            <TextBlock Text="Комплектующие" FontWeight="SemiBold" />
+            <dg:DataGrid ItemsSource="{Binding Components}" AutoGenerateColumns="False" Height="120"
+                         IsReadOnly="{Binding !CanEdit}">
+                <dg:DataGrid.Columns>
+                    <dg:DataGridTextColumn Header="Артикул" Binding="{Binding Article}" Width="*" />
+                    <dg:DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="2*" />
+                    <dg:DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="100" />
+                </dg:DataGrid.Columns>
+            </dg:DataGrid>
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding CanEdit}">
+                <Button Content="+ Комплектующее" Command="{Binding AddComponentCommand}" />
+            </StackPanel>
+
+            <TextBlock Text="Сборочные единицы" FontWeight="SemiBold" />
+            <dg:DataGrid ItemsSource="{Binding Assemblies}" AutoGenerateColumns="False" Height="100"
+                         IsReadOnly="{Binding !CanEdit}">
+                <dg:DataGrid.Columns>
+                    <dg:DataGridTextColumn Header="Дочернее изделие" Binding="{Binding ChildProductName}" Width="2*" />
+                    <dg:DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="100" />
+                </dg:DataGrid.Columns>
+            </dg:DataGrid>
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding CanEdit}">
+                <Button Content="+ Сборка" Command="{Binding AddAssemblyCommand}" />
+            </StackPanel>
+
+            <TextBlock Text="Операции" FontWeight="SemiBold" />
+            <dg:DataGrid ItemsSource="{Binding Operations}" AutoGenerateColumns="False" Height="140"
+                         IsReadOnly="{Binding !CanEdit}">
+                <dg:DataGrid.Columns>
+                    <dg:DataGridTextColumn Header="№" Binding="{Binding SequenceNumber}" Width="50" />
+                    <dg:DataGridTextColumn Header="Операция" Binding="{Binding OperationName}" Width="*" />
+                    <dg:DataGridTextColumn Header="Оборудование" Binding="{Binding EquipmentTypeName}" Width="*" />
+                    <dg:DataGridTextColumn Header="Мин" Binding="{Binding DurationMinutes}" Width="70" />
+                    <dg:DataGridCheckBoxColumn Header="Занимает оборуд." Binding="{Binding RequiresEquipment}" Width="120" />
+                    <dg:DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="2*" />
+                </dg:DataGrid.Columns>
+            </dg:DataGrid>
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding CanEdit}">
+                <Button Content="+ Операция" Command="{Binding AddOperationCommand}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+                <Button Content="Печать" Command="{Binding PrintCommand}" />
+                <Button Content="Сохранить" Command="{Binding SaveCommand}" IsVisible="{Binding CanEdit}" Click="Save_Click" />
+                <Button Content="Закрыть" Click="Close_Click" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

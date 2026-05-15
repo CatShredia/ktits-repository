@@ -75,9 +75,13 @@ public partial class MainWindowViewModel : ViewModelBase
 
         if (role == UserRoles.Foreman)
         {
+            yield return new NavItem("Изделия / спецификации", () => new ProductsViewModel(_api));
             yield return new NavItem("Сбои оборудования", () => new EquipmentFailuresViewModel(_api));
             yield return new NavItem("Контроль качества", () => new QualityControlViewModel(_api));
         }
+
+        if (role is UserRoles.Manager or UserRoles.Director)
+            yield return new NavItem("Отчёт по остаткам", () => new InventoryReportViewModel(_api));
 
         if (role == UserRoles.Director)
         {

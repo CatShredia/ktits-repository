@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ProductionSystem.Client.ViewModels"
+        xmlns:dg="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.DataGrid"
+        xmlns:views="using:ProductionSystem.Client.Views"
+        x:Class="ProductionSystem.Client.Views.OrderPlanningWindow"
+        x:DataType="vm:OrderPlanningViewModel"
+        Title="{Binding Title}"
+        Width="1100" Height="750">
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <TextBlock Text="{Binding ErrorMessage}" Foreground="#BB0C07" Margin="12,12,12,0" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="1" Text="{Binding SummaryText}" Margin="12,8" TextWrapping="Wrap" FontWeight="SemiBold" />
+
+        <TabControl Grid.Row="2" Margin="12,0">
+            <TabItem Header="Закупка">
+                <dg:DataGrid ItemsSource="{Binding ProcurementLines}" AutoGenerateColumns="False" IsReadOnly="True">
+                    <dg:DataGrid.Columns>
+                        <dg:DataGridTextColumn Header="Вид" Binding="{Binding Kind}" Width="110" />
+                        <dg:DataGridTextColumn Header="Артикул" Binding="{Binding Article}" Width="*" />
+                        <dg:DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="2*" />
+                        <dg:DataGridTextColumn Header="Нужно" Binding="{Binding RequiredQuantity}" Width="80" />
+                        <dg:DataGridTextColumn Header="Есть" Binding="{Binding AvailableQuantity}" Width="80" />
+                        <dg:DataGridTextColumn Header="Недостача" Binding="{Binding ShortageQuantity}" Width="90" />
+                        <dg:DataGridTextColumn Header="Цена" Binding="{Binding PurchasePrice}" Width="80" />
+                        <dg:DataGridTextColumn Header="Сумма" Binding="{Binding LineCost}" Width="90" />
+                        <dg:DataGridTextColumn Header="Доставка, дн" Binding="{Binding DeliveryDays}" Width="100" />
+                    </dg:DataGrid.Columns>
+                </dg:DataGrid>
+            </TabItem>
+            <TabItem Header="Диаграмма Ганта">
+                <views:GanttChartControl Bars="{Binding GanttBars}" />
+            </TabItem>
+        </TabControl>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="12">
+            <Button Content="Печать" Command="{Binding PrintCommand}" />
+            <Button Content="Закрыть" Click="Close_Click" />
+        </StackPanel>
+    </Grid>
+</Window>

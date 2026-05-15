@@ -3,7 +3,7 @@ using ProductionSystem.Data;
 
 namespace ProductionSystem.Api.Services;
 
-public class MaterialWriteOffService(AppDbContext db)
+public class MaterialWriteOffService(AppDbContext db, ProductRequirementsService requirements)
 {
     public async Task<(bool Ok, string? Error)> WriteOffForOrderAsync(string orderNumber, CancellationToken ct)
     {
@@ -12,9 +12,9 @@ public class MaterialWriteOffService(AppDbContext db)
         if (order is null)
             return (false, "Заказ не найден.");
 
-        var materials = new Dictionary<int, decimal>();
-        var components = new Dictionary<int, decimal>();
-        await ExplodeAsync(order.ProductName, 1m, materials, components, new HashSet<string>(), ct);
+        var (matList, compList) = await requirements.ExplodeAsync(order.ProductName, 1m, ct);
+        var materials = matList.ToDictionary(m => m.MaterialId, m => m.Quantity);
+        var components = compList.ToDictionary(c => c.ComponentId, c => c.Quantity);
 
         foreach (var (materialId, qty) in materials)
         {
@@ -38,32 +38,5 @@ public class MaterialWriteOffService(AppDbContext db)
 
         await db.SaveChangesAsync(ct);
         return (true, null);
-    }
-
-    private async Task ExplodeAsync(
-        string productName,
-        decimal multiplier,
-        Dictionary<int, decimal> materials,
-        Dictionary<int, decimal> components,
-        HashSet<string> visited,
-        CancellationToken ct)
-    {
-        if (!visited.Add(productName))
-            return;
-
-        var matSpecs = await db.ProductMaterialSpecs.AsNoTracking()
-            .Where(s => s.ProductName == productName).ToListAsync(ct);
-        foreach (var s in matSpecs)
-            materials[s.MaterialId] = materials.GetValueOrDefault(s.MaterialId) + s.Quantity * multiplier;
-
-        var compSpecs = await db.ProductComponentSpecs.AsNoTracking()
-            .Where(s => s.ProductName == productName).ToListAsync(ct);
-        foreach (var s in compSpecs)
-            components[s.ComponentId] = components.GetValueOrDefault(s.ComponentId) + s.Quantity * multiplier;
-
-        var assemblies = await db.ProductAssemblySpecs.AsNoTracking()
-            .Where(s => s.ParentProductName == productName).ToListAsync(ct);
-        foreach (var a in assemblies)
-            await ExplodeAsync(a.ChildProductName, multiplier * a.Quantity, materials, components, visited, ct);
     }
 }

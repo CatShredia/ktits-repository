@@ -9,6 +9,10 @@ public class ProductOperationSpec
     public string? EquipmentTypeName { get; set; }
     /// <summary>Длительность операции (в минутах).</summary>
     public int DurationMinutes { get; set; }
+    /// <summary>Словесное описание выполнения операции.</summary>
+    public string? Description { get; set; }
+    /// <summary>false — операция не занимает оборудование (напр. сушка), но учитывается во времени заказа.</summary>
+    public bool RequiresEquipment { get; set; } = true;
 
     public Product Product { get; set; } = null!;
     public ProductionOperation Operation { get; set; } = null!;
