@@ -22,6 +22,12 @@ public class AppDbContext : DbContext
     public DbSet<ProductAssemblySpec> ProductAssemblySpecs => Set<ProductAssemblySpec>();
     public DbSet<EquipmentType> EquipmentTypes => Set<EquipmentType>();
     public DbSet<Equipment> Equipment => Set<Equipment>();
+    public DbSet<OrderStatusHistory> OrderStatusHistory => Set<OrderStatusHistory>();
+    public DbSet<OrderDimension> OrderDimensions => Set<OrderDimension>();
+    public DbSet<Workshop> Workshops => Set<Workshop>();
+    public DbSet<WorkshopLayoutItem> WorkshopLayoutItems => Set<WorkshopLayoutItem>();
+    public DbSet<EquipmentFailure> EquipmentFailures => Set<EquipmentFailure>();
+    public DbSet<OrderQualityCheck> OrderQualityChecks => Set<OrderQualityCheck>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -122,11 +128,80 @@ public class AppDbContext : DbContext
             e.Property(x => x.ProductName).HasMaxLength(512).IsRequired();
             e.Property(x => x.CustomerLogin).HasMaxLength(64).IsRequired();
             e.Property(x => x.ManagerLogin).HasMaxLength(64);
+            e.Property(x => x.Status).HasMaxLength(64).IsRequired();
+            e.Property(x => x.RejectionReason).HasMaxLength(2000);
+            e.Property(x => x.ProductDescription).HasMaxLength(4000);
             e.HasOne(x => x.Product).WithMany(p => p.CustomerOrders).HasForeignKey(x => x.ProductName)
                 .HasPrincipalKey(p => p.Name).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerLogin).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(x => x.Manager).WithMany().HasForeignKey(x => x.ManagerLogin).IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<OrderStatusHistory>(e =>
+        {
+            e.ToTable("order_status_history");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.OrderNumber).HasMaxLength(64).IsRequired();
+            e.Property(x => x.Status).HasMaxLength(64).IsRequired();
+            e.Property(x => x.ChangedByLogin).HasMaxLength(64);
+            e.Property(x => x.Comment).HasMaxLength(2000);
+            e.HasOne(x => x.Order).WithMany(o => o.StatusHistory).HasForeignKey(x => x.OrderNumber)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<OrderDimension>(e =>
+        {
+            e.ToTable("order_dimensions");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.OrderNumber).HasMaxLength(64).IsRequired();
+            e.Property(x => x.Description).HasMaxLength(512);
+            e.Property(x => x.Unit).HasMaxLength(64);
+            e.HasOne(x => x.Order).WithMany(o => o.Dimensions).HasForeignKey(x => x.OrderNumber)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Workshop>(e =>
+        {
+            e.ToTable("workshops");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Name).HasMaxLength(256).IsRequired();
+            e.HasIndex(x => x.Name).IsUnique();
+        });
+
+        modelBuilder.Entity<WorkshopLayoutItem>(e =>
+        {
+            e.ToTable("workshop_layout_items");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.IconType).HasMaxLength(64).IsRequired();
+            e.HasOne(x => x.Workshop).WithMany(w => w.LayoutItems).HasForeignKey(x => x.WorkshopId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<EquipmentFailure>(e =>
+        {
+            e.ToTable("equipment_failures");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.EquipmentMarking).HasMaxLength(256).IsRequired();
+            e.Property(x => x.Reason).HasMaxLength(2000).IsRequired();
+            e.Property(x => x.RegisteredByLogin).HasMaxLength(64).IsRequired();
+            e.HasOne(x => x.Equipment).WithMany().HasForeignKey(x => x.EquipmentMarking)
+                .OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.RegisteredBy).WithMany().HasForeignKey(x => x.RegisteredByLogin)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<OrderQualityCheck>(e =>
+        {
+            e.ToTable("order_quality_checks");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.OrderNumber).HasMaxLength(64).IsRequired();
+            e.Property(x => x.ParameterName).HasMaxLength(512).IsRequired();
+            e.Property(x => x.Grade).HasMaxLength(8).IsRequired();
+            e.Property(x => x.Comment).HasMaxLength(2000);
+            e.Property(x => x.CheckedByLogin).HasMaxLength(64).IsRequired();
+            e.HasOne(x => x.Order).WithMany(o => o.QualityChecks).HasForeignKey(x => x.OrderNumber)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<ProductMaterialSpec>(e =>

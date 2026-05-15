@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ProductionSystem.Client.ViewModels"
+             xmlns:dg="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.DataGrid"
+             x:Class="ProductionSystem.Client.Views.EquipmentFailuresView"
+             x:DataType="vm:EquipmentFailuresViewModel">
+    <Grid RowDefinitions="Auto,Auto,*">
+        <TextBlock Text="Регистрация сбоя" FontWeight="SemiBold" />
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto,2*,Auto" Margin="0,8,0,8">
+            <ComboBox Grid.Column="0" ItemsSource="{Binding Equipment}" SelectedItem="{Binding SelectedEquipment}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Marking}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <DatePicker Grid.Column="1" SelectedDate="{Binding StartedAt}" Margin="8,0,0,0" />
+            <TextBox Grid.Column="2" Watermark="Причина" Text="{Binding Reason}" Margin="8,0,0,0" />
+            <Button Grid.Column="3" Content="Зарегистрировать" Command="{Binding RegisterFailureCommand}" Margin="8,0,0,0" />
+        </Grid>
+        <StackPanel Grid.Row="2">
+            <TextBlock Text="{Binding StatusMessage}" Foreground="#BB0C07" />
+            <Button Content="Закрыть выбранный сбой" Command="{Binding EndFailureCommand}" HorizontalAlignment="Left" Margin="0,0,0,8" />
+            <dg:DataGrid ItemsSource="{Binding Failures}" SelectedItem="{Binding SelectedFailure}"
+                         AutoGenerateColumns="False" IsReadOnly="True">
+                <dg:DataGrid.Columns>
+                    <dg:DataGridTextColumn Header="Оборудование" Binding="{Binding EquipmentMarking}" Width="*" />
+                    <dg:DataGridTextColumn Header="Начало" Binding="{Binding StartedAt}" Width="*" />
+                    <dg:DataGridTextColumn Header="Окончание" Binding="{Binding EndedAt}" Width="*" />
+                    <dg:DataGridTextColumn Header="Причина" Binding="{Binding Reason}" Width="2*" />
+                </dg:DataGrid.Columns>
+            </dg:DataGrid>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -13,6 +13,8 @@ var conn = builder.Configuration.GetConnectionString("Default")
 
 builder.Services.AddDbContext<AppDbContext>(o => o.UseNpgsql(conn));
 builder.Services.AddSingleton<JwtTokenBuilder>();
+builder.Services.AddScoped<MaterialWriteOffService>();
+builder.Services.AddScoped<OrderWorkflowService>();
 builder.Services.AddControllers();
 builder.Services.AddProductionSystemSwagger();
 builder.Services.AddCors(o => o.AddDefaultPolicy(p => p
@@ -47,11 +49,12 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
     await db.Database.MigrateAsync();
+    await WorkshopSeedService.EnsureSeededAsync(db, env);
 }
 
 app.MapControllers();

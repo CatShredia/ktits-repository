@@ -146,6 +146,110 @@ public class BackendApi
         return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
     }
 
+    public async Task<List<OrderListItemDto>?> GetOrdersAsync(string? filter = null, CancellationToken ct = default)
+    {
+        var q = string.IsNullOrWhiteSpace(filter) ? "" : $"?filter={Uri.EscapeDataString(filter)}";
+        return await GetJsonAsync<List<OrderListItemDto>>($"api/orders{q}", ct);
+    }
+
+    public async Task<OrderDetailDto?> GetOrderAsync(string number, CancellationToken ct = default) =>
+        await GetJsonAsync<OrderDetailDto>($"api/orders/{Uri.EscapeDataString(number)}", ct);
+
+    public async Task<List<OrderStatusHistoryDto>?> GetOrderHistoryAsync(string number, CancellationToken ct = default) =>
+        await GetJsonAsync<List<OrderStatusHistoryDto>>($"api/orders/{Uri.EscapeDataString(number)}/history", ct);
+
+    public async Task<List<CustomerUserDto>?> GetCustomersAsync(CancellationToken ct = default) =>
+        await GetJsonAsync<List<CustomerUserDto>>("api/orders/customers", ct);
+
+    public async Task<(bool Ok, string? Error, OrderDetailDto? Data)> CreateOrderAsync(
+        OrderCreateRequest body, CancellationToken ct = default)
+    {
+        var res = await _http.PostAsJsonAsync("api/orders", body, _json, ct);
+        if (res.IsSuccessStatusCode)
+        {
+            var data = await res.Content.ReadFromJsonAsync<OrderDetailDto>(_json, ct);
+            return (true, null, data);
+        }
+
+        return (false, await TryReadError(res, ct), null);
+    }
+
+    public async Task<(bool Ok, string? Error)> UpdateOrderAsync(
+        string number, OrderCreateRequest body, CancellationToken ct = default)
+    {
+        var res = await _http.PutAsJsonAsync($"api/orders/{Uri.EscapeDataString(number)}", body, _json, ct);
+        return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
+    }
+
+    public async Task<(bool Ok, string? Error)> DeleteOrderAsync(string number, CancellationToken ct = default)
+    {
+        var res = await _http.DeleteAsync($"api/orders/{Uri.EscapeDataString(number)}", ct);
+        return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
+    }
+
+    public async Task<(bool Ok, string? Error)> ChangeOrderStatusAsync(
+        string number, OrderStatusChangeRequest body, CancellationToken ct = default)
+    {
+        var res = await _http.PostAsJsonAsync($"api/orders/{Uri.EscapeDataString(number)}/status", body, _json, ct);
+        return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
+    }
+
+    public async Task<(bool Ok, string? Error)> CancelOrderByCustomerAsync(
+        string number, string? comment = null, CancellationToken ct = default)
+    {
+        var res = await _http.PostAsJsonAsync(
+            $"api/orders/{Uri.EscapeDataString(number)}/cancel",
+            new OrderStatusChangeRequest { Comment = comment },
+            _json,
+            ct);
+        return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
+    }
+
+    public async Task<List<WorkshopDto>?> GetWorkshopsAsync(CancellationToken ct = default) =>
+        await GetJsonAsync<List<WorkshopDto>>("api/workshops", ct);
+
+    public async Task<(bool Ok, string? Error)> SaveWorkshopLayoutAsync(
+        int workshopId, List<WorkshopLayoutItemDto> items, CancellationToken ct = default)
+    {
+        var res = await _http.PutAsJsonAsync($"api/workshops/{workshopId}/layout", new { items }, _json, ct);
+        return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
+    }
+
+    public async Task<List<EquipmentFailureDto>?> GetEquipmentFailuresAsync(CancellationToken ct = default) =>
+        await GetJsonAsync<List<EquipmentFailureDto>>("api/equipment-failures", ct);
+
+    public async Task<(bool Ok, string? Error)> CreateEquipmentFailureAsync(
+        string marking, DateTime startedAt, string reason, CancellationToken ct = default)
+    {
+        var res = await _http.PostAsJsonAsync("api/equipment-failures",
+            new { equipmentMarking = marking, startedAt, reason }, _json, ct);
+        return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
+    }
+
+    public async Task<(bool Ok, string? Error)> EndEquipmentFailureAsync(int id, DateTime endedAt, CancellationToken ct = default)
+    {
+        var res = await _http.PostAsJsonAsync($"api/equipment-failures/{id}/end", new { endedAt }, _json, ct);
+        return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
+    }
+
+    public async Task<List<EquipmentListItemDto>?> GetEquipmentAsync(CancellationToken ct = default) =>
+        await GetJsonAsync<List<EquipmentListItemDto>>("api/equipment", ct);
+
+    public async Task<List<QualityCheckDto>?> GetQualityChecksAsync(string orderNumber, CancellationToken ct = default) =>
+        await GetJsonAsync<List<QualityCheckDto>>(
+            $"api/orders/{Uri.EscapeDataString(orderNumber)}/quality-checks", ct);
+
+    public async Task<(bool Ok, string? Error)> UpsertQualityCheckAsync(
+        string orderNumber, string parameterName, string grade, string? comment, CancellationToken ct = default)
+    {
+        var res = await _http.PostAsJsonAsync(
+            $"api/orders/{Uri.EscapeDataString(orderNumber)}/quality-checks",
+            new { parameterName, grade, comment },
+            _json,
+            ct);
+        return res.IsSuccessStatusCode ? (true, null) : (false, await TryReadError(res, ct));
+    }
+
     private async Task<AuthResponse?> ReadAuthResponseAsync(HttpResponseMessage res, CancellationToken ct)
     {
         var body = await res.Content.ReadFromJsonAsync<AuthResponse>(_json, ct);

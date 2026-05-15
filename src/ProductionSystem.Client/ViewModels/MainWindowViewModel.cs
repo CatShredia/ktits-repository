@@ -64,6 +64,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         var role = _api.Role ?? "";
         yield return new NavItem(TitleFor(role), () => new RoleHomeViewModel(role));
+        yield return new NavItem("Заказы", () => new OrdersViewModel(_api));
 
         if (role == UserRoles.Customer)
             yield break;
@@ -72,8 +73,17 @@ public partial class MainWindowViewModel : ViewModelBase
         yield return new NavItem("Материалы", () => new MaterialsViewModel(_api, canEdit));
         yield return new NavItem("Комплектующие", () => new ComponentsViewModel(_api, canEdit));
 
+        if (role == UserRoles.Foreman)
+        {
+            yield return new NavItem("Сбои оборудования", () => new EquipmentFailuresViewModel(_api));
+            yield return new NavItem("Контроль качества", () => new QualityControlViewModel(_api));
+        }
+
         if (role == UserRoles.Director)
+        {
+            yield return new NavItem("Планировка цехов", () => new WorkshopLayoutViewModel(_api));
             yield return new NavItem("Работники", () => new WorkersViewModel(_api));
+        }
     }
 
     private static string TitleFor(string r) => r switch

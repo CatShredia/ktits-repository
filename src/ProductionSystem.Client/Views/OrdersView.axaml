@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ProductionSystem.Client.ViewModels"
+             xmlns:dg="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.DataGrid"
+             x:Class="ProductionSystem.Client.Views.OrdersView"
+             x:DataType="vm:OrdersViewModel">
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+            <TextBlock Text="Фильтр:" VerticalAlignment="Center" />
+            <ComboBox Width="160" ItemsSource="{Binding FilterOptions}" SelectedItem="{Binding SelectedFilter}" />
+            <Button Content="Обновить" Command="{Binding RefreshCommand}" />
+            <Button Content="Новый заказ" Command="{Binding CreateOrderCommand}" IsVisible="{Binding CanCreateOrder}" />
+            <Button Content="Изменить" Command="{Binding EditOrderCommand}" IsVisible="{Binding CanEditSelected}" />
+            <Button Content="Удалить" Command="{Binding DeleteOrderCommand}" IsVisible="{Binding CanDeleteSelected}" />
+            <Button Content="История" Command="{Binding ShowHistoryCommand}" />
+        </StackPanel>
+
+        <TextBlock Grid.Row="1" Text="{Binding StatusMessage}" Foreground="#BB0C07" TextWrapping="Wrap" Margin="0,0,0,8" />
+
+        <dg:DataGrid Grid.Row="2" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedOrder}"
+                     AutoGenerateColumns="False" IsReadOnly="True">
+            <dg:DataGrid.Columns>
+                <dg:DataGridTextColumn Header="Номер" Binding="{Binding Number}" Width="120" />
+                <dg:DataGridTextColumn Header="Дата" Binding="{Binding OrderDate}" Width="100" />
+                <dg:DataGridTextColumn Header="Наименование" Binding="{Binding OrderName}" Width="2*" />
+                <dg:DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="*" />
+                <dg:DataGridTextColumn Header="Стоимость" Binding="{Binding EstimatedCost}" Width="90" />
+                <dg:DataGridTextColumn Header="Заказчик" Binding="{Binding CustomerName}" Width="*" />
+                <dg:DataGridTextColumn Header="Менеджер" Binding="{Binding ManagerName}" Width="*" />
+                <dg:DataGridTextColumn Header="План" Binding="{Binding PlannedCompletionDate}" Width="100" />
+            </dg:DataGrid.Columns>
+        </dg:DataGrid>
+
+        <StackPanel Grid.Row="3" Spacing="6" Margin="0,10,0,0">
+            <TextBlock Text="Смена статуса / комментарий" FontWeight="SemiBold" />
+            <TextBox Watermark="Комментарий (при отклонении)" Text="{Binding StatusComment}" />
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBox Width="120" Watermark="Стоимость" Text="{Binding CostText}" />
+                <DatePicker SelectedDate="{Binding PlannedDate}" />
+            </StackPanel>
+            <WrapPanel Orientation="Horizontal">
+                <Button Content="Принять (спецификация)" Command="{Binding ChangeStatusCommand}" CommandParameter="Составление спецификации" />
+                <Button Content="Подтверждение" Command="{Binding ChangeStatusCommand}" CommandParameter="Подтверждение" />
+                <Button Content="Закупка" Command="{Binding ChangeStatusCommand}" CommandParameter="Закупка" />
+                <Button Content="Производство" Command="{Binding ChangeStatusCommand}" CommandParameter="Производство" />
+                <Button Content="Контроль" Command="{Binding ChangeStatusCommand}" CommandParameter="Контроль" />
+                <Button Content="Готов" Command="{Binding ChangeStatusCommand}" CommandParameter="Готов" />
+                <Button Content="Закрыт" Command="{Binding ChangeStatusCommand}" CommandParameter="Закрыт" />
+                <Button Content="Отменить заказ" Command="{Binding CancelOrderCommand}" />
+            </WrapPanel>
+            <TextBlock Text="{Binding HistoryText}" IsVisible="{Binding ShowHistory}" TextWrapping="Wrap" />
+        </StackPanel>
+    </Grid>
+</UserControl>

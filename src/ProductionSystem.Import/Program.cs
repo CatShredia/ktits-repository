@@ -39,11 +39,17 @@ await using var trx = await db.Database.BeginTransactionAsync();
 
 await db.Database.ExecuteSqlRawAsync("""
     TRUNCATE TABLE
+        order_quality_checks,
+        order_status_history,
+        order_dimensions,
+        workshop_layout_items,
+        equipment_failures,
         product_material_specs,
         product_component_specs,
         product_operation_specs,
         product_assembly_specs,
         customer_orders,
+        workshops,
         worker_operations,
         equipment,
         materials,

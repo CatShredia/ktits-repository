@@ -1,0 +1,42 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ProductionSystem.Client.ViewModels"
+        x:Class="ProductionSystem.Client.Views.OrderEditWindow"
+        x:DataType="vm:OrderEditViewModel"
+        Width="560"
+        Height="520"
+        Title="Заказ"
+        WindowStartupLocation="CenterOwner">
+    <StackPanel Margin="16" Spacing="8">
+        <TextBox Watermark="Наименование заказа" Text="{Binding OrderName}" />
+        <ComboBox ItemsSource="{Binding Customers}"
+                  SelectedItem="{Binding SelectedCustomer}"
+                  IsVisible="{Binding IsManager}"
+                  PlaceholderText="Заказчик">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding FullName}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBox Watermark="Описание изделия" AcceptsReturn="True" Height="80"
+                 Text="{Binding ProductDescription}" />
+        <TextBlock Text="Замеры" FontWeight="SemiBold" />
+        <Grid ColumnDefinitions="*,80,80,Auto">
+            <TextBox Grid.Column="0" Watermark="Описание" Text="{Binding DimDescription}" />
+            <TextBox Grid.Column="1" Watermark="Ед." Text="{Binding DimUnit}" Margin="4,0,0,0" />
+            <TextBox Grid.Column="2" Watermark="Значение" Text="{Binding DimValueText}" Margin="4,0,0,0" />
+            <Button Grid.Column="3" Content="+" Command="{Binding AddDimensionCommand}" Margin="4,0,0,0" />
+        </Grid>
+        <ListBox ItemsSource="{Binding Dimensions}" Height="100">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Description}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock Text="{Binding ErrorMessage}" Foreground="#BB0C07" TextWrapping="Wrap" />
+        <Button Content="Сохранить" Click="Save_Click" HorizontalAlignment="Stretch" />
+        <Button Content="Отмена" Click="Cancel_Click" HorizontalAlignment="Stretch" />
+    </StackPanel>
+</Window>

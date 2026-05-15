@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ProductionSystem.Client.ViewModels"
+             xmlns:dg="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls.DataGrid"
+             x:Class="ProductionSystem.Client.Views.QualityControlView"
+             x:DataType="vm:QualityControlViewModel">
+    <Grid RowDefinitions="Auto,Auto,*">
+        <ComboBox ItemsSource="{Binding Orders}" SelectedItem="{Binding SelectedOrder}" PlaceholderText="Заказ">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Number}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Grid Grid.Row="1" ColumnDefinitions="2*,80,80,2*,Auto" Margin="0,8,0,8">
+            <TextBox Watermark="Параметр" Text="{Binding ParameterName}" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding Grades}" SelectedItem="{Binding Grade}" Margin="4,0,0,0" />
+            <TextBox Grid.Column="3" Watermark="Комментарий" Text="{Binding Comment}" Margin="4,0,0,0" />
+            <Button Grid.Column="4" Content="Сохранить" Command="{Binding SaveCheckCommand}" Margin="4,0,0,0" />
+        </Grid>
+        <dg:DataGrid Grid.Row="2" ItemsSource="{Binding Checks}" AutoGenerateColumns="False" IsReadOnly="True">
+            <dg:DataGrid.Columns>
+                <dg:DataGridTextColumn Header="Параметр" Binding="{Binding ParameterName}" Width="2*" />
+                <dg:DataGridTextColumn Header="Оценка" Binding="{Binding Grade}" Width="60" />
+                <dg:DataGridTextColumn Header="Комментарий" Binding="{Binding Comment}" Width="2*" />
+            </dg:DataGrid.Columns>
+        </dg:DataGrid>
+        <TextBlock Grid.Row="2" VerticalAlignment="Bottom" Text="{Binding StatusMessage}" Foreground="#BB0C07" />
+    </Grid>
+</UserControl>
