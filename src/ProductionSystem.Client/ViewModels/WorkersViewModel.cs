@@ -16,7 +16,7 @@ public partial class WorkersViewModel : ViewModelBase
     [ObservableProperty] private WorkerListItemDto? _selectedWorker;
     [ObservableProperty] private string _lastName = "";
     [ObservableProperty] private string _firstMiddleName = "";
-    [ObservableProperty] private DateTime? _birthDate = new DateTime(1990, 1, 1);
+    [ObservableProperty] private DateOnly? _birthDate = new DateOnly(1990, 1, 1);
     [ObservableProperty] private string _homeAddress = "";
     [ObservableProperty] private string _education = "";
     [ObservableProperty] private string _qualification = "";
@@ -80,7 +80,7 @@ public partial class WorkersViewModel : ViewModelBase
 
         LastName = detail.LastName;
         FirstMiddleName = detail.FirstMiddleName;
-        BirthDate = detail.BirthDate.ToDateTime(TimeOnly.MinValue);
+        BirthDate = detail.BirthDate;
         HomeAddress = detail.HomeAddress;
         Education = detail.Education;
         Qualification = detail.Qualification;
@@ -96,7 +96,7 @@ public partial class WorkersViewModel : ViewModelBase
         SelectedWorker = null;
         LastName = "";
         FirstMiddleName = "";
-        BirthDate = new DateTime(1990, 1, 1);
+        BirthDate = new DateOnly(1990, 1, 1);
         HomeAddress = "";
         Education = "";
         Qualification = "";
@@ -121,7 +121,7 @@ public partial class WorkersViewModel : ViewModelBase
         {
             LastName = LastName.Trim(),
             FirstMiddleName = FirstMiddleName.Trim(),
-            BirthDate = DateOnly.FromDateTime(BirthDate ?? DateTime.Today),
+            BirthDate = BirthDate ?? DateOnly.FromDateTime(DateTime.Today),
             HomeAddress = HomeAddress.Trim(),
             Education = Education.Trim(),
             Qualification = Qualification.Trim(),

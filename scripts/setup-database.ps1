@@ -161,6 +161,12 @@ UNION ALL SELECT 'product_material_specs'::text, count(*)::bigint FROM product_m
 UNION ALL SELECT 'product_component_specs'::text, count(*)::bigint FROM product_component_specs
 UNION ALL SELECT 'product_operation_specs'::text, count(*)::bigint FROM product_operation_specs
 UNION ALL SELECT 'product_assembly_specs'::text, count(*)::bigint FROM product_assembly_specs
+UNION ALL SELECT 'order_status_history'::text, count(*)::bigint FROM order_status_history
+UNION ALL SELECT 'order_dimensions'::text, count(*)::bigint FROM order_dimensions
+UNION ALL SELECT 'order_quality_checks'::text, count(*)::bigint FROM order_quality_checks
+UNION ALL SELECT 'workshops'::text, count(*)::bigint FROM workshops
+UNION ALL SELECT 'workshop_layout_items'::text, count(*)::bigint FROM workshop_layout_items
+UNION ALL SELECT 'equipment_failures'::text, count(*)::bigint FROM equipment_failures
 ORDER BY 1;
 "@
 

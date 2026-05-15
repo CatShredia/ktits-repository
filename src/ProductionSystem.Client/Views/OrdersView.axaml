@@ -31,23 +31,31 @@
             </dg:DataGrid.Columns>
         </dg:DataGrid>
 
-        <StackPanel Grid.Row="3" Spacing="6" Margin="0,10,0,0">
-            <TextBlock Text="Смена статуса / комментарий" FontWeight="SemiBold" />
-            <TextBox Watermark="Комментарий (при отклонении)" Text="{Binding StatusComment}" />
-            <StackPanel Orientation="Horizontal" Spacing="6">
-                <TextBox Width="120" Watermark="Стоимость" Text="{Binding CostText}" />
-                <DatePicker SelectedDate="{Binding PlannedDate}" />
+        <StackPanel Grid.Row="3" Spacing="8" Margin="0,10,0,0" IsVisible="{Binding ShowBottomPanel}">
+            <StackPanel Spacing="4" IsVisible="{Binding IsDirectorReadOnlyView}">
+                <TextBlock Text="Детали заказа (только просмотр)" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding SelectedOrderSummary}" TextWrapping="Wrap" />
             </StackPanel>
-            <WrapPanel Orientation="Horizontal">
-                <Button Content="Принять (спецификация)" Command="{Binding ChangeStatusCommand}" CommandParameter="Составление спецификации" />
-                <Button Content="Подтверждение" Command="{Binding ChangeStatusCommand}" CommandParameter="Подтверждение" />
-                <Button Content="Закупка" Command="{Binding ChangeStatusCommand}" CommandParameter="Закупка" />
-                <Button Content="Производство" Command="{Binding ChangeStatusCommand}" CommandParameter="Производство" />
-                <Button Content="Контроль" Command="{Binding ChangeStatusCommand}" CommandParameter="Контроль" />
-                <Button Content="Готов" Command="{Binding ChangeStatusCommand}" CommandParameter="Готов" />
-                <Button Content="Закрыт" Command="{Binding ChangeStatusCommand}" CommandParameter="Закрыт" />
-                <Button Content="Отменить заказ" Command="{Binding CancelOrderCommand}" />
-            </WrapPanel>
+
+            <StackPanel Spacing="6" IsVisible="{Binding CanChangeOrderStatus}">
+                <TextBlock Text="Смена статуса / комментарий" FontWeight="SemiBold" />
+                <TextBox Watermark="Комментарий (при отклонении)" Text="{Binding StatusComment}" />
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBox Width="120" Watermark="Стоимость" Text="{Binding CostText}" />
+                    <DatePicker SelectedDate="{Binding PlannedDate}" />
+                </StackPanel>
+                <WrapPanel Orientation="Horizontal">
+                    <Button Content="Принять (спецификация)" Command="{Binding ChangeStatusCommand}" CommandParameter="Составление спецификации" />
+                    <Button Content="Подтверждение" Command="{Binding ChangeStatusCommand}" CommandParameter="Подтверждение" />
+                    <Button Content="Закупка" Command="{Binding ChangeStatusCommand}" CommandParameter="Закупка" />
+                    <Button Content="Производство" Command="{Binding ChangeStatusCommand}" CommandParameter="Производство" />
+                    <Button Content="Контроль" Command="{Binding ChangeStatusCommand}" CommandParameter="Контроль" />
+                    <Button Content="Готов" Command="{Binding ChangeStatusCommand}" CommandParameter="Готов" />
+                    <Button Content="Закрыт" Command="{Binding ChangeStatusCommand}" CommandParameter="Закрыт" />
+                    <Button Content="Отменить заказ" Command="{Binding CancelOrderCommand}" />
+                </WrapPanel>
+            </StackPanel>
+
             <TextBlock Text="{Binding HistoryText}" IsVisible="{Binding ShowHistory}" TextWrapping="Wrap" />
         </StackPanel>
     </Grid>

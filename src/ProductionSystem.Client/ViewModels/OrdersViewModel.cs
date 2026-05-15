@@ -18,12 +18,18 @@ public partial class OrdersViewModel : ViewModelBase
     };
 
     [ObservableProperty] private string _selectedFilter = "Все";
-    [ObservableProperty] private OrderListItemDto? _selectedOrder;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasSelectedOrder))]
+    [NotifyPropertyChangedFor(nameof(SelectedOrderSummary))]
+    [NotifyPropertyChangedFor(nameof(ShowBottomPanel))]
+    private OrderListItemDto? _selectedOrder;
     [ObservableProperty] private string? _statusMessage;
     [ObservableProperty] private string _statusComment = "";
     [ObservableProperty] private string _costText = "";
-    [ObservableProperty] private DateTime? _plannedDate = DateTime.Today.AddDays(30);
-    [ObservableProperty] private bool _showHistory;
+    [ObservableProperty] private DateOnly? _plannedDate = DateOnly.FromDateTime(DateTime.Today.AddDays(30));
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowBottomPanel))]
+    private bool _showHistory;
     [ObservableProperty] private string _historyText = "";
 
     public string Role => _api.Role ?? "";
@@ -35,6 +41,15 @@ public partial class OrdersViewModel : ViewModelBase
     }
 
     partial void OnSelectedFilterChanged(string value) => _ = RefreshAsync();
+
+    partial void OnSelectedOrderChanged(OrderListItemDto? value)
+    {
+        if (value is null)
+            return;
+
+        CostText = value.EstimatedCost?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "";
+        PlannedDate = value.PlannedCompletionDate ?? DateOnly.FromDateTime(DateTime.Today.AddDays(30));
+    }
 
     [RelayCommand]
     public async Task RefreshAsync()
@@ -129,16 +144,12 @@ public partial class OrdersViewModel : ViewModelBase
                 System.Globalization.CultureInfo.InvariantCulture, out var c))
             cost = c;
 
-        DateOnly? planned = PlannedDate.HasValue
-            ? DateOnly.FromDateTime(PlannedDate.Value)
-            : null;
-
         var (ok, err) = await _api.ChangeOrderStatusAsync(SelectedOrder.Number, new OrderStatusChangeRequest
         {
             Status = targetStatus,
             Comment = string.IsNullOrWhiteSpace(StatusComment) ? null : StatusComment.Trim(),
             EstimatedCost = cost,
-            PlannedCompletionDate = planned,
+            PlannedCompletionDate = PlannedDate,
         });
 
         StatusMessage = ok ? $"Статус изменён на «{targetStatus}»." : err;
@@ -163,4 +174,19 @@ public partial class OrdersViewModel : ViewModelBase
     public bool CanCreateOrder => Role is UserRoles.Customer or UserRoles.Manager;
     public bool CanEditSelected => SelectedOrder?.Status == "Новый" && CanCreateOrder;
     public bool CanDeleteSelected => CanEditSelected;
+    /// <summary>Директор только просматривает заказы (WSR C2).</summary>
+    public bool CanChangeOrderStatus => Role is not UserRoles.Director;
+
+    public bool IsDirectorReadOnlyView => Role == UserRoles.Director;
+
+    public bool HasSelectedOrder => SelectedOrder is not null;
+
+    public bool ShowBottomPanel => HasSelectedOrder || ShowHistory || CanChangeOrderStatus;
+
+    public string SelectedOrderSummary => SelectedOrder is null
+        ? ""
+        : $"Номер: {SelectedOrder.Number}  |  Статус: {SelectedOrder.Status}" +
+          (SelectedOrder.EstimatedCost is { } cost ? $"  |  Стоимость: {cost}" : "") +
+          (SelectedOrder.PlannedCompletionDate is { } plan ? $"  |  План: {plan:dd.MM.yyyy}" : "") +
+          (string.IsNullOrWhiteSpace(SelectedOrder.CustomerName) ? "" : $"  |  Заказчик: {SelectedOrder.CustomerName}");
 }

@@ -14,7 +14,7 @@ public partial class EquipmentFailuresViewModel : ViewModelBase
     public ObservableCollection<EquipmentListItemDto> Equipment { get; } = new();
 
     [ObservableProperty] private EquipmentListItemDto? _selectedEquipment;
-    [ObservableProperty] private DateTime _startedAt = DateTime.Now;
+    [ObservableProperty] private DateOnly? _startedAt = DateOnly.FromDateTime(DateTime.Today);
     [ObservableProperty] private string _reason = "";
     [ObservableProperty] private string? _statusMessage;
     [ObservableProperty] private EquipmentFailureDto? _selectedFailure;
@@ -58,8 +58,11 @@ public partial class EquipmentFailuresViewModel : ViewModelBase
             return;
         }
 
+        var started = StartedAt ?? DateOnly.FromDateTime(DateTime.Today);
         var (ok, err) = await _api.CreateEquipmentFailureAsync(
-            SelectedEquipment.Marking, StartedAt, Reason.Trim());
+            SelectedEquipment.Marking,
+            started.ToDateTime(TimeOnly.FromTimeSpan(TimeSpan.FromHours(8))),
+            Reason.Trim());
         StatusMessage = ok ? "Сбой зарегистрирован." : err;
         if (ok)
         {
