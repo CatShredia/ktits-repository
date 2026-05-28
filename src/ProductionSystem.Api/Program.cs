@@ -11,7 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 var conn = builder.Configuration.GetConnectionString("Default")
            ?? "Host=localhost;Database=production_system;Username=postgres;Password=postgres";
 
-builder.Services.AddDbContext<AppDbContext>(o => o.UseNpgsql(conn));
+if (builder.Environment.IsEnvironment("Testing"))
+{
+    var inMemoryDbName = builder.Configuration["InMemoryDatabaseName"] ?? "ProductionSystemTests";
+    builder.Services.AddDbContext<AppDbContext>(o => o.UseInMemoryDatabase(inMemoryDbName));
+}
+else
+    builder.Services.AddDbContext<AppDbContext>(o => o.UseNpgsql(conn));
 builder.Services.AddSingleton<JwtTokenBuilder>();
 builder.Services.AddScoped<ProductRequirementsService>();
 builder.Services.AddScoped<ProcurementEstimationService>();
@@ -52,15 +58,20 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
-using (var scope = app.Services.CreateScope())
+if (!app.Environment.IsEnvironment("Testing"))
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
-    await db.Database.MigrateAsync();
-    await WorkshopSeedService.EnsureSeededAsync(db, env);
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+        await db.Database.MigrateAsync();
+        await WorkshopSeedService.EnsureSeededAsync(db, env);
+    }
 }
 
 app.MapControllers();
 app.MapGet("/", () => Results.Redirect("/swagger", permanent: false));
 
 await app.RunAsync();
+
+public partial class Program;
