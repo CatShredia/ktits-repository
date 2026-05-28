@@ -28,7 +28,7 @@ public partial class OrdersViewModel : ViewModelBase
     [ObservableProperty] private string? _statusMessage;
     [ObservableProperty] private string _statusComment = "";
     [ObservableProperty] private string _costText = "";
-    [ObservableProperty] private DateOnly? _plannedDate = DateOnly.FromDateTime(DateTime.Today.AddDays(30));
+    [ObservableProperty] private DateTimeOffset? _plannedDate = DatePickerValue.Today(30);
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowBottomPanel))]
     private bool _showHistory;
@@ -50,7 +50,8 @@ public partial class OrdersViewModel : ViewModelBase
             return;
 
         CostText = value.EstimatedCost?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "";
-        PlannedDate = value.PlannedCompletionDate ?? DateOnly.FromDateTime(DateTime.Today.AddDays(30));
+        PlannedDate = DatePickerValue.FromDateOnly(
+            value.PlannedCompletionDate ?? DateOnly.FromDateTime(DateTime.Today.AddDays(30)));
     }
 
     [RelayCommand]
@@ -151,7 +152,7 @@ public partial class OrdersViewModel : ViewModelBase
             Status = targetStatus,
             Comment = string.IsNullOrWhiteSpace(StatusComment) ? null : StatusComment.Trim(),
             EstimatedCost = cost,
-            PlannedCompletionDate = PlannedDate,
+            PlannedCompletionDate = DatePickerValue.ToDateOnly(PlannedDate),
         });
 
         StatusMessage = ok ? $"Статус изменён на «{targetStatus}»." : err;
