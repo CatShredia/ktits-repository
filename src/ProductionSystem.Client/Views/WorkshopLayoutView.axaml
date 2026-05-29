@@ -3,7 +3,7 @@
              xmlns:vm="using:ProductionSystem.Client.ViewModels"
              x:Class="ProductionSystem.Client.Views.WorkshopLayoutView"
              x:DataType="vm:WorkshopLayoutViewModel">
-    <Grid ColumnDefinitions="160,*" RowDefinitions="Auto,*">
+    <Grid ColumnDefinitions="180,*" RowDefinitions="Auto,*">
         <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
             <TextBlock Text="Цех:" VerticalAlignment="Center" />
             <ComboBox Width="220" ItemsSource="{Binding Workshops}" SelectedItem="{Binding SelectedWorkshop}">
@@ -15,21 +15,65 @@
             </ComboBox>
             <Button Content="Сохранить" Command="{Binding SaveCommand}" />
             <Button Content="Отменить" Command="{Binding CancelChangesCommand}" />
-            <Button Content="+" Command="{Binding ZoomInCommand}" />
-            <Button Content="-" Command="{Binding ZoomOutCommand}" />
+            <Button Content="Увеличить" Command="{Binding ZoomInCommand}" />
+            <Button Content="Уменьшить" Command="{Binding ZoomOutCommand}" />
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Spacing="6">
-            <TextBlock Text="Значки" FontWeight="SemiBold" />
-            <ListBox ItemsSource="{Binding PaletteIcons}" SelectedItem="{Binding SelectedPaletteIcon}" />
-            <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" />
-        </StackPanel>
+        <Border Grid.Row="1" Padding="8" Margin="0,0,8,0" BorderBrush="#CCC" BorderThickness="1" CornerRadius="8">
+            <StackPanel Spacing="8">
+                <TextBlock Text="Значки" FontWeight="SemiBold" />
+                <TextBlock Text="Перетащите на схему" FontSize="11" TextWrapping="Wrap" />
+
+                <Border x:Name="ToolEquipment" Tag="Equipment" Classes="tool-icon"
+                        PointerPressed="Toolbar_PointerPressed" HorizontalAlignment="Stretch">
+                    <StackPanel HorizontalAlignment="Center" Spacing="4">
+                        <Image x:Name="ToolEquipmentImage" Width="48" Height="48" />
+                        <TextBlock Text="Оборуд." FontSize="11" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="ToolExit" Tag="Exit" Classes="tool-icon"
+                        PointerPressed="Toolbar_PointerPressed" HorizontalAlignment="Stretch">
+                    <StackPanel HorizontalAlignment="Center" Spacing="4">
+                        <Image x:Name="ToolExitImage" Width="48" Height="48" />
+                        <TextBlock Text="Выход" FontSize="11" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="ToolFireExtinguisher" Tag="FireExtinguisher" Classes="tool-icon"
+                        PointerPressed="Toolbar_PointerPressed" HorizontalAlignment="Stretch">
+                    <StackPanel HorizontalAlignment="Center" Spacing="4">
+                        <Image x:Name="ToolFireImage" Width="48" Height="48" />
+                        <TextBlock Text="Огнетуш." FontSize="11" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="ToolFirstAid" Tag="FirstAid" Classes="tool-icon"
+                        PointerPressed="Toolbar_PointerPressed" HorizontalAlignment="Stretch">
+                    <StackPanel HorizontalAlignment="Center" Spacing="4">
+                        <Image x:Name="ToolFirstAidImage" Width="48" Height="48" />
+                        <TextBlock Text="Аптечка" FontSize="11" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <Button Content="Удалить значок" HorizontalAlignment="Stretch" Click="DeleteSelected_Click" />
+                <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
 
         <Border Grid.Row="1" Grid.Column="1" BorderBrush="#CCC" BorderThickness="1" ClipToBounds="True">
             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <Canvas x:Name="PlanCanvas" Width="800" Height="500"
-                        Background="#F8F8F8"
-                        PointerPressed="PlanCanvas_PointerPressed" />
+                <Grid x:Name="ZoomGrid" RenderTransformOrigin="0,0">
+                    <Grid.RenderTransform>
+                        <ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}" />
+                    </Grid.RenderTransform>
+                    <Canvas x:Name="PlanCanvas"
+                            Background="#F8F8F8"
+                            Width="800"
+                            Height="500"
+                            PointerMoved="PlanCanvas_PointerMoved"
+                            PointerReleased="PlanCanvas_PointerReleased" />
+                </Grid>
             </ScrollViewer>
         </Border>
     </Grid>

@@ -13,13 +13,7 @@ public partial class WorkshopLayoutViewModel : ViewModelBase
 
     public ObservableCollection<WorkshopDto> Workshops { get; } = new();
     public ObservableCollection<WorkshopLayoutItemDto> PlacedIcons { get; } = new();
-    public ObservableCollection<string> PaletteIcons { get; } = new()
-    {
-        "Equipment", "FireExtinguisher", "FirstAid", "Exit",
-    };
-
     [ObservableProperty] private WorkshopDto? _selectedWorkshop;
-    [ObservableProperty] private string? _selectedPaletteIcon;
     [ObservableProperty] private string? _statusMessage;
     [ObservableProperty] private double _zoom = 1.0;
 
@@ -53,21 +47,24 @@ public partial class WorkshopLayoutViewModel : ViewModelBase
         SelectedWorkshop = Workshops.FirstOrDefault();
     }
 
-    public void PlaceIcon(double x, double y)
+    public void PlaceIcon(double x, double y, string iconType)
     {
-        if (string.IsNullOrEmpty(SelectedPaletteIcon))
-            return;
-
         PlacedIcons.Add(new WorkshopLayoutItemDto
         {
-            IconType = SelectedPaletteIcon,
+            IconType = iconType,
             X = Math.Clamp(x, 0, 1),
             Y = Math.Clamp(y, 0, 1),
         });
     }
 
+    public void MoveIcon(WorkshopLayoutItemDto item, double x, double y)
+    {
+        item.X = Math.Clamp(x, 0, 1);
+        item.Y = Math.Clamp(y, 0, 1);
+    }
+
     [RelayCommand]
-    private void RemoveIcon(WorkshopLayoutItemDto item) => PlacedIcons.Remove(item);
+    public void RemoveIcon(WorkshopLayoutItemDto item) => PlacedIcons.Remove(item);
 
     [RelayCommand]
     private async Task SaveAsync()
