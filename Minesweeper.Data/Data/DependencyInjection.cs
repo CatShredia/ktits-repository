@@ -8,7 +8,7 @@ namespace Minesweeper.Data;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddDataLayer(this IServiceCollection services, string dbPath = "minesweeper.db")
+    public static IServiceCollection AddDataLayer(this IServiceCollection services, string dbPath = "minesweeper.sqlite")
     {
         services.AddDbContext<AppDbContext>(options => 
             options.UseSqlite($"Data Source={dbPath}"));

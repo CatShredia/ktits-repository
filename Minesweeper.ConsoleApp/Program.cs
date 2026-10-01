@@ -17,7 +17,7 @@ var gameRepo = sp.GetRequiredService<IGameRepository>();
 var hasher = sp.GetRequiredService<IPasswordHasher>();
 
 // ── Auth ──
-Data.Models.User? currentUser = null;
+Minesweeper.Data.Models.User? currentUser = null;
 while (currentUser == null)
 {
     Console.Write("Login: "); var login = Console.ReadLine()!;

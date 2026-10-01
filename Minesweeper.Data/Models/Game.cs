@@ -1,3 +1,5 @@
+using Minesweeper.Core.Models;
+
 namespace Minesweeper.Data.Models;
 
 public class Game
