@@ -1,5 +1,7 @@
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Minesweeper.Core.Interfaces;
 using Minesweeper.Data.Repositories;
 using Minesweeper.AvaloniaApp;
@@ -21,13 +23,19 @@ public partial class LoginViewModel : ObservableObject
         var repo = App.Services.GetRequiredService<IUserRepository>();
         var hasher = App.Services.GetRequiredService<IPasswordHasher>();
         var user = await repo.GetByLoginAsync(Login);
+        
         if (user != null && hasher.Verify(Password, user.PasswordHash))
+        {
             _main.NavigateToMenu(user.Id, user.Login);
+        }
         else if (user == null)
         {
             var newUser = await repo.CreateAsync(Login, hasher.Generate(Password));
             _main.NavigateToMenu(newUser.Id, newUser.Login);
         }
-        else Message = "Wrong password";
+        else 
+        {
+            Message = "Wrong password";
+        }
     }
 }

@@ -6,8 +6,19 @@ public partial class CellViewModel : ObservableObject
 {
     public int X { get; }
     public int Y { get; }
-    [ObservableProperty] private string _text = "";
-    [ObservableProperty] private string _classes = "cell-hidden";
 
-    public CellViewModel(int x, int y) { X = x; Y = y; }
+    [ObservableProperty] private string _text = "";
+
+    // Логические свойства для привязки стилей
+    [ObservableProperty] private bool _isHidden = true;
+    [ObservableProperty] private bool _isRevealed;
+    [ObservableProperty] private bool _isMine;
+    [ObservableProperty] private bool _isFlagged;
+    [ObservableProperty] private int _adjacentMines;
+
+    public CellViewModel(int x, int y) 
+    { 
+        X = x; 
+        Y = y; 
+    }
 }

@@ -3,8 +3,7 @@
              x:Class="Minesweeper.AvaloniaApp.App"
              xmlns:local="using:Minesweeper.AvaloniaApp"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
+             
     <Application.DataTemplates>
         <local:ViewLocator />
     </Application.DataTemplates>

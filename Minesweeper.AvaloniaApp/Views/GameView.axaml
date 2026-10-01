@@ -1,41 +1,78 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Minesweeper.AvaloniaApp.ViewModels"
              x:Class="Minesweeper.AvaloniaApp.Views.GameView">
-    <UserControl.Styles>
-        <Style Selector="Button.cell-hidden">
-            <Setter Property="Background" Value="#AAA"/>
-            <Setter Property="Width" Value="32"/><Setter Property="Height" Value="32"/>
-            <Setter Property="Margin" Value="1"/><Setter Property="Padding" Value="0"/>
-        </Style>
-        <Style Selector="Button.cell-open">
-            <Setter Property="Background" Value="#DDD"/>
-            <Setter Property="Width" Value="32"/><Setter Property="Height" Value="32"/>
-            <Setter Property="Margin" Value="1"/><Setter Property="Padding" Value="0"/>
-        </Style>
-        <Style Selector="Button.cell-mine"><Setter Property="Background" Value="Red"/></Style>
-        <Style Selector="Button.cell-flagged"><Setter Property="Background" Value="#AAA"/></Style>
-        <Style Selector="Button.num-1 TextBlock"><Setter Property="Foreground" Value="Blue"/></Style>
-        <Style Selector="Button.num-2 TextBlock"><Setter Property="Foreground" Value="Green"/></Style>
-        <Style Selector="Button.num-3 TextBlock"><Setter Property="Foreground" Value="Red"/></Style>
-    </UserControl.Styles>
-    <DockPanel>
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="20" Margin="10">
-            <TextBlock Text="{Binding TimerText}" FontSize="18"/>
-            <TextBlock Text="{Binding StatusText}" FontSize="18" Foreground="Red"/>
-            <Button Content="← Back" Command="{Binding BackCommand}"/>
-        </StackPanel>
-        <ItemsControl ItemsSource="{Binding Cells}" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Columns="{Binding $parent[ItemsControl].((vm:GameViewModel)DataContext).BoardWidth}"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button Content="{Binding Text}" Classes="{Binding Classes}"
-                            PointerPressed="CellPointerPressed"/>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </DockPanel>
+  <UserControl.Styles>
+    <Style Selector="Button.cell-hidden">
+      <Setter Property="Background" Value="#AAA"/>
+      <Setter Property="Width" Value="32"/>
+      <Setter Property="Height" Value="32"/>
+      <Setter Property="Margin" Value="1"/>
+      <Setter Property="Padding" Value="0"/>
+    </Style>
+    <Style Selector="Button.cell-open">
+      <Setter Property="Background" Value="#DDD"/>
+      <Setter Property="Width" Value="32"/>
+      <Setter Property="Height" Value="32"/>
+      <Setter Property="Margin" Value="1"/>
+      <Setter Property="Padding" Value="0"/>
+    </Style>
+    <Style Selector="Button.cell-mine">
+      <Setter Property="Background" Value="Red"/>
+    </Style>
+    <Style Selector="Button.cell-flagged">
+      <Setter Property="Background" Value="#AAA"/>
+    </Style>
+    
+    <!-- Стили для цифр на основе содержимого кнопки (свойство Foreground наследуется текстом внутри) -->
+    <Style Selector="Button.cell-open[Content='1']">
+      <Setter Property="Foreground" Value="Blue"/>
+    </Style>
+    <Style Selector="Button.cell-open[Content='2']">
+      <Setter Property="Foreground" Value="Green"/>
+    </Style>
+    <Style Selector="Button.cell-open[Content='3']">
+      <Setter Property="Foreground" Value="Red"/>
+    </Style>
+    <Style Selector="Button.cell-open[Content='4']">
+      <Setter Property="Foreground" Value="DarkBlue"/>
+    </Style>
+    <Style Selector="Button.cell-open[Content='5']">
+      <Setter Property="Foreground" Value="DarkRed"/>
+    </Style>
+    <Style Selector="Button.cell-open[Content='6']">
+      <Setter Property="Foreground" Value="Cyan"/>
+    </Style>
+    <Style Selector="Button.cell-open[Content='7']">
+      <Setter Property="Foreground" Value="Black"/>
+    </Style>
+    <Style Selector="Button.cell-open[Content='8']">
+      <Setter Property="Foreground" Value="Gray"/>
+    </Style>
+  </UserControl.Styles>
+
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="20" Margin="10">
+      <TextBlock Text="{Binding TimerText}" FontSize="18"/>
+      <TextBlock Text="{Binding StatusText}" FontSize="18" Foreground="Red"/>
+      <Button Content="← Back" Command="{Binding BackCommand}"/>
+    </StackPanel>
+
+    <ItemsControl ItemsSource="{Binding Cells}" HorizontalAlignment="Center" VerticalAlignment="Center">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <UniformGrid Columns="{Binding $parent[ItemsControl].((vm:GameViewModel)DataContext).BoardWidth}"/>
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Button Content="{Binding Text}" 
+                  Classes.cell-hidden="{Binding IsHidden}"
+                  Classes.cell-open="{Binding IsRevealed}"
+                  Classes.cell-mine="{Binding IsMine}"
+                  Classes.cell-flagged="{Binding IsFlagged}"
+                  PointerPressed="CellPointerPressed"/>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </DockPanel>
 </UserControl>

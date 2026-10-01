@@ -20,3 +20,5 @@
 
 .docx
 no_commit/*
+
+*.db*
