@@ -1,0 +1,11 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="using:Minesweeper.Core.Models"
+             x:Class="Minesweeper.AvaloniaApp.Views.MenuView">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="15">
+        <TextBlock Text="{Binding Login, StringFormat='Hello, {0}!'}" FontSize="20" HorizontalAlignment="Center"/>
+        <Button Content="Beginner (9×9)" Command="{Binding NewGameCommand}" CommandParameter="{x:Static models:GameSize.Beginner}" Width="200"/>
+        <Button Content="Amateur (12×12)" Command="{Binding NewGameCommand}" CommandParameter="{x:Static models:GameSize.Amateur}" Width="200"/>
+        <Button Content="Professional (20×20)" Command="{Binding NewGameCommand}" CommandParameter="{x:Static models:GameSize.Professional}" Width="200"/>
+        <Button Content="Logout" Command="{Binding LogoutCommand}" Width="200"/>
+    </StackPanel>
+</UserControl>

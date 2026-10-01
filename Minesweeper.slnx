@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Minesweeper.AvaloniaApp/Minesweeper.AvaloniaApp.csproj" />
+  <Project Path="Minesweeper.ConsoleApp/Minesweeper.ConsoleApp.csproj" />
+  <Project Path="Minesweeper.Core/Minesweeper.Core.csproj" />
+  <Project Path="Minesweeper.Data/Minesweeper.Data.csproj" />
+</Solution>

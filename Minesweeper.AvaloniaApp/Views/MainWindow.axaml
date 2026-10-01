@@ -1,0 +1,12 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Minesweeper.AvaloniaApp.ViewModels"
+        xmlns:views="using:Minesweeper.AvaloniaApp.Views"
+        x:Class="Minesweeper.AvaloniaApp.Views.MainWindow"
+        Title="Minesweeper" Width="700" Height="700">
+    <Window.DataTemplates>
+        <DataTemplate DataType="vm:LoginViewModel"><views:LoginView/></DataTemplate>
+        <DataTemplate DataType="vm:MenuViewModel"><views:MenuView/></DataTemplate>
+        <DataTemplate DataType="vm:GameViewModel"><views:GameView/></DataTemplate>
+    </Window.DataTemplates>
+    <ContentControl Content="{Binding CurrentPage}"/>
+</Window>
