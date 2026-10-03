@@ -8,14 +8,24 @@ using Minesweeper.Data.Models;
 using Minesweeper.Data.Repositories;
 
 var services = new ServiceCollection();
-services.AddDataLayer("minesweeper.db");
+services.AddDataLayer();
 services.AddTransient<IGameTimer, ConsoleTimer>();
-var sp = services.BuildServiceProvider();
+var sp = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 await DatabaseInitializer.InitializeAsync(sp);
 
-var userRepo = sp.GetRequiredService<IUserRepository>();
-var gameRepo = sp.GetRequiredService<IGameRepository>();
 var hasher = sp.GetRequiredService<IPasswordHasher>();
+
+async Task RunInDb(Func<IServiceProvider, Task> work)
+{
+    await using var scope = sp.CreateAsyncScope();
+    await work(scope.ServiceProvider);
+}
+
+async Task<T> FromDb<T>(Func<IServiceProvider, Task<T>> work)
+{
+    await using var scope = sp.CreateAsyncScope();
+    return await work(scope.ServiceProvider);
+}
 
 // ── Auth ──
 User? currentUser = null;
@@ -25,7 +35,7 @@ while (currentUser == null)
     Console.WriteLine("=== MINESWEEPER ===\n");
     Console.Write("Login: "); var login = Console.ReadLine()!;
     Console.Write("Password: "); var pass = Console.ReadLine()!;
-    var user = await userRepo.GetByLoginAsync(login);
+    var user = await FromDb(s => s.GetRequiredService<IUserRepository>().GetByLoginAsync(login));
     if (user != null && hasher.Verify(pass, user.PasswordHash))
         currentUser = user;
     else
@@ -33,7 +43,7 @@ while (currentUser == null)
         Console.Write("User not found. Register? (y/n): ");
         if (Console.ReadLine()?.ToLower() == "y")
         {
-            currentUser = await userRepo.CreateAsync(login, hasher.Generate(pass));
+            currentUser = await FromDb(s => s.GetRequiredService<IUserRepository>().CreateAsync(login, hasher.Generate(pass)));
             Console.WriteLine("Registered!");
         }
     }
@@ -233,9 +243,9 @@ async Task PlayGame()
     }
 
     // ── Save & exit ──
-    await gameRepo.SaveGameAsync(
+    await RunInDb(s => s.GetRequiredService<IGameRepository>().SaveGameAsync(
         currentUser.Id, size, session.Status,
-        timer.ElapsedSeconds, session.Board.GetMineMap());
+        timer.ElapsedSeconds, session.Board.GetMineMap()));
 
     lock (lockObj)
     {
@@ -248,7 +258,7 @@ async Task PlayGame()
 async Task ShowHistory()
 {
     Console.Clear();
-    var games = await gameRepo.GetUserHistoryAsync(currentUser!.Id);
+    var games = await FromDb(s => s.GetRequiredService<IGameRepository>().GetUserHistoryAsync(currentUser!.Id));
     Console.WriteLine("--- Your History ---\n");
     if (games.Count == 0) Console.WriteLine("No games yet.");
     foreach (var g in games)
@@ -268,7 +278,7 @@ async Task ShowLeaderboard()
         "3" => GameSize.Professional,
         _ => GameSize.Beginner
     };
-    var top = await gameRepo.GetLeaderboardAsync(s);
+    var top = await FromDb(db => db.GetRequiredService<IGameRepository>().GetLeaderboardAsync(s));
     Console.WriteLine($"\n--- Top 10 ({s}) ---\n");
     if (top.Count == 0) Console.WriteLine("No records yet.");
     for (int i = 0; i < top.Count; i++)

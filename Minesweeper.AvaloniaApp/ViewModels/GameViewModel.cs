@@ -62,7 +62,8 @@ public partial class GameViewModel : ObservableObject, IGameTimer
                     for (int y = 0; y < h; y++)
                         if (_session.Board.Grid[x, y].IsMine) UpdateCellVm(_session.Board.Grid[x, y]);
 
-            await App.Services.GetRequiredService<IGameRepository>()
+            await using var scope = App.Services.CreateAsyncScope();
+            await scope.ServiceProvider.GetRequiredService<IGameRepository>()
                 .SaveGameAsync(userId, size, s, ElapsedSeconds, _session.Board.GetMineMap());
         };
 

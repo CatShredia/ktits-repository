@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -18,15 +19,19 @@ public partial class App : Application
 
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
-    public override async void OnFrameworkInitializationCompleted()
+    public override void OnFrameworkInitializationCompleted()
     {
         try
         {
             var sc = new ServiceCollection();
-            sc.AddDataLayer("minesweeper.db");
+            sc.AddDataLayer();
             sc.AddSingleton<MainViewModel>();
-            Services = sc.BuildServiceProvider();
-            await DatabaseInitializer.InitializeAsync(Services);
+            Services = sc.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+
+            // Метод обязан завершиться синхронно: Start() показывает MainWindow сразу после него
+            // и повторно окно не открывает. Инициализация идёт в пуле потоков, чтобы ожидание
+            // не встало в тупик на контексте синхронизации UI.
+            Task.Run(() => DatabaseInitializer.InitializeAsync(Services)).GetAwaiter().GetResult();
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
                 desktop.MainWindow = new MainWindow { DataContext = Services.GetRequiredService<MainViewModel>() };

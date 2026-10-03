@@ -20,10 +20,11 @@ public partial class LoginViewModel : ObservableObject
     [RelayCommand]
     private async Task Submit()
     {
-        var repo = App.Services.GetRequiredService<IUserRepository>();
-        var hasher = App.Services.GetRequiredService<IPasswordHasher>();
+        await using var scope = App.Services.CreateAsyncScope();
+        var repo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+        var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
         var user = await repo.GetByLoginAsync(Login);
-        
+
         if (user != null && hasher.Verify(Password, user.PasswordHash))
         {
             _main.NavigateToMenu(user.Id, user.Login);
@@ -33,7 +34,7 @@ public partial class LoginViewModel : ObservableObject
             var newUser = await repo.CreateAsync(Login, hasher.Generate(Password));
             _main.NavigateToMenu(newUser.Id, newUser.Login);
         }
-        else 
+        else
         {
             Message = "Wrong password";
         }

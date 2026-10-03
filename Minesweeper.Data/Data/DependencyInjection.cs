@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Minesweeper.Core.Interfaces;
 using Minesweeper.Data.Repositories;
@@ -8,11 +8,18 @@ namespace Minesweeper.Data;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddDataLayer(this IServiceCollection services, string dbPath = "minesweeper.sqlite")
+    public const string ConnectionStringVariable = "MINESWEEPER_DB";
+
+    private const string DefaultConnectionString =
+        "Host=localhost;Port=5432;Database=minesweeper;Username=postgres;Password=qwerty123";
+
+    public static IServiceCollection AddDataLayer(this IServiceCollection services, string? connectionString = null)
     {
-        services.AddDbContext<AppDbContext>(options => 
-            options.UseSqlite($"Data Source={dbPath}"));
-        
+        connectionString ??= Environment.GetEnvironmentVariable(ConnectionStringVariable);
+        connectionString = string.IsNullOrWhiteSpace(connectionString) ? DefaultConnectionString : connectionString;
+
+        services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IGameRepository, GameRepository>();
         services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
