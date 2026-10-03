@@ -22,7 +22,6 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Game>(entity =>
         {
             entity.HasKey(g => g.Id);
-            // Indexes for fast Leaderboard queries
             entity.HasIndex(g => new { g.Size, g.Status, g.TimeInSeconds }); 
         });
     }

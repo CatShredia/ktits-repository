@@ -28,13 +28,21 @@ public partial class LeaderboardViewModel : ObservableObject
 
     public string Title => $"Top 10 ({Size})";
 
-    public LeaderboardViewModel(MainViewModel main, int userId, string login)
+    public LeaderboardViewModel(MainViewModel main, int userId, string login, GameSize size = GameSize.Beginner)
     {
         _main = main;
         _userId = userId;
         _login = login;
-        _ = LoadAsync();
+        if (size == GameSize.Beginner)
+            _ = LoadAsync();
+        else
+            Size = size;
     }
+
+    [RelayCommand]
+    private void ShowMap(LeaderboardRow row) =>
+        _main.CurrentPage = new MineMapViewModel(
+            _main, _userId, _login, Size, $"{row.Place} {row.User} | {row.Time}", row.MineMap);
 
     [RelayCommand]
     private void SelectSize(GameSize size) => Size = size;
@@ -70,7 +78,8 @@ public partial class LeaderboardViewModel : ObservableObject
                         $"{i + 1}.",
                         $"User#{top[i].UserId}",
                         $"{top[i].TimeInSeconds}s",
-                        top[i].Date.ToString("g")));
+                        top[i].Date.ToString("g"),
+                        top[i].MineMap));
                 }
 
                 IsEmpty = Entries.Count == 0;
@@ -83,4 +92,4 @@ public partial class LeaderboardViewModel : ObservableObject
     }
 }
 
-public sealed record LeaderboardRow(string Place, string User, string Time, string Date);
+public sealed record LeaderboardRow(string Place, string User, string Time, string Date, string MineMap);

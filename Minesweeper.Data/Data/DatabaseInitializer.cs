@@ -9,6 +9,6 @@ public static class DatabaseInitializer
     {
         using var scope = serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        await context.Database.EnsureCreatedAsync(); // Or use Migrations in production
+        await context.Database.EnsureCreatedAsync(); 
     }
 }

@@ -11,9 +11,6 @@ public partial class GameView : UserControl
     public GameView()
     {
         InitializeComponent();
-
-        // Button помечает нажатие левой кнопки как обработанное, поэтому обработчик
-        // приходится вешать на всю карту и просить события, которые уже обработаны.
         AddHandler(PointerPressedEvent, CellPointerPressed, handledEventsToo: true);
     }
 

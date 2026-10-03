@@ -22,7 +22,6 @@ public class Board
                 Grid[x, y] = new Cell(x, y);
     }
 
-    // First-click safety: generate mines only after the first move
     public void PlaceMines(int safeX, int safeY)
     {
         if (_minesPlaced) return;
@@ -35,7 +34,6 @@ public class Board
             int x = random.Next(Width);
             int y = random.Next(Height);
 
-            // Ensure the first clicked cell and its neighbors are safe
             if (Math.Abs(x - safeX) <= 1 && Math.Abs(y - safeY) <= 1) continue;
             if (Grid[x, y].IsMine) continue;
 
@@ -75,7 +73,6 @@ public class Board
         return count;
     }
 
-    // Returns list of cells that were revealed (for UI updates)
     public List<Cell> RevealCell(int x, int y)
     {
         if (!_minesPlaced) PlaceMines(x, y);
@@ -86,11 +83,10 @@ public class Board
         cell.IsRevealed = true;
         var revealed = new List<Cell> { cell };
 
-        if (cell.IsMine) return revealed; // Hit a mine
+        if (cell.IsMine) return revealed;
 
         _revealedSafeCells++;
 
-        // Cascade reveal (BFS) for empty cells
         if (cell.AdjacentMines == 0)
         {
             var queue = new Queue<Cell>();

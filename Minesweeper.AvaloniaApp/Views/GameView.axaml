@@ -21,8 +21,6 @@
     <Style Selector="Button.cell-flagged">
       <Setter Property="Background" Value="#AAA"/>
     </Style>
-    
-    <!-- Стили для цифр на основе содержимого кнопки (свойство Foreground наследуется текстом внутри) -->
     <Style Selector="Button.cell-open[Content='1']">
       <Setter Property="Foreground" Value="Blue"/>
     </Style>

@@ -27,10 +27,6 @@ public partial class App : Application
             sc.AddDataLayer();
             sc.AddSingleton<MainViewModel>();
             Services = sc.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
-
-            // Метод обязан завершиться синхронно: Start() показывает MainWindow сразу после него
-            // и повторно окно не открывает. Инициализация идёт в пуле потоков, чтобы ожидание
-            // не встало в тупик на контексте синхронизации UI.
             Task.Run(() => DatabaseInitializer.InitializeAsync(Services)).GetAwaiter().GetResult();
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

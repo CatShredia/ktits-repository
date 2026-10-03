@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Minesweeper.AvaloniaApp.Views.MineMapView">
+    <UserControl.Styles>
+        <Style Selector="Border.cell">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="Background" Value="#DDD"/>
+        </Style>
+        <Style Selector="Border.cell.mine">
+            <Setter Property="Background" Value="#E07070"/>
+        </Style>
+    </UserControl.Styles>
+
+    <DockPanel Margin="16">
+        <Button DockPanel.Dock="Top" Content="Back" Command="{Binding BackCommand}"
+                HorizontalAlignment="Left" Margin="0,0,0,12"/>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" FontSize="20"
+                   HorizontalAlignment="Center" Margin="0,0,0,12"/>
+        <TextBlock Text="Map is unavailable." IsVisible="{Binding IsMissing}" HorizontalAlignment="Center"/>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Cells}" HorizontalAlignment="Center" VerticalAlignment="Top">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="{Binding $parent[ItemsControl].DataContext.Width}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Classes="cell" Classes.mine="{Binding IsMine}">
+                            <TextBlock Text="{Binding Text}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

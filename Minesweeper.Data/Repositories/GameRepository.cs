@@ -1,7 +1,6 @@
 using Minesweeper.Core.Models;
 using Minesweeper.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 
 namespace Minesweeper.Data.Repositories;
 
@@ -19,15 +18,6 @@ public class GameRepository : IGameRepository
 
     public async Task SaveGameAsync(int userId, GameSize size, GameStatus status, int timeSec, bool[,] mineMap)
     {
-        // Serialize 2D array to JSON string
-        var mapList = new List<List<bool>>();
-        for (int i = 0; i < mineMap.GetLength(0); i++)
-        {
-            var row = new List<bool>();
-            for (int j = 0; j < mineMap.GetLength(1); j++) row.Add(mineMap[i, j]);
-            mapList.Add(row);
-        }
-
         var game = new Game
         {
             UserId = userId,
@@ -35,7 +25,7 @@ public class GameRepository : IGameRepository
             Status = status,
             TimeInSeconds = timeSec,
             Date = DateTime.UtcNow,
-            MineMap = JsonSerializer.Serialize(mapList)
+            MineMap = MineMapCodec.Encode(mineMap)
         };
 
         _context.Games.Add(game);

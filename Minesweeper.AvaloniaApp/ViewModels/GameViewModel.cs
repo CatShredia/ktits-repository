@@ -75,14 +75,12 @@ public partial class GameViewModel : ObservableObject, IGameTimer
     {
         var vm = Cells.First(v => v.X == c.X && v.Y == c.Y);
 
-        // Обновляем логические флаги
         vm.IsHidden = !c.IsRevealed && !c.IsFlagged;
         vm.IsFlagged = c.IsFlagged;
         vm.IsMine = c.IsRevealed && c.IsMine;
         vm.IsRevealed = c.IsRevealed && !c.IsMine;
         vm.AdjacentMines = c.AdjacentMines;
 
-        // Обновляем текст
         if (c.IsFlagged)
         {
             vm.Text = "F";

@@ -29,6 +29,11 @@ public partial class HistoryViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void ShowMap(HistoryRow row) =>
+        _main.CurrentPage = new MineMapViewModel(
+            _main, _userId, _login, null, $"{row.Date} | {row.Size} | {row.Status}", row.MineMap);
+
+    [RelayCommand]
     private void Back() => _main.NavigateToMenu(_userId, _login);
 
     private async Task LoadAsync()
@@ -48,7 +53,8 @@ public partial class HistoryViewModel : ObservableObject
                         game.Date.ToString("g"),
                         game.Size.ToString(),
                         game.Status.ToString(),
-                        $"{game.TimeInSeconds}s"));
+                        $"{game.TimeInSeconds}s",
+                        game.MineMap));
                 }
 
                 IsEmpty = Games.Count == 0;
@@ -61,4 +67,4 @@ public partial class HistoryViewModel : ObservableObject
     }
 }
 
-public sealed record HistoryRow(string Date, string Size, string Status, string Time);
+public sealed record HistoryRow(string Date, string Size, string Status, string Time, string MineMap);

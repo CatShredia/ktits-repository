@@ -27,7 +27,6 @@ async Task<T> FromDb<T>(Func<IServiceProvider, Task<T>> work)
     return await work(scope.ServiceProvider);
 }
 
-// ── Auth ──
 User? currentUser = null;
 while (currentUser == null)
 {
@@ -49,7 +48,6 @@ while (currentUser == null)
     }
 }
 
-// ── Main Menu Loop ──
 while (true)
 {
     Console.Clear();
@@ -65,7 +63,6 @@ while (true)
     }
 }
 
-// ── Game ──
 async Task PlayGame()
 {
     Console.Clear();
@@ -79,7 +76,6 @@ async Task PlayGame()
         _ => (9, 9, 10, GameSize.Beginner)
     };
 
-    // Resize console buffer to fit the board
     try
     {
         int needH = h + 8;
@@ -92,24 +88,16 @@ async Task PlayGame()
             Console.WindowHeight = Math.Min(Console.LargestWindowHeight, needH);
         }
     }
-    catch { /* Non-Windows or restricted terminal — ignore */ }
+    catch { }
 
     Console.Title = $"Minesweeper - {size} ({w}x{h})";
 
     var timer = sp.GetRequiredService<IGameTimer>();
     var session = new GameSession(w, h, m, timer);
 
-    // Screen layout:
-    // Row 0: Timer + Status
-    // Row 1: empty
-    // Row 2: column headers
-    // Row 3..3+h-1: board rows
-    // Row 3+h: empty
-    // Row 4+h: input prompt
     int inputRow = h + 4;
     object lockObj = new();
 
-    // ── Drawing helpers ──
     void DrawHeader()
     {
         Console.SetCursorPosition(0, 2);
@@ -142,7 +130,7 @@ async Task PlayGame()
     void DrawInputLine(string text = "")
     {
         Console.SetCursorPosition(0, inputRow);
-        Console.Write(new string(' ', Console.BufferWidth - 1)); // clear line
+        Console.Write(new string(' ', Console.BufferWidth - 1));
         Console.SetCursorPosition(0, inputRow);
         Console.Write(text);
     }
@@ -152,7 +140,6 @@ async Task PlayGame()
         Console.SetCursorPosition(0, inputRow);
     }
 
-    // ── Subscribe to events ──
     timer.OnTick += s =>
     {
         lock (lockObj)
@@ -190,7 +177,6 @@ async Task PlayGame()
     {
         lock (lockObj)
         {
-            // Reveal all mines on lose
             if (status == GameStatus.Lose)
             {
                 for (int x = 0; x < w; x++)
@@ -210,7 +196,6 @@ async Task PlayGame()
         }
     };
 
-    // ── Initial draw ──
     Console.Clear();
     lock (lockObj)
     {
@@ -223,7 +208,6 @@ async Task PlayGame()
         DrawInputLine("Command (open X Y / flag X Y): ");
     }
 
-    // ── Input loop ──
     while (session.Status == GameStatus.InProgress)
     {
         lock (lockObj)
@@ -242,7 +226,6 @@ async Task PlayGame()
         session.MakeMove(cx, cy, parts[0] == "flag");
     }
 
-    // ── Save & exit ──
     await RunInDb(s => s.GetRequiredService<IGameRepository>().SaveGameAsync(
         currentUser.Id, size, session.Status,
         timer.ElapsedSeconds, session.Board.GetMineMap()));
@@ -260,11 +243,19 @@ async Task ShowHistory()
     Console.Clear();
     var games = await FromDb(s => s.GetRequiredService<IGameRepository>().GetUserHistoryAsync(currentUser!.Id));
     Console.WriteLine("--- Your History ---\n");
-    if (games.Count == 0) Console.WriteLine("No games yet.");
-    foreach (var g in games)
-        Console.WriteLine($"{g.Date:g} | {g.Size,-12} | {g.Status,-10} | {g.TimeInSeconds}s");
-    Console.WriteLine("\nPress Enter...");
-    Console.ReadLine();
+    if (games.Count == 0)
+    {
+        Console.WriteLine("No games yet.");
+        Console.WriteLine("\nPress Enter...");
+        Console.ReadLine();
+        return;
+    }
+
+    for (int i = 0; i < games.Count; i++)
+        Console.WriteLine($"{i + 1,2}. {games[i].Date:g} | {games[i].Size,-12} | {games[i].Status,-10} | {games[i].TimeInSeconds}s");
+    Console.Write("\nMap number (Enter to go back): ");
+    if (int.TryParse(Console.ReadLine(), out int number) && number >= 1 && number <= games.Count)
+        ShowMineMap(games[number - 1]);
 }
 
 async Task ShowLeaderboard()
@@ -280,9 +271,40 @@ async Task ShowLeaderboard()
     };
     var top = await FromDb(db => db.GetRequiredService<IGameRepository>().GetLeaderboardAsync(s));
     Console.WriteLine($"\n--- Top 10 ({s}) ---\n");
-    if (top.Count == 0) Console.WriteLine("No records yet.");
+    if (top.Count == 0)
+    {
+        Console.WriteLine("No records yet.");
+        Console.WriteLine("\nPress Enter...");
+        Console.ReadLine();
+        return;
+    }
+
     for (int i = 0; i < top.Count; i++)
         Console.WriteLine($"{i + 1,2}. User#{top[i].UserId} — {top[i].TimeInSeconds}s ({top[i].Date:g})");
+    Console.Write("\nMap number (Enter to go back): ");
+    if (int.TryParse(Console.ReadLine(), out int number) && number >= 1 && number <= top.Count)
+        ShowMineMap(top[number - 1]);
+}
+
+void ShowMineMap(Game game)
+{
+    Console.Clear();
+    Console.WriteLine($"--- Mine map | {game.Size} | {game.Status} | {game.TimeInSeconds}s | {game.Date:g} ---\n");
+    var map = MineMapCodec.Decode(game.MineMap);
+    if (map == null)
+    {
+        Console.WriteLine("Map is unavailable.");
+    }
+    else
+    {
+        for (int y = 0; y < map.GetLength(1); y++)
+        {
+            for (int x = 0; x < map.GetLength(0); x++)
+                Console.Write(map[x, y] ? " * " : " . ");
+            Console.WriteLine();
+        }
+    }
+
     Console.WriteLine("\nPress Enter...");
     Console.ReadLine();
 }

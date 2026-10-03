@@ -9,7 +9,6 @@ public partial class CellViewModel : ObservableObject
 
     [ObservableProperty] private string _text = "";
 
-    // Логические свойства для привязки стилей
     [ObservableProperty] private bool _isHidden = true;
     [ObservableProperty] private bool _isRevealed;
     [ObservableProperty] private bool _isMine;

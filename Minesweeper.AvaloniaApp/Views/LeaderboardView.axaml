@@ -26,12 +26,17 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid ColumnDefinitions="40,120,80,*">
-                            <TextBlock Grid.Column="0" Text="{Binding Place}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding User}"/>
-                            <TextBlock Grid.Column="2" Text="{Binding Time}"/>
-                            <TextBlock Grid.Column="3" Text="{Binding Date}"/>
-                        </Grid>
+                        <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                                Background="Transparent" Padding="4,2"
+                                Command="{Binding $parent[ItemsControl].DataContext.ShowMapCommand}"
+                                CommandParameter="{Binding}">
+                            <Grid ColumnDefinitions="40,120,80,*">
+                                <TextBlock Grid.Column="0" Text="{Binding Place}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding User}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding Time}"/>
+                                <TextBlock Grid.Column="3" Text="{Binding Date}"/>
+                            </Grid>
+                        </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
