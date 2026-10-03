@@ -1,5 +1,4 @@
 <UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:Minesweeper.AvaloniaApp.ViewModels"
              x:Class="Minesweeper.AvaloniaApp.Views.GameView">
   <UserControl.Styles>
     <Style Selector="Button.cell-hidden">
@@ -60,7 +59,7 @@
     <ItemsControl ItemsSource="{Binding Cells}" HorizontalAlignment="Center" VerticalAlignment="Center">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
-          <UniformGrid Columns="{Binding $parent[ItemsControl].((vm:GameViewModel)DataContext).BoardWidth}"/>
+          <UniformGrid Columns="{Binding $parent[ItemsControl].DataContext.BoardWidth}"/>
         </ItemsPanelTemplate>
       </ItemsControl.ItemsPanel>
       <ItemsControl.ItemTemplate>
@@ -69,8 +68,7 @@
                   Classes.cell-hidden="{Binding IsHidden}"
                   Classes.cell-open="{Binding IsRevealed}"
                   Classes.cell-mine="{Binding IsMine}"
-                  Classes.cell-flagged="{Binding IsFlagged}"
-                  PointerPressed="CellPointerPressed"/>
+                  Classes.cell-flagged="{Binding IsFlagged}"/>
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>

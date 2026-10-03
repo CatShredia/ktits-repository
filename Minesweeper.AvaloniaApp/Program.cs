@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using System;
+using Minesweeper.AvaloniaApp.Logging;
 
 namespace Minesweeper.AvaloniaApp;
 
@@ -9,8 +10,21 @@ sealed class Program
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+    public static void Main(string[] args)
+    {
+        ExceptionLog.RegisterHandlers();
+
+        try
+        {
+            BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args);
+        }
+        catch (Exception ex)
+        {
+            ExceptionLog.Write("Fatal startup exception", ex);
+            throw;
+        }
+    }
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
@@ -20,5 +34,5 @@ sealed class Program
             // .WithDeveloperTools()
 #endif
             .WithInterFont()
-            .LogToTrace();
+            .LogExceptionsToFile();
 }

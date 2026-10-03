@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Minesweeper.AvaloniaApp.ViewModels;
 using Minesweeper.AvaloniaApp.Views;
+using Minesweeper.AvaloniaApp.Logging;
 using Minesweeper.Core.Interfaces;
 using Minesweeper.Data;
 using Minesweeper.Data.Repositories;
@@ -19,15 +20,23 @@ public partial class App : Application
 
     public override async void OnFrameworkInitializationCompleted()
     {
-        var sc = new ServiceCollection();
-        sc.AddDataLayer("minesweeper.db");
-        sc.AddSingleton<MainViewModel>();
-        Services = sc.BuildServiceProvider();
-        await DatabaseInitializer.InitializeAsync(Services);
+        try
+        {
+            var sc = new ServiceCollection();
+            sc.AddDataLayer("minesweeper.db");
+            sc.AddSingleton<MainViewModel>();
+            Services = sc.BuildServiceProvider();
+            await DatabaseInitializer.InitializeAsync(Services);
 
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = new MainWindow { DataContext = Services.GetRequiredService<MainViewModel>() };
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                desktop.MainWindow = new MainWindow { DataContext = Services.GetRequiredService<MainViewModel>() };
 
-        base.OnFrameworkInitializationCompleted();
+            base.OnFrameworkInitializationCompleted();
+        }
+        catch (Exception ex)
+        {
+            ExceptionLog.Write("Framework initialization", ex);
+            throw;
+        }
     }
 }
