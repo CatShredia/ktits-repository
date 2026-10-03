@@ -15,6 +15,8 @@ public partial class MenuViewModel : ObservableObject
         _main = main; UserId = userId; _login = login;
     }
 
-    [RelayCommand] private void NewGame(GameSize size) => _main.CurrentPage = new GameViewModel(_main, UserId, size);
+    [RelayCommand] private void NewGame(GameSize size) => _main.CurrentPage = new GameViewModel(_main, UserId, Login, size);
+    [RelayCommand] private void History() => _main.CurrentPage = new HistoryViewModel(_main, UserId, Login);
+    [RelayCommand] private void Leaderboard() => _main.CurrentPage = new LeaderboardViewModel(_main, UserId, Login);
     [RelayCommand] private void Logout() => _main.NavigateToLogin();
 }

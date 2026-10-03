@@ -16,6 +16,7 @@ public partial class GameViewModel : ObservableObject, IGameTimer
 {
     private readonly MainViewModel _main;
     private readonly int _userId;
+    private readonly string _login;
     private readonly GameSize _size;
     private GameSession _session = null!;
     private DispatcherTimer? _dispatcherTimer;
@@ -23,15 +24,15 @@ public partial class GameViewModel : ObservableObject, IGameTimer
     public int BoardWidth { get; }
     public ObservableCollection<CellViewModel> Cells { get; } = new();
 
-    [ObservableProperty] private string _timerText = "0s";
+    [ObservableProperty] private string _timerText = "Time: 0s";
     [ObservableProperty] private string _statusText = "";
 
     public int ElapsedSeconds { get; private set; }
     public event Action<int>? OnTick;
 
-    public GameViewModel(MainViewModel main, int userId, GameSize size)
+    public GameViewModel(MainViewModel main, int userId, string login, GameSize size)
     {
-        _main = main; _userId = userId; _size = size;
+        _main = main; _userId = userId; _login = login; _size = size;
 
         var (w, h, m) = size switch
         {
@@ -56,7 +57,7 @@ public partial class GameViewModel : ObservableObject, IGameTimer
 
         _session.OnGameEnded += async s =>
         {
-            StatusText = s == GameStatus.Win ? "🎉 You Win!" : "💥 Boom!";
+            StatusText = s == GameStatus.Win ? "YOU WIN!" : "BOOM! You lost.";
             if (s == GameStatus.Lose)
                 for (int x = 0; x < w; x++)
                     for (int y = 0; y < h; y++)
@@ -67,7 +68,7 @@ public partial class GameViewModel : ObservableObject, IGameTimer
                 .SaveGameAsync(userId, size, s, ElapsedSeconds, _session.Board.GetMineMap());
         };
 
-        OnTick += s => Dispatcher.UIThread.Post(() => TimerText = $"{s}s");
+        OnTick += s => Dispatcher.UIThread.Post(() => TimerText = $"Time: {s}s");
     }
 
     private void UpdateCellVm(Cell c)
@@ -84,7 +85,7 @@ public partial class GameViewModel : ObservableObject, IGameTimer
         // Обновляем текст
         if (c.IsFlagged)
         {
-            vm.Text = "🚩";
+            vm.Text = "F";
         }
         else if (!c.IsRevealed)
         {
@@ -92,7 +93,7 @@ public partial class GameViewModel : ObservableObject, IGameTimer
         }
         else if (c.IsMine)
         {
-            vm.Text = "💣";
+            vm.Text = "*";
         }
         else
         {
@@ -102,7 +103,7 @@ public partial class GameViewModel : ObservableObject, IGameTimer
 
     [RelayCommand] private void OpenCell(CellViewModel c) => _session.MakeMove(c.X, c.Y, false);
     [RelayCommand] private void ToggleFlag(CellViewModel c) => _session.MakeMove(c.X, c.Y, true);
-    [RelayCommand] private void Back() => _main.CurrentPage = new MenuViewModel(_main, _userId, "");
+    [RelayCommand] private void Back() => _main.NavigateToMenu(_userId, _login);
 
     public void Start()
     {

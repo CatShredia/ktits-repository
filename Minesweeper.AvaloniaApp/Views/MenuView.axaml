@@ -3,9 +3,11 @@
              x:Class="Minesweeper.AvaloniaApp.Views.MenuView">
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="15">
         <TextBlock Text="{Binding Login, StringFormat='Hello, {0}!'}" FontSize="20" HorizontalAlignment="Center"/>
-        <Button Content="Beginner (9×9)" Command="{Binding NewGameCommand}" CommandParameter="{x:Static models:GameSize.Beginner}" Width="200"/>
-        <Button Content="Amateur (12×12)" Command="{Binding NewGameCommand}" CommandParameter="{x:Static models:GameSize.Amateur}" Width="200"/>
-        <Button Content="Professional (20×20)" Command="{Binding NewGameCommand}" CommandParameter="{x:Static models:GameSize.Professional}" Width="200"/>
+        <Button Content="Beginner (9x9)" Command="{Binding NewGameCommand}" CommandParameter="{x:Static models:GameSize.Beginner}" Width="200"/>
+        <Button Content="Amateur (12x12)" Command="{Binding NewGameCommand}" CommandParameter="{x:Static models:GameSize.Amateur}" Width="200"/>
+        <Button Content="Professional (20x20)" Command="{Binding NewGameCommand}" CommandParameter="{x:Static models:GameSize.Professional}" Width="200"/>
+        <Button Content="History" Command="{Binding HistoryCommand}" Width="200"/>
+        <Button Content="Leaderboard" Command="{Binding LeaderboardCommand}" Width="200"/>
         <Button Content="Logout" Command="{Binding LogoutCommand}" Width="200"/>
     </StackPanel>
 </UserControl>

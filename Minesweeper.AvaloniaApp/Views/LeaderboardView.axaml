@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="using:Minesweeper.Core.Models"
+             x:Class="Minesweeper.AvaloniaApp.Views.LeaderboardView">
+    <DockPanel Margin="16">
+        <Button DockPanel.Dock="Top" Content="Back" Command="{Binding BackCommand}"
+                HorizontalAlignment="Left" Margin="0,0,0,12"/>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" FontSize="20"
+                   HorizontalAlignment="Center" Margin="0,0,0,12"/>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center"
+                    Spacing="8" Margin="0,0,0,16">
+            <Button Content="Beginner" Command="{Binding SelectSizeCommand}"
+                    CommandParameter="{x:Static models:GameSize.Beginner}" Width="120"/>
+            <Button Content="Amateur" Command="{Binding SelectSizeCommand}"
+                    CommandParameter="{x:Static models:GameSize.Amateur}" Width="120"/>
+            <Button Content="Professional" Command="{Binding SelectSizeCommand}"
+                    CommandParameter="{x:Static models:GameSize.Professional}" Width="120"/>
+        </StackPanel>
+        <TextBlock Text="No records yet." IsVisible="{Binding IsEmpty}" HorizontalAlignment="Center"/>
+        <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Entries}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="4"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="40,120,80,*">
+                            <TextBlock Grid.Column="0" Text="{Binding Place}"/>
+                            <TextBlock Grid.Column="1" Text="{Binding User}"/>
+                            <TextBlock Grid.Column="2" Text="{Binding Time}"/>
+                            <TextBlock Grid.Column="3" Text="{Binding Date}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

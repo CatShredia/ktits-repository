@@ -158,7 +158,7 @@ async Task PlayGame()
         lock (lockObj)
         {
             Console.SetCursorPosition(0, 0);
-            Console.Write($"⏱ Time: {s}s    ");
+            Console.Write($"Time: {s}s    ");
             ReturnCursorToInput();
         }
     };
@@ -204,8 +204,8 @@ async Task PlayGame()
 
             Console.SetCursorPosition(0, 1);
             Console.Write(status == GameStatus.Win
-                ? "🎉 YOU WIN!              "
-                : "💥 BOOM! You lost.       ");
+                ? "YOU WIN!           "
+                : "BOOM! You lost.    ");
             ReturnCursorToInput();
         }
     };
@@ -215,7 +215,7 @@ async Task PlayGame()
     lock (lockObj)
     {
         Console.SetCursorPosition(0, 0);
-        Console.Write("⏱ Time: 0s");
+        Console.Write("Time: 0s");
         Console.SetCursorPosition(0, 1);
         Console.Write("Status: In Progress");
         DrawHeader();

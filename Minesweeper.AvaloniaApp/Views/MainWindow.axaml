@@ -7,6 +7,8 @@
         <DataTemplate DataType="vm:LoginViewModel"><views:LoginView/></DataTemplate>
         <DataTemplate DataType="vm:MenuViewModel"><views:MenuView/></DataTemplate>
         <DataTemplate DataType="vm:GameViewModel"><views:GameView/></DataTemplate>
+        <DataTemplate DataType="vm:HistoryViewModel"><views:HistoryView/></DataTemplate>
+        <DataTemplate DataType="vm:LeaderboardViewModel"><views:LeaderboardView/></DataTemplate>
     </Window.DataTemplates>
     <ContentControl Content="{Binding CurrentPage}"/>
 </Window>
