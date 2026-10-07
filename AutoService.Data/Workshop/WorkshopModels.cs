@@ -181,3 +181,70 @@ public sealed class InvoiceRow
     public decimal Remainder { get; init; }
     public override string ToString() => $"Счёт №{Id}, остаток {Remainder:0.00} ₽";
 }
+
+public sealed class OpenAppointmentRow
+{
+    public int Id { get; init; }
+    public string When { get; init; } = "";
+    public string ClientName { get; init; } = "";
+    public string Car { get; init; } = "";
+    public string Service { get; init; } = "";
+    public override string ToString() => $"{When} · {ClientName} · {Car} · {Service}";
+}
+
+public sealed class MechanicOrderRow
+{
+    public int Id { get; init; }
+    public string CreatedAt { get; init; } = "";
+    public string Status { get; init; } = "";
+    public WorkOrderStatus StatusValue { get; init; }
+    public string ClientName { get; init; } = "";
+    public string Car { get; init; } = "";
+    public string Service { get; init; } = "";
+    public override string ToString() => $"№{Id} · {CreatedAt} · {Status} · {ClientName}";
+}
+
+public sealed class OrderLineRow
+{
+    public int Id { get; init; }
+    public string Title { get; init; } = "";
+    public override string ToString() => Title;
+}
+
+public sealed class MechanicOrderDetails
+{
+    public string CarText { get; init; } = "";
+    public string Fault { get; init; } = "";
+    public string Engine { get; init; } = "";
+    public string Brakes { get; init; } = "";
+    public string Suspension { get; init; } = "";
+    public string Electrical { get; init; } = "";
+    public string Recommendations { get; init; } = "";
+    public bool CanEditLines { get; init; }
+    public IReadOnlyList<OrderLineRow> Services { get; init; } = [];
+    public IReadOnlyList<OrderLineRow> Parts { get; init; } = [];
+}
+
+public sealed class ReviewRow
+{
+    public int Id { get; init; }
+    public int WorkOrderId { get; init; }
+    public string CreatedAt { get; init; } = "";
+    public string ClientName { get; init; } = "";
+    public int Rating { get; init; }
+    public string Comment { get; init; } = "";
+}
+
+public sealed class MetricRow
+{
+    public string Title { get; init; } = "";
+    public string Value { get; init; } = "";
+    public override string ToString() => string.IsNullOrEmpty(Value) ? Title : $"{Title}: {Value}";
+}
+
+public sealed class AnalyticsSection
+{
+    public string Title { get; init; } = "";
+    public string Explanation { get; init; } = "";
+    public IReadOnlyList<MetricRow> Rows { get; init; } = [];
+}

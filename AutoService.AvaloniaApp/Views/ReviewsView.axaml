@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoService.AvaloniaApp.Views.ReviewsView">
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Top" Spacing="8">
+      <TextBlock Classes="h1" Text="Отзывы клиентов" />
+      <TextBlock Classes="hint" Text="Отзыв вводит администратор от имени клиента после завершённого заказ-наряда." />
+      <TextBlock Classes="error" Text="{Binding Error}" IsVisible="{Binding HasError}" />
+    </StackPanel>
+    <Grid ColumnDefinitions="*,340">
+      <DataGrid ItemsSource="{Binding Items}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Дата" Binding="{Binding CreatedAt}" Width="140" />
+          <DataGridTextColumn Header="Клиент" Binding="{Binding ClientName}" Width="*" />
+          <DataGridTextColumn Header="Заказ" Binding="{Binding WorkOrderId}" Width="70" />
+          <DataGridTextColumn Header="Оценка" Binding="{Binding Rating}" Width="80" />
+          <DataGridTextColumn Header="Комментарий" Binding="{Binding Comment}" Width="2*" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <StackPanel Grid.Column="1" Spacing="8" Margin="16,0,0,0" IsVisible="{Binding CanEdit}">
+        <ComboBox ItemsSource="{Binding Orders}" SelectedItem="{Binding Order}" PlaceholderText="Завершённый заказ без отзыва" HorizontalAlignment="Stretch" />
+        <ComboBox ItemsSource="{Binding Ratings}" SelectedItem="{Binding Rating}" HorizontalAlignment="Stretch" />
+        <TextBox Text="{Binding Comment}" Watermark="Комментарий" AcceptsReturn="True" Height="80" />
+        <TextBox Text="{Binding CreatedAt}" Watermark="Дата дд.мм.гггг чч:мм" />
+        <Button Content="Сохранить отзыв" Command="{Binding SaveCommand}" HorizontalAlignment="Left" />
+        <TextBlock Classes="error" Text="{Binding Error}" IsVisible="{Binding HasError}" />
+      </StackPanel>
+    </Grid>
+  </DockPanel>
+</UserControl>

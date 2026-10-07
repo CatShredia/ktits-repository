@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using AutoService.Data.Workshop;
+using AppSession = AutoService.AvaloniaApp.AppSession;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,7 @@ public partial class ShellViewModel : ObservableObject
     public void Enter(CurrentUser user)
     {
         UserTitle = user.FullName + " · " + user.Role;
+        _services.GetRequiredService<AppSession>().User = user;
         _suppress = true;
         Menu.Clear();
         if (user.Role == RoleNames.Admin)
@@ -42,18 +44,16 @@ public partial class ShellViewModel : ObservableObject
             Add("Расписание", () => _services.GetRequiredService<SchedulesViewModel>());
             Add("Заказ-наряды", () => _services.GetRequiredService<WorkOrdersViewModel>());
             Add("Счета", () => _services.GetRequiredService<InvoicesViewModel>());
+            Add("Отзывы", () => _services.GetRequiredService<ReviewsViewModel>());
         }
         else if (user.Role == RoleNames.Mechanic)
         {
-            Add("Мои заказы", () => new RoleHomeViewModel(
-                "Раздел механика",
-                "Назначенные заказ-наряды, осмотр автомобиля, выполненные работы и использованные запчасти."));
+            Add("Мои заказы", () => _services.GetRequiredService<MechanicOrdersViewModel>());
         }
         else
         {
-            Add("Аналитика", () => new RoleHomeViewModel(
-                "Раздел руководителя",
-                "Сводка по заказам, выручке, загрузке механиков и складским остаткам."));
+            Add("Аналитика", () => _services.GetRequiredService<AnalyticsViewModel>());
+            Add("Отзывы", () => _services.GetRequiredService<ReviewsViewModel>());
         }
 
         _suppress = false;

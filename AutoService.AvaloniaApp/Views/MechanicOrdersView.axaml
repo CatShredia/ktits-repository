@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoService.AvaloniaApp.Views.MechanicOrdersView">
+  <DockPanel>
+    <TextBlock DockPanel.Dock="Top" Classes="h1" Text="Мои заказ-наряды" />
+    <TextBlock DockPanel.Dock="Bottom" Classes="error" Text="{Binding Error}" IsVisible="{Binding HasError}" />
+    <Grid ColumnDefinitions="340,*" ColumnSpacing="16">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Spacing="8">
+          <TextBlock Text="Записи без заказ-наряда" FontWeight="SemiBold" />
+          <ListBox ItemsSource="{Binding Appointments}" SelectedItem="{Binding SelectedAppointment}" MaxHeight="160" />
+          <Button Content="Создать заказ-наряд" Command="{Binding CreateOrderCommand}" HorizontalAlignment="Left" />
+          <TextBlock Text="Назначенные заказы" FontWeight="SemiBold" Margin="0,8,0,0" />
+        </StackPanel>
+        <ListBox ItemsSource="{Binding Orders}" SelectedItem="{Binding SelectedOrder}" />
+      </DockPanel>
+      <TextBlock Grid.Column="1" Text="Выберите заказ или создайте его по записи." IsVisible="{Binding !HasOrder}" TextWrapping="Wrap" />
+      <ScrollViewer Grid.Column="1" IsVisible="{Binding HasOrder}">
+        <StackPanel Spacing="8" MaxWidth="640" HorizontalAlignment="Left">
+          <TextBlock Text="Автомобиль" FontWeight="SemiBold" />
+          <TextBlock Text="{Binding CarText}" TextWrapping="Wrap" />
+          <TextBlock Text="Статус" FontWeight="SemiBold" Margin="0,8,0,0" />
+          <ComboBox ItemsSource="{Binding Statuses}" SelectedItem="{Binding SelectedStatus}" HorizontalAlignment="Stretch" />
+          <Button Content="Сохранить статус" Command="{Binding SaveStatusCommand}" HorizontalAlignment="Left" />
+          <TextBlock Text="Осмотр" FontWeight="SemiBold" Margin="0,8,0,0" />
+          <TextBox Text="{Binding Fault}" Watermark="Неисправности" AcceptsReturn="True" Height="50" />
+          <TextBox Text="{Binding Engine}" Watermark="Двигатель" />
+          <TextBox Text="{Binding Brakes}" Watermark="Тормозная система" />
+          <TextBox Text="{Binding Suspension}" Watermark="Подвеска" />
+          <TextBox Text="{Binding Electrical}" Watermark="Электрооборудование" />
+          <TextBox Text="{Binding Recommendations}" Watermark="Рекомендации по дальнейшему обслуживанию" AcceptsReturn="True" Height="50" />
+          <Button Content="Сохранить осмотр" Command="{Binding SaveInspectionCommand}" HorizontalAlignment="Left" />
+          <TextBlock Text="Услуги" FontWeight="SemiBold" Margin="0,8,0,0" />
+          <ListBox ItemsSource="{Binding ServiceLines}" SelectedItem="{Binding SelectedServiceLine}" MaxHeight="120" />
+          <ComboBox ItemsSource="{Binding Services}" SelectedItem="{Binding SelectedService}" PlaceholderText="Услуга" HorizontalAlignment="Stretch" IsVisible="{Binding CanEditLines}" />
+          <WrapPanel IsVisible="{Binding CanEditLines}">
+            <Button Content="Добавить услугу" Command="{Binding AddServiceCommand}" Margin="0,0,8,8" />
+            <Button Content="Убрать услугу" Command="{Binding RemoveServiceCommand}" Margin="0,0,8,8" />
+          </WrapPanel>
+          <TextBlock Text="Запчасти" FontWeight="SemiBold" />
+          <ListBox ItemsSource="{Binding PartLines}" SelectedItem="{Binding SelectedPartLine}" MaxHeight="120" />
+          <ComboBox ItemsSource="{Binding Parts}" SelectedItem="{Binding SelectedPart}" PlaceholderText="Запчасть и остаток" HorizontalAlignment="Stretch" IsVisible="{Binding CanEditLines}" />
+          <TextBox Text="{Binding Quantity}" Watermark="Количество" IsVisible="{Binding CanEditLines}" />
+          <WrapPanel IsVisible="{Binding CanEditLines}">
+            <Button Content="Добавить запчасть" Command="{Binding AddPartCommand}" Margin="0,0,8,8" />
+            <Button Content="Убрать запчасть" Command="{Binding RemovePartCommand}" Margin="0,0,8,8" />
+          </WrapPanel>
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </DockPanel>
+</UserControl>

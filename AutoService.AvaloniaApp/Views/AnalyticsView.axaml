@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoService.AvaloniaApp.Views.AnalyticsView">
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Top" Spacing="8">
+      <TextBlock Classes="h1" Text="Аналитика" />
+      <WrapPanel>
+        <TextBox Width="140" Text="{Binding FromDate}" Watermark="С дд.мм.гггг" Margin="0,0,8,8" />
+        <TextBox Width="140" Text="{Binding ToDate}" Watermark="По дд.мм.гггг" Margin="0,0,8,8" />
+        <Button Content="Показать" Command="{Binding ShowCommand}" Margin="0,0,8,8" />
+      </WrapPanel>
+      <TextBlock Classes="error" Text="{Binding Error}" IsVisible="{Binding HasError}" />
+    </StackPanel>
+    <ScrollViewer>
+      <ItemsControl ItemsSource="{Binding Sections}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Margin="0,0,0,16" MaxWidth="760" HorizontalAlignment="Left">
+              <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+              <TextBlock Classes="hint" Text="{Binding Explanation}" TextWrapping="Wrap" Margin="0,2,0,4" />
+              <ItemsControl ItemsSource="{Binding Rows}" />
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

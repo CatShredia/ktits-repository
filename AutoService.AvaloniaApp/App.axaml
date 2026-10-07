@@ -53,5 +53,14 @@
     <DataTemplate DataType="vm:InvoicesViewModel">
       <views:InvoicesView />
     </DataTemplate>
+    <DataTemplate DataType="vm:MechanicOrdersViewModel">
+      <views:MechanicOrdersView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:AnalyticsViewModel">
+      <views:AnalyticsView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:ReviewsViewModel">
+      <views:ReviewsView />
+    </DataTemplate>
   </Application.DataTemplates>
 </Application>

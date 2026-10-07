@@ -15,6 +15,10 @@ public static class AppComposition
         services.AddDbContextFactory<AutoServiceDbContext>(options => options.UseNpgsql(connectionString));
         services.AddSingleton<AuthService>();
         services.AddSingleton<AdminService>();
+        services.AddSingleton<MechanicWorkService>();
+        services.AddSingleton<ReviewService>();
+        services.AddSingleton<ChiefService>();
+        services.AddSingleton<AppSession>();
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<LoginViewModel>();
         services.AddSingleton<ShellViewModel>();
@@ -25,6 +29,9 @@ public static class AppComposition
         services.AddTransient<SchedulesViewModel>();
         services.AddTransient<WorkOrdersViewModel>();
         services.AddTransient<InvoicesViewModel>();
+        services.AddTransient<MechanicOrdersViewModel>();
+        services.AddTransient<AnalyticsViewModel>();
+        services.AddTransient<ReviewsViewModel>();
         return services.BuildServiceProvider();
     }
 }
