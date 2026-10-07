@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoService.AvaloniaApp.Views.CatalogView">
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Top" Spacing="8">
+      <TextBlock Classes="h1" Text="Справочники" />
+      <ComboBox ItemsSource="{Binding Kinds}" SelectedItem="{Binding Kind}" HorizontalAlignment="Left" MinWidth="240" />
+      <WrapPanel IsVisible="{Binding UsesPages}">
+        <TextBox Width="220" Text="{Binding Search}" Watermark="Поиск" Margin="0,0,8,8" />
+        <TextBox Width="140" Text="{Binding MaxPrice}" Watermark="Цена до" IsVisible="{Binding IsService}" Margin="0,0,8,8" />
+        <TextBox Width="140" Text="{Binding MaxDuration}" Watermark="Минут до" IsVisible="{Binding IsService}" Margin="0,0,8,8" />
+        <ComboBox Width="200" ItemsSource="{Binding Suppliers}" SelectedItem="{Binding Supplier}" PlaceholderText="Поставщик" IsVisible="{Binding IsPart}" Margin="0,0,8,8" />
+        <CheckBox Content="Ниже минимума" IsChecked="{Binding BelowMinimum}" IsVisible="{Binding IsPart}" Margin="0,0,8,8" />
+        <Button Content="Найти" Command="{Binding SearchCommand}" Margin="0,0,8,8" />
+        <ComboBox Width="80" ItemsSource="{Binding PageSizes}" SelectedItem="{Binding PageSize}" Margin="0,0,8,8" />
+        <Button Content="Назад" Command="{Binding PreviousPageCommand}" Margin="0,0,8,8" />
+        <Button Content="Дальше" Command="{Binding NextPageCommand}" Margin="0,0,8,8" />
+        <TextBlock Text="{Binding PageText}" VerticalAlignment="Center" />
+      </WrapPanel>
+    </StackPanel>
+    <Grid ColumnDefinitions="*,360" ColumnSpacing="16">
+      <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding Title}" />
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+      <ScrollViewer Grid.Column="1">
+        <StackPanel Spacing="8">
+          <TextBox Text="{Binding Name}" Watermark="Название или ФИО" />
+          <TextBox Text="{Binding Description}" Watermark="Описание" IsVisible="{Binding IsService}" AcceptsReturn="True" Height="60" />
+          <TextBox Text="{Binding Price}" Watermark="Стоимость" IsVisible="{Binding IsService}" />
+          <TextBox Text="{Binding Duration}" Watermark="Продолжительность, мин" IsVisible="{Binding IsService}" />
+          <TextBox Text="{Binding Phone}" Watermark="Телефон" IsVisible="{Binding IsSupplier}" />
+          <TextBox Text="{Binding Email}" Watermark="Почта" IsVisible="{Binding IsSupplier}" />
+          <ComboBox ItemsSource="{Binding Suppliers}" SelectedItem="{Binding Supplier}" PlaceholderText="Поставщик" IsVisible="{Binding IsPart}" HorizontalAlignment="Stretch" />
+          <TextBox Text="{Binding Sku}" Watermark="Артикул" IsVisible="{Binding IsPart}" />
+          <TextBox Text="{Binding PurchasePrice}" Watermark="Закупочная цена" IsVisible="{Binding IsPart}" />
+          <TextBox Text="{Binding Price}" Watermark="Продажная цена" IsVisible="{Binding IsPart}" />
+          <TextBox Text="{Binding Quantity}" Watermark="Остаток" IsVisible="{Binding IsPart}" />
+          <TextBox Text="{Binding MinQuantity}" Watermark="Минимальный остаток" IsVisible="{Binding IsPart}" />
+          <ComboBox ItemsSource="{Binding BayKinds}" SelectedItem="{Binding BayKind}" IsVisible="{Binding IsBay}" HorizontalAlignment="Stretch" />
+          <TextBox Text="{Binding Login}" Watermark="Логин" IsVisible="{Binding IsMechanic}" />
+          <TextBox Text="{Binding Password}" PasswordChar="*" Watermark="Пароль, при правке можно пусто" IsVisible="{Binding IsMechanic}" />
+          <ComboBox ItemsSource="{Binding Departments}" SelectedItem="{Binding Department}" PlaceholderText="Отдел" IsVisible="{Binding IsMechanic}" HorizontalAlignment="Stretch" />
+          <ComboBox ItemsSource="{Binding Specializations}" SelectedItem="{Binding Specialization}" PlaceholderText="Специализация" IsVisible="{Binding IsMechanic}" HorizontalAlignment="Stretch" />
+          <ItemsControl ItemsSource="{Binding ServiceChoices}" IsVisible="{Binding IsMechanic}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <WrapPanel>
+            <Button Content="Новая запись" Command="{Binding NewItemCommand}" Margin="0,0,8,8" />
+            <Button Content="Сохранить" Command="{Binding SaveCommand}" Margin="0,0,8,8" />
+            <Button Content="Удалить" Command="{Binding DeleteCommand}" Margin="0,0,8,8" />
+          </WrapPanel>
+          <TextBlock Classes="error" Text="{Binding Error}" IsVisible="{Binding HasError}" />
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </DockPanel>
+</UserControl>

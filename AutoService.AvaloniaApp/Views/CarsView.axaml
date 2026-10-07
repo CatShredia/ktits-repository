@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoService.AvaloniaApp.Views.CarsView">
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Top" Spacing="8">
+      <TextBlock Classes="h1" Text="Автомобили" />
+      <WrapPanel>
+        <TextBox Width="220" Text="{Binding Search}" Watermark="Поиск" Margin="0,0,8,8" />
+        <ComboBox Width="160" ItemsSource="{Binding Fields}" SelectedItem="{Binding Field}" Margin="0,0,8,8" />
+        <Button Content="Найти" Command="{Binding SearchCommand}" Margin="0,0,8,8" />
+        <ComboBox Width="80" ItemsSource="{Binding PageSizes}" SelectedItem="{Binding PageSize}" Margin="0,0,8,8" />
+        <Button Content="Назад" Command="{Binding PreviousPageCommand}" Margin="0,0,8,8" />
+        <Button Content="Дальше" Command="{Binding NextPageCommand}" Margin="0,0,8,8" />
+        <TextBlock Text="{Binding PageText}" VerticalAlignment="Center" />
+      </WrapPanel>
+    </StackPanel>
+    <Grid ColumnDefinitions="*,340" ColumnSpacing="16">
+      <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Клиент" Binding="{Binding ClientName}" Width="*" />
+          <DataGridTextColumn Header="Марка" Binding="{Binding Brand}" Width="100" />
+          <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="110" />
+          <DataGridTextColumn Header="Год" Binding="{Binding Year}" Width="70" />
+          <DataGridTextColumn Header="VIN" Binding="{Binding Vin}" Width="160" />
+          <DataGridTextColumn Header="Госномер" Binding="{Binding LicensePlate}" Width="110" />
+          <DataGridTextColumn Header="Пробег" Binding="{Binding Mileage}" Width="90" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <ScrollViewer Grid.Column="1">
+        <StackPanel Spacing="8">
+          <TextBlock Text="Карточка автомобиля" FontWeight="SemiBold" />
+          <ComboBox ItemsSource="{Binding Clients}" SelectedItem="{Binding Client}" PlaceholderText="Клиент" HorizontalAlignment="Stretch" />
+          <ComboBox ItemsSource="{Binding Brands}" SelectedItem="{Binding Brand}" PlaceholderText="Марка" HorizontalAlignment="Stretch" />
+          <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding Category}" PlaceholderText="Категория" HorizontalAlignment="Stretch" />
+          <TextBox Text="{Binding Model}" Watermark="Модель" />
+          <TextBox Text="{Binding Year}" Watermark="Год выпуска" />
+          <TextBox Text="{Binding Vin}" Watermark="VIN, 17 символов" />
+          <TextBox Text="{Binding Plate}" Watermark="Госномер" />
+          <TextBox Text="{Binding Mileage}" Watermark="Пробег" />
+          <TextBox Text="{Binding Color}" Watermark="Цвет" />
+          <TextBox Text="{Binding Notes}" Watermark="Примечание" AcceptsReturn="True" Height="60" />
+          <WrapPanel>
+            <Button Content="Новый" Command="{Binding NewCarCommand}" Margin="0,0,8,8" />
+            <Button Content="Сохранить" Command="{Binding SaveCommand}" Margin="0,0,8,8" />
+            <Button Content="Удалить" Command="{Binding DeleteCommand}" Margin="0,0,8,8" />
+          </WrapPanel>
+          <TextBlock Classes="error" Text="{Binding Error}" IsVisible="{Binding HasError}" />
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </DockPanel>
+</UserControl>

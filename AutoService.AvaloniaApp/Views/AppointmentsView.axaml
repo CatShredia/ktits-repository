@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoService.AvaloniaApp.Views.AppointmentsView">
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Top" Spacing="8">
+      <TextBlock Classes="h1" Text="Записи на обслуживание" />
+      <WrapPanel>
+        <TextBox Width="180" Text="{Binding Search}" Watermark="Клиент" Margin="0,0,8,8" />
+        <TextBox Width="140" Text="{Binding Day}" Watermark="Дата дд.мм.гггг" Margin="0,0,8,8" />
+        <ComboBox Width="160" ItemsSource="{Binding Statuses}" SelectedItem="{Binding Status}" Margin="0,0,8,8" />
+        <ComboBox Width="200" ItemsSource="{Binding FilterMechanics}" SelectedItem="{Binding FilterMechanic}" PlaceholderText="Механик" Margin="0,0,8,8" />
+        <Button Content="Найти" Command="{Binding SearchCommand}" Margin="0,0,8,8" />
+        <ComboBox Width="80" ItemsSource="{Binding PageSizes}" SelectedItem="{Binding PageSize}" Margin="0,0,8,8" />
+        <Button Content="Назад" Command="{Binding PreviousPageCommand}" Margin="0,0,8,8" />
+        <Button Content="Дальше" Command="{Binding NextPageCommand}" Margin="0,0,8,8" />
+        <TextBlock Text="{Binding PageText}" VerticalAlignment="Center" />
+      </WrapPanel>
+    </StackPanel>
+    <Grid ColumnDefinitions="*,340" ColumnSpacing="16">
+      <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Когда" Binding="{Binding When}" Width="140" />
+          <DataGridTextColumn Header="Клиент" Binding="{Binding ClientName}" Width="*" />
+          <DataGridTextColumn Header="Авто" Binding="{Binding Car}" Width="140" />
+          <DataGridTextColumn Header="Услуга" Binding="{Binding Service}" Width="160" />
+          <DataGridTextColumn Header="Механик" Binding="{Binding Mechanic}" Width="160" />
+          <DataGridTextColumn Header="Место" Binding="{Binding Bay}" Width="140" />
+          <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="120" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <ScrollViewer Grid.Column="1">
+        <StackPanel Spacing="8">
+          <ComboBox ItemsSource="{Binding Clients}" SelectedItem="{Binding Client}" PlaceholderText="Клиент" HorizontalAlignment="Stretch" />
+          <ComboBox ItemsSource="{Binding Cars}" SelectedItem="{Binding Car}" PlaceholderText="Автомобиль клиента" HorizontalAlignment="Stretch" />
+          <ComboBox ItemsSource="{Binding Services}" SelectedItem="{Binding Service}" PlaceholderText="Услуга" HorizontalAlignment="Stretch" />
+          <ComboBox ItemsSource="{Binding Mechanics}" SelectedItem="{Binding Mechanic}" PlaceholderText="Механик услуги" HorizontalAlignment="Stretch" />
+          <ComboBox ItemsSource="{Binding Bays}" SelectedItem="{Binding Bay}" PlaceholderText="Ремонтное место" HorizontalAlignment="Stretch" />
+          <TextBox Text="{Binding When}" Watermark="Дата и время дд.мм.гггг чч:мм" />
+          <ComboBox ItemsSource="{Binding EditStatuses}" SelectedItem="{Binding EditStatus}" HorizontalAlignment="Stretch" />
+          <WrapPanel>
+            <Button Content="Новая запись" Command="{Binding NewItemCommand}" Margin="0,0,8,8" />
+            <Button Content="Сохранить" Command="{Binding SaveCommand}" Margin="0,0,8,8" />
+          </WrapPanel>
+          <TextBlock Classes="error" Text="{Binding Error}" IsVisible="{Binding HasError}" />
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </DockPanel>
+</UserControl>

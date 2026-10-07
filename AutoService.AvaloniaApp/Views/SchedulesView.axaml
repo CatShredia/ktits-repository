@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoService.AvaloniaApp.Views.SchedulesView">
+  <DockPanel>
+    <TextBlock DockPanel.Dock="Top" Classes="h1" Text="Расписание механиков" />
+    <Grid ColumnDefinitions="*,340" ColumnSpacing="16">
+      <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Механик" Binding="{Binding Mechanic}" Width="*" />
+          <DataGridTextColumn Header="Место" Binding="{Binding Bay}" Width="180" />
+          <DataGridTextColumn Header="Начало" Binding="{Binding Starts}" Width="150" />
+          <DataGridTextColumn Header="Окончание" Binding="{Binding Ends}" Width="150" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <StackPanel Grid.Column="1" Spacing="8">
+        <ComboBox ItemsSource="{Binding Mechanics}" SelectedItem="{Binding Mechanic}" PlaceholderText="Механик" HorizontalAlignment="Stretch" />
+        <ComboBox ItemsSource="{Binding Bays}" SelectedItem="{Binding Bay}" PlaceholderText="Ремонтное место" HorizontalAlignment="Stretch" />
+        <TextBox Text="{Binding Starts}" Watermark="Начало дд.мм.гггг чч:мм" />
+        <TextBox Text="{Binding Ends}" Watermark="Окончание дд.мм.гггг чч:мм" />
+        <WrapPanel>
+          <Button Content="Новая смена" Command="{Binding NewItemCommand}" Margin="0,0,8,8" />
+          <Button Content="Сохранить" Command="{Binding SaveCommand}" Margin="0,0,8,8" />
+          <Button Content="Удалить" Command="{Binding DeleteCommand}" Margin="0,0,8,8" />
+        </WrapPanel>
+        <TextBlock Classes="error" Text="{Binding Error}" IsVisible="{Binding HasError}" />
+      </StackPanel>
+    </Grid>
+  </DockPanel>
+</UserControl>

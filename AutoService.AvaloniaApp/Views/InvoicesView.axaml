@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoService.AvaloniaApp.Views.InvoicesView">
+  <DockPanel>
+    <TextBlock DockPanel.Dock="Top" Classes="h1" Text="Счета и платежи" />
+    <Grid ColumnDefinitions="*,360" ColumnSpacing="16">
+      <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding Invoice}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="№" Binding="{Binding Id}" Width="50" />
+          <DataGridTextColumn Header="Заказ" Binding="{Binding WorkOrderId}" Width="70" />
+          <DataGridTextColumn Header="Дата" Binding="{Binding CreatedAt}" Width="140" />
+          <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="150" />
+          <DataGridTextColumn Header="Итог" Binding="{Binding Total}" Width="90" />
+          <DataGridTextColumn Header="Оплачено" Binding="{Binding Paid}" Width="90" />
+          <DataGridTextColumn Header="Остаток" Binding="{Binding Remainder}" Width="90" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <ScrollViewer Grid.Column="1">
+        <StackPanel Spacing="8">
+          <TextBlock Text="Новый счёт по завершённому заказу" FontWeight="SemiBold" />
+          <ComboBox ItemsSource="{Binding Orders}" SelectedItem="{Binding Order}" PlaceholderText="Заказ-наряд" HorizontalAlignment="Stretch" />
+          <TextBox Text="{Binding InvoiceDate}" Watermark="Дата счёта дд.мм.гггг чч:мм" />
+          <TextBox Text="{Binding Amount}" Watermark="Сумма до скидки" />
+          <TextBox Text="{Binding Discount}" Watermark="Скидка" />
+          <TextBox Text="{Binding TaxRate}" Watermark="Ставка налога, %" />
+          <Button Content="Пересчитать налог и итог" Command="{Binding RecalculateCommand}" HorizontalAlignment="Left" />
+          <TextBlock Text="{Binding TaxText, StringFormat=Налог: {0}}" />
+          <TextBlock Text="{Binding TotalText, StringFormat=Итог: {0}}" />
+          <Button Content="Выставить счёт" Command="{Binding CreateInvoiceCommand}" HorizontalAlignment="Left" />
+          <TextBlock Text="Платёж по выбранному счёту" FontWeight="SemiBold" Margin="0,12,0,0" />
+          <TextBox Text="{Binding PaymentDate}" Watermark="Дата платежа дд.мм.гггг чч:мм" />
+          <TextBox Text="{Binding PaymentAmount}" Watermark="Сумма" />
+          <ComboBox ItemsSource="{Binding Methods}" SelectedItem="{Binding Method}" HorizontalAlignment="Stretch" />
+          <ComboBox ItemsSource="{Binding PaymentStatuses}" SelectedItem="{Binding PaymentStatus}" HorizontalAlignment="Stretch" />
+          <TextBox Text="{Binding Transaction}" Watermark="Номер транзакции" />
+          <Button Content="Зарегистрировать платёж" Command="{Binding PayCommand}" HorizontalAlignment="Left" />
+          <TextBlock Classes="error" Text="{Binding Error}" IsVisible="{Binding HasError}" />
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </DockPanel>
+</UserControl>

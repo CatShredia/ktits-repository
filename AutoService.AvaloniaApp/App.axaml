@@ -1,0 +1,57 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AutoService.AvaloniaApp.ViewModels"
+             xmlns:views="using:AutoService.AvaloniaApp.Views"
+             x:Class="AutoService.AvaloniaApp.App"
+             RequestedThemeVariant="Light">
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+    <Style Selector="TextBlock.h1">
+      <Setter Property="FontSize" Value="22" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+    <Style Selector="TextBlock.error">
+      <Setter Property="Foreground" Value="#B42318" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Margin" Value="0,8,0,0" />
+    </Style>
+    <Style Selector="TextBlock.hint">
+      <Setter Property="Foreground" Value="#5C6B76" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+  </Application.Styles>
+  <Application.DataTemplates>
+    <DataTemplate DataType="vm:LoginViewModel">
+      <views:LoginView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:ShellViewModel">
+      <views:ShellView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:RoleHomeViewModel">
+      <views:RoleHomeView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:ClientsViewModel">
+      <views:ClientsView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:CarsViewModel">
+      <views:CarsView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:CatalogViewModel">
+      <views:CatalogView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:AppointmentsViewModel">
+      <views:AppointmentsView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:SchedulesViewModel">
+      <views:SchedulesView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:WorkOrdersViewModel">
+      <views:WorkOrdersView />
+    </DataTemplate>
+    <DataTemplate DataType="vm:InvoicesViewModel">
+      <views:InvoicesView />
+    </DataTemplate>
+  </Application.DataTemplates>
+</Application>

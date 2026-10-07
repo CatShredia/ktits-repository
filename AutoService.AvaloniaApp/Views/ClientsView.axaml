@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoService.AvaloniaApp.Views.ClientsView">
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Top" Spacing="8">
+      <TextBlock Classes="h1" Text="Клиенты" />
+      <WrapPanel>
+        <TextBox Width="220" Text="{Binding Search}" Watermark="Поиск" Margin="0,0,8,8" />
+        <ComboBox Width="160" ItemsSource="{Binding Fields}" SelectedItem="{Binding Field}" Margin="0,0,8,8" />
+        <Button Content="Найти" Command="{Binding SearchCommand}" Margin="0,0,8,8" />
+        <ComboBox Width="80" ItemsSource="{Binding PageSizes}" SelectedItem="{Binding PageSize}" Margin="0,0,8,8" />
+        <Button Content="Назад" Command="{Binding PreviousPageCommand}" Margin="0,0,8,8" />
+        <Button Content="Дальше" Command="{Binding NextPageCommand}" Margin="0,0,8,8" />
+        <TextBlock Text="{Binding PageText}" VerticalAlignment="Center" />
+      </WrapPanel>
+    </StackPanel>
+    <Grid ColumnDefinitions="*,320" ColumnSpacing="16">
+      <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="*" />
+          <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="140" />
+          <DataGridTextColumn Header="Почта" Binding="{Binding Email}" Width="180" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <StackPanel Grid.Column="1" Spacing="8">
+        <TextBlock Text="Карточка клиента" FontWeight="SemiBold" />
+        <TextBox Text="{Binding FullName}" Watermark="ФИО" />
+        <TextBox Text="{Binding Phone}" Watermark="Телефон" />
+        <TextBox Text="{Binding Email}" Watermark="Почта, можно пусто" />
+        <WrapPanel>
+          <Button Content="Новый" Command="{Binding NewClientCommand}" Margin="0,0,8,8" />
+          <Button Content="Сохранить" Command="{Binding SaveCommand}" Margin="0,0,8,8" />
+          <Button Content="Удалить" Command="{Binding DeleteCommand}" Margin="0,0,8,8" />
+        </WrapPanel>
+        <TextBlock Classes="error" Text="{Binding Error}" IsVisible="{Binding HasError}" />
+      </StackPanel>
+    </Grid>
+  </DockPanel>
+</UserControl>
