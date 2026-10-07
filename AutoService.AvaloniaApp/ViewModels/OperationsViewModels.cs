@@ -88,8 +88,8 @@ public partial class AppointmentsViewModel : PagedViewModel
         if (!string.IsNullOrWhiteSpace(Day))
         {
             if (!InputValues.TryDate(Day, out var parsed))
-                throw new WorkshopException("Дата фильтра: дд.мм.гггг.");
-            date = parsed.Date;
+                throw new WorkshopException("Дата фильтра: дд.мм.гггг или дд.мм.гггг чч:мм.");
+            date = Day.Trim().Length <= 10 ? parsed.Date : parsed;
         }
 
         var result = await _admin.GetAppointmentsAsync(Search, Status?.Value, FilterMechanic?.Id, date, Page, PageSize);

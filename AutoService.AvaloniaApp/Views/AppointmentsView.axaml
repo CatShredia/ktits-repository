@@ -6,7 +6,7 @@
       <TextBlock Classes="h1" Text="Записи на обслуживание" />
       <WrapPanel>
         <TextBox Width="180" Text="{Binding Search}" Watermark="Клиент" Margin="0,0,8,8" />
-        <TextBox Width="140" Text="{Binding Day}" Watermark="Дата дд.мм.гггг" Margin="0,0,8,8" />
+        <TextBox Width="180" Text="{Binding Day}" Watermark="Дата или дата и время" Margin="0,0,8,8" />
         <ComboBox Width="160" ItemsSource="{Binding Statuses}" SelectedItem="{Binding Status}" Margin="0,0,8,8" />
         <ComboBox Width="200" ItemsSource="{Binding FilterMechanics}" SelectedItem="{Binding FilterMechanic}" PlaceholderText="Механик" Margin="0,0,8,8" />
         <Button Content="Найти" Command="{Binding SearchCommand}" Margin="0,0,8,8" />

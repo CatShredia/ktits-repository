@@ -19,8 +19,16 @@ public sealed partial class AdminService
             query = query.Where(x => x.MechanicId == mechanic);
         if (day is DateTime date)
         {
-            var start = date.Date;
-            query = query.Where(x => x.ScheduledAt >= start && x.ScheduledAt < start.AddDays(1));
+            if (date.TimeOfDay == TimeSpan.Zero)
+            {
+                var start = date.Date;
+                query = query.Where(x => x.ScheduledAt >= start && x.ScheduledAt < start.AddDays(1));
+            }
+            else
+            {
+                var minute = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, 0);
+                query = query.Where(x => x.ScheduledAt >= minute && x.ScheduledAt < minute.AddMinutes(1));
+            }
         }
 
         return await PageAsync(query.OrderBy(x => x.ScheduledAt).ThenBy(x => x.Id), page, pageSize, x => new AppointmentRow
