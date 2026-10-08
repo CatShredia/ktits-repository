@@ -2,6 +2,8 @@ using AutoService.Core.Enums;
 
 namespace AutoService.Core.Entities;
 
+// Услуга с ценой и длительностью.
+// Хранится в AutoServiceDbContext, выбирается в записи и заказе.
 public sealed class Service
 {
     public int Id { get; set; }
@@ -14,6 +16,8 @@ public sealed class Service
     public ICollection<WorkOrderService> WorkOrderLines { get; set; } = new List<WorkOrderService>();
 }
 
+// Связь механика с услугой, которую он выполняет.
+// Хранится в AutoServiceDbContext, проверяется при записи и в справочнике.
 public sealed class MechanicService
 {
     public int MechanicId { get; set; }
@@ -22,6 +26,8 @@ public sealed class MechanicService
     public Service Service { get; set; } = null!;
 }
 
+// Ремонтное место.
+// Хранится в AutoServiceDbContext, выбирается в записи и расписании.
 public sealed class RepairBay
 {
     public int Id { get; set; }
@@ -31,6 +37,8 @@ public sealed class RepairBay
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 }
 
+// Поставщик запчастей.
+// Хранится в AutoServiceDbContext, выбирается у запчасти.
 public sealed class Supplier
 {
     public int Id { get; set; }
@@ -40,6 +48,8 @@ public sealed class Supplier
     public ICollection<Part> Parts { get; set; } = new List<Part>();
 }
 
+// Запчасть и её остаток на складе.
+// Хранится в AutoServiceDbContext, списывается в MechanicWorkService.
 public sealed class Part
 {
     public int Id { get; set; }

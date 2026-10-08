@@ -8,6 +8,8 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace AutoService.AvaloniaApp.ViewModels;
 
+// Заказ-наряды текущего механика.
+// Создаётся в AppComposition и показывается в MechanicOrdersView.
 public partial class MechanicOrdersViewModel : AppPageViewModel
 {
     private readonly AppSession _session;

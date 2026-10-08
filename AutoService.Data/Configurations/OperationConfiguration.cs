@@ -2,6 +2,8 @@ using AutoService.Data.Conversions;
 
 namespace AutoService.Data.Configurations;
 
+// Правила таблицы расписания.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class MechanicScheduleConfiguration : IEntityTypeConfiguration<MechanicSchedule>
 {
     public void Configure(EntityTypeBuilder<MechanicSchedule> builder)
@@ -18,6 +20,8 @@ internal sealed class MechanicScheduleConfiguration : IEntityTypeConfiguration<M
     }
 }
 
+// Правила таблицы записей на обслуживание.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class AppointmentConfiguration : IEntityTypeConfiguration<Appointment>
 {
     public void Configure(EntityTypeBuilder<Appointment> builder)
@@ -44,6 +48,8 @@ internal sealed class AppointmentConfiguration : IEntityTypeConfiguration<Appoin
     }
 }
 
+// Правила таблицы заказ-нарядов.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class WorkOrderConfiguration : IEntityTypeConfiguration<WorkOrder>
 {
     public void Configure(EntityTypeBuilder<WorkOrder> builder)
@@ -65,6 +71,8 @@ internal sealed class WorkOrderConfiguration : IEntityTypeConfiguration<WorkOrde
     }
 }
 
+// Правила услуг в заказ-наряде.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class WorkOrderServiceConfiguration : IEntityTypeConfiguration<WorkOrderService>
 {
     public void Configure(EntityTypeBuilder<WorkOrderService> builder)
@@ -81,6 +89,8 @@ internal sealed class WorkOrderServiceConfiguration : IEntityTypeConfiguration<W
     }
 }
 
+// Правила запчастей в заказ-наряде.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class WorkOrderPartConfiguration : IEntityTypeConfiguration<WorkOrderPart>
 {
     public void Configure(EntityTypeBuilder<WorkOrderPart> builder)
@@ -98,6 +108,8 @@ internal sealed class WorkOrderPartConfiguration : IEntityTypeConfiguration<Work
     }
 }
 
+// Правила таблицы осмотра.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class InspectionResultConfiguration : IEntityTypeConfiguration<InspectionResult>
 {
     public void Configure(EntityTypeBuilder<InspectionResult> builder)

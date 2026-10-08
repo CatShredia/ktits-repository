@@ -1,5 +1,7 @@
 namespace AutoService.Data.Seed;
 
+// Начальные роли, сотрудники, клиенты и один оплаченный заказ.
+// Вызывается из AutoServiceDbContext.OnModelCreating.
 internal static class SeedData
 {
     public static void Apply(ModelBuilder modelBuilder)

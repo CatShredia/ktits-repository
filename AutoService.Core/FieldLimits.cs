@@ -1,5 +1,7 @@
 namespace AutoService.Core;
 
+// Максимальные длины полей.
+// Используются в конфигурациях таблиц и при проверке ввода.
 public static class FieldLimits
 {
     public const int Name = 200;

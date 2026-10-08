@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace AutoService.AvaloniaApp.ViewModels;
 
+// Общая модель раздела: загрузка и текст ошибки.
+// Базовый класс экранов в папке ViewModels.
 public abstract partial class AppPageViewModel : ObservableObject
 {
     [ObservableProperty] private string error = "";
@@ -38,6 +40,8 @@ public abstract partial class AppPageViewModel : ObservableObject
     }
 }
 
+// Раздел со страницами по 10 или 20 строк.
+// Базовый класс списков клиентов, автомобилей, записей и заказов.
 public abstract partial class PagedViewModel : AppPageViewModel
 {
     [ObservableProperty] private int page = 1;

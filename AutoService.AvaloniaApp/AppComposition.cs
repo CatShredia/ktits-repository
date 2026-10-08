@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AutoService.AvaloniaApp;
 
+// Регистрация базы, сервисов и моделей экранов.
+// Вызывается из App при старте.
 public static class AppComposition
 {
     public static IServiceProvider Build()

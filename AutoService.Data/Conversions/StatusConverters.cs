@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AutoService.Data.Conversions;
 
+// Перевод статусов и вида поста в текст базы.
+// Используется в конфигурациях таблиц.
 internal static class StatusConverters
 {
     public static readonly ValueConverter<WorkOrderStatus, string> WorkOrderStatus = new(

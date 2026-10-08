@@ -7,6 +7,8 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace AutoService.AvaloniaApp.ViewModels;
 
+// Сводка руководителя за период.
+// Создаётся в AppComposition и показывается в AnalyticsView.
 public partial class AnalyticsViewModel : AppPageViewModel
 {
     private readonly ChiefService _chief;
@@ -32,6 +34,8 @@ public partial class AnalyticsViewModel : AppPageViewModel
     });
 }
 
+// Просмотр отзывов и ввод отзыва администратором.
+// Создаётся в AppComposition и показывается в ReviewsView.
 public partial class ReviewsViewModel : AppPageViewModel
 {
     private readonly AppSession _session;

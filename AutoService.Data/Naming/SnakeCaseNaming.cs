@@ -2,6 +2,8 @@ using System.Text;
 
 namespace AutoService.Data.Naming;
 
+// Имена таблиц и столбцов в snake_case.
+// Вызывается из AutoServiceDbContext.OnModelCreating.
 internal static class SnakeCaseNaming
 {
     public static void Apply(ModelBuilder modelBuilder)

@@ -7,6 +7,8 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace AutoService.AvaloniaApp.ViewModels;
 
+// Пункт фильтра по статусу.
+// Используется в моделях записей, заказ-нарядов и заказов механика.
 public sealed class StatusChoice<T> where T : struct
 {
     public string Title { get; init; } = "";
@@ -14,6 +16,8 @@ public sealed class StatusChoice<T> where T : struct
     public override string ToString() => Title;
 }
 
+// Записи на обслуживание.
+// Создаётся в AppComposition и показывается в AppointmentsView.
 public partial class AppointmentsViewModel : PagedViewModel
 {
     private readonly AdminService _admin;
@@ -168,6 +172,8 @@ public partial class AppointmentsViewModel : PagedViewModel
     }
 }
 
+// Смены механиков на ремонтных местах.
+// Создаётся в AppComposition и показывается в SchedulesView.
 public partial class SchedulesViewModel : AppPageViewModel
 {
     private readonly AdminService _admin;
@@ -241,6 +247,8 @@ public partial class SchedulesViewModel : AppPageViewModel
     });
 }
 
+// Просмотр заказ-нарядов администратором.
+// Создаётся в AppComposition и показывается в WorkOrdersView.
 public partial class WorkOrdersViewModel : PagedViewModel
 {
     private readonly AdminService _admin;
@@ -292,6 +300,8 @@ public partial class WorkOrdersViewModel : PagedViewModel
     }
 }
 
+// Счета и регистрация платежей.
+// Создаётся в AppComposition и показывается в InvoicesView.
 public partial class InvoicesViewModel : AppPageViewModel
 {
     private readonly AdminService _admin;

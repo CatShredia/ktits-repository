@@ -2,6 +2,8 @@ using AutoService.Core.Security;
 
 namespace AutoService.Data.Workshop;
 
+// Справочники: марки, услуги, запчасти, механики и остальные.
+// Вызывается из CatalogViewModel.
 public sealed partial class AdminService
 {
     public async Task<IReadOnlyList<CatalogRow>> GetCatalogAsync(CatalogKind kind)

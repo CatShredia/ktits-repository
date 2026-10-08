@@ -1,5 +1,7 @@
 namespace AutoService.Data.Configurations;
 
+// Правила таблицы клиентов.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class ClientConfiguration : IEntityTypeConfiguration<Client>
 {
     public void Configure(EntityTypeBuilder<Client> builder)
@@ -14,6 +16,8 @@ internal sealed class ClientConfiguration : IEntityTypeConfiguration<Client>
     }
 }
 
+// Правила таблицы марок.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class CarBrandConfiguration : IEntityTypeConfiguration<CarBrand>
 {
     public void Configure(EntityTypeBuilder<CarBrand> builder)
@@ -24,6 +28,8 @@ internal sealed class CarBrandConfiguration : IEntityTypeConfiguration<CarBrand>
     }
 }
 
+// Правила таблицы категорий автомобилей.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class CarCategoryConfiguration : IEntityTypeConfiguration<CarCategory>
 {
     public void Configure(EntityTypeBuilder<CarCategory> builder)
@@ -34,6 +40,8 @@ internal sealed class CarCategoryConfiguration : IEntityTypeConfiguration<CarCat
     }
 }
 
+// Правила таблицы автомобилей.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class CarConfiguration : IEntityTypeConfiguration<Car>
 {
     public void Configure(EntityTypeBuilder<Car> builder)

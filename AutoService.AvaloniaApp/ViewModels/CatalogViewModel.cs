@@ -7,6 +7,8 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace AutoService.AvaloniaApp.ViewModels;
 
+// Услуга, отмеченная у механика в справочнике.
+// Используется в CatalogViewModel.
 public partial class ServiceChoice : ObservableObject
 {
     public int Id { get; init; }
@@ -14,6 +16,8 @@ public partial class ServiceChoice : ObservableObject
     [ObservableProperty] private bool isSelected;
 }
 
+// Вид справочника в переключателе экрана.
+// Используется в CatalogViewModel.
 public sealed class CatalogOption
 {
     public CatalogKind Kind { get; init; }
@@ -21,6 +25,8 @@ public sealed class CatalogOption
     public override string ToString() => Title;
 }
 
+// Просмотр и правка справочников.
+// Создаётся в AppComposition и показывается в CatalogView.
 public partial class CatalogViewModel : AppPageViewModel
 {
     private readonly AdminService _admin;

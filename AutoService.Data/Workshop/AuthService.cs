@@ -2,6 +2,8 @@ using AutoService.Core.Security;
 
 namespace AutoService.Data.Workshop;
 
+// Проверка логина и пароля.
+// Вызывается из LoginViewModel.
 public sealed class AuthService
 {
     private readonly IDbContextFactory<AutoServiceDbContext> _factory;

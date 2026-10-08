@@ -3,6 +3,8 @@ using System.Globalization;
 
 namespace AutoService.Data.Workshop;
 
+// Показатели руководителя за период.
+// Вызывается из AnalyticsViewModel.
 public sealed class ChiefService
 {
     private readonly IDbContextFactory<AutoServiceDbContext> _factory;

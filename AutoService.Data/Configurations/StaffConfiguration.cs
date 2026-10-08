@@ -1,5 +1,7 @@
 namespace AutoService.Data.Configurations;
 
+// Правила таблицы ролей.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
 {
     public void Configure(EntityTypeBuilder<Role> builder)
@@ -10,6 +12,8 @@ internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
     }
 }
 
+// Правила таблицы пользователей.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
@@ -23,6 +27,8 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
     }
 }
 
+// Правила таблицы отделов.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class DepartmentConfiguration : IEntityTypeConfiguration<Department>
 {
     public void Configure(EntityTypeBuilder<Department> builder)
@@ -33,6 +39,8 @@ internal sealed class DepartmentConfiguration : IEntityTypeConfiguration<Departm
     }
 }
 
+// Правила таблицы специализаций.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class SpecializationConfiguration : IEntityTypeConfiguration<Specialization>
 {
     public void Configure(EntityTypeBuilder<Specialization> builder)
@@ -43,6 +51,8 @@ internal sealed class SpecializationConfiguration : IEntityTypeConfiguration<Spe
     }
 }
 
+// Правила таблицы механиков.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class MechanicConfiguration : IEntityTypeConfiguration<Mechanic>
 {
     public void Configure(EntityTypeBuilder<Mechanic> builder)

@@ -1,5 +1,7 @@
 namespace AutoService.Core.Enums;
 
+// Русские подписи статусов заказа, счёта и ремонтного места.
+// Используется в сервисах Workshop и в фильтрах экранов.
 public static class StatusText
 {
     public static string WorkOrder(WorkOrderStatus status) => status switch

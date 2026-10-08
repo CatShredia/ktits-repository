@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace AutoService.Data;
 
+// Строка подключения и контекст для миграций.
+// Вызывается из AppComposition и команды dotnet ef.
 public sealed class AutoServiceDbContextFactory : IDesignTimeDbContextFactory<AutoServiceDbContext>
 {
     public const string ConnectionVariable = "AUTOSERVICE_CONNECTION";

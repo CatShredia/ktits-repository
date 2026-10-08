@@ -2,6 +2,8 @@ using AutoService.Data.Conversions;
 
 namespace AutoService.Data.Configurations;
 
+// Правила таблицы услуг.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class ServiceConfiguration : IEntityTypeConfiguration<Service>
 {
     public void Configure(EntityTypeBuilder<Service> builder)
@@ -20,6 +22,8 @@ internal sealed class ServiceConfiguration : IEntityTypeConfiguration<Service>
     }
 }
 
+// Правила связи механика с услугами.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class MechanicServiceConfiguration : IEntityTypeConfiguration<MechanicService>
 {
     public void Configure(EntityTypeBuilder<MechanicService> builder)
@@ -31,6 +35,8 @@ internal sealed class MechanicServiceConfiguration : IEntityTypeConfiguration<Me
     }
 }
 
+// Правила таблицы ремонтных мест.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class RepairBayConfiguration : IEntityTypeConfiguration<RepairBay>
 {
     public void Configure(EntityTypeBuilder<RepairBay> builder)
@@ -48,6 +54,8 @@ internal sealed class RepairBayConfiguration : IEntityTypeConfiguration<RepairBa
     }
 }
 
+// Правила таблицы поставщиков.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class SupplierConfiguration : IEntityTypeConfiguration<Supplier>
 {
     public void Configure(EntityTypeBuilder<Supplier> builder)
@@ -59,6 +67,8 @@ internal sealed class SupplierConfiguration : IEntityTypeConfiguration<Supplier>
     }
 }
 
+// Правила таблицы запчастей.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class PartConfiguration : IEntityTypeConfiguration<Part>
 {
     public void Configure(EntityTypeBuilder<Part> builder)

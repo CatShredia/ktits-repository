@@ -1,5 +1,7 @@
 namespace AutoService.Data.Workshop;
 
+// Записи, расписание, просмотр заказов и счета.
+// Вызывается из AppointmentsViewModel, SchedulesViewModel, WorkOrdersViewModel и InvoicesViewModel.
 public sealed partial class AdminService
 {
     public async Task<PageResult<AppointmentRow>> GetAppointmentsAsync(string? search, AppointmentStatus? status, int? mechanicId, DateTime? day, int page, int pageSize)

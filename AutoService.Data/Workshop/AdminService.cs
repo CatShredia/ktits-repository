@@ -2,6 +2,8 @@ using Npgsql;
 
 namespace AutoService.Data.Workshop;
 
+// Клиенты и автомобили: поиск, сохранение и удаление.
+// Вызывается из ClientsViewModel и CarsViewModel.
 public sealed partial class AdminService
 {
     private readonly IDbContextFactory<AutoServiceDbContext> _factory;

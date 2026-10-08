@@ -11,6 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace AutoService.Data.Migrations
 {
+    // Снимок модели для миграции InitialCreate.
+    // Читается Entity Framework при сравнении схемы.
     [DbContext(typeof(AutoServiceDbContext))]
     [Migration("20261005154840_InitialCreate")]
     partial class InitialCreate

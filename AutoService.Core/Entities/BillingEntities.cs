@@ -2,6 +2,8 @@ using AutoService.Core.Enums;
 
 namespace AutoService.Core.Entities;
 
+// Счёт по завершённому заказ-наряду.
+// Хранится в AutoServiceDbContext, ведётся в AdminService.
 public sealed class Invoice
 {
     public int Id { get; set; }
@@ -17,6 +19,8 @@ public sealed class Invoice
     public ICollection<Payment> Payments { get; set; } = new List<Payment>();
 }
 
+// Платёж по счёту.
+// Хранится в AutoServiceDbContext, регистрируется в AdminService.
 public sealed class Payment
 {
     public int Id { get; set; }
@@ -29,6 +33,8 @@ public sealed class Payment
     public Invoice Invoice { get; set; } = null!;
 }
 
+// Отзыв клиента по заказ-наряду.
+// Хранится в AutoServiceDbContext, ведётся в ReviewService.
 public sealed class Review
 {
     public int Id { get; set; }

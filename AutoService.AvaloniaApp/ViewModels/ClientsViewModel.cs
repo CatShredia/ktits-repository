@@ -6,6 +6,8 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace AutoService.AvaloniaApp.ViewModels;
 
+// Список и карточка клиентов.
+// Создаётся в AppComposition и показывается в ClientsView.
 public partial class ClientsViewModel : PagedViewModel
 {
     private readonly AdminService _admin;
@@ -89,6 +91,8 @@ public partial class ClientsViewModel : PagedViewModel
     };
 }
 
+// Список и карточка автомобилей.
+// Создаётся в AppComposition и показывается в CarsView.
 public partial class CarsViewModel : PagedViewModel
 {
     private readonly AdminService _admin;

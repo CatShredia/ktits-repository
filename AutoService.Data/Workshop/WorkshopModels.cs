@@ -1,5 +1,7 @@
 namespace AutoService.Data.Workshop;
 
+// Строка выпадающего списка: идентификатор и подпись.
+// Используется в моделях экранов и сервисах Workshop.
 public sealed class LookupItem
 {
     public int Id { get; init; }
@@ -7,6 +9,8 @@ public sealed class LookupItem
     public override string ToString() => Title;
 }
 
+// Страница списка и общее число строк.
+// Возвращается AdminService и читается в PagedViewModel.
 public sealed class PageResult<T>
 {
     public PageResult(IReadOnlyList<T> items, int total, int page, int pageSize)
@@ -23,6 +27,8 @@ public sealed class PageResult<T>
     public int PageSize { get; }
 }
 
+// Сотрудник после успешного входа.
+// Создаётся в AuthService и хранится в AppSession.
 public sealed class CurrentUser
 {
     public int Id { get; init; }
@@ -31,6 +37,8 @@ public sealed class CurrentUser
     public string Role { get; init; } = "";
 }
 
+// Результат входа: пользователь или текст ошибки.
+// Возвращается AuthService в LoginViewModel.
 public sealed class AuthResult
 {
     public bool Success { get; init; }
@@ -38,6 +46,8 @@ public sealed class AuthResult
     public CurrentUser? User { get; init; }
 }
 
+// Клиент в таблице администратора.
+// Создаётся в AdminService и показывается в ClientsViewModel.
 public sealed class ClientRow
 {
     public int Id { get; init; }
@@ -46,6 +56,8 @@ public sealed class ClientRow
     public string Email { get; init; } = "";
 }
 
+// Автомобиль в таблице администратора.
+// Создаётся в AdminService и показывается в CarsViewModel.
 public sealed class CarRow
 {
     public int Id { get; init; }
@@ -64,6 +76,8 @@ public sealed class CarRow
     public string Notes { get; init; } = "";
 }
 
+// Строка справочника.
+// Создаётся в AdminService и показывается в CatalogViewModel.
 public sealed class CatalogRow
 {
     public int Id { get; init; }
@@ -101,6 +115,8 @@ public enum CatalogKind
     Mechanics
 }
 
+// Запись на обслуживание в списке.
+// Создаётся в AdminService и показывается в AppointmentsViewModel.
 public sealed class AppointmentRow
 {
     public int Id { get; init; }
@@ -120,6 +136,8 @@ public sealed class AppointmentRow
     public AppointmentStatus StatusValue { get; init; }
 }
 
+// Смена механика на ремонтном месте.
+// Создаётся в AdminService и показывается в SchedulesViewModel.
 public sealed class ScheduleRow
 {
     public int Id { get; init; }
@@ -133,6 +151,8 @@ public sealed class ScheduleRow
     public DateTime EndsAt { get; init; }
 }
 
+// Заказ-наряд в списке администратора.
+// Создаётся в AdminService и показывается в WorkOrdersViewModel.
 public sealed class WorkOrderRow
 {
     public int Id { get; init; }
@@ -144,6 +164,8 @@ public sealed class WorkOrderRow
     public string Service { get; init; } = "";
 }
 
+// Услуга в постраничном списке справочника.
+// Создаётся в AdminService и показывается в CatalogViewModel.
 public sealed class ServiceRow
 {
     public int Id { get; init; }
@@ -153,6 +175,8 @@ public sealed class ServiceRow
     public int DurationMinutes { get; init; }
 }
 
+// Запчасть в постраничном списке справочника.
+// Создаётся в AdminService и показывается в CatalogViewModel.
 public sealed class PartRow
 {
     public int Id { get; init; }
@@ -166,6 +190,8 @@ public sealed class PartRow
     public int MinQuantity { get; init; }
 }
 
+// Счёт с остатком оплаты.
+// Создаётся в AdminService и показывается в InvoicesViewModel.
 public sealed class InvoiceRow
 {
     public int Id { get; init; }
@@ -182,6 +208,8 @@ public sealed class InvoiceRow
     public override string ToString() => $"Счёт №{Id}, остаток {Remainder:0.00} ₽";
 }
 
+// Запись механика без заказ-наряда.
+// Создаётся в MechanicWorkService и показывается в MechanicOrdersViewModel.
 public sealed class OpenAppointmentRow
 {
     public int Id { get; init; }
@@ -192,6 +220,8 @@ public sealed class OpenAppointmentRow
     public override string ToString() => $"{When} · {ClientName} · {Car} · {Service}";
 }
 
+// Заказ-наряд в списке механика.
+// Создаётся в MechanicWorkService и показывается в MechanicOrdersViewModel.
 public sealed class MechanicOrderRow
 {
     public int Id { get; init; }
@@ -204,6 +234,8 @@ public sealed class MechanicOrderRow
     public override string ToString() => $"№{Id} · {CreatedAt} · {Status} · {ClientName}";
 }
 
+// Услуга или запчасть в карточке заказа.
+// Создаётся в MechanicWorkService и показывается в MechanicOrdersViewModel.
 public sealed class OrderLineRow
 {
     public int Id { get; init; }
@@ -211,6 +243,8 @@ public sealed class OrderLineRow
     public override string ToString() => Title;
 }
 
+// Карточка заказ-наряда механика.
+// Создаётся в MechanicWorkService и читается в MechanicOrdersViewModel.
 public sealed class MechanicOrderDetails
 {
     public string CarText { get; init; } = "";
@@ -225,6 +259,8 @@ public sealed class MechanicOrderDetails
     public IReadOnlyList<OrderLineRow> Parts { get; init; } = [];
 }
 
+// Отзыв в списке.
+// Создаётся в ReviewService и показывается в ReviewsViewModel.
 public sealed class ReviewRow
 {
     public int Id { get; init; }
@@ -235,6 +271,8 @@ public sealed class ReviewRow
     public string Comment { get; init; } = "";
 }
 
+// Одна строка показателя: название и значение.
+// Создаётся в ChiefService и входит в AnalyticsSection.
 public sealed class MetricRow
 {
     public string Title { get; init; } = "";
@@ -242,6 +280,8 @@ public sealed class MetricRow
     public override string ToString() => string.IsNullOrEmpty(Value) ? Title : $"{Title}: {Value}";
 }
 
+// Блок аналитики с пояснением и строками.
+// Создаётся в ChiefService и показывается в AnalyticsViewModel.
 public sealed class AnalyticsSection
 {
     public string Title { get; init; } = "";

@@ -1,5 +1,7 @@
 namespace AutoService.Data.Workshop;
 
+// Ошибка предметной области с текстом для пользователя.
+// Выбрасывается сервисами Workshop и показывается на экранах.
 public sealed class WorkshopException : Exception
 {
     public WorkshopException(string message) : base(message)
@@ -7,6 +9,8 @@ public sealed class WorkshopException : Exception
     }
 }
 
+// Названия ролей, как они записаны в базе.
+// Сравниваются в ShellViewModel и ReviewsViewModel.
 public static class RoleNames
 {
     public const string Admin = "Администратор";
@@ -14,6 +18,8 @@ public static class RoleNames
     public const string Chief = "Руководитель";
 }
 
+// Налог и итог счёта.
+// Вызывается из AdminService при сохранении счёта.
 public static class InvoiceMath
 {
     public static (decimal Tax, decimal Total) Calculate(decimal amountBeforeDiscount, decimal discount, decimal taxRate)

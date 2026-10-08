@@ -1,5 +1,7 @@
 namespace AutoService.Core.Entities;
 
+// Роль сотрудника.
+// Хранится в AutoServiceDbContext, настраивается в RoleConfiguration.
 public sealed class Role
 {
     public int Id { get; set; }
@@ -7,6 +9,8 @@ public sealed class Role
     public ICollection<User> Users { get; set; } = new List<User>();
 }
 
+// Учётная запись сотрудника.
+// Хранится в AutoServiceDbContext, читается в AuthService.
 public sealed class User
 {
     public int Id { get; set; }
@@ -18,6 +22,8 @@ public sealed class User
     public Mechanic? Mechanic { get; set; }
 }
 
+// Отдел автосервиса.
+// Хранится в AutoServiceDbContext, выбирается для механика.
 public sealed class Department
 {
     public int Id { get; set; }
@@ -25,6 +31,8 @@ public sealed class Department
     public ICollection<Mechanic> Mechanics { get; set; } = new List<Mechanic>();
 }
 
+// Специализация механика.
+// Хранится в AutoServiceDbContext, выбирается для механика.
 public sealed class Specialization
 {
     public int Id { get; set; }
@@ -32,6 +40,8 @@ public sealed class Specialization
     public ICollection<Mechanic> Mechanics { get; set; } = new List<Mechanic>();
 }
 
+// Механик: пользователь, отдел и специализация.
+// Хранится в AutoServiceDbContext, используется в записи и заказ-наряде.
 public sealed class Mechanic
 {
     public int Id { get; set; }

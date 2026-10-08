@@ -2,6 +2,8 @@ using Npgsql;
 
 namespace AutoService.Data.Workshop;
 
+// Список отзывов и сохранение нового.
+// Вызывается из ReviewsViewModel.
 public sealed class ReviewService
 {
     private readonly IDbContextFactory<AutoServiceDbContext> _factory;

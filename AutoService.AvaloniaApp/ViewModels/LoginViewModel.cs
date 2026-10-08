@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace AutoService.AvaloniaApp.ViewModels;
 
+// Вход: логин, пароль и текст ошибки.
+// Создаётся в AppComposition и открывается из MainViewModel.
 public partial class LoginViewModel : ObservableObject
 {
     private readonly AuthService _auth;

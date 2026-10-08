@@ -3,6 +3,8 @@ using AutoService.Data.Seed;
 
 namespace AutoService.Data;
 
+// Контекст Entity Framework: таблицы и сборка модели.
+// Создаётся фабрикой в AppComposition и сервисах Workshop.
 public sealed class AutoServiceDbContext : DbContext
 {
     public AutoServiceDbContext(DbContextOptions<AutoServiceDbContext> options)

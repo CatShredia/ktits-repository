@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AutoService.AvaloniaApp;
 
+// Приложение: тема, шаблоны экранов и главное окно.
+// Создаётся в Program и собирает службы через AppComposition.
 public partial class App : Application
 {
     public static IServiceProvider Services { get; private set; } = null!;

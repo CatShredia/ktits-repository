@@ -2,6 +2,8 @@ using Npgsql;
 
 namespace AutoService.Data.Workshop;
 
+// Заказ-наряд механика: осмотр, услуги, запчасти и статус.
+// Вызывается из MechanicOrdersViewModel.
 public sealed class MechanicWorkService
 {
     private readonly IDbContextFactory<AutoServiceDbContext> _factory;

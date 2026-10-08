@@ -10,6 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace AutoService.Data.Migrations
 {
+    // Последний снимок модели базы.
+    // Читается Entity Framework при создании следующей миграции.
     [DbContext(typeof(AutoServiceDbContext))]
     partial class AutoServiceDbContextModelSnapshot : ModelSnapshot
     {

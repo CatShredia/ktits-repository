@@ -2,6 +2,8 @@ using AutoService.Data.Conversions;
 
 namespace AutoService.Data.Configurations;
 
+// Правила таблицы счетов и формулы итога.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
 {
     public void Configure(EntityTypeBuilder<Invoice> builder)
@@ -34,6 +36,8 @@ internal sealed class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
     }
 }
 
+// Правила таблицы платежей.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 {
     public void Configure(EntityTypeBuilder<Payment> builder)
@@ -54,6 +58,8 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
     }
 }
 
+// Правила таблицы отзывов.
+// Подключается в AutoServiceDbContext.OnModelCreating.
 internal sealed class ReviewConfiguration : IEntityTypeConfiguration<Review>
 {
     public void Configure(EntityTypeBuilder<Review> builder)

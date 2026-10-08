@@ -8,6 +8,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace AutoService.Data.Migrations
 {
+    // Миграция: таблицы, ограничения и начальные строки.
+    // Применяется к PostgreSQL командой dotnet ef database update.
     /// <inheritdoc />
     public partial class InitialCreate : Migration
     {

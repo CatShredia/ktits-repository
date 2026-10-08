@@ -2,6 +2,8 @@ using System.Security.Cryptography;
 
 namespace AutoService.Core.Security;
 
+// Хеш пароля PBKDF2 и его проверка.
+// Вызывается из AuthService и при сохранении механика в AdminService.
 public static class PasswordHasher
 {
     public const int Iterations = 100_000;

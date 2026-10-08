@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AutoService.AvaloniaApp.ViewModels;
 
+// Пункт меню: название и фабрика экрана.
+// Собирается в ShellViewModel.
 public sealed class NavItem
 {
     public required string Title { get; init; }
@@ -14,6 +16,8 @@ public sealed class NavItem
     public override string ToString() => Title;
 }
 
+// Меню роли и переход между разделами.
+// Создаётся в AppComposition и открывается после входа.
 public partial class ShellViewModel : ObservableObject
 {
     private readonly IServiceProvider _services;
@@ -89,6 +93,8 @@ public partial class ShellViewModel : ObservableObject
     }
 }
 
+// Переключает экран входа и оболочку.
+// Создаётся в AppComposition и назначается окну в App.
 public partial class MainViewModel : ObservableObject
 {
     public MainViewModel(LoginViewModel login, ShellViewModel shell)
@@ -109,6 +115,8 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty] private object? current;
 }
 
+// Текст раздела до загрузки его данных.
+// Создаётся в ShellViewModel при выборе пункта меню.
 public partial class RoleHomeViewModel : AppPageViewModel
 {
     public RoleHomeViewModel(string title, string description)

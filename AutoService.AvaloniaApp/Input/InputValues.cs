@@ -2,6 +2,8 @@ using System.Globalization;
 
 namespace AutoService.AvaloniaApp.Input;
 
+// Разбор дат и чисел из полей формы.
+// Вызывается из моделей представления экранов.
 public static class InputValues
 {
     public static bool TryInt(string? text, out int value)

@@ -1,5 +1,7 @@
 namespace AutoService.Core.Entities;
 
+// Клиент автосервиса.
+// Хранится в AutoServiceDbContext, ведётся в AdminService.
 public sealed class Client
 {
     public int Id { get; set; }
@@ -11,6 +13,8 @@ public sealed class Client
     public ICollection<Review> Reviews { get; set; } = new List<Review>();
 }
 
+// Марка автомобиля.
+// Хранится в AutoServiceDbContext, выбирается в карточке автомобиля.
 public sealed class CarBrand
 {
     public int Id { get; set; }
@@ -18,6 +22,8 @@ public sealed class CarBrand
     public ICollection<Car> Cars { get; set; } = new List<Car>();
 }
 
+// Категория автомобиля.
+// Хранится в AutoServiceDbContext, выбирается в карточке автомобиля.
 public sealed class CarCategory
 {
     public int Id { get; set; }
@@ -25,6 +31,8 @@ public sealed class CarCategory
     public ICollection<Car> Cars { get; set; } = new List<Car>();
 }
 
+// Автомобиль клиента.
+// Хранится в AutoServiceDbContext, ведётся в AdminService.
 public sealed class Car
 {
     public int Id { get; set; }

@@ -2,6 +2,8 @@ using Avalonia;
 
 namespace AutoService.AvaloniaApp;
 
+// Точка входа приложения Avalonia.
+// Вызывается средой при запуске процесса.
 internal static class Program
 {
     [STAThread]

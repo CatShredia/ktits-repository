@@ -2,6 +2,8 @@ using AutoService.Core.Enums;
 
 namespace AutoService.Core.Entities;
 
+// Смена механика на ремонтном месте.
+// Хранится в AutoServiceDbContext, ведётся в AdminService.
 public sealed class MechanicSchedule
 {
     public int Id { get; set; }
@@ -13,6 +15,8 @@ public sealed class MechanicSchedule
     public RepairBay RepairBay { get; set; } = null!;
 }
 
+// Запись клиента на услугу.
+// Хранится в AutoServiceDbContext, ведётся в AdminService и MechanicWorkService.
 public sealed class Appointment
 {
     public int Id { get; set; }
@@ -31,6 +35,8 @@ public sealed class Appointment
     public WorkOrder? WorkOrder { get; set; }
 }
 
+// Заказ-наряд по записи.
+// Хранится в AutoServiceDbContext, ведётся механиком и смотрится администратором.
 public sealed class WorkOrder
 {
     public int Id { get; set; }
@@ -48,6 +54,8 @@ public sealed class WorkOrder
     public Review? Review { get; set; }
 }
 
+// Услуга в составе заказ-наряда.
+// Хранится в AutoServiceDbContext, добавляется в MechanicWorkService.
 public sealed class WorkOrderService
 {
     public int WorkOrderId { get; set; }
@@ -57,6 +65,8 @@ public sealed class WorkOrderService
     public Service Service { get; set; } = null!;
 }
 
+// Запчасть, списанная в заказ-наряд.
+// Хранится в AutoServiceDbContext, добавляется в MechanicWorkService.
 public sealed class WorkOrderPart
 {
     public int WorkOrderId { get; set; }
@@ -67,6 +77,8 @@ public sealed class WorkOrderPart
     public Part Part { get; set; } = null!;
 }
 
+// Результат осмотра по заказ-наряду.
+// Хранится в AutoServiceDbContext, сохраняется в MechanicWorkService.
 public sealed class InspectionResult
 {
     public int Id { get; set; }
