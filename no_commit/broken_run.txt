@@ -1,0 +1,14 @@
+[xUnit.net 00:00:00.25]     ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_ReturnsPriceTimesQuantity(price: 100, quantity: 2, expected: 200) [FAIL]
+[xUnit.net 00:00:00.25]     ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_ReturnsPriceTimesQuantity(price: 125.5, quantity: 2, expected: 251) [FAIL]
+[xUnit.net 00:00:00.25]     ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_ReturnsPriceTimesQuantity(price: 50, quantity: 0, expected: 0) [FAIL]
+[xUnit.net 00:00:00.25]     ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_ReturnsPriceTimesQuantity(price: 250, quantity: 4, expected: 1000) [FAIL]
+Failed ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_ReturnsPriceTimesQuantity(price: 100, quantity: 2, expected: 200) [3 ms]
+Assert.Equal() Failure: Values differ
+Expected: 200
+Actual:   102
+at ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_ReturnsPriceTimesQuantity(Double price, Int32 quantity, Double expected) in D:\directory-git\ktits-repository\ProductManagement.Solution\ProductManagement.Tests\Services\ProductServiceTests.cs:line 24
+Failed ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_ReturnsPriceTimesQuantity(price: 125.5, quantity: 2, expected: 251) [< 1 ms]
+Assert.Equal() Failure: Values differ
+Expected: 251
+Actual:   127.5
+at ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_ReturnsPriceTimesQuantity(Double price, Int32 quantity, Double expected) in D:\directory-git\ktits-repository\ProductManagement.Solution\ProductManagement.Tests\Services\ProductServiceTests.cs:line 24

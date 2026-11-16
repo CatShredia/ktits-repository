@@ -1,0 +1,50 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  ProductManagement -> D:\directory-git\ktits-repository\ProductManagement.Solution\ProductManagement\bin\Debug\net10.0\ProductManagement.dll
+  ProductManagement.Tests -> D:\directory-git\ktits-repository\ProductManagement.Solution\ProductManagement.Tests\bin\Debug\net10.0\ProductManagement.Tests.dll
+Test run for D:\directory-git\ktits-repository\ProductManagement.Solution\ProductManagement.Tests\bin\Debug\net10.0\ProductManagement.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.15)
+[xUnit.net 00:00:00.08]   Discovering: ProductManagement.Tests
+[xUnit.net 00:00:00.13]   Discovered:  ProductManagement.Tests
+[xUnit.net 00:00:00.15]   Starting:    ProductManagement.Tests
+  Passed ProductManagement.Tests.Services.ProductServiceTests.ValidateProduct_Null_Throws [28 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateDiscount_ReturnsPriceWithDiscount(total: 1000, percent: 10, expected: 900) [3 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateDiscount_ReturnsPriceWithDiscount(total: 500, percent: 20, expected: 400) [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateDiscount_ReturnsPriceWithDiscount(total: 100, percent: 0, expected: 100) [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateDiscount_ReturnsPriceWithDiscount(total: 100, percent: 100, expected: 0) [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateDiscount_ReturnsPriceWithDiscount(total: 2000, percent: 50, expected: 1000) [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.ValidateProduct_EmptyName_ReturnsFalse(name: "") [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.ValidateProduct_EmptyName_ReturnsFalse(name: "   ") [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.ValidateProduct_NegativeQuantity_ReturnsFalse [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateDiscount_InvalidPercent_Throws(percent: -0.01) [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateDiscount_InvalidPercent_Throws(percent: -1) [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateDiscount_InvalidPercent_Throws(percent: 100.01000000000001) [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateDiscount_InvalidPercent_Throws(percent: 150) [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_ReturnsPriceTimesQuantity(price: 100, quantity: 2, expected: 200) [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_ReturnsPriceTimesQuantity(price: 125.5, quantity: 2, expected: 251) [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_ReturnsPriceTimesQuantity(price: 50, quantity: 0, expected: 0) [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_ReturnsPriceTimesQuantity(price: 250, quantity: 4, expected: 1000) [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_NegativeQuantity_Throws [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.ValidateProduct_NegativePrice_ReturnsFalse [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateTotalPrice_NegativePrice_Throws [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.CalculateDiscount_NegativeTotal_Throws [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.ValidateProduct_ZeroPrice_ReturnsFalse [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.ValidateProduct_ZeroQuantity_ReturnsTrue [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.ValidateProduct_CorrectProduct_ReturnsTrue [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.ValidateProduct_EmptyCategory_ReturnsFalse(category: "") [< 1 ms]
+  Passed ProductManagement.Tests.Services.ProductServiceTests.ValidateProduct_EmptyCategory_ReturnsFalse(category: "   ") [< 1 ms]
+  Passed ProductManagement.Tests.Repositories.ProductRepositoryTests.GetById_ExistingProduct_ReturnsIt [235 ms]
+[xUnit.net 00:00:00.52]   Finished:    ProductManagement.Tests
+  Passed ProductManagement.Tests.Repositories.ProductRepositoryTests.Delete_ExistingProduct_RemovesRecord [21 ms]
+  Passed ProductManagement.Tests.Repositories.ProductRepositoryTests.Update_Missing_ReturnsFalse [11 ms]
+  Passed ProductManagement.Tests.Repositories.ProductRepositoryTests.Delete_Missing_ReturnsFalse [8 ms]
+  Passed ProductManagement.Tests.Repositories.ProductRepositoryTests.GetById_Missing_ReturnsNull [8 ms]
+  Passed ProductManagement.Tests.Repositories.ProductRepositoryTests.GetAll_ReturnsAllRecords [26 ms]
+  Passed ProductManagement.Tests.Repositories.ProductRepositoryTests.Update_ExistingProduct_ChangesData [17 ms]
+  Passed ProductManagement.Tests.Repositories.ProductRepositoryTests.Add_NewProduct_AppearsInTable [15 ms]
+
+Test Run Successful.
+Total tests: 34
+     Passed: 34
+ Total time: 0.9352 Seconds
